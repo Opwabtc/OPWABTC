@@ -181,9 +181,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Documentation**: [docs.opwa.btc](none)
-- **Discord**: [OPWA Community](none)
-- **Twitter**: [@opwa_btc](https://twitter.com/opwabtc)
+- **Documentation**:
+- **Discord**: 
+- **Twitter**: [@opwabtc](https://twitter.com/opwabtc)
 
 ## ⚠️ Disclaimer
 
