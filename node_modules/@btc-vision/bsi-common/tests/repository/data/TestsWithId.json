@@ -1,0 +1,68 @@
+[
+  {
+    "_id": "65ff1f6c0e0dd5a32089fc22",
+    "account": "123",
+    "ticker": "BTC",
+    "amount": 50000,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0,
+    "version": 1
+  },
+  {
+    "_id": "65ff1f6c0e0dd5a32089fc25",
+    "account": "456",
+    "ticker": "BTC",
+    "amount": 100,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0,
+    "version": 1
+  },
+  {
+    "_id": "65ff1f6c0e0dd5a32089fc28",
+    "account": "789",
+    "ticker": "BTC",
+    "amount": 0,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0,
+    "version": 1
+  },
+  {
+    "_id": "65ff2034987ed2e941a94d58",
+    "account": "123",
+    "ticker": "ETH",
+    "amount": 3333330,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0,
+    "version": 1
+  },
+  {
+    "account": "123",
+    "ticker": "SOL",
+    "amount": 1234,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0,
+    "_id": "6605d14603bce86bdca515b2",
+    "version": 1
+  },
+  {
+    "account": "234",
+    "ticker": "SOL",
+    "amount": 100,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0,
+    "_id": "6605d41603bce86bdca515b3",
+    "version": 1
+  }
+]

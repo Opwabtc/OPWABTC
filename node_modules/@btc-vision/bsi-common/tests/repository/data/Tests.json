@@ -1,0 +1,56 @@
+[
+  {
+    "account": "123",
+    "ticker": "BTC",
+    "amount": 50000,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0
+  },
+  {
+    "account": "456",
+    "ticker": "BTC",
+    "amount": 100,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0
+  },
+  {
+    "account": "789",
+    "ticker": "BTC",
+    "amount": 0,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0
+  },
+  {
+    "account": "123",
+    "ticker": "ETH",
+    "amount": 3333330,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0
+  },
+  {
+    "account": "123",
+    "ticker": "SOL",
+    "amount": 1234,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0
+  },
+  {
+    "account": "234",
+    "ticker": "SOL",
+    "amount": 100,
+    "lock": 0,
+    "mint": 0,
+    "stake": 0,
+    "burn": 0
+  }
+]
