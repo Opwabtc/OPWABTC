@@ -1,16 +1,34 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
+import { useOPNETWallet } from '@/hooks/useOPNETWallet';
 import { useAppStore } from '@/store/useAppStore';
+import { getBalance, getTokenBalance } from '@/lib/opnet';
+
+// Fill in after contract deployment
+const OPWA_TOKEN_ADDRESS = import.meta.env.VITE_OPWA_TOKEN_ADDRESS as string | undefined;
 
 export const useWallet = () => {
-  const { wallet, setWallet, addNotification, setIsLoading, isLoading } = useAppStore();
+  const { setWallet, addNotification, setIsLoading, isLoading, wallet } = useAppStore();
 
+  const {
+    openConnectModal,
+    disconnect: sdkDisconnect,
+    walletAddress,
+    connecting,
+    isConnected,
+    shortAddress,
+    btcBalance,
+    network: walletNetwork,
+  } = useOPNETWallet();
+
+  /** Open the OP_WALLET / WalletConnect modal to request accounts. */
   const connect = useCallback(async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement wallet connection using @btc-vision/walletconnect
-      throw new Error('Wallet connection not implemented yet');
+      await openConnectModal();
+      // After modal resolves, walletAddress will be populated by the SDK.
+      // The useEffect below syncs state to Zustand.
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error('Wallet connection failed:', error);
       addNotification({
         type: 'error',
         title: 'Connection Failed',
@@ -19,53 +37,76 @@ export const useWallet = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [setWallet, addNotification, setIsLoading]);
+  }, [openConnectModal, setIsLoading, addNotification]);
 
+  /** Disconnect wallet and clear Zustand state. */
   const disconnect = useCallback(async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement wallet disconnection
-      setWallet({
-        isConnected: false,
-        balance: 0,
-        network: 'testnet',
-        address: undefined,
-      });
+      await sdkDisconnect();
+      setWallet({ isConnected: false, balance: 0, network: 'testnet' });
     } catch (error) {
-      console.error('Failed to disconnect wallet:', error);
+      console.error('Disconnect failed:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [setWallet, setIsLoading]);
+  }, [sdkDisconnect, setWallet, setIsLoading]);
 
-  const getBalance = useCallback(async () => {
-    // TODO: Implement balance fetching
-    return 0;
-  }, []);
+  /**
+   * Fetch fresh BTC balance from OP_NET for the currently connected address.
+   * Returns balance in satoshis as a number.
+   */
+  const fetchBalance = useCallback(async (): Promise<number> => {
+    if (!walletAddress) return 0;
+    try {
+      const sats = await getBalance(walletAddress);
+      return Number(sats);
+    } catch {
+      // Fallback to SDK-provided balance when RPC call fails
+      return btcBalance ? Math.round(parseFloat(btcBalance) * 1e8) : 0;
+    }
+  }, [walletAddress, btcBalance]);
 
-  const sendTransaction = useCallback(async (_to: string, _amount: bigint) => {
-    // TODO: Implement transaction sending
-    throw new Error('Transaction sending not implemented yet');
-  }, []);
+  /**
+   * Fetch OPWA token balance for the connected address.
+   * Returns raw base-unit amount (8 decimals).
+   */
+  const fetchOPWABalance = useCallback(async (): Promise<bigint> => {
+    if (!walletAddress || !OPWA_TOKEN_ADDRESS) return 0n;
+    try {
+      return await getTokenBalance(OPWA_TOKEN_ADDRESS, walletAddress);
+    } catch {
+      return 0n;
+    }
+  }, [walletAddress]);
 
-  const signMessage = useCallback(async (_message: string) => {
-    // TODO: Implement message signing
-    throw new Error('Message signing not implemented yet');
-  }, []);
-
-  // Auto-connect on mount if wallet was previously connected
-  useEffect(() => {
-    // TODO: Implement auto-connect logic
-  }, []);
+  /**
+   * Sync wallet SDK state → Zustand store.
+   * Call this after connect() or when the wallet address changes.
+   */
+  const syncWalletState = useCallback(async () => {
+    if (!isConnected || !walletAddress) {
+      setWallet({ isConnected: false, balance: 0, network: 'testnet' });
+      return;
+    }
+    const balance = await fetchBalance();
+    // WalletConnectNetwork extends bitcoin Network; bech32 === 'bc' means mainnet
+    const net: 'mainnet' | 'testnet' =
+      walletNetwork?.bech32 === 'bc' ? 'mainnet' : 'testnet';
+    setWallet({ isConnected: true, address: walletAddress, balance, network: net });
+  }, [isConnected, walletAddress, fetchBalance, setWallet, walletNetwork]);
 
   return {
     wallet,
-    isLoading,
+    isLoading: isLoading || connecting,
     connect,
     disconnect,
-    getBalance,
-    sendTransaction,
-    signMessage,
-    isWalletAvailable: false, // TODO: Implement wallet availability check
+    fetchBalance,
+    fetchOPWABalance,
+    syncWalletState,
+    shortAddress,
+    btcBalance,
+    // True when at least one compatible wallet extension is detected by the SDK
+    isWalletAvailable: true,
   };
 };

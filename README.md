@@ -116,6 +116,41 @@ interface IOP721 {
 
 ---
 
+## Deployed Contracts (OP_NET Testnet)
+
+> Contracts are compiled to WASM (AssemblyScript → OP-VM) and deployed on Bitcoin L1 via OP_NET Testnet.
+
+| Contract | Standard | Address | Explorer |
+|----------|----------|---------|----------|
+| `OPWACoin` | OP-20 | _pending deployment_ | [OPScan](https://testnet.opscan.io) |
+| `PropertyNFT` | OP-721 | _pending deployment_ | [OPScan](https://testnet.opscan.io) |
+| `YieldDistributor` | Custom | _pending deployment_ | [OPScan](https://testnet.opscan.io) |
+
+Full deployment records: [docs/testnet-deployments.md](./docs/testnet-deployments.md)
+
+---
+
+## How It Works
+
+```
+1. TOKENIZE  — A real-world property is verified and its legal docs uploaded to IPFS.
+               The owner mints a PropertyNFT (OP-721) representing sole title.
+
+2. FRACTIONALIZE — The NFT is locked and a FractionalToken (OP-20) is deployed.
+                   Investors buy fractional shares with native BTC.
+
+3. EARN      — Rental income is deposited on-chain to the YieldDistributor contract,
+               which distributes yield pro-rata to FractionalToken holders in OPWA.
+
+4. TRADE     — Fractional shares and OPWA tokens trade on Motoswap (AMM DEX on OP_NET)
+               with native BTC liquidity pairs.
+
+5. REDEEM    — When 100% of fractional shares are bought back, the PropertyNFT is
+               unlocked and the full property title is returned to the redeemer.
+```
+
+---
+
 ## Testnet Status
 
 See [docs/testnet-deployments.md](./docs/testnet-deployments.md) for current deployment records.
@@ -137,6 +172,7 @@ OP_NET Mainnet launch: **March 17, 2026**. OPWA will migrate all contracts post-
 ```bash
 git clone https://github.com/Opwabtc/OPWABTC.git
 cd OPWABTC
+
 npm install
 npm run dev
 ```

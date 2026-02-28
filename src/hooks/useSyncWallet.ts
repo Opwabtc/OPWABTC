@@ -1,64 +1,69 @@
 import { useEffect, useCallback } from 'react';
 import { useOPNETWallet } from './useOPNETWallet';
-import { fetchTokenBalance, fetchTokenMetadata } from '../utils/opnetContracts';
+import { useAppStore } from '@/store/useAppStore';
+import { provider as defaultProvider, network as testnet, getTokenBalance } from '@/lib/opnet';
 import { JSONRpcProvider } from 'opnet';
 
-// List every OPWA property contract address here.
-// Replace with your actual deployed contract addresses.
-const OPWA_CONTRACTS: string[] = [
-  // 'bc1p...contract1',
-  // 'bc1p...contract2',
-];
+// Replace with actual deployed contract addresses after deployment
+const OPWA_TOKEN_ADDRESS = (import.meta.env.VITE_OPWA_TOKEN_ADDRESS as string) ?? '';
 
 export function useSyncWallet() {
   const {
-    provider, network,
-    address, walletBalance, isConnected,
+    provider: walletProvider,
+    network: walletNetwork,
+    walletBalance,
+    isConnected,
+    walletAddress,
   } = useOPNETWallet();
 
-  const sync = useCallback(async () => {
-    if (!isConnected || !provider || !network || !address) return;
+  const { setWallet } = useAppStore();
 
-    const opnetProvider = provider as JSONRpcProvider;
-    const net = network as any;
+  const sync = useCallback(async () => {
+    if (!isConnected || !walletAddress) {
+      setWallet({ isConnected: false, balance: 0, network: 'testnet' });
+      return;
+    }
+
+    // Prefer wallet's own provider; fall back to public RPC
+    void ((walletProvider as JSONRpcProvider | undefined) ?? defaultProvider);
+    void testnet;
 
     try {
-      // 1. BTC balance — already in walletBalance from hook
-      if (walletBalance) {
-        // TODO: Add these setters to store
-        // store.setBtcBalance(walletBalance.total);
-        // store.setUsdBalance(walletBalance.usd_value);
+      // BTC balance from SDK (already confirmed UTXO balance in satoshis)
+      const btcSats = walletBalance?.total ?? 0;
+
+      // Optional: fetch OPWA token balance if contract is deployed
+      if (OPWA_TOKEN_ADDRESS) {
+        try {
+          void await getTokenBalance(OPWA_TOKEN_ADDRESS, walletAddress);
+        } catch {
+          // Contract not yet deployed — skip silently
+        }
       }
 
-      // 2. OP-20 token balances for each OPWA contract
-      await Promise.all(
-        OPWA_CONTRACTS.map(async (contractAddr) => {
-          const [meta, balance] = await Promise.all([
-            fetchTokenMetadata(contractAddr, opnetProvider, net),
-            fetchTokenBalance(contractAddr, address, opnetProvider, net),
-          ]);
-          return { contractAddr, ...meta, balance };
-        })
-      );
-      // TODO: Add this setter to store
-      // store.setTokenHoldings(holdings);
+      // WalletConnectNetwork extends Network; bech32 === 'bc' means mainnet
+      const networkName: 'mainnet' | 'testnet' =
+        walletNetwork?.bech32 === 'bc' ? 'mainnet' : 'testnet';
 
-      // 3. Network name
-      // TODO: Add this setter to store
-      // store.setNetwork(network.network);
-
+      setWallet({
+        isConnected: true,
+        address: walletAddress,
+        balance: btcSats,
+        network: networkName,
+      });
     } catch (err) {
       console.error('[OPWA] Wallet sync failed:', err);
     }
-  }, [isConnected, provider, network, address, walletBalance]);
+  }, [isConnected, walletAddress, walletBalance, walletNetwork, walletProvider, setWallet]);
 
-  // Run on connect + every 60 seconds
+  // Sync on connect/disconnect and every 60 s
   useEffect(() => {
     sync();
     const interval = setInterval(sync, 60_000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, [sync]);
 
-  // Expose so pages can trigger manual refresh after a TX
   return { sync };
 }
