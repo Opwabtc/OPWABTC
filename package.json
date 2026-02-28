@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sanity": "bash scripts/sanity-check.sh"
   },
   "dependencies": {
     "@btc-vision/bitcoin": "^7.0.0-rc.6",
