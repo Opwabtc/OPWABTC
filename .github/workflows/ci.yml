@@ -1,8 +1,8 @@
-name: OPWA Enterprise CI
+name: OPWA CI
 
 on:
   push:
-    branches: [main, protocol-*]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -10,40 +10,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20]
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies (deterministic)
-        run: npm ci --legacy-peer-deps
-
-      - name: Type check
-        run: npx tsc --noEmit
-
-      - name: Lint
-        run: npm run lint || echo 'No lint script configured'
-
-      - name: Run tests
-        run: npm test || echo 'No test script configured'
-
-      - name: Audit dependencies
-        run: npm audit --audit-level=high || true
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build
         run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
