@@ -489,6 +489,7 @@ input, textarea {
   position: relative; z-index: 1;
 }
 .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse-dot 2s infinite; flex-shrink: 0; }
+@keyframes pulse-dot { 0%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.5} 100%{transform:scale(1);opacity:1} }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
 
 /* Hero title — legível mas sem dominar toda a tela */
