@@ -5,6 +5,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Marketplace } from './pages/Marketplace';
 import { PropertyManagement } from './pages/PropertyManagement';
 import { Simulator } from './pages/Simulator';
+import { Terms } from './pages/Terms';
+import { Privacy } from './pages/Privacy';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/simulator" element={<Simulator />} />
         <Route path="/admin" element={<PropertyManagement />} />
         <Route path="/manage" element={<PropertyManagement />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
       </Routes>
     </Layout>
   );
