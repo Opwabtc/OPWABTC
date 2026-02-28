@@ -4,6 +4,7 @@ import { Navigation } from './Navigation';
 import { ToastContainer } from './ToastContainer';
 import { NotificationSystem } from './NotificationSystem';
 import { useToast } from '@/hooks/useToast';
+import { Footer } from './Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children || <Outlet />}
         </main>
       </div>
+      <Footer />
       <NotificationSystem />
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
