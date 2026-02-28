@@ -28,7 +28,7 @@ export const Home: React.FC = () => {
       {/* Hero Section */}
       <section className="hero" id="hero">
         <div className="hero-eyebrow fade-in d1">
-          <span className="dot"></span>
+          <span className="dot" style={{background:"#10b981"}}></span>
           Real Estate Investment Platform
         </div>
 

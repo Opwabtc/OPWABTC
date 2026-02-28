@@ -161,7 +161,7 @@ input, textarea {
   transition: border-color .15s;
 }
 .gas-ticker:hover { border-color: var(--accent-border); }
-.gas-ticker-icon { color: var(--success); }
+.gas-ticker-icon { color: #a855f7; }
 .gas-ticker-val  { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-1); font-weight: 500; }
 .gas-ticker-usd  { font-size: 10px; color: var(--text-3); }
 
