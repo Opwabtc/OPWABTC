@@ -1,194 +1,234 @@
-# 🏠 OP Real Estate Platform
+# OPWA — Onchain Proof of World Asset
 
-A modern platform for investing in tokenized real estate properties using Bitcoin and OP_NET blockchain technology.
+> **Real Estate Tokenization on Bitcoin Layer 1, Powered by OP_NET**
 
-## 🌟 Features
-
-- **🏠 Property Tokenization**: Invest in fractional ownership of premium real estate
-- **💰 Bitcoin Integration**: Buy/sell property tokens using Bitcoin
-- **📊 Portfolio Analytics**: Track your investments with detailed charts and performance metrics
-- **👛 OP_NET Wallet**: Secure wallet integration for seamless transactions
-- **📈 Real-time Data**: Live price updates and market information
-- **🎨 Modern UI**: Beautiful, responsive interface built with React and TailwindCSS
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+
-- npm or yarn
-- OP_NET compatible wallet (OP_NET, UniSat, XVerse)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/Opwabtc/opwa.btc.git
-cd opwa.btc/op-real-estate-platform
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-### Environment Setup
-
-Create a `.env` file in the root directory:
-
-```env
-# OP_NET Configuration
-VITE_OP_NET_TESTNET_RPC=https://testnet.opnet.org/rpc
-VITE_OP_NET_TESTNET_CHAIN_ID=1338
-
-# API Configuration
-VITE_API_BASE_URL=https://api.opwa.btc
-```
-
-## 🏗️ Project Structure
-
-```
-src/
-├── components/          # Reusable React components
-│   ├── PropertyCard.tsx
-│   ├── PortfolioChart.tsx
-│   └── WalletButton.tsx
-├── hooks/              # Custom React hooks
-│   └── useWallet.ts
-├── lib/                # Utility libraries
-│   ├── opnet.ts
-│   └── utils.ts
-├── pages/              # Page components
-│   └── Dashboard.tsx
-├── store/              # State management
-│   └── useAppStore.ts
-├── types/              # TypeScript type definitions
-│   └── index.ts
-└── styles/             # Global styles
-    └── index.css
-```
-
-## 💻 Technology Stack
-
-### Frontend
-- **React 19.2.0** - Modern React with hooks
-- **TypeScript** - Type-safe development
-- **Vite** - Fast build tool and dev server
-- **TailwindCSS** - Utility-first CSS framework
-- **Zustand** - Lightweight state management
-- **React Router** - Client-side routing
-
-### UI/UX
-- **Lucide React** - Beautiful icons
-- **Recharts** - Interactive charts and graphs
-- **Responsive Design** - Mobile-first approach
-
-### Blockchain
-- **OP_NET Integration** - Bitcoin Layer 1 smart contracts
-- **Multi-wallet Support** - OP_NET, UniSat, XVerse
-- **Ethers.js** - Blockchain interaction library
-
-## 🎯 Core Features
-
-### 🏠 Property Marketplace
-- Browse available tokenized properties
-- Filter by location, price, property type
-- View detailed property information and documents
-- Real-time price updates
-
-### 💼 Portfolio Management
-- Track all your property token investments
-- View performance charts and analytics
-- Calculate rental income and appreciation
-- Export portfolio data
-
-### 👛 Wallet Integration
-- Connect OP_NET compatible wallets
-- Secure transaction signing
-- Balance tracking and history
-- Multi-wallet support
-
-### 📊 Analytics & Charts
-- Portfolio performance over time
-- Property price history
-- Market trends and statistics
-- Interactive data visualization
-
-## 🔧 Development
-
-### Available Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Run ESLint
-```
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-The build will be output to the `dist/` directory.
-
-## 🌐 Deployment
-
-### Vercel (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-```
-
-### Netlify
-
-```bash
-# Build and deploy to Netlify
-npm run build
-# Upload dist/ folder to Netlify
-```
-
-## 🔐 Security Considerations
-
-- All wallet interactions are client-side and secure
-- No private keys are stored on servers
-- Transactions require explicit user approval
-- Smart contract interactions are validated
-
-## 📱 Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-- **Documentation**:
-- **Discord**: 
-- **Twitter**: [@opwabtc](https://twitter.com/opwabtc)
-
-## ⚠️ Disclaimer
-
-This is a experimental platform for tokenized real estate investment. Cryptocurrency investments carry significant risk. Please do your own research before investing.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Network: Bitcoin L1](https://img.shields.io/badge/Network-Bitcoin%20L1-orange)](https://opnet.org)
+[![Status: Testnet](https://img.shields.io/badge/Status-Testnet-blue)](./docs/testnet-deployments.md)
+[![Frontend: Live](https://img.shields.io/badge/Frontend-Live-green)](https://op-real-estate-platform.vercel.app/)
 
 ---
 
-**Built with ❤️ for the Bitcoin ecosystem**
+## Overview
+
+OPWA is the first real estate tokenization protocol built **natively on Bitcoin Layer 1** via the [OP_NET](https://opnet.org) smart contract infrastructure. It enables fractional ownership of premium real estate through OP-20 fungible tokens and OP-721 NFTs — without bridges, sidechains, or wrapped assets.
+
+Bitcoin holders interact with real estate tokens using native BTC, on the Bitcoin blockchain, with full self-custody preserved throughout the entire investment lifecycle.
+
+---
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                        USER LAYER                            │
+│           OPWallet / UniSat / XVerse Browser Extension       │
+└─────────────────────────┬────────────────────────────────────┘
+                          │  BTC Transaction (native L1)
+┌─────────────────────────▼────────────────────────────────────┐
+│                     FRONTEND LAYER                           │
+│      React 19 + TypeScript + Vite + TailwindCSS + Zustand    │
+│          https://op-real-estate-platform.vercel.app/         │
+└─────────────────────────┬────────────────────────────────────┘
+                          │  opnet SDK calls
+┌─────────────────────────▼────────────────────────────────────┐
+│                    OP_NET LAYER (Bitcoin L1)                  │
+│   ┌─────────────┐  ┌─────────────┐  ┌──────────────────┐    │
+│   │  OPWACOIN   │  │ Property NFT │  │  Yield Dist.     │    │
+│   │  (OP-20)    │  │  (OP-721)   │  │  (Yield.ts)      │    │
+│   └─────────────┘  └─────────────┘  └──────────────────┘    │
+│              WASM Contracts (AssemblyScript)                  │
+│              Deployed via Taproot / UTXO Model               │
+└─────────────────────────┬────────────────────────────────────┘
+                          │
+┌─────────────────────────▼────────────────────────────────────┐
+│                   BITCOIN LAYER 1                            │
+│           Settlement Layer — ~$1.9T Market Cap              │
+│           Taproot + Tapscript + Native UTXO                  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Smart Contract Stack
+
+| Contract | Standard | Description | Status |
+|----------|----------|-------------|--------|
+| `OPWACoin` | OP-20 | Platform governance & utility token | Testnet |
+| `PropertyNFT` | OP-721 | Represents unique real estate asset ownership | Testnet |
+| `FractionalToken` | OP-20 | Per-property fungible fractional shares | Testnet |
+| `YieldDistributor` | Custom | Rental income distribution to token holders | Development |
+| `Governance` | Custom | On-chain voting for protocol parameters | Planned |
+
+All contracts are written in **AssemblyScript**, compiled to **WASM**, and deployed on Bitcoin L1 via OP_NET. No EVM. No Solidity. Native Bitcoin.
+
+---
+
+## OP-20 Standard Overview
+
+OP-20 is the Bitcoin-native fungible token standard on OP_NET, analogous to ERC-20 on Ethereum. Key differences:
+
+- Gas is paid in **native BTC** — no secondary token required
+- Transactions are **Bitcoin Layer 1 UTXOs** — not account-model
+- Contracts execute in **WASM** via the OP-VM engine
+- Full **self-custody** — your BTC never leaves your wallet
+
+Core interface:
+
+```typescript
+// Standard OP-20 interface (AssemblyScript)
+interface IOP20 {
+  name(): string;
+  symbol(): string;
+  decimals(): u8;
+  totalSupply(): u256;
+  balanceOf(account: Address): u256;
+  transfer(to: Address, value: u256): bool;
+  approve(spender: Address, value: u256): bool;
+  allowance(owner: Address, spender: Address): u256;
+  transferFrom(from: Address, to: Address, value: u256): bool;
+}
+```
+
+---
+
+## OP-721 Standard Overview
+
+OP-721 is the Bitcoin-native non-fungible token standard. Each `PropertyNFT` represents a unique real estate asset with on-chain metadata.
+
+Core interface:
+
+```typescript
+// Standard OP-721 interface (AssemblyScript)
+interface IOP721 {
+  name(): string;
+  symbol(): string;
+  tokenURI(tokenId: u256): string;
+  ownerOf(tokenId: u256): Address;
+  balanceOf(owner: Address): u256;
+  transferFrom(from: Address, to: Address, tokenId: u256): void;
+  approve(to: Address, tokenId: u256): void;
+  getApproved(tokenId: u256): Address;
+}
+```
+
+---
+
+## Testnet Status
+
+See [docs/testnet-deployments.md](./docs/testnet-deployments.md) for current deployment records.
+
+OP_NET Mainnet launch: **March 17, 2026**. OPWA will migrate all contracts post-mainnet launch.
+
+---
+
+## Quickstart
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+- OPWallet, UniSat, or XVerse browser extension
+
+### Frontend Setup
+
+```bash
+git clone https://github.com/Opwabtc/OPWABTC.git
+cd OPWABTC
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173)
+
+### Environment Variables
+
+Create a `.env` file at project root:
+
+```env
+VITE_OP_NET_TESTNET_RPC=https://testnet.opnet.org/rpc
+VITE_OP_NET_TESTNET_CHAIN_ID=1338
+VITE_API_BASE_URL=https://api.opwa.btc
+```
+
+### Build & Deploy
+
+```bash
+npm run build       # Outputs to dist/
+npm run preview     # Preview production build locally
+vercel --prod       # Deploy to Vercel
+```
+
+---
+
+## Project Structure
+
+```
+OPWABTC/
+├── contracts/
+│   ├── op20/               # OPWACOIN fungible token contract
+│   ├── op721/              # PropertyNFT non-fungible token contract
+│   ├── yield/              # Yield distribution contract
+│   └── governance/         # Governance contract (planned)
+├── docs/
+│   ├── whitepaper.md
+│   ├── technical-architecture.md
+│   ├── tokenomics.md
+│   ├── security-model.md
+│   ├── legal-structure-example.md
+│   └── testnet-deployments.md
+├── audits/                 # Security audit reports
+├── tests/                  # Contract unit tests
+├── src/                    # React frontend
+│   ├── components/
+│   ├── hooks/
+│   ├── lib/
+│   ├── pages/
+│   ├── store/
+│   └── types/
+├── index.html
+├── package.json
+├── vite.config.ts
+├── vercel.json
+├── README.md
+├── CHANGELOG.md
+└── LICENSE
+```
+
+---
+
+## Roadmap
+
+| Quarter | Milestone |
+|---------|-----------|
+| Q1 2026 | Smart contracts on OP_NET testnet (OP-20 + OP-721), wallet integration, frontend marketplace |
+| Q2 2026 | Mainnet migration (post March 17), first tokenized properties listed, Motoswap liquidity |
+| Q3 2026 | Rental yield distribution via smart contracts, multi-geography expansion |
+| Q4 2026 | Governance token activation, institutional partnerships, secondary market |
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/your-feature`
+3. Commit using conventional commits: `feat(contract): add yield distributor`
+4. Push and open a Pull Request
+
+Commit convention: `feat | fix | refactor | docs | chore | test` + `(scope)` + description.
+
+---
+
+## License
+
+MIT License — see [LICENSE](./LICENSE)
+
+---
+
+## Disclaimer
+
+This platform is experimental and operates on testnet. Cryptocurrency investments carry significant risk. This is not financial, investment, or legal advice. Always conduct your own research before making investment decisions.
+
+---
+
+> **Bitcoin is the settlement layer. OP_NET is the execution layer. OPWA is the application layer.**
