@@ -1,0 +1,128 @@
+# OPWA — Full Documentation Dump for AI Agents
+# Generated: February 2026
+# Source: https://github.com/Opwabtc/OPWABTC
+#
+# This file concatenates all OPWA documentation for AI agent consumption.
+# For a structured index, see /llms.txt
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# TABLE OF CONTENTS
+# 1. Project Overview (README)
+# 2. Technical Architecture
+# 3. Tokenomics
+# 4. Smart Contract API Reference
+# 5. Testnet Deployments
+# 6. Security Model
+# ─────────────────────────────────────────────────────────────────────────────
+
+## 1. PROJECT OVERVIEW
+
+OPWA (Onchain Proof of World Asset) is the first real estate tokenization protocol
+built natively on Bitcoin Layer 1 via OP_NET smart contracts.
+
+Key properties:
+- Native Bitcoin — no bridges, sidechains, or wrapped assets
+- Fractional ownership via OP-20 fungible tokens (FractionalToken per property)
+- Property title NFTs via OP-721 (PropertyNFT — one per real-world property)
+- Platform utility token: OPWA (OPWACoin) — OP-20, 21M max supply, 8 decimals
+- Yield distribution to fractional token holders via YieldDistributor contract
+- OPWA/BTC liquidity on Motoswap (AMM DEX native to OP_NET)
+
+Tech stack:
+- Frontend: React 19, TypeScript, Vite, TailwindCSS, Zustand, React Router
+- SDK: opnet, @btc-vision/transaction, @btc-vision/bitcoin (NO ethers.js)
+- Wallet: OP_WALLET (primary), UniSat, XVerse via @btc-vision/walletconnect
+- RPC: https://testnet.opnet.org (testnet) | Chain ID: 1338
+
+## 2. HOW IT WORKS
+
+Step 1 — TOKENIZE
+  A real-world property is verified. Legal documents are uploaded to IPFS/Arweave.
+  The owner mints a PropertyNFT (OP-721) representing sole title on Bitcoin L1.
+
+Step 2 — FRACTIONALIZE
+  The NFT is locked in the PropertyNFT contract.
+  A FractionalToken (OP-20) is deployed with a fixed supply = total_fractions.
+  Investors purchase fractional shares with native BTC.
+
+Step 3 — EARN
+  Property rental income is deposited on-chain to the YieldDistributor contract.
+  Yield is distributed pro-rata to FractionalToken holders, paid in OPWA tokens.
+
+Step 4 — TRADE
+  Fractional shares and OPWA tokens trade on Motoswap (https://motoswap.org)
+  with native BTC liquidity pairs. No CEX, no custodian.
+
+Step 5 — REDEEM
+  When 100% of fractional shares are redeemed by a single holder,
+  the PropertyNFT is unlocked and full property title returns to that holder.
+
+## 3. SMART CONTRACT API (SUMMARY)
+
+### OPWACoin (OP-20)
+  name() → "OPWACoin"
+  symbol() → "OPWA"
+  decimals() → 8
+  totalSupply() → u256
+  balanceOf(account: Address) → u256
+  transfer(to, value) | approve(spender, value) | transferFrom(from, to, value)
+  mint(to, value) — OWNER ONLY
+  burn(value)
+
+### PropertyNFT (OP-721)
+  name() → "OPWA Property"
+  symbol() → "OPWA-PROP"
+  tokenURI(tokenId) → IPFS metadata URI
+  ownerOf(tokenId) → Address
+  balanceOf(owner) → u256
+  mint(metadataURI) — OWNER ONLY
+  fractionalize(tokenId, fractionalContractAddress)
+  unlockOnRedemption(tokenId) — FRACTIONAL CONTRACT ONLY
+  transferFrom(from, to, tokenId) — BLOCKED while fractionalized
+
+### YieldDistributor (in development)
+  depositYield(propertyId, amount)
+  claim(propertyId)
+  pendingYield(propertyId, holder)
+
+## 4. FRONTEND ARCHITECTURE
+
+src/
+  lib/opnet.ts        — provider, getBlockHeight(), getBalance(), getTokenInfo()
+  lib/motoswap.ts     — Motoswap trade/pool URL helpers
+  lib/utils.ts        — formatSatsToBTC, formatNumber, mock data generators
+  hooks/useWallet.ts  — OP_WALLET connection via @btc-vision/walletconnect
+  hooks/useOPNETWallet.ts — Raw SDK hook (walletAddress, signer, provider, etc.)
+  hooks/useSyncWallet.ts  — Syncs SDK state → Zustand every 60s
+  hooks/useBlockHeight.ts — Polls OP_NET block height every 30s
+  utils/opnetContracts.ts — getOP20Contract(), fetchTokenMetadata(), fetchTokenBalance()
+  utils/defaultProvider.ts — Public RPC provider for read-only calls
+  store/useAppStore.ts    — Zustand global state (wallet, properties, portfolio)
+  pages/Dashboard.tsx     — Live stats (block height, balance) + property listings
+  pages/Marketplace.tsx   — Buy/sell property fractional tokens
+  pages/AdminMint.tsx     — Admin: mint PropertyNFT (owner wallet only)
+
+## 5. ENVIRONMENT VARIABLES
+
+VITE_OP_NET_TESTNET_RPC=https://testnet.opnet.org
+VITE_OP_NET_TESTNET_CHAIN_ID=1338
+VITE_OPWA_TOKEN_ADDRESS=<deployed OPWACoin contract address>
+VITE_PROPERTY_NFT_ADDRESS=<deployed PropertyNFT contract address>
+
+## 6. TESTNET DEPLOYMENT STATUS (February 2026)
+
+OPWACoin: pending deployment
+PropertyNFT: pending deployment
+YieldDistributor: in development
+
+OP_NET Mainnet launch: March 17, 2026
+OPWA mainnet migration: Q2 2026
+
+## 7. LINKS
+
+- Live app: https://op-real-estate-platform.vercel.app/
+- GitHub: https://github.com/Opwabtc/OPWABTC
+- OPScan (testnet): https://testnet.opscan.io
+- OP_NET docs: https://docs.opnet.org
+- Motoswap: https://motoswap.org
+- Twitter: @opwabtc
