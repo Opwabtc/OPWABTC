@@ -3,39 +3,36 @@ import { PropertyCard } from '@/components/PropertyCard';
 import { PortfolioChart, PortfolioStats } from '@/components/PortfolioChart';
 import { useAppStore } from '@/store/useAppStore';
 import { useWallet } from '@/hooks/useWallet';
-import { generateMockProperties, generateMockPortfolio, generateMockPriceHistory } from '@/lib/utils';
+import { useSyncWallet } from '@/hooks/useSyncWallet';
+import { useBlockHeight } from '@/hooks/useBlockHeight';
+import { generateMockPortfolio, generateMockPriceHistory } from '@/lib/utils';
+import { formatSatsToBTC } from '@/lib/utils';
 import type { Property } from '@/types';
 
 export const Dashboard: React.FC = () => {
-  const { 
-    properties, 
-    setProperties, 
-    portfolio, 
-    setPortfolio, 
-    isLoading 
+  const {
+    properties,
+    portfolio,
+    setPortfolio,
+    isLoading,
   } = useAppStore();
-  
+
   const { wallet } = useWallet();
+  useSyncWallet();
+
+  const { blockHeight, error: rpcError } = useBlockHeight();
 
   useEffect(() => {
-    // Load mock properties
-    const mockProperties = generateMockProperties();
-    setProperties(mockProperties);
-    
-    // Load mock portfolio if wallet is connected
-    if (wallet.isConnected) {
-      const mockPortfolio = generateMockPortfolio();
-      setPortfolio(mockPortfolio);
+    if (wallet.isConnected && !portfolio) {
+      setPortfolio(generateMockPortfolio());
     }
-  }, [wallet.isConnected, setProperties, setPortfolio]);
+  }, [wallet.isConnected, portfolio, setPortfolio]);
 
   const handleBuyClick = (property: Property) => {
-    // TODO: Open buy modal
     console.log('Buy clicked for property:', property.name);
   };
 
   const handleDetailsClick = (property: Property) => {
-    // TODO: Navigate to property details
     console.log('Details clicked for property:', property.name);
   };
 
@@ -54,6 +51,28 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="p-6">
+      {/* Network Status Bar */}
+      <div className="mb-4 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
+          OP_NET Testnet
+        </span>
+        {blockHeight !== null ? (
+          <span>Block #{blockHeight.toLocaleString()}</span>
+        ) : rpcError ? (
+          <span className="text-red-400">{rpcError}</span>
+        ) : (
+          <span>Fetching block...</span>
+        )}
+        {wallet.isConnected && wallet.address && (
+          <span className="ml-auto font-mono">
+            {wallet.address.slice(0, 8)}...{wallet.address.slice(-6)}
+            &nbsp;|&nbsp;
+            {formatSatsToBTC(wallet.balance)} BTC
+          </span>
+        )}
+      </div>
+
       {/* Hero Section */}
       <section className="mb-12 animate-fadeInUp">
         <div className="gradient-bitcoin rounded-2xl p-8 text-white relative overflow-hidden">
@@ -84,32 +103,20 @@ export const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="card card-hover text-center">
             <div className="p-8">
-              <h3 className="text-3xl font-bold text-bitcoin-orange mb-2">
-                15%+
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Retorno anual médio
-              </p>
+              <h3 className="text-3xl font-bold text-bitcoin-orange mb-2">15%+</h3>
+              <p className="text-gray-600 dark:text-gray-400">Retorno anual médio</p>
             </div>
           </div>
           <div className="card card-hover text-center">
             <div className="p-8">
-              <h3 className="text-3xl font-bold text-bitcoin-orange mb-2">
-                R$ 2M+
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Volume de investimentos
-              </p>
+              <h3 className="text-3xl font-bold text-bitcoin-orange mb-2">R$ 2M+</h3>
+              <p className="text-gray-600 dark:text-gray-400">Volume de investimentos</p>
             </div>
           </div>
           <div className="card card-hover text-center">
             <div className="p-8">
-              <h3 className="text-3xl font-bold text-bitcoin-orange mb-2">
-                500+
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Investidores ativos
-              </p>
+              <h3 className="text-3xl font-bold text-bitcoin-orange mb-2">500+</h3>
+              <p className="text-gray-600 dark:text-gray-400">Investidores ativos</p>
             </div>
           </div>
         </div>
@@ -119,14 +126,10 @@ export const Dashboard: React.FC = () => {
       {wallet.isConnected && portfolio && (
         <section className="mb-12 animate-fadeInUp">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Sua Carteira
-            </h2>
-            <button className="btn-ghost">
-              Ver Detalhes
-            </button>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Sua Carteira</h2>
+            <button className="btn-ghost">Ver Detalhes</button>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="card">
               <div className="p-6">
@@ -140,7 +143,7 @@ export const Dashboard: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="card">
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -156,9 +159,7 @@ export const Dashboard: React.FC = () => {
       {/* Properties Section */}
       <section className="animate-fadeInUp">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Ativos Disponíveis
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Ativos Disponíveis</h2>
           <div className="flex items-center gap-4">
             <div className="relative">
               <input
@@ -166,11 +167,21 @@ export const Dashboard: React.FC = () => {
                 placeholder="Buscar ativos..."
                 className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-bitcoin-orange focus:border-transparent"
               />
-              <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
-            
+
             <select className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-bitcoin-orange">
               <option value="all">Todos os tipos</option>
               <option value="residential">Residencial</option>
@@ -178,7 +189,7 @@ export const Dashboard: React.FC = () => {
             </select>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {properties.map((property) => (
             <PropertyCard
@@ -192,9 +203,7 @@ export const Dashboard: React.FC = () => {
 
         {properties.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400">
-              Nenhum ativo disponível no momento.
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">Nenhum ativo disponível no momento.</p>
           </div>
         )}
       </section>
@@ -210,9 +219,7 @@ export const Dashboard: React.FC = () => {
               <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
                 Abra sua conta e comece a investir em imóveis tokenizados com Bitcoin
               </p>
-              <button className="btn-primary text-lg px-8 py-4">
-                Criar Conta
-              </button>
+              <button className="btn-primary text-lg px-8 py-4">Criar Conta</button>
             </div>
           </div>
         </section>

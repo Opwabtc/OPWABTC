@@ -15,7 +15,6 @@
     "@btc-vision/walletconnect": "^1.10.3",
     "clsx": "^2.0.0",
     "date-fns": "^3.6.0",
-    "ethers": "^6.16.0",
     "lucide-react": "^0.575.0",
     "opnet": "^1.8.1-rc.16",
     "react": "^19.2.0",

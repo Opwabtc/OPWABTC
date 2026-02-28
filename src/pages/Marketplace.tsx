@@ -10,7 +10,7 @@ import type { Property, PropertyToken } from '@/types';
 
 export const Marketplace: React.FC = () => {
   const { properties, portfolio } = useAppStore();
-  const { wallet, sendTransaction } = useWallet();
+  const { wallet } = useWallet();
   
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('price-low');
@@ -63,24 +63,16 @@ export const Marketplace: React.FC = () => {
 
   const handleBuy = async (amount: number, totalPrice: number) => {
     if (!wallet.address) throw new Error('Wallet not connected');
-    
-    // Mock transaction - in real app, this would interact with smart contract
-    const txHash = await sendTransaction('0xPropertyContract', BigInt(totalPrice));
-    console.log(`Bought ${amount} tokens for ${formatSatsToBTC(totalPrice)} BTC. TX: ${txHash}`);
-    
-    // Update portfolio (mock)
-    // In real app, this would be handled by contract events
+    // TODO: call OPWAPropertyToken contract via signer once contracts are deployed
+    console.log(`Buy intent: ${amount} tokens for ${formatSatsToBTC(totalPrice)} BTC`);
+    throw new Error('Contract interaction coming after testnet deployment');
   };
 
   const handleSell = async (amount: number, totalPrice: number) => {
     if (!wallet.address) throw new Error('Wallet not connected');
-    
-    // Mock transaction - in real app, this would interact with smart contract
-    const txHash = await sendTransaction('0xPropertyContract', BigInt(totalPrice));
-    console.log(`Sold ${amount} tokens for ${formatSatsToBTC(totalPrice)} BTC. TX: ${txHash}`);
-    
-    // Update portfolio (mock)
-    // In real app, this would be handled by contract events
+    // TODO: call OPWAPropertyToken contract via signer once contracts are deployed
+    console.log(`Sell intent: ${amount} tokens for ${formatSatsToBTC(totalPrice)} BTC`);
+    throw new Error('Contract interaction coming after testnet deployment');
   };
 
   const marketStats = {
