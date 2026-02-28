@@ -772,6 +772,7 @@ footer { background: var(--bg-surface); border-top: 1px solid var(--border); pad
 
 .dot { width:6px; height:6px; border-radius:50%; display:inline-block; background:var(--success); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+@keyframes pulse-dot { 0%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.5} 100%{transform:scale(1);opacity:1} }
 
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVO
