@@ -18,11 +18,7 @@ jobs:
       run: npm ci --legacy-peer-deps
     - name: Build application
       run: npm run build
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-files
-        path: dist/
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -30,11 +26,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-files
-        path: dist/
     - name: Deploy to Vercel
       uses: amondnet/vercel-action@v25
       with:
@@ -42,4 +33,3 @@ jobs:
         vercel-org-id: ${{ secrets.ORG_ID }}
         vercel-project-id: ${{ secrets.PROJECT_ID }}
         vercel-args: '--prod'
-        working-directory: ./dist
