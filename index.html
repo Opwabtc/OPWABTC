@@ -33,8 +33,22 @@
    • Fixed bottom-RIGHT (24px). Toggle via flame button → .open class
    • Never overlaps footer or status bar
 
-   LINKS (no redundancy):
-   • Twitter/X: footer brand social icon ONLY (https://x.com/opwabtc)
+   LIVE DATA (real, not mock):
+   • Gas: fetch('https://mempool.opnet.org/testnet4/api/v1/fees/recommended')
+     → state.gasPrice = response.fastestFee (sat/vB). Refreshed every 30s.
+     Fallback: mainnet mempool.opnet.org if testnet4 unreachable.
+   • BTC Price: CoinGecko free API, refreshed every 30s.
+   • Tx cost estimate: gasSat × 250 vBytes / 1e8 × btcPrice = USD
+
+   WALLET (real browser extension APIs, no mocks):
+   • OP_Wallet:  window.opnet.requestAccounts() / getBalance() / getPublicKey()
+   • UniSat:     window.unisat.requestAccounts() / getBalance() / getPublicKey()
+   • Xverse:     window.BitcoinProvider.request('getAccounts', {...})
+   • OKX:        window.okxwallet.bitcoin.requestAccounts() / getBalance()
+   • state.walletAddr = real address string (never hardcoded)
+   • state.walletSats = balance in satoshis from wallet API
+   • detectInstalledWallets() called on modal open to check extensions
+   • Account/disconnect events wired via provider.on('accountsChanged')
    • GitHub: Assets header link + Developers footer column ONLY
    • Whitepaper: Resources footer column → opwa_strategic_document
 
@@ -2008,12 +2022,15 @@ section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
 <script>
 /* ══════════ GLOBAL STATE ══════════ */
 const state = {
-  theme:    'dark',
-  connected: false,
-  wallet:    null,
-  network:  'OP_NET Testnet',
-  btcPrice:  null,
-  gasPrice:  null,
+  theme:      'dark',
+  connected:  false,
+  wallet:     null,
+  walletAddr: null,       /* real P2TR/P2WPKH address from extension */
+  walletSats: 0,          /* balance in satoshis from wallet API */
+  publicKey:  null,       /* compressed pubkey hex */
+  network:    'OP_NET Testnet',
+  btcPrice:   null,
+  gasPrice:   null,       /* sat/vB from mempool.opnet.org — REAL */
 };
 
 /* ══════════ THEME ══════════ */
@@ -2043,52 +2060,80 @@ function toggleMobileMenu() {
 }
 document.getElementById('menuBtn').addEventListener('click', toggleMobileMenu);
 
-/* ══════════ LIVE PRICES — CoinGecko ══════════ */
+/* ══════════ LIVE PRICES — CoinGecko + REAL GAS — mempool.opnet.org ══════════
+   Gas API: https://mempool.opnet.org/api/v1/fees/recommended (testnet4)
+   Returns: { fastestFee, halfHourFee, hourFee, economyFee, minimumFee }
+   All in sat/vB. We display fastestFee as the live gas reference.
+   Tx size estimate: ~250 vBytes for a typical OP_NET interaction.
+════════════════════════════════════════════════════════════════════════════ */
 async function fetchPrices() {
   try {
-    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-    const d = await r.json();
-    state.btcPrice = d?.bitcoin?.usd || null;
+    const [priceRes, gasRes] = await Promise.allSettled([
+      fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'),
+      fetch('https://mempool.opnet.org/testnet4/api/v1/fees/recommended')
+    ]);
+
+    /* BTC price */
+    if (priceRes.status === 'fulfilled' && priceRes.value.ok) {
+      const d = await priceRes.value.json();
+      state.btcPrice = d?.bitcoin?.usd || null;
+    }
+
+    /* Real gas from mempool.opnet.org testnet4 */
+    if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
+      const g = await gasRes.value.json();
+      /* Use fastestFee for OP_NET — real-time sat/vB */
+      state.gasPrice = g?.fastestFee ?? g?.halfHourFee ?? 10;
+    } else {
+      /* Fallback: try mainnet mempool if testnet4 unreachable */
+      try {
+        const fallback = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+        if (fallback.ok) {
+          const g = await fallback.json();
+          state.gasPrice = g?.fastestFee ?? 10;
+        }
+      } catch(_) { state.gasPrice = state.gasPrice || 10; }
+    }
+
     updatePriceTickers();
     calcSimulator();
-  } catch(e) { /* silent fail */ }
+  } catch(e) { /* silent fail — keep last known values */ }
 }
 
 function updatePriceTickers() {
-  if (!state.btcPrice) return;
   const price  = state.btcPrice;
-  const gasSat = 12; // mock — replace with real OP_NET gas endpoint
-  const txUsd  = ((gasSat * 250) / 1e8 * price).toFixed(4);
-  state.gasPrice = gasSat;
+  const gasSat = state.gasPrice || 10;
+  const txUsd  = price ? ((gasSat * 250) / 1e8 * price).toFixed(4) : null;
 
-  /* navbar */
+  /* navbar gas ticker */
   const gv = document.getElementById('gasVal');
   const gu = document.getElementById('gasUsd');
   if (gv) gv.textContent = gasSat + ' sat/vB';
-  if (gu) gu.textContent = '($' + txUsd + ')';
+  if (gu) gu.textContent = txUsd ? '($' + txUsd + ')' : '';
 
-  /* gas widget */
+  /* gas converter widget */
   const gg = document.getElementById('gcwGas');
   const gb = document.getElementById('gcwBtc');
   const gt = document.getElementById('gcwTx');
   if (gg) gg.textContent = gasSat + ' sat/vB';
-  if (gb) gb.textContent = '$' + price.toLocaleString('en-US');
-  if (gt) gt.textContent = '~$' + txUsd;
+  if (gb) gb.textContent = price ? '$' + price.toLocaleString('en-US') : '—';
+  if (gt) gt.textContent = txUsd ? '~$' + txUsd : '—';
 
   /* asset card gas estimates */
   document.querySelectorAll('.tx-detail-val.acc').forEach(el => {
-    el.textContent = '~$' + txUsd;
+    el.textContent = txUsd ? '~$' + txUsd : '—';
   });
 
   /* wallet dropdown USD balance */
-  if (state.connected) {
+  if (state.connected && price && state.walletSats) {
     const usdEl = document.getElementById('wd-balance-usd');
-    if (usdEl) usdEl.textContent = '≈ $' + (0.025 * price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const btcBal = state.walletSats / 1e8;
+    if (usdEl) usdEl.textContent = '≈ $' + (btcBal * price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   }
 }
 
 fetchPrices();
-setInterval(fetchPrices, 60_000);
+setInterval(fetchPrices, 30_000); /* refresh every 30s for live gas */
 
 /* ══════════ GAS WIDGET TOGGLE (v5.1) ══════════ */
 function toggleGasWidget() {
@@ -2188,6 +2233,7 @@ document.addEventListener('click', e => {
 
 /* ══════════ WALLET MODAL ══════════ */
 function openWalletModal() {
+  detectInstalledWallets();
   document.getElementById('walletModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -2207,32 +2253,162 @@ function selectNetwork(el, name) {
   state.network = name;
 }
 
-function connectWallet(name) {
-  closeWalletModal();
-  state.connected = true;
-  state.wallet    = name;
+/* ══════════ WALLET — REAL OP_NET INTEGRATION ══════════════════════════════
+   Priority:  1. window.opnet   (OP_Wallet — official, preferred)
+              2. window.unisat  (UniSat)
+              3. window.xverse  (Xverse)
+              4. window.okxwallet.bitcoin (OKX)
 
-  const addr = 'bc1q3xm...8f4e'; // mock address — replace with provider
-  const bal  = '0.0250';
+   FLOW:
+   • connectWallet(name) → calls real browser extension API
+   • On success → update state + UI with REAL address + balance
+   • On failure → show error toast, keep modal open
 
-  document.getElementById('connectBtn').style.display      = 'none';
-  document.getElementById('walletConnected').style.display = 'flex';
-  document.getElementById('navAddr').textContent    = addr;
-  document.getElementById('navBalance').textContent = bal;
-  document.getElementById('wd-address').textContent = addr;
-  document.getElementById('wd-balance').textContent = '₿ ' + bal;
-  document.getElementById('networkLabel').textContent = '· Network: ' + state.network;
+   AI NOTE: requireWallet() guards every invest button.
+   Never bypass this check. MCP hooks go inside requireWallet
+   after state.connected is confirmed true.
 
-  if (state.btcPrice) {
-    document.getElementById('wd-balance-usd').textContent =
-      '≈ $' + (parseFloat(bal) * state.btcPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+   WALLET BALANCE: fetched from wallet API in satoshis → converted to BTC.
+   ADDRESS: real P2TR/P2WPKH address from wallet, never hardcoded.
+════════════════════════════════════════════════════════════════════════════ */
+
+/* Detect which wallets are installed (called on modal open) */
+function detectInstalledWallets() {
+  const opInstalled     = !!(window.opnet);
+  const unisatInstalled = !!(window.unisat);
+  const xverseInstalled = !!(window.BitcoinProvider || window.XverseProviders?.BitcoinProvider);
+  const okxInstalled    = !!(window.okxwallet?.bitcoin);
+
+  /* Show install hint if OP_Wallet not found */
+  const hint = document.getElementById('opwalletHint');
+  if (hint) hint.style.display = opInstalled ? 'none' : 'flex';
+
+  return { opInstalled, unisatInstalled, xverseInstalled, okxInstalled };
+}
+
+async function connectWallet(name) {
+  try {
+    showToast('info', 'Connecting…', 'Waiting for ' + name + ' wallet approval.');
+
+    let address = null;
+    let balanceSats = 0;
+    let publicKey = null;
+
+    if (name === 'OP_Wallet') {
+      /* ── OP_Wallet (window.opnet) ── */
+      if (!window.opnet) {
+        showToast('error', 'OP_Wallet Not Found', 'Please install OP_Wallet from the Chrome Web Store.');
+        return;
+      }
+      const accounts = await window.opnet.requestAccounts();
+      address = accounts?.[0] || null;
+      if (!address) { showToast('error', 'No Account', 'No account returned by OP_Wallet.'); return; }
+      try { publicKey = await window.opnet.getPublicKey(); } catch(_) {}
+      try {
+        const bal = await window.opnet.getBalance();
+        /* OP_Wallet returns { confirmed, unconfirmed, total } in satoshis */
+        balanceSats = bal?.total ?? bal?.confirmed ?? 0;
+      } catch(_) {}
+
+    } else if (name === 'Unisat') {
+      /* ── UniSat (window.unisat) ── */
+      if (!window.unisat) {
+        showToast('error', 'UniSat Not Found', 'Please install UniSat wallet.');
+        return;
+      }
+      const accounts = await window.unisat.requestAccounts();
+      address = accounts?.[0] || null;
+      if (!address) { showToast('error', 'No Account', 'No account returned by UniSat.'); return; }
+      try { publicKey = await window.unisat.getPublicKey(); } catch(_) {}
+      try {
+        const bal = await window.unisat.getBalance();
+        balanceSats = bal?.total ?? bal?.confirmed ?? 0;
+      } catch(_) {}
+
+    } else if (name === 'Xverse') {
+      /* ── Xverse (window.BitcoinProvider) ── */
+      const xverse = window.BitcoinProvider || window.XverseProviders?.BitcoinProvider;
+      if (!xverse) {
+        showToast('error', 'Xverse Not Found', 'Please install Xverse wallet.');
+        return;
+      }
+      const response = await xverse.request('getAccounts', { purposes: ['payment', 'ordinals'] });
+      const accts = response?.result?.addresses || [];
+      address = accts?.[0]?.address || null;
+      publicKey = accts?.[0]?.publicKey || null;
+      if (!address) { showToast('error', 'No Account', 'No account returned by Xverse.'); return; }
+
+    } else if (name === 'OKX') {
+      /* ── OKX (window.okxwallet.bitcoin) ── */
+      if (!window.okxwallet?.bitcoin) {
+        showToast('error', 'OKX Not Found', 'Please install OKX Wallet.');
+        return;
+      }
+      const result = await window.okxwallet.bitcoin.requestAccounts();
+      address = result?.[0] || null;
+      if (!address) { showToast('error', 'No Account', 'No account returned by OKX.'); return; }
+      try {
+        const bal = await window.okxwallet.bitcoin.getBalance();
+        balanceSats = bal?.total ?? 0;
+      } catch(_) {}
+    }
+
+    if (!address) { showToast('error', 'Connection Failed', 'Could not get address from wallet.'); return; }
+
+    /* ── Update state ── */
+    state.connected   = true;
+    state.wallet      = name;
+    state.walletAddr  = address;
+    state.walletSats  = balanceSats;
+    state.publicKey   = publicKey;
+
+    /* ── Update UI ── */
+    closeWalletModal();
+    const shortAddr = address.slice(0, 8) + '…' + address.slice(-6);
+    const btcBal    = (balanceSats / 1e8).toFixed(6);
+
+    document.getElementById('connectBtn').style.display      = 'none';
+    document.getElementById('walletConnected').style.display = 'flex';
+    document.getElementById('navAddr').textContent           = shortAddr;
+    document.getElementById('navBalance').textContent        = btcBal;
+    document.getElementById('wd-address').textContent        = address;
+    document.getElementById('wd-balance').textContent        = '₿ ' + btcBal;
+    document.getElementById('networkLabel').textContent      = '· Network: ' + state.network;
+
+    if (state.btcPrice) {
+      document.getElementById('wd-balance-usd').textContent =
+        '≈ $' + ((balanceSats / 1e8) * state.btcPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    showToast('success', 'Wallet Connected', name + ' connected · ' + shortAddr);
+
+    /* Listen for account/network changes */
+    const provider = window.opnet || window.unisat || null;
+    if (provider?.on) {
+      provider.on('accountsChanged', (accs) => {
+        if (!accs || accs.length === 0) { disconnectWallet(); return; }
+        state.walletAddr = accs[0];
+        const s = accs[0].slice(0,8) + '…' + accs[0].slice(-6);
+        document.getElementById('navAddr').textContent     = s;
+        document.getElementById('wd-address').textContent  = accs[0];
+        showToast('info', 'Account Changed', s);
+      });
+      provider.on('disconnect', () => disconnectWallet());
+    }
+
+  } catch(err) {
+    console.error('[OPWA] Wallet connection error:', err);
+    const msg = err?.message || 'User rejected or wallet error.';
+    showToast('error', 'Connection Failed', msg);
   }
-  showToast('success', 'Wallet Connected', name + ' connected to ' + state.network);
 }
 
 function disconnectWallet() {
-  state.connected = false;
-  state.wallet    = null;
+  state.connected  = false;
+  state.wallet     = null;
+  state.walletAddr = null;
+  state.walletSats = 0;
+  state.publicKey  = null;
   document.getElementById('connectBtn').style.display      = 'flex';
   document.getElementById('walletConnected').style.display = 'none';
   document.getElementById('walletDropdown').classList.remove('open');
@@ -2244,7 +2420,8 @@ function toggleWalletDropdown() {
 }
 
 function copyAddress() {
-  navigator.clipboard?.writeText('bc1q3xm...8f4e').catch(()=>{});
+  const addr = state.walletAddr || '';
+  if (addr) navigator.clipboard?.writeText(addr).catch(()=>{});
   showToast('success', 'Copied!', 'Address copied to clipboard.');
   document.getElementById('walletDropdown').classList.remove('open');
 }
