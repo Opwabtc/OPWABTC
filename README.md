@@ -1,3 +1,5 @@
+[![CI](https://github.com/Opwabtc/OPWABTC/actions/workflows/ci.yml/badge.svg)](https://github.com/Opwabtc/OPWABTC/actions) [![Vercel](https://vercelbadge.vercel.app/api/Opwabtc/OPWABTC)](https://op-real-estate-platform.vercel.app/)
+
 # OPWA — Onchain Proof of World Asset
 
 > **Real Estate Tokenization on Bitcoin Layer 1, Powered by OP_NET**
@@ -232,3 +234,12 @@ This platform is experimental and operates on testnet. Cryptocurrency investment
 ---
 
 > **Bitcoin is the settlement layer. OP_NET is the execution layer. OPWA is the application layer.**
+
+
+## Security Notice
+
+OPWA is currently operating exclusively on **Bitcoin Testnet** via OP_NET. No real assets are at risk. All tokens are test-only and carry zero monetary value.
+
+Some dependencies inherited from the OP_NET ecosystem may surface advisories in `npm audit`. These are known upstream issues and do not affect the security of the testnet deployment. A full audit will be conducted prior to mainnet launch.
+
+See [docs/security-model.md](./docs/security-model.md) for the complete security architecture.
