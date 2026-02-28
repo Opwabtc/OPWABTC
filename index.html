@@ -1952,8 +1952,8 @@ section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
           OP_NET Testnet
         </div>
         <div class="footer-bottom-links">
-          <a href="/terms" class="footer-bottom-link">Terms</a>
-          <a href="/privacy" class="footer-bottom-link">Privacy</a>
+          <a href="/terms" class="footer-bottom-link" onclick="event.preventDefault();window.history.pushState({},'','/terms');window.dispatchEvent(new PopStateEvent('popstate'))">Terms</a>
+          <a href="/privacy" class="footer-bottom-link" onclick="event.preventDefault();window.history.pushState({},'','/privacy');window.dispatchEvent(new PopStateEvent('popstate'))">Privacy</a>
           <!-- GitHub appears ONLY here in footer-bottom to avoid duplication with Developers column -->
         </div>
       </div>
