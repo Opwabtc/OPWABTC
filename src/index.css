@@ -25,7 +25,9 @@
   border-radius: 999px;
   pointer-events: none;
   z-index: 99999;
-  transform: translate(-50%, -50%) rotate(45deg);
+  transform: rotate(45deg);
+  margin-left: -5px;
+  margin-top: -14px;
   transition: width 0.15s, height 0.15s, background 0.15s;
   box-shadow: 0 0 12px var(--accent-glow);
 }
