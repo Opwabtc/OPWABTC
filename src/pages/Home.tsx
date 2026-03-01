@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { useWallet } from '../hooks/useWallet'
 import { useInvestment, calcTokens } from '../hooks/useInvestment'
@@ -30,7 +30,6 @@ function calcFV(p: number, m: number, n: number, r: number) {
   return p * f + m * ((f - 1) / r);
 }
 function fmt(n: number) { return n.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}); }
-
 
 function searchAssets(query: string) {
   const q = query.toLowerCase().trim();
@@ -69,8 +68,8 @@ export default function Home() {
   const { requireWallet, connect, disconnect } = useWallet()
   const inv1 = useInvestment()
   const inv2 = useInvestment()
-  const btc1 = '0.0001'
-  const btc2 = '0.0001'
+  const [btc1, setBtc1] = React.useState('0.0001')
+  const [btc2, setBtc2] = React.useState('0.0001')
 
   function calcSimulator() {
     const initial = parseFloat((document.getElementById('simInitial') as HTMLInputElement)?.value) || 0;
@@ -120,13 +119,10 @@ export default function Home() {
       </button>
     </div>
     <p className="modal-subtitle">Choose your Bitcoin wallet to connect to the OP_NET platform.</p>
-
-    
     <div style={{"marginBottom":"12px"}}>
       <div style={{"fontSize":"10px","fontWeight":"700","color":"var(--accent)","textTransform":"uppercase","letterSpacing":".1em","marginBottom":"8px"}}>Recommended</div>
       <button className="wallet-option wallet-option-primary" onClick={() => { connect('OP_Wallet') }}>
         <div className="wallet-option-icon wallet-option-icon-primary">
-          
           <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
             <rect width="32" height="32" rx="8" fill="#f97316"/>
             <text x="16" y="22" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="800" font-size="14" fill="#fff">OP</text>
@@ -142,11 +138,9 @@ export default function Home() {
          target="_blank" rel="noopener"
          style={{"display":"flex","alignItems":"center","justifyContent":"center","gap":"6px","marginTop":"6px","padding":"8px","borderRadius":"8px","background":"var(--bg-elevated)","border":"1px solid var(--border)","fontSize":"11px","color":"var(--text-3)","transition":"color .15s"}}>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Don't have OP_Wallet? Install from Chrome Web Store ↗
+        Don't have OP_Wallet? Install from Chrome Web Store
       </a>
     </div>
-
-    
     <div style={{"fontSize":"10px","fontWeight":"700","color":"var(--text-3)","textTransform":"uppercase","letterSpacing":".1em","marginBottom":"8px"}}>Other Options</div>
     <div className="wallet-options">
       <button className="wallet-option" onClick={() => { connect('Unisat') }}>
@@ -177,7 +171,6 @@ export default function Home() {
         </div>
       </button>
     </div>
-
     <div className="network-selector">
       <div className="network-selector-label">Select Network</div>
       <div className="network-options">
@@ -193,7 +186,6 @@ export default function Home() {
     </div>
   </div>
 </div>
-
 
 <div className="wallet-dropdown" id="walletDropdown">
   <div className="wd-address" id="wd-address">bc1q...0000</div>
@@ -217,10 +209,6 @@ export default function Home() {
   </div>
 </div>
 
-
-
-
-
 <div className="mobile-menu" id="mobileMenu">
   <a className="mobile-nav-link active" href="#">Home</a>
   <a className="mobile-nav-link" href="#assets">Assets</a>
@@ -232,7 +220,6 @@ export default function Home() {
     </button>
   </div>
 </div>
-
 
 <div className="hero-section" id="home">
   <div className="hero-content fade-in-up">
@@ -258,47 +245,35 @@ export default function Home() {
       </a>
     </div>
   </div>
-
-  
   <div className="hero-stats fade-in">
-
-    
     <div className="hero-stat">
       <div className="hero-stat-val">&#x20BF; Layer</div>
       <span className="hero-stat-label">Native Bitcoin Settlement</span>
     </div>
-
     <div className="hero-stat">
       <div className="hero-stat-val">OP_NET</div>
       <span className="hero-stat-label">Smart Contract Protocol</span>
     </div>
-
     <div className="hero-stat">
       <div className="hero-stat-val">15% p.a.</div>
       <span className="hero-stat-label">Projected Annual Yield</span>
     </div>
-
-    
     <div className="hero-stat">
       <div className="hero-stat-val">0.5%</div>
       <span className="hero-stat-label">Max Slippage</span>
     </div>
-
     <div className="hero-stat">
       <div className="hero-stat-val">500+</div>
       <span className="hero-stat-label">Early Investors</span>
     </div>
-
     <div className="hero-stat">
       <div className="hero-stat-val">$2M+</div>
       <span className="hero-stat-label">Total Volume Target</span>
     </div>
-
   </div>
 </div>
 
 <div className="section-divider"></div>
-
 
 <section id="assets">
   <div className="ativos-header">
@@ -312,8 +287,6 @@ export default function Home() {
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
   </div>
-
-  
   <div className="filter-row">
     <div className="filter-tabs" id="filterTabs">
       <button className="filter-tab active" data-filter="all" onClick={(e) => { filterAssets('all', e.currentTarget) }}>All</button>
@@ -336,7 +309,7 @@ export default function Home() {
 
   <div className="ativos-grid" id="ativosGrid">
 
-    
+    {/* CARD ALPHA */}
     <div className="ativo-card fade-in-up d1" data-type="residential" data-name="Asset Alpha Residential">
       <div className="ativo-img">
         <div className="ativo-img-placeholder">
@@ -373,24 +346,27 @@ export default function Home() {
         </div>
         <button className="btn-card" onClick={() => { toggleExpand(event) }}>Invest Now</button>
       </div>
-      
       <div className="ativo-expand-panel">
         <div className="ativo-expand-inner">
           <div className="ativo-expand-title">Investment Details</div>
           <div className="expand-field">
             <label>Amount (BTC)</label>
-            <input className="expand-input" type="number" placeholder="0.001" step="0.001" min="0.001"/>
+            <input className="expand-input" type="number" placeholder="0.0001" step="0.0001" min="0.00001" value={btc1} onChange={(e) => { inv1.reset(); setBtc1(e.target.value); }}/>
           </div>
           <div className="expand-field">
-            <label>Number of tokens</label>
-            <input className="expand-input" type="number" placeholder="1" min="1"/>
+            <label>You will receive</label>
+            <input className="expand-input" type="text" readOnly value={calcTokens(parseFloat(btc1) || 0) + ' OPWAP'}/>
           </div>
-          <button className="btn-invest" onClick={() => inv1.invest(parseFloat(btc1))} disabled={inv1.loading}>{inv1.loading ? 'Processing...' : 'Confirm · ' + calcTokens(parseFloat(btc1)) + ' OPWAP'}</button>
+          <button className="btn-invest" onClick={() => inv1.invest(parseFloat(btc1))} disabled={inv1.loading}>
+            {inv1.loading ? 'Processing...' : 'Confirm Investment'}
+          </button>
+          {inv1.error && <p style={{color:'#f87171',fontSize:'0.8rem',marginTop:'8px'}}>{inv1.error}</p>}
+          {inv1.result && <p style={{color:'#4ade80',fontSize:'0.8rem',marginTop:'8px'}}>TX sent! <a href={inv1.result.opscanUrl} target="_blank" rel="noreferrer">View on OpScan</a></p>}
         </div>
       </div>
     </div>
 
-    
+    {/* CARD BETA */}
     <div className="ativo-card fade-in-up d2" data-type="commercial" data-name="Asset Beta Commercial">
       <div className="ativo-img" style={{"background":"linear-gradient(135deg,#1a1a2e,#252540)"}}>
         <div className="ativo-img-placeholder">
@@ -432,18 +408,22 @@ export default function Home() {
           <div className="ativo-expand-title">Investment Details</div>
           <div className="expand-field">
             <label>Amount (BTC)</label>
-            <input className="expand-input" type="number" placeholder="0.001" step="0.001" min="0.001"/>
+            <input className="expand-input" type="number" placeholder="0.0001" step="0.0001" min="0.00001" value={btc2} onChange={(e) => { inv2.reset(); setBtc2(e.target.value); }}/>
           </div>
           <div className="expand-field">
-            <label>Number of tokens</label>
-            <input className="expand-input" type="number" placeholder="1" min="1"/>
+            <label>You will receive</label>
+            <input className="expand-input" type="text" readOnly value={calcTokens(parseFloat(btc2) || 0) + ' OPWAP'}/>
           </div>
-          <button className="btn-invest" onClick={() => inv2.invest(parseFloat(btc2))} disabled={inv2.loading}>{inv2.loading ? 'Processing...' : 'Confirm · ' + calcTokens(parseFloat(btc2)) + ' OPWAP'}</button>
+          <button className="btn-invest" onClick={() => inv2.invest(parseFloat(btc2))} disabled={inv2.loading}>
+            {inv2.loading ? 'Processing...' : 'Confirm Investment'}
+          </button>
+          {inv2.error && <p style={{color:'#f87171',fontSize:'0.8rem',marginTop:'8px'}}>{inv2.error}</p>}
+          {inv2.result && <p style={{color:'#4ade80',fontSize:'0.8rem',marginTop:'8px'}}>TX sent! <a href={inv2.result.opscanUrl} target="_blank" rel="noreferrer">View on OpScan</a></p>}
         </div>
       </div>
     </div>
 
-    
+    {/* CARD GAMMA */}
     <div className="ativo-card fade-in-up d3" data-type="industrial" data-name="Asset Gamma Industrial">
       <div className="ativo-img" style={{"background":"linear-gradient(135deg,#1a2e1a,#1a2520)"}}>
         <div className="ativo-img-placeholder">
@@ -497,7 +477,6 @@ export default function Home() {
 
 <div className="section-divider"></div>
 
-
 <div className="simulador-section" id="simulator">
   <div className="simulador-inner">
     <div style={{"marginBottom":"40px"}}>
@@ -506,14 +485,12 @@ export default function Home() {
       <p className="section-subtitle" style={{"marginBottom":"0"}}>Model your returns and compare the platform against traditional alternatives.</p>
     </div>
     <div className="simulador-grid">
-
-      
       <div className="sim-panel">
         <div className="sim-field">
           <label>Initial Investment (USD)</label>
           <div className="sim-stepper">
             <button className="sim-stepper-btn" data-target="simInitial" data-step="100" data-dir="-1" type="button">−</button>
-            <input className="sim-stepper-input" id="simInitial" type="number" min="0" step="100" value="1000" placeholder="$ amount" onInput={() => { calcSimulator() }}/>
+            <input className="sim-stepper-input" id="simInitial" type="number" min="0" step="100" defaultValue="1000" placeholder="$ amount" onInput={() => { calcSimulator() }}/>
             <button className="sim-stepper-btn" data-target="simInitial" data-step="100" data-dir="1" type="button">+</button>
           </div>
         </div>
@@ -521,13 +498,13 @@ export default function Home() {
           <label>Monthly Contribution (USD)</label>
           <div className="sim-stepper">
             <button className="sim-stepper-btn" data-target="simMonthly" data-step="50" data-dir="-1" type="button">−</button>
-            <input className="sim-stepper-input" id="simMonthly" type="number" min="0" step="50" value="200" placeholder="$ amount" onInput={() => { calcSimulator() }}/>
+            <input className="sim-stepper-input" id="simMonthly" type="number" min="0" step="50" defaultValue="200" placeholder="$ amount" onInput={() => { calcSimulator() }}/>
             <button className="sim-stepper-btn" data-target="simMonthly" data-step="50" data-dir="1" type="button">+</button>
           </div>
         </div>
         <div className="sim-field">
           <label>Period</label>
-          <input type="range" className="sim-slider" id="periodSlider" min="1" max="36" value="12" onInput={(e) => { onSliderChange(e.target as HTMLInputElement) }}/>
+          <input type="range" className="sim-slider" id="periodSlider" min="1" max="36" defaultValue="12" onInput={(e) => { onSliderChange(e.target as HTMLInputElement) }}/>
           <div className="sim-slider-labels"><span>1 mo</span><span>12 mo</span><span>36 mo</span></div>
           <div className="sim-slider-current" id="sliderLabel">12 months</div>
         </div>
@@ -539,8 +516,6 @@ export default function Home() {
         <button className="btn-sim" onClick={() => { calcSimulator() }}>Recalculate</button>
         <p style={{"fontSize":"11px","color":"var(--text-3)","textAlign":"center","lineHeight":"1.6"}}>* Simulation is illustrative only and does not constitute a guarantee.</p>
       </div>
-
-      
       <div>
         <div className="sim-forecast-header">
           <span className="sim-forecast-title">Return Forecast</span>
@@ -576,82 +551,35 @@ export default function Home() {
         <div id="simDelta" style={{"marginTop":"16px","padding":"14px 18px","borderRadius":"10px","background":"var(--accent-dim)","border":"1px solid var(--accent-border)","fontSize":"13px","color":"var(--text-2)","display":"none"}}></div>
         <p style={{"fontSize":"11px","color":"var(--text-3)","lineHeight":"1.6","marginTop":"16px"}}>* Simulation is illustrative only.</p>
       </div>
-
     </div>
   </div>
 </div>
 
 <div className="section-divider"></div>
-
 
 <div className="partners-section" id="partners">
   <div className="partners-label">Companies That Trust the Platform</div>
   <div className="partners-wrapper">
     <div className="partners-track" id="partnersTrack">
-      
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-        OP_NET Protocol
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        Partner B
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        Partner C
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Partner D
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Partner E
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Partner F
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-        Partner G
-      </div>
-      
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-        OP_NET Protocol
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        Partner B
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        Partner C
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Partner D
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Partner E
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Partner F
-      </div>
-      <div className="partner-slot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-        Partner G
-      </div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>OP_NET Protocol</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Partner B</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Partner C</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Partner D</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Partner E</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Partner F</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>Partner G</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>OP_NET Protocol</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Partner B</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Partner C</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Partner D</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Partner E</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Partner F</div>
+      <div className="partner-slot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>Partner G</div>
     </div>
   </div>
 </div>
 
 <div className="section-divider"></div>
-
 
 <section id="how-it-works">
   <div style={{"textAlign":"center","marginBottom":"52px"}}>
@@ -660,68 +588,42 @@ export default function Home() {
     <p className="section-subtitle" style={{"margin":"0 auto"}}>Four steps from Bitcoin wallet to tokenized real estate investment — fully on-chain.</p>
   </div>
   <div className="steps-grid">
-
     <div className="step fade-in-up d1">
       <div className="step-number">1</div>
-      <div className="step-icon-wrap">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
-      </div>
+      <div className="step-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg></div>
       <div className="step-label">Step 1</div>
       <div className="step-title">Connect Your Bitcoin Wallet</div>
       <div className="step-desc">Use OP_Wallet, Unisat, Xverse, or OKX wallet to connect to OPWA. Your keys stay in your control at all times — the platform never holds custody of your Bitcoin.</div>
-      <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" rel="noopener" className="step-link">
-        Get OP_Wallet ↗
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+      <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" rel="noopener" className="step-link">Get OP_Wallet ↗<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg></a>
     </div>
-
     <div className="step fade-in-up d2">
       <div className="step-number">2</div>
-      <div className="step-icon-wrap">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-      </div>
+      <div className="step-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
       <div className="step-label">Step 2</div>
       <div className="step-title">Choose a Tokenized Property</div>
       <div className="step-desc">Browse the available assets — each backed by real physical property. Review APY, availability, and on-chain details before investing any amount, from micro to large.</div>
-      <a href="https://op-real-estate-platform.vercel.app/#assets" target="_blank" rel="noopener" className="step-link">
-        View Assets
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+      <a href="https://op-real-estate-platform.vercel.app/#assets" target="_blank" rel="noopener" className="step-link">View Assets<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg></a>
     </div>
-
     <div className="step fade-in-up d3">
       <div className="step-number">3</div>
-      <div className="step-icon-wrap">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-      </div>
+      <div className="step-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
       <div className="step-label">Step 3</div>
       <div className="step-title">Invest via OP_NET Smart Contract</div>
       <div className="step-desc">Transactions are executed through OP_NET smart contracts deployed on Bitcoin. No intermediaries, no custodians — the protocol handles settlement trustlessly and transparently.</div>
-      <a href="https://dev.opnet.org/" target="_blank" rel="noopener" className="step-link">
-        Build on OP_NET
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+      <a href="https://dev.opnet.org/" target="_blank" rel="noopener" className="step-link">Build on OP_NET<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg></a>
     </div>
-
     <div className="step fade-in-up d4">
       <div className="step-number">4</div>
-      <div className="step-icon-wrap">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      </div>
+      <div className="step-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
       <div className="step-label">Step 4</div>
       <div className="step-title">Earn Yield &amp; Govern</div>
       <div className="step-desc">Receive yield distributions directly in satoshis to your wallet. Token holders participate in platform governance decisions proportional to their holdings.</div>
-      <a href="https://faucet.opnet.org/" target="_blank" rel="noopener" className="step-link">
-        Get Testnet Tokens
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+      <a href="https://faucet.opnet.org/" target="_blank" rel="noopener" className="step-link">Get Testnet Tokens<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg></a>
     </div>
-
   </div>
 </section>
 
 <div className="section-divider"></div>
-
 
 <div className="status-bar">
   <div className="status-item"><div className="dot"></div> All systems operational</div>
@@ -732,105 +634,50 @@ export default function Home() {
   </div>
 </div>
 
-
 <footer className="footer">
   <div className="footer-inner">
     <div className="footer-grid">
-
-      
       <div className="footer-brand">
         <div className="footer-logo">
           <div className="footer-logo-mark">OP</div>
           <div className="footer-logo-name">OPWA</div>
         </div>
-        <p className="footer-desc">
-          OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.
-        </p>
-        
+        <p className="footer-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>
         <div className="footer-socials">
           <a href="https://x.com/opwabtc" target="_blank" rel="noopener" className="social-btn" aria-label="Twitter / X">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4l16 16M4 20L20 4"/></svg>
           </a>
         </div>
       </div>
-
-      
       <div>
         <div className="footer-col-title">Platform</div>
         <div className="footer-links">
-          <a href="#assets" className="footer-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            Assets
-          </a>
-          <a href="#simulator" className="footer-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
-            Simulator
-          </a>
-          <a href="#how-it-works" className="footer-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>
-            How It Works
-          </a>
-          <a href="#partners" className="footer-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-            Partners
-          </a>
+          <a href="#assets" className="footer-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Assets</a>
+          <a href="#simulator" className="footer-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>Simulator</a>
+          <a href="#how-it-works" className="footer-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>How It Works</a>
+          <a href="#partners" className="footer-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Partners</a>
         </div>
       </div>
-
-      
       <div>
         <div className="footer-col-title">Developers</div>
         <div className="footer-links">
-          <a href="https://github.com/Opwabtc/" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-            GitHub
-          </a>
-          <a href="https://dev.opnet.org/" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            Build on OP_NET
-          </a>
-          <a href="https://faucet.opnet.org/" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>
-            Testnet Faucet
-          </a>
-          <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
-            Get OP_Wallet
-          </a>
+          <a href="https://github.com/Opwabtc/" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>GitHub</a>
+          <a href="https://dev.opnet.org/" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Build on OP_NET</a>
+          <a href="https://faucet.opnet.org/" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>Testnet Faucet</a>
+          <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>Get OP_Wallet</a>
         </div>
       </div>
-
-      
       <div>
         <div className="footer-col-title">Resources</div>
         <div className="footer-links">
-          
-          <a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" target="_blank" rel="noopener" className="footer-link footer-link-ext"
-             style={{"color":"var(--gold)"}} title="OPWA Strategic Document — Whitepaper">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            Whitepaper
-          </a>
-          <a href="https://defibible.org/" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-            DeFi Bible
-          </a>
-          <a href="https://op-real-estate-platform.vercel.app/" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-            Live Platform
-          </a>
-          <a href="https://opscan.org/?network=op_testnet" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-            OPScan Explorer
-          </a>
-          <a href="https://mempool.opnet.org/pt/testnet4" target="_blank" rel="noopener" className="footer-link footer-link-ext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Mempool
-          </a>
+          <a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" target="_blank" rel="noopener" className="footer-link footer-link-ext" style={{"color":"var(--gold)"}}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Whitepaper</a>
+          <a href="https://defibible.org/" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>DeFi Bible</a>
+          <a href="https://op-real-estate-platform.vercel.app/" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Live Platform</a>
+          <a href="https://opscan.org/?network=op_testnet" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>OPScan Explorer</a>
+          <a href="https://mempool.opnet.org/pt/testnet4" target="_blank" rel="noopener" className="footer-link footer-link-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Mempool</a>
         </div>
       </div>
-
     </div>
-
     <div className="footer-bottom">
       <div>
         <span>© 2025 OPWA · Real Estate on Bitcoin · Built with </span>
@@ -844,13 +691,11 @@ export default function Home() {
         <div className="footer-bottom-links">
           <a href="/terms" className="footer-bottom-link" onClick={(e) => { e.preventDefault(); window.history.pushState({},"","/terms"); window.dispatchEvent(new PopStateEvent("popstate")) }}>Terms</a>
           <a href="/privacy" className="footer-bottom-link" onClick={(e) => { e.preventDefault(); window.history.pushState({},"","/privacy"); window.dispatchEvent(new PopStateEvent("popstate")) }}>Privacy</a>
-          
         </div>
       </div>
     </div>
   </div>
 </footer>
-
 
     </div>
   )
