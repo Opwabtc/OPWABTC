@@ -1,7 +1,6 @@
-﻿import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { useWallet } from '../hooks/useWallet'
-import SimulatorDiffCard from "../components/SimulatorDiffCard"
 import { useInvestment } from '../hooks/useInvestment'
 
 const SATS_PER_TOKEN = 1000
@@ -385,14 +384,6 @@ function Simulator() {
               ))}
             </div>
           </div>
-          {(() => {
-            const opwaData = comparisons.find(c => c.main)
-            const refAData = comparisons.find(c => !c.main)
-            if (!opwaData || !refAData) return null
-            const diff = Math.abs(opwaData.data.total - refAData.data.total)
-            const totalMonths = years * 12
-            return <SimulatorDiffCard diff={diff} months={totalMonths} label="Reference A" />
-          })()}
         </div>
       </div>
     </div>

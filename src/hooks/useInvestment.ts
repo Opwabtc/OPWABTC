@@ -42,15 +42,18 @@ async function buildSenderAddress(publicKey: string): Promise<Address> {
   return new Address(new Uint8Array(32), pubkeyBytes);
 }
 
-// mint() takes NO arguments — contract reads BTC from tx.outputs and mints to tx.origin
+// ABI com OP_20 padrão
 const OPWAP_ABI: BitcoinInterfaceAbi = [
   {
     name: 'mint',
     type: BitcoinAbiTypes.Function,
     constant: false,
     payable: true,
-    inputs: [],
-    outputs: [{ name: 'tokensMinted', type: ABIDataTypes.UINT256 }],
+    inputs: [
+      { name: 'to', type: ABIDataTypes.ADDRESS },
+      { name: 'amount', type: ABIDataTypes.UINT256 },
+    ],
+    outputs: [],
   },
   {
     name: 'balanceOf',
@@ -64,7 +67,7 @@ const OPWAP_ABI: BitcoinInterfaceAbi = [
 
 interface IMintableToken extends BaseContractProperties {
   balanceOf(owner: Address): Promise<CallResult<{ balance: bigint }, []>>;
-  mint(): Promise<CallResult<{ tokensMinted: bigint }, []>>;
+  mint(to: Address, amount: bigint): Promise<CallResult<Record<string, never>, []>>;
 }
 
 export interface InvestmentResult {
@@ -72,6 +75,31 @@ export interface InvestmentResult {
   opscanUrl: string;
 }
 
+// Patch: intercepta getSelector para mint retornar string que o SDK hasheia para 0x40c10f19
+// Descoberta: 0x40c10f19 = 1086394137 é keccak256, não SHA256
+// Solução: patch no writeSelector do writer dentro de encodeFunctionData
+// FIX DEFINITIVO (Bob confirmou): BinaryWriter tem campo 'buffer' como Uint8Array
+// writer.buffer[0..3] = selector bytes em big-endian após writeSelector()
+function applyMintSelectorPatch(contract: unknown): (() => void) {
+  const c = contract as Record<string, unknown>;
+  const proto = Object.getPrototypeOf(c) as Record<string, unknown>;
+  const origEncode = proto['encodeFunctionData'] as ((el: unknown, args: unknown[]) => Record<string, unknown>) | undefined;
+  if (!origEncode) return () => {};
+
+  proto['encodeFunctionData'] = function(element: Record<string, unknown>, args: unknown[]) {
+    const writer = origEncode.call(this, element, args) as Record<string, unknown>;
+    if (element['name'] === 'mint') {
+      const buf = writer['buffer'] as Uint8Array | undefined;
+      if (buf && buf.length >= 4) {
+        buf[0] = 0x40; buf[1] = 0xc1; buf[2] = 0x0f; buf[3] = 0x19;
+        console.log('[OPWA] ✓ mint selector patched → 0x40C10F19');
+      }
+    }
+    return writer;
+  };
+
+  return () => { proto['encodeFunctionData'] = origEncode; };
+}
 
 export function useInvestment() {
   const { walletAddr, publicKey } = useAppStore();
@@ -99,6 +127,8 @@ export function useInvestment() {
     if (satsAmount < BigInt(SATS_PER_TOKEN)) { setError('Minimum: 1000 sats (0.00001 BTC).'); return; }
 
     setLoading(true);
+    let removePatch: (() => void) | undefined;
+
     try {
       console.log('[OPWA] 1. building sender address...');
       const senderAddress = await buildSenderAddress(effectivePublicKey);
@@ -117,6 +147,9 @@ export function useInvestment() {
         senderAddress,
       );
 
+      // Aplicar patch para inspecionar o BinaryWriter e tentar corrigir selector
+      removePatch = applyMintSelectorPatch(contract);
+
       contract.setTransactionDetails({
         inputs: [],
         outputs: [
@@ -129,8 +162,10 @@ export function useInvestment() {
         ],
       });
 
-      console.log('[OPWA] 3. simulating mint...', { satsAmount: satsAmount.toString() });
-      const sim = await contract.mint();
+      const tokenAmount = (satsAmount * BigInt(10 ** 8)) / BigInt(SATS_PER_TOKEN);
+
+      console.log('[OPWA] 3. simulating mint...', { satsAmount: satsAmount.toString(), tokenAmount: tokenAmount.toString() });
+      const sim = await contract.mint(senderAddress, tokenAmount);
       console.log('[OPWA] 4. sim result:', sim);
 
       if (!sim || 'error' in sim || (sim as any).revert || (sim as any).ok === false) {
@@ -164,6 +199,7 @@ export function useInvestment() {
       console.error('OPWA MINT ERROR:', err);
       setError(msg);
     } finally {
+      if (removePatch) removePatch();
       setLoading(false);
     }
   }, [walletAddr, publicKey]);
