@@ -10,7 +10,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Navigation />
-      <main>{children}</main>
+      <div style={{ paddingTop: 'var(--navbar-h)' }}>{children}</div>
       <GasConverterWidget />
       <ToastContainer />
     </>
