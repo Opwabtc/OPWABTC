@@ -143,12 +143,50 @@ function AssetCard({ id, title, desc, apy, apyClass, change, available, total, t
 
 function Simulator() {
   const { btcPrice } = useAppStore()
-  const [btcAmount, setBtcAmount] = useState(0.01)
+  const price = btcPrice || 65000
+
+  // Estado
+  const [currency, setCurrency] = useState<'btc' | 'usd'>('btc')
+  const [initialBtc, setInitialBtc] = useState(0.005)
+  const [monthlyBtc, setMonthlyBtc] = useState(0)
   const [years, setYears] = useState(1)
-  const apy = 12.4
-  const invested = btcAmount * (btcPrice || 65000)
-  const returns = invested * (Math.pow(1 + apy / 100, years) - 1)
-  const total = invested + returns
+
+  // Valores em USD para display
+  const initialUsd = initialBtc * price
+  const monthlyUsd = monthlyBtc * price
+
+  // Helpers de display
+  const fmtBtc = (v: number) => v.toFixed(5) + ' BTC'
+  const fmtUsd = (v: number) => '$' + v.toLocaleString('en-US', { maximumFractionDigits: 0 })
+  const fmt = (btc: number) => currency === 'btc' ? fmtBtc(btc) : fmtUsd(btc * price)
+
+  // Cálculo composto com aporte mensal
+  const OPWA_APY = 15
+  const ALT_APY_A = 6.9
+  const ALT_APY_B = 4.2
+
+  function calcTotal(apy: number) {
+    const r = apy / 100 / 12
+    const n = years * 12
+    // FV = PV*(1+r)^n + PMT*((1+r)^n - 1)/r
+    const fv = initialBtc * Math.pow(1 + r, n) +
+      (r > 0 ? monthlyBtc * (Math.pow(1 + r, n) - 1) / r : monthlyBtc * n)
+    return { total: fv, returns: fv - initialBtc - monthlyBtc * n }
+  }
+
+  const opwa = calcTotal(OPWA_APY)
+  const altA = calcTotal(ALT_APY_A)
+  const altB = calcTotal(ALT_APY_B)
+
+  // Stepper helpers
+  const stepInitial = currency === 'btc' ? 0.001 : 100 / price
+  const stepMonthly = currency === 'btc' ? 0.0001 : 10 / price
+
+  const comparisons = [
+    { name: 'OPWA Platform', apy: OPWA_APY, data: opwa, main: true, apyColor: '#22c55e' },
+    { name: 'Fixed Income', apy: ALT_APY_A, data: altA, main: false, apyColor: '#eab308' },
+    { name: 'Savings Account', apy: ALT_APY_B, data: altB, main: false, apyColor: '#ef4444' },
+  ]
 
   return (
     <div className="simulador-section" id="simulator">
@@ -160,39 +198,115 @@ function Simulator() {
         </p>
         <div className="simulador-grid">
           <div className="sim-panel">
+
+            {/* Toggle BTC/USD */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+              <button
+                onClick={() => setCurrency('btc')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+                  border: '1.5px solid',
+                  borderColor: currency === 'btc' ? 'var(--accent)' : 'var(--border)',
+                  background: currency === 'btc' ? 'var(--accent-dim)' : 'transparent',
+                  color: currency === 'btc' ? 'var(--accent)' : '#444',
+                  cursor: 'pointer', transition: 'all .15s',
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                BTC
+              </button>
+              <button
+                onClick={() => setCurrency('usd')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+                  border: '1.5px solid',
+                  borderColor: currency === 'usd' ? '#22c55e' : 'var(--border)',
+                  background: currency === 'usd' ? 'rgba(34,197,94,.1)' : 'transparent',
+                  color: currency === 'usd' ? '#22c55e' : '#444',
+                  cursor: 'pointer', transition: 'all .15s',
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                </svg>
+                USD
+              </button>
+            </div>
+
+            {/* Investimento Inicial */}
             <div className="sim-field">
-              <label>Investment Amount (BTC)</label>
+              <label>Investimento Inicial
+                <span style={{ color: 'var(--text-3)', marginLeft: 8, fontWeight: 400 }}>
+                  {currency === 'btc' ? fmtUsd(initialUsd) : fmtBtc(initialBtc)}
+                </span>
+              </label>
               <div className="sim-stepper">
-                <button className="sim-stepper-btn" onClick={() => setBtcAmount(v => Math.max(0.00001, +(v - 0.001).toFixed(8)))}>−</button>
-                <input className="sim-stepper-input" type="number" value={btcAmount} onChange={e => setBtcAmount(+e.target.value)} />
-                <button className="sim-stepper-btn" onClick={() => setBtcAmount(v => +(v + 0.001).toFixed(8))}>+</button>
+                <button className="sim-stepper-btn" onClick={() => setInitialBtc(v => Math.max(0.00001, +(v - stepInitial).toFixed(8)))}>−</button>
+                <div className="sim-stepper-input" style={{ textAlign: 'center', padding: '10px 0', fontFamily: 'DM Mono, monospace', fontSize: 15, color: 'var(--text-1)' }}>
+                  {currency === 'btc' ? fmtBtc(initialBtc) : fmtUsd(initialUsd)}
+                </div>
+                <button className="sim-stepper-btn" onClick={() => setInitialBtc(v => +(v + stepInitial).toFixed(8))}>+</button>
               </div>
             </div>
+
+            {/* Investimento Mensal */}
             <div className="sim-field">
-              <label>Duration (years): <span style={{ color: 'var(--accent)' }}>{years}y</span></label>
+              <label>Investimento Mensal
+                <span style={{ color: 'var(--text-3)', marginLeft: 8, fontWeight: 400 }}>
+                  {currency === 'btc' ? fmtUsd(monthlyUsd) : fmtBtc(monthlyBtc)}
+                </span>
+              </label>
+              <div className="sim-stepper">
+                <button className="sim-stepper-btn" onClick={() => setMonthlyBtc(v => Math.max(0, +(v - stepMonthly).toFixed(8)))}>−</button>
+                <div className="sim-stepper-input" style={{ textAlign: 'center', padding: '10px 0', fontFamily: 'DM Mono, monospace', fontSize: 15, color: 'var(--text-1)' }}>
+                  {currency === 'btc' ? fmtBtc(monthlyBtc) : fmtUsd(monthlyUsd)}
+                </div>
+                <button className="sim-stepper-btn" onClick={() => setMonthlyBtc(v => +(v + stepMonthly).toFixed(8))}>+</button>
+              </div>
+            </div>
+
+            {/* Slider anos */}
+            <div className="sim-field">
+              <label>Duration: <span style={{ color: 'var(--accent)' }}>{years} year{years > 1 ? 's' : ''}</span></label>
               <input type="range" className="sim-slider" min={1} max={10} step={1} value={years} onChange={e => setYears(+e.target.value)} />
               <div className="sim-slider-labels"><span>1y</span><span>5y</span><span>10y</span></div>
             </div>
+
+            {/* Result OPWA */}
             <div className="sim-result">
-              <div className="sim-result-label">Projected Return ({apy}% APY)</div>
-              <div className="sim-result-value">${returns.toLocaleString('en-US', { maximumFractionDigits: 0 })}</div>
-              <div className="sim-result-btc">Total: ${total.toLocaleString('en-US', { maximumFractionDigits: 0 })}</div>
+              <div className="sim-result-label">OPWA Return ({OPWA_APY}% APY · {years}y)</div>
+              <div className="sim-result-value">{fmt(opwa.returns)}</div>
+              <div className="sim-result-btc">Total acumulado: {fmt(opwa.total)}</div>
             </div>
           </div>
+
+          {/* Comparison */}
           <div>
             <div className="sim-forecast-header"><div className="sim-forecast-title">Comparison</div></div>
             <div className="sim-compare">
-              {[
-                { name: 'OPWA Platform', rate: `${apy}% APY`, val: returns, main: true, badge: 'platform' },
-                { name: 'Savings Account', rate: '4.5% APY', val: invested * (Math.pow(1.045, years) - 1), main: false, badge: 'ref-a' },
-                { name: 'Fixed Income', rate: '6% APY', val: invested * (Math.pow(1.06, years) - 1), main: false, badge: 'ref-b' },
-              ].map(c => (
+              {comparisons.map(c => (
                 <div key={c.name} className={`sim-compare-card${c.main ? ' highlighted' : ''}`}>
                   <div>
-                    <div className="sim-compare-name">{c.name}<span className={`sim-rate-badge ${c.badge}`}>{c.rate}</span></div>
-                    <div className="sim-compare-rate">{years}y · ${invested.toLocaleString('en-US', { maximumFractionDigits: 0 })} invested</div>
+                    <div className="sim-compare-name">
+                      {c.name}
+                      <span style={{
+                        marginLeft: 8, padding: '2px 8px', borderRadius: 20,
+                        fontSize: 11, fontWeight: 700,
+                        background: c.apyColor + '18',
+                        color: c.apyColor,
+                        border: `1px solid ${c.apyColor}40`,
+                      }}>{c.apy}% APY</span>
+                    </div>
+                    <div className="sim-compare-rate">
+                      {years}y · {fmt(initialBtc)} inicial
+                      {monthlyBtc > 0 ? ` + ${fmt(monthlyBtc)}/mês` : ''}
+                    </div>
                   </div>
-                  <div className={`sim-compare-val ${c.main ? 'main' : 'sec'}`}>${c.val.toLocaleString('en-US', { maximumFractionDigits: 0 })}</div>
+                  <div className={`sim-compare-val ${c.main ? 'main' : 'sec'}`}>{fmt(c.data.returns)}</div>
                 </div>
               ))}
             </div>
