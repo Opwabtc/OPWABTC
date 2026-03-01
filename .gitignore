@@ -17,3 +17,5 @@ Thumbs.db
 npm-debug.log*
 coverage/
 .vercel
+OPWACoin/
+index_bob_visual.html
