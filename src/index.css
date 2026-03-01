@@ -1218,3 +1218,27 @@ section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
   height: 4px; border-radius: 2px;
   background: var(--accent);
 }
+/* SLIDER CAT — substitui todas as versões duplicadas anteriores */
+/* Remover aparência nativa */
+.sim-slider { -webkit-appearance: none !important; appearance: none !important; height: 4px !important; border-radius: 2px !important; outline: none !important; cursor: pointer; width: 100%; }
+
+/* Thumb invisível — o gato SVG substitui */
+.sim-slider::-webkit-slider-thumb { -webkit-appearance: none !important; width: 1px !important; height: 1px !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+.sim-slider::-moz-range-thumb { width: 1px !important; height: 1px !important; background: transparent !important; border: none !important; opacity: 0 !important; }
+
+/* Track */
+.sim-slider::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; }
+.sim-slider::-moz-range-track { height: 4px; border-radius: 2px; background: var(--border); }
+.sim-slider::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--accent); }
+/* SLIDER CAT — substitui todas as versões duplicadas anteriores */
+/* Remover aparência nativa */
+.sim-slider { -webkit-appearance: none !important; appearance: none !important; height: 4px !important; border-radius: 2px !important; outline: none !important; cursor: pointer; width: 100%; }
+
+/* Thumb invisível — o gato SVG substitui */
+.sim-slider::-webkit-slider-thumb { -webkit-appearance: none !important; width: 1px !important; height: 1px !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+.sim-slider::-moz-range-thumb { width: 1px !important; height: 1px !important; background: transparent !important; border: none !important; opacity: 0 !important; }
+
+/* Track */
+.sim-slider::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; }
+.sim-slider::-moz-range-track { height: 4px; border-radius: 2px; background: var(--border); }
+.sim-slider::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--accent); }

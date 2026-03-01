@@ -13,66 +13,6 @@ import { networks, Satoshi } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
 
-// FIX (Bob s13): contrato deployado usa keccak256 selector 0x40c10f19
-// OP_20_ABI envia SHA256 (961601633) — contrato rejeita
-// Usar ABI customizado com selector override para keccak256
-// FIX (Bob s13 — definitivo): SDK sempre recomputa selector via SHA256(getSelector())
-// Contrato deployado usa keccak256 0x40c10f19. Patch no encodeFunctionData para interceptar mint.
-const MINT_ABI: BitcoinInterfaceAbi = [
-  {
-    name: 'mint',
-    type: BitcoinAbiTypes.Function,
-    constant: false,
-    payable: true,
-    inputs: [
-      { name: 'to', type: ABIDataTypes.ADDRESS },
-      { name: 'amount', type: ABIDataTypes.UINT256 },
-    ],
-    outputs: [],
-  },
-  {
-    name: 'balanceOf',
-    type: BitcoinAbiTypes.Function,
-    constant: true,
-    payable: false,
-    inputs: [{ name: 'account', type: ABIDataTypes.ADDRESS }],
-    outputs: [{ name: 'balance', type: ABIDataTypes.UINT256 }],
-  },
-];
-
-// Selector keccak256 correto do contrato deployado
-const MINT_SELECTOR_KECCAK = 0x40c10f19;
-
-// Patch: intercepta encodeFunctionData para substituir selector de mint
-// encodeFunctionData retorna um objeto BinaryWriter com método getBuffer()
-function patchContractMintSelector(contract: unknown): void {
-  const c = contract as Record<string, unknown>;
-  const proto = Object.getPrototypeOf(c) as Record<string, unknown>;
-  if ((c as Record<string, boolean>)['__mintPatched']) return;
-  const original = proto['encodeFunctionData'] as ((el: unknown, args: unknown[]) => unknown) | undefined;
-  if (!original) return;
-  proto['encodeFunctionData'] = function(element: Record<string, unknown>, args: unknown[]) {
-    const result = original.call(this, element, args) as Record<string, unknown>;
-    if (element['name'] === 'mint') {
-      // result é BinaryWriter — substituir os 4 bytes do selector via getBuffer()
-      const originalGetBuffer = result['getBuffer'] as (() => Uint8Array) | undefined;
-      if (originalGetBuffer) {
-        result['getBuffer'] = function() {
-          const buf = new Uint8Array(originalGetBuffer.call(result));
-          buf[0] = (MINT_SELECTOR_KECCAK >>> 24) & 0xff;
-          buf[1] = (MINT_SELECTOR_KECCAK >>> 16) & 0xff;
-          buf[2] = (MINT_SELECTOR_KECCAK >>> 8) & 0xff;
-          buf[3] = MINT_SELECTOR_KECCAK & 0xff;
-          console.log('[OPWA] mint selector patched →', '0x' + MINT_SELECTOR_KECCAK.toString(16).toUpperCase());
-          return buf;
-        };
-      }
-    }
-    return result;
-  };
-  (c as Record<string, boolean>)['__mintPatched'] = true;
-}
-
 const CONTRACT_ADDRESS: string =
   (import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string) ||
   'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp';
@@ -102,8 +42,29 @@ async function buildSenderAddress(publicKey: string): Promise<Address> {
   return new Address(new Uint8Array(32), pubkeyBytes);
 }
 
-// FIX (Bob s13): contrato é OP-20 fungível
-// OP_20_ABI já contém mint(address,uint256) — selector 961601633
+// ABI com OP_20 padrão
+const OPWAP_ABI: BitcoinInterfaceAbi = [
+  {
+    name: 'mint',
+    type: BitcoinAbiTypes.Function,
+    constant: false,
+    payable: true,
+    inputs: [
+      { name: 'to', type: ABIDataTypes.ADDRESS },
+      { name: 'amount', type: ABIDataTypes.UINT256 },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'balanceOf',
+    type: BitcoinAbiTypes.Function,
+    constant: true,
+    payable: false,
+    inputs: [{ name: 'account', type: ABIDataTypes.ADDRESS }],
+    outputs: [{ name: 'balance', type: ABIDataTypes.UINT256 }],
+  },
+];
+
 interface IMintableToken extends BaseContractProperties {
   balanceOf(owner: Address): Promise<CallResult<{ balance: bigint }, []>>;
   mint(to: Address, amount: bigint): Promise<CallResult<Record<string, never>, []>>;
@@ -112,6 +73,64 @@ interface IMintableToken extends BaseContractProperties {
 export interface InvestmentResult {
   txHash: string;
   opscanUrl: string;
+}
+
+// Patch: intercepta getSelector para mint retornar string que o SDK hasheia para 0x40c10f19
+// Descoberta: 0x40c10f19 = 1086394137 é keccak256, não SHA256
+// Solução: patch no writeSelector do writer dentro de encodeFunctionData
+function applyMintSelectorPatch(contract: unknown): (() => void) {
+  const c = contract as Record<string, unknown>;
+  const proto = Object.getPrototypeOf(c) as Record<string, unknown>;
+
+  // Patch no getSelector — retorna string que SHA256 → 0x40c10f19
+  // Como não há tal string, interceptamos writeSelector via patch temporário no proto
+  const origGetSelector = proto['getSelector'] as ((el: unknown) => string) | undefined;
+  if (!origGetSelector) return () => {};
+
+  proto['getSelector'] = function(element: Record<string, unknown>): string {
+    const result = origGetSelector.call(this, element);
+    if (element['name'] === 'mint') {
+      // Retornar a assinatura que o bitcoinAbiCoder.encodeSelector() converterá para 0x40c10f19
+      // Descoberta necessária: qual string o encodeSelector transforma em 40c10f19?
+      // Por enquanto usar a string original e fazer patch no nível do BinaryWriter
+      console.log('[OPWA] getSelector for mint:', result);
+    }
+    return result;
+  };
+
+  // Mais direto: patch no encodeFunctionData para modificar o writer ANTES de retornar
+  const origEncode = proto['encodeFunctionData'] as ((el: unknown, args: unknown[]) => unknown) | undefined;
+  if (!origEncode) return () => { proto['getSelector'] = origGetSelector; };
+
+  proto['encodeFunctionData'] = function(element: Record<string, unknown>, args: unknown[]) {
+    const writer = origEncode.call(this, element, args) as Record<string, unknown>;
+    if (element['name'] === 'mint') {
+      // Tentar todos os campos possíveis do BinaryWriter
+      const possibleBufs = ['_buffer', 'buffer', 'bytes', 'data', '_bytes', '_data'];
+      let patched = false;
+      for (const field of possibleBufs) {
+        const buf = writer[field];
+        if (buf instanceof Uint8Array && buf.length >= 4) {
+          buf[0] = 0x40; buf[1] = 0xc1; buf[2] = 0x0f; buf[3] = 0x19;
+          console.log(`[OPWA] selector patched via writer.${field} → 0x40C10F19`);
+          patched = true;
+          break;
+        }
+      }
+      if (!patched) {
+        // Inspecionar o writer para debug
+        console.log('[OPWA] writer keys:', Object.keys(writer));
+        const proto2 = Object.getPrototypeOf(writer);
+        if (proto2) console.log('[OPWA] writer proto keys:', Object.getOwnPropertyNames(proto2).slice(0, 20));
+      }
+    }
+    return writer;
+  };
+
+  return () => {
+    proto['getSelector'] = origGetSelector;
+    proto['encodeFunctionData'] = origEncode;
+  };
 }
 
 export function useInvestment() {
@@ -140,6 +159,8 @@ export function useInvestment() {
     if (satsAmount < BigInt(SATS_PER_TOKEN)) { setError('Minimum: 1000 sats (0.00001 BTC).'); return; }
 
     setLoading(true);
+    let removePatch: (() => void) | undefined;
+
     try {
       console.log('[OPWA] 1. building sender address...');
       const senderAddress = await buildSenderAddress(effectivePublicKey);
@@ -152,13 +173,14 @@ export function useInvestment() {
 
       const contract = getContract<IMintableToken>(
         CONTRACT_ADDRESS,
-        MINT_ABI,
+        OPWAP_ABI,
         provider,
         NETWORK,
         senderAddress,
       );
-      // Aplicar patch do selector keccak256 antes de qualquer chamada
-      patchContractMintSelector(contract);
+
+      // Aplicar patch para inspecionar o BinaryWriter e tentar corrigir selector
+      removePatch = applyMintSelectorPatch(contract);
 
       contract.setTransactionDetails({
         inputs: [],
@@ -172,7 +194,6 @@ export function useInvestment() {
         ],
       });
 
-      // tokenAmount em base units (8 decimais): sats / SATS_PER_TOKEN * 10^8
       const tokenAmount = (satsAmount * BigInt(10 ** 8)) / BigInt(SATS_PER_TOKEN);
 
       console.log('[OPWA] 3. simulating mint...', { satsAmount: satsAmount.toString(), tokenAmount: tokenAmount.toString() });
@@ -210,6 +231,7 @@ export function useInvestment() {
       console.error('OPWA MINT ERROR:', err);
       setError(msg);
     } finally {
+      if (removePatch) removePatch();
       setLoading(false);
     }
   }, [walletAddr, publicKey]);
