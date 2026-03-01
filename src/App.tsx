@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import Home from './pages/Home'
 import { Terms } from './pages/Terms'
@@ -11,14 +11,12 @@ export default function App() {
   const theme = useAppStore(s => s.theme)
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme) }, [theme])
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+      </Routes>
+    </Layout>
   )
 }
