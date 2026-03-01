@@ -16,19 +16,21 @@ import { useAppStore } from '../store/useAppStore';
 // FIX (Bob s13): contrato deployado usa keccak256 selector 0x40c10f19
 // OP_20_ABI envia SHA256 (961601633) — contrato rejeita
 // Usar ABI customizado com selector override para keccak256
+// FIX: campo 'selector' não existe no tipo FunctionBaseData do SDK
+// Usar cast para injetar keccak256 0x40c10f19 que é o que o contrato compilado espera
 const MINT_ABI: BitcoinInterfaceAbi = [
   {
     name: 'mint',
     type: BitcoinAbiTypes.Function,
     constant: false,
     payable: true,
-    selector: 0x40c10f19, // keccak256("mint(address,uint256)") — selector do contrato compilado
     inputs: [
       { name: 'to', type: ABIDataTypes.ADDRESS },
       { name: 'amount', type: ABIDataTypes.UINT256 },
     ],
     outputs: [],
-  },
+    ...({ selector: 0x40c10f19 } as object), // keccak256("mint(address,uint256)")
+  } as BitcoinInterfaceAbi[0],
   {
     name: 'balanceOf',
     type: BitcoinAbiTypes.Function,
