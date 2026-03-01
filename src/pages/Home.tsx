@@ -141,26 +141,49 @@ function AssetCard({ id, title, desc, apy, apyClass, change, available, total, t
   )
 }
 
+// Gato laranja SVG para o thumb do slider
+function CatThumb() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* corpo */}
+      <circle cx="10" cy="11" r="7" fill="#f97316"/>
+      {/* orelha esquerda */}
+      <polygon points="4,6 2,1 7,4" fill="#f97316"/>
+      {/* orelha direita */}
+      <polygon points="16,6 18,1 13,4" fill="#f97316"/>
+      {/* olhos */}
+      <ellipse cx="7.5" cy="10" rx="1.2" ry="1.4" fill="#1a1a1a"/>
+      <ellipse cx="12.5" cy="10" rx="1.2" ry="1.4" fill="#1a1a1a"/>
+      {/* nariz */}
+      <polygon points="10,12 9,13.2 11,13.2" fill="#ea580c"/>
+    </svg>
+  )
+}
+
 function Simulator() {
   const { btcPrice } = useAppStore()
   const price = btcPrice || 65000
 
-  // Estado
   const [currency, setCurrency] = useState<'btc' | 'usd'>('btc')
-  const [initialBtc, setInitialBtc] = useState(0.005)
-  const [monthlyBtc, setMonthlyBtc] = useState(0)
+  // strings para permitir apagar tudo
+  const [initialRaw, setInitialRaw] = useState('0.005')
+  const [monthlyRaw, setMonthlyRaw] = useState('0')
   const [years, setYears] = useState(1)
 
-  // Valores em USD para display
+  // parse seguro — retorna 0 se vazio/inválido
+  const parseRaw = (s: string) => { const v = parseFloat(s.replace(',', '.')); return isNaN(v) ? 0 : Math.max(0, v) }
+
+  const initialBtc = currency === 'btc' ? parseRaw(initialRaw) : parseRaw(initialRaw) / price
+  const monthlyBtc = currency === 'btc' ? parseRaw(monthlyRaw) : parseRaw(monthlyRaw) / price
+
   const initialUsd = initialBtc * price
   const monthlyUsd = monthlyBtc * price
 
-  // Helpers de display
-  const fmtBtc = (v: number) => v.toFixed(5) + ' BTC'
-  const fmtUsd = (v: number) => '$' + v.toLocaleString('en-US', { maximumFractionDigits: 0 })
+  const prefix = currency === 'btc' ? '₿ ' : '$ '
+  const fmtBtc = (v: number) => '₿ ' + v.toFixed(5)
+  const fmtUsd = (v: number) => '$ ' + v.toLocaleString('en-US', { maximumFractionDigits: 0 })
   const fmt = (btc: number) => currency === 'btc' ? fmtBtc(btc) : fmtUsd(btc * price)
 
-  // Cálculo composto com aporte mensal
   const OPWA_APY = 15
   const ALT_APY_A = 6.9
   const ALT_APY_B = 4.2
@@ -168,7 +191,6 @@ function Simulator() {
   function calcTotal(apy: number) {
     const r = apy / 100 / 12
     const n = years * 12
-    // FV = PV*(1+r)^n + PMT*((1+r)^n - 1)/r
     const fv = initialBtc * Math.pow(1 + r, n) +
       (r > 0 ? monthlyBtc * (Math.pow(1 + r, n) - 1) / r : monthlyBtc * n)
     return { total: fv, returns: fv - initialBtc - monthlyBtc * n }
@@ -178,9 +200,19 @@ function Simulator() {
   const altA = calcTotal(ALT_APY_A)
   const altB = calcTotal(ALT_APY_B)
 
-  // Stepper helpers
-  const stepInitial = currency === 'btc' ? 0.001 : 100 / price
-  const stepMonthly = currency === 'btc' ? 0.0001 : 10 / price
+  const stepInitial = currency === 'btc' ? 0.001 : 100
+  const stepMonthly = currency === 'btc' ? 0.0001 : 10
+
+  const bumpInitial = (dir: number) => {
+    const cur = parseRaw(initialRaw)
+    const next = Math.max(0, cur + dir * stepInitial)
+    setInitialRaw(currency === 'btc' ? next.toFixed(5) : next.toFixed(2))
+  }
+  const bumpMonthly = (dir: number) => {
+    const cur = parseRaw(monthlyRaw)
+    const next = Math.max(0, cur + dir * stepMonthly)
+    setMonthlyRaw(currency === 'btc' ? next.toFixed(5) : next.toFixed(2))
+  }
 
   const comparisons = [
     { name: 'OPWA Platform', apy: OPWA_APY, data: opwa, main: true, apyColor: '#22c55e' },
@@ -245,20 +277,23 @@ function Simulator() {
                 </span>
               </label>
               <div className="sim-stepper">
-                <button className="sim-stepper-btn" onClick={() => setInitialBtc(v => Math.max(0.00001, +(v - stepInitial).toFixed(8)))}>−</button>
-                <input
-                  className="sim-stepper-input"
-                  type="number"
-                  step={stepInitial}
-                  min={0.00001}
-                  value={currency === 'btc' ? +initialBtc.toFixed(8) : +initialUsd.toFixed(2)}
-                  onChange={e => {
-                    const v = parseFloat(e.target.value)
-                    if (!isNaN(v) && v > 0) setInitialBtc(currency === 'btc' ? v : v / price)
-                  }}
-                  style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15 }}
-                />
-                <button className="sim-stepper-btn" onClick={() => setInitialBtc(v => +(v + stepInitial).toFixed(8))}>+</button>
+                <button className="sim-stepper-btn" onClick={() => bumpInitial(-1)}>−</button>
+                <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
+                  <span style={{ position: 'absolute', left: 10, fontSize: 13, color: currency === 'btc' ? 'var(--accent)' : '#22c55e', fontWeight: 700, pointerEvents: 'none' }}>{prefix}</span>
+                  <input
+                    className="sim-stepper-input"
+                    type="text"
+                    inputMode="decimal"
+                    value={initialRaw}
+                    onChange={e => setInitialRaw(e.target.value)}
+                    onBlur={e => {
+                      const v = parseRaw(e.target.value)
+                      setInitialRaw(currency === 'btc' ? v.toFixed(5) : v.toFixed(2))
+                    }}
+                    style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15, paddingLeft: 22 }}
+                  />
+                </div>
+                <button className="sim-stepper-btn" onClick={() => bumpInitial(1)}>+</button>
               </div>
             </div>
 
@@ -270,27 +305,49 @@ function Simulator() {
                 </span>
               </label>
               <div className="sim-stepper">
-                <button className="sim-stepper-btn" onClick={() => setMonthlyBtc(v => Math.max(0, +(v - stepMonthly).toFixed(8)))}>−</button>
-                <input
-                  className="sim-stepper-input"
-                  type="number"
-                  step={stepMonthly}
-                  min={0}
-                  value={currency === 'btc' ? +monthlyBtc.toFixed(8) : +monthlyUsd.toFixed(2)}
-                  onChange={e => {
-                    const v = parseFloat(e.target.value)
-                    if (!isNaN(v) && v >= 0) setMonthlyBtc(currency === 'btc' ? v : v / price)
-                  }}
-                  style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15 }}
-                />
-                <button className="sim-stepper-btn" onClick={() => setMonthlyBtc(v => +(v + stepMonthly).toFixed(8))}>+</button>
+                <button className="sim-stepper-btn" onClick={() => bumpMonthly(-1)}>−</button>
+                <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
+                  <span style={{ position: 'absolute', left: 10, fontSize: 13, color: currency === 'btc' ? 'var(--accent)' : '#22c55e', fontWeight: 700, pointerEvents: 'none' }}>{prefix}</span>
+                  <input
+                    className="sim-stepper-input"
+                    type="text"
+                    inputMode="decimal"
+                    value={monthlyRaw}
+                    onChange={e => setMonthlyRaw(e.target.value)}
+                    onBlur={e => {
+                      const v = parseRaw(e.target.value)
+                      setMonthlyRaw(currency === 'btc' ? v.toFixed(5) : v.toFixed(2))
+                    }}
+                    style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15, paddingLeft: 22 }}
+                  />
+                </div>
+                <button className="sim-stepper-btn" onClick={() => bumpMonthly(1)}>+</button>
               </div>
             </div>
 
-            {/* Slider anos */}
+            {/* Slider anos com thumb gato laranja */}
             <div className="sim-field">
               <label>Duration: <span style={{ color: 'var(--accent)' }}>{years} year{years > 1 ? 's' : ''}</span></label>
-              <input type="range" className="sim-slider" min={1} max={10} step={1} value={years} onChange={e => setYears(+e.target.value)} />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="range"
+                  className="sim-slider sim-slider-cat"
+                  min={1} max={10} step={1}
+                  value={years}
+                  onChange={e => setYears(+e.target.value)}
+                />
+                {/* Gato posicionado sobre o thumb */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: `calc(${((years - 1) / 9) * 100}% - 10px)`,
+                  transform: 'translateY(-80%)',
+                  pointerEvents: 'none',
+                  lineHeight: 0,
+                }}>
+                  <CatThumb />
+                </div>
+              </div>
               <div className="sim-slider-labels"><span>1y</span><span>5y</span><span>10y</span></div>
             </div>
 
@@ -298,7 +355,7 @@ function Simulator() {
             <div className="sim-result">
               <div className="sim-result-label">OPWA Return ({OPWA_APY}% APY · {years}y)</div>
               <div className="sim-result-value">{fmt(opwa.returns)}</div>
-              <div className="sim-result-btc">Total acumulado: {fmt(opwa.total)}</div>
+              <div className="sim-result-btc">Total accumulated: {fmt(opwa.total)}</div>
             </div>
           </div>
 
