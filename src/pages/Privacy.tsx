@@ -1,33 +1,13 @@
-import React from 'react';
-export const Privacy: React.FC = () => (
-  <div style={{minHeight:'100vh',background:'var(--bg)',color:'var(--text-1)',padding:'80px 24px'}}>
-    <div style={{maxWidth:'800px',margin:'0 auto'}}>
-      <div style={{fontSize:'11px',fontWeight:'700',letterSpacing:'2px',color:'var(--accent)',textTransform:'uppercase',marginBottom:'12px'}}>Legal</div>
-      <h1 style={{fontSize:'2.5rem',fontWeight:'800',marginBottom:'8px'}}>Privacy Policy</h1>
-      <p style={{color:'var(--text-3)',fontSize:'13px',marginBottom:'40px'}}>Last updated: February 2026</p>
-      <div style={{background:'rgba(16,185,129,0.08)',border:'1px solid rgba(16,185,129,0.2)',borderRadius:'12px',padding:'16px 20px',marginBottom:'40px'}}>
-        <strong style={{color:'#10b981'}}>🔒 Privacy First:</strong> <span style={{color:'var(--text-2)'}}>OPWA is non-custodial and collects no personal data. Your wallet address is the only identifier on-chain.</span>
-      </div>
-      {[
-        ['1. Overview','OPWA is a decentralized, non-custodial protocol. We do not collect, store, or process personal information beyond what is inherent to blockchain interactions.'],
-        ['2. Information We Do Not Collect','We do not collect your name, email, phone number, IP address, or any personally identifiable information. We do not use cookies for tracking. We do not run analytics that identify individual users.'],
-        ['3. On-Chain Data','All transactions you initiate on OPWA are recorded on the Bitcoin blockchain via OP_NET. This data is public and immutable by design. Your wallet address and transaction history are visible on-chain.'],
-        ['4. Wallet Connection','When you connect a wallet (OPWallet, UniSat, XVerse), the connection happens entirely in your browser. We never receive or store your private keys, seed phrase, or wallet credentials.'],
-        ['5. Third-Party Services','The platform may link to third-party services (GitHub, OPScan, Mempool). These services have their own privacy policies which we do not control.'],
-        ['6. No Data Sales','We do not sell, rent, or share any user data with third parties. There is no data to sell.'],
-        ['7. Security','As a non-custodial protocol, your asset security depends entirely on your own wallet security practices. We recommend using hardware wallets and never sharing your seed phrase.'],
-        ['8. Changes to This Policy','We may update this policy as the protocol evolves. Updates will be reflected in the GitHub repository and on this page.'],
-        ['9. Contact','For privacy-related questions contact us via @opwabtc on Twitter or open an issue at github.com/Opwabtc/OPWABTC.'],
-      ].map(([title, body]) => (
-        <React.Fragment key={title}>
-          <h2 style={{fontSize:'1.1rem',fontWeight:'700',marginBottom:'10px',marginTop:'36px',color:'var(--text-1)'}}>{title}</h2>
-          <p style={{color:'var(--text-2)',lineHeight:'1.9',marginBottom:'8px'}}>{body}</p>
-        </React.Fragment>
-      ))}
-      <div style={{marginTop:'60px',paddingTop:'24px',borderTop:'1px solid var(--border)',display:'flex',gap:'24px'}}>
-        <a href="/terms" style={{color:'var(--accent)',textDecoration:'none',fontSize:'14px'}}>Terms of Service →</a>
-        <a href="/" style={{color:'var(--text-3)',textDecoration:'none',fontSize:'14px'}}>← Back to OPWA</a>
-      </div>
+export function Privacy() {
+  return (
+    <div style={{maxWidth:'800px',margin:'120px auto',padding:'0 40px'}}>
+      <h1 style={{fontFamily:'Syne,sans-serif',fontWeight:800,fontSize:'2rem',marginBottom:'24px'}}>Privacy Policy</h1>
+      <p style={{color:'var(--text-2)',lineHeight:1.7,marginBottom:'16px'}}>
+        OPWA does not collect personal data. Wallet addresses are read locally from your browser extension only.
+      </p>
+      <p style={{color:'var(--text-2)',lineHeight:1.7}}>
+        No analytics, no cookies, no third-party trackers. Full privacy policy will be published prior to mainnet launch.
+      </p>
     </div>
-  </div>
-);
+  )
+}

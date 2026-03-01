@@ -2,10 +2,10 @@ import { TransactionParameters } from 'opnet';
 import { useOPNETWallet } from './useOPNETWallet';
 
 export function useSendTransaction() {
-  const { provider, signer, network, address, walletInstance, walletAddress, mldsaPublicKey } = useOPNETWallet();
+  const { provider, network, walletAddress } = useOPNETWallet();
 
   async function executeTransaction(simulation: any) {
-    if (!provider || !signer || !network || !address) {
+    if (!provider || !network || !walletAddress) {
       throw new Error('Wallet not connected');
     }
 
@@ -13,12 +13,13 @@ export function useSendTransaction() {
     const feeRateResult = await (provider as any).getFeeRate?.() || { result: 10 };
     const feeRate = feeRateResult?.result ?? 10; // fallback 10 sat/vB
 
-    // 2. Build transaction parameters
+    // 2. Build transaction parameters.
+    // FRONTEND RULE: signer=null and mldsaSigner=null — the wallet extension handles signing.
     const params: TransactionParameters = {
-      signer:                   signer as any,                   // UnisatSigner from hook
-      mldsaSigner:              mldsaPublicKey as any,          // MLDSA public key
-      refundTo:                 (walletInstance as any)?.p2tr ?? walletAddress!, // refund change
-      maximumAllowedSatToSpend: 100_000n,                 // adjust per action
+      signer:                   null as any,
+      mldsaSigner:              null as any,
+      refundTo:                 walletAddress,
+      maximumAllowedSatToSpend: 100_000n,
       feeRate:                  feeRate,
       network:                  network,
     };

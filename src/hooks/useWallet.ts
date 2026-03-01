@@ -1,112 +1,81 @@
-import { useCallback } from 'react';
-import { useOPNETWallet } from '@/hooks/useOPNETWallet';
-import { useAppStore } from '@/store/useAppStore';
-import { getBalance, getTokenBalance } from '@/lib/opnet';
+import { useAppStore } from '../store/useAppStore'
 
-// Fill in after contract deployment
-const OPWA_TOKEN_ADDRESS = import.meta.env.VITE_OPWA_TOKEN_ADDRESS as string | undefined;
+function showToast(type: string, title: string, desc: string) {
+  window.dispatchEvent(new CustomEvent('opwa-toast', { detail: { type, title, desc } }))
+}
 
-export const useWallet = () => {
-  const { setWallet, addNotification, setIsLoading, isLoading, wallet } = useAppStore();
+export function useWallet() {
+  const { setWallet, disconnect: storeDisconnect } = useAppStore.getState()
 
-  const {
-    openConnectModal,
-    disconnect: sdkDisconnect,
-    walletAddress,
-    connecting,
-    isConnected,
-    shortAddress,
-    btcBalance,
-    network: walletNetwork,
-  } = useOPNETWallet();
-
-  /** Open the OP_WALLET / WalletConnect modal to request accounts. */
-  const connect = useCallback(async () => {
-    setIsLoading(true);
+  async function connect(name: string) {
     try {
-      await openConnectModal();
-      // After modal resolves, walletAddress will be populated by the SDK.
-      // The useEffect below syncs state to Zustand.
-    } catch (error) {
-      console.error('Wallet connection failed:', error);
-      addNotification({
-        type: 'error',
-        title: 'Connection Failed',
-        message: error instanceof Error ? error.message : 'Failed to connect wallet',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [openConnectModal, setIsLoading, addNotification]);
+      showToast('info', 'Connecting...', 'Waiting for ' + name + ' wallet approval.')
+      let address: string | null = null, balanceSats = 0, publicKey: string | null = null
 
-  /** Disconnect wallet and clear Zustand state. */
-  const disconnect = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      await sdkDisconnect();
-      setWallet({ isConnected: false, balance: 0, network: 'testnet' });
-    } catch (error) {
-      console.error('Disconnect failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [sdkDisconnect, setWallet, setIsLoading]);
+      if (name === 'OP_Wallet') {
+        if (!window.opnet) { showToast('error', 'OP_Wallet Not Found', 'Install OP_Wallet from Chrome Web Store.'); return }
+        const accs = await window.opnet.requestAccounts()
+        address = accs?.[0] || null
+        if (!address) { showToast('error', 'No Account', 'No account returned by OP_Wallet.'); return }
+        try { publicKey = await window.opnet.getPublicKey() } catch(_) {}
+        try { const b = await window.opnet.getBalance(); balanceSats = b?.total ?? b?.confirmed ?? 0 } catch(_) {}
 
-  /**
-   * Fetch fresh BTC balance from OP_NET for the currently connected address.
-   * Returns balance in satoshis as a number.
-   */
-  const fetchBalance = useCallback(async (): Promise<number> => {
-    if (!walletAddress) return 0;
-    try {
-      const sats = await getBalance(walletAddress);
-      return Number(sats);
-    } catch {
-      // Fallback to SDK-provided balance when RPC call fails
-      return btcBalance ? Math.round(parseFloat(btcBalance) * 1e8) : 0;
-    }
-  }, [walletAddress, btcBalance]);
+      } else if (name === 'Unisat') {
+        if (!window.unisat) { showToast('error', 'UniSat Not Found', 'Install UniSat wallet.'); return }
+        const accs = await window.unisat.requestAccounts()
+        address = accs?.[0] || null
+        if (!address) { showToast('error', 'No Account', 'No account returned by UniSat.'); return }
+        try { publicKey = await window.unisat.getPublicKey() } catch(_) {}
+        try { const b = await window.unisat.getBalance(); balanceSats = b?.total ?? b?.confirmed ?? 0 } catch(_) {}
 
-  /**
-   * Fetch OPWA token balance for the connected address.
-   * Returns raw base-unit amount (8 decimals).
-   */
-  const fetchOPWABalance = useCallback(async (): Promise<bigint> => {
-    if (!walletAddress || !OPWA_TOKEN_ADDRESS) return 0n;
-    try {
-      return await getTokenBalance(OPWA_TOKEN_ADDRESS, walletAddress);
-    } catch {
-      return 0n;
-    }
-  }, [walletAddress]);
+      } else if (name === 'Xverse') {
+        const xverse = window.BitcoinProvider || window.XverseProviders?.BitcoinProvider
+        if (!xverse) { showToast('error', 'Xverse Not Found', 'Install Xverse wallet.'); return }
+        const res = await xverse.request('getAccounts', { purposes: ['payment', 'ordinals'] })
+        const accts = res?.result?.addresses || []
+        address = accts?.[0]?.address || null
+        publicKey = accts?.[0]?.publicKey || null
+        if (!address) { showToast('error', 'No Account', 'No account returned by Xverse.'); return }
 
-  /**
-   * Sync wallet SDK state → Zustand store.
-   * Call this after connect() or when the wallet address changes.
-   */
-  const syncWalletState = useCallback(async () => {
-    if (!isConnected || !walletAddress) {
-      setWallet({ isConnected: false, balance: 0, network: 'testnet' });
-      return;
-    }
-    const balance = await fetchBalance();
-    // WalletConnectNetwork extends bitcoin Network; bech32 === 'bc' means mainnet
-    const net: 'mainnet' | 'testnet' =
-      walletNetwork?.bech32 === 'bc' ? 'mainnet' : 'testnet';
-    setWallet({ isConnected: true, address: walletAddress, balance, network: net });
-  }, [isConnected, walletAddress, fetchBalance, setWallet, walletNetwork]);
+      } else if (name === 'OKX') {
+        if (!window.okxwallet?.bitcoin) { showToast('error', 'OKX Not Found', 'Install OKX Wallet.'); return }
+        const res = await window.okxwallet.bitcoin.requestAccounts()
+        address = res?.[0] || null
+        if (!address) { showToast('error', 'No Account', 'No account returned by OKX.'); return }
+        try { const b = await window.okxwallet.bitcoin.getBalance(); balanceSats = b?.total ?? 0 } catch(_) {}
+      }
 
-  return {
-    wallet,
-    isLoading: isLoading || connecting,
-    connect,
-    disconnect,
-    fetchBalance,
-    fetchOPWABalance,
-    syncWalletState,
-    shortAddress,
-    btcBalance,
-    // True when at least one compatible wallet extension is detected by the SDK
-    isWalletAvailable: true,
-  };
-};
+      if (!address) { showToast('error', 'Connection Failed', 'Could not get address from wallet.'); return }
+
+      setWallet({ connected: true, wallet: name, walletAddr: address, walletSats: balanceSats, publicKey })
+      const short = address.slice(0,8) + '...' + address.slice(-6)
+      showToast('success', 'Wallet Connected', name + ' connected - ' + short)
+
+      const provider = window.opnet || window.unisat || null
+      if (provider?.on) {
+        provider.on('accountsChanged', (accs: string[]) => {
+          if (!accs?.length) { disconnect(); return }
+          setWallet({ walletAddr: accs[0] })
+          showToast('info', 'Account Changed', accs[0].slice(0,8) + '...' + accs[0].slice(-6))
+        })
+        provider.on('disconnect', () => disconnect())
+      }
+    } catch(err: any) {
+      showToast('error', 'Connection Failed', err?.message || 'User rejected or wallet error.')
+    }
+  }
+
+  function disconnect() {
+    storeDisconnect()
+    showToast('info', 'Wallet Disconnected', 'You have safely signed out.')
+  }
+
+  function requireWallet() {
+    const { connected, wallet } = useAppStore.getState()
+    if (!connected) { showToast('info', 'Wallet Required', 'Connect your wallet to invest.'); return false }
+    showToast('success', 'Initiating Transaction...', 'Confirm in your ' + wallet + ' wallet.')
+    return true
+  }
+
+  return { connect, disconnect, requireWallet }
+}

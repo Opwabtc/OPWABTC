@@ -1,11 +1,10 @@
-// The @btc-vision/walletconnect library manages window detection internally.
-// This file only documents what the SDK exposes for reference.
-
+export {}
 declare global {
   interface Window {
-    opwallet?: unknown;   // OPWallet extension (detected by SDK)
-    xverse?:   unknown;   // Xverse extension (detected by SDK)
+    opnet?: any
+    unisat?: any
+    BitcoinProvider?: any
+    XverseProviders?: { BitcoinProvider?: any }
+    okxwallet?: { bitcoin?: any }
   }
 }
-
-export {};
