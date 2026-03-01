@@ -745,7 +745,7 @@ section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
   border-top: 0px solid var(--border);
 }
 .ativo-expand-panel.open {
-  max-height: 400px;
+  max-height: 600px;
   border-top: 1px solid var(--border);
 }
 .ativo-expand-inner {
