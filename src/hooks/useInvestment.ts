@@ -14,8 +14,11 @@ import { networks, Satoshi } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
 
-// FIX 1: nome correto do env var (era VITE_OPWAP_ com P a mais)
-const CONTRACT_ADDRESS = import.meta.env.VITE_OPWA_TOKEN_ADDRESS as string;
+// Endereço do contrato OPWAP deployado na testnet OPNet
+// Usa env var se configurada no Vercel, senão usa o endereço hardcoded como fallback
+const CONTRACT_ADDRESS: string =
+  (import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string) ||
+  'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp';
 const NETWORK = networks.opnetTestnet;
 export const SATS_PER_TOKEN = 1000;
 export const BTC_TO_SATS = 100_000_000;
