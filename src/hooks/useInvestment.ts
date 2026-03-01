@@ -38,36 +38,36 @@ const MINT_ABI: BitcoinInterfaceAbi = [
   },
 ];
 
-// FIX 2: constrói Address manualmente via window.opnet (sem useWalletConnect)
-// window.opnet.getMLDSAPublicKey() → raw key → SHA-256 → hashedMLDSAKey
-// Para wallets sem MLDSA (Unisat/Xverse/OKX), usa SHA-256 do publicKey como fallback
+// Constrói Address via window.opnet sem depender de useWalletConnect.
+// O construtor Address(mldsaBytes, pubkeyBytes) auto-hasha a raw MLDSA key
+// (1312/1952/2592 bytes → SHA-256 internamente), logo não precisamos de hash manual.
+// Para wallets sem MLDSA (Unisat/Xverse/OKX): Address(new Uint8Array(32), pubkeyBytes)
+// — zero hash no slot MLDSA, identificado apenas pela pubkey clássica.
 function _hexToBytes(hex: string): Uint8Array {
   const clean = hex.replace(/^0x/, '');
-  const bytes = new Uint8Array(clean.length / 2);
-  for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  const out = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < out.length; i++) {
+    out[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
   }
-  return bytes;
-}
-function _bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  return out;
 }
 async function buildSenderAddress(publicKey: string): Promise<Address> {
-  let sourceBytes: Uint8Array;
+  const pubkeyBytes = _hexToBytes(publicKey);
   // Cast to any: @btc-vision/transaction declara window.opnet como OPWallet
-  // (sem getMLDSAPublicKey), mas a extensão OP_Wallet expõe esse método em runtime
+  // sem getMLDSAPublicKey, mas OP_Wallet expõe esse método em runtime
   const opnet = window.opnet as any; // eslint-disable-line @typescript-eslint/no-explicit-any
   if (opnet && typeof opnet.getMLDSAPublicKey === 'function') {
-    const raw: string = await opnet.getMLDSAPublicKey();
-    sourceBytes = _hexToBytes(raw);
-  } else {
-    // wallets não-MLDSA (Unisat/Xverse/OKX): usa SHA-256 do publicKey como fallback
-    sourceBytes = _hexToBytes(publicKey);
+    try {
+      const raw: string = await opnet.getMLDSAPublicKey();
+      const mldsaBytes = _hexToBytes(raw);
+      // construtor auto-hasha raw MLDSA → não precisamos de crypto.subtle
+      return new Address(mldsaBytes, pubkeyBytes);
+    } catch (_) {
+      // getMLDSAPublicKey falhou → cai para fallback abaixo
+    }
   }
-  // sourceBytes.buffer é sempre ArrayBuffer aqui (criado em _hexToBytes via new Uint8Array)
-  const hashBuf = await crypto.subtle.digest('SHA-256', sourceBytes.buffer as ArrayBuffer);
-  const hashedMLDSAKey = '0x' + _bytesToHex(new Uint8Array(hashBuf));
-  return Address.fromString(hashedMLDSAKey, publicKey);
+  // Fallback: wallets sem MLDSA — zero hash no 1º slot, pubkey clássica no 2º
+  return new Address(new Uint8Array(32), pubkeyBytes);
 }
 
 // FIX 3: NAO extende IOP20Contract — usa BaseContractProperties direto
