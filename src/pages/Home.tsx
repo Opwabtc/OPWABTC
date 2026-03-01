@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react'
+﻿import React, { useState, useCallback } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { useWallet } from '../hooks/useWallet'
+import SimulatorDiffCard from "../components/SimulatorDiffCard"
 import { useInvestment } from '../hooks/useInvestment'
 
 const SATS_PER_TOKEN = 1000
