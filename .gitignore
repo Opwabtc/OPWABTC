@@ -19,3 +19,14 @@ coverage/
 .vercel
 OPWACoin/
 index_bob_visual.html
+
+fix_*.cjs
+gen_*.cjs
+gen_*.js
+dump_*.cjs
+dump_*.js
+code_dump.txt
+claude-context.md
+*.sh
+opwa_fix*.py
+repo-snapshot.sh
