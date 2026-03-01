@@ -217,12 +217,20 @@ export default function Home() {
   const { btcPrice } = useAppStore()
   const { connect } = useWallet()
   const { connected } = useAppStore()
+  const [activeFilter, setActiveFilter] = useState('all')
+  const [search, setSearch] = useState('')
 
   const assets = [
     { id: 'ID-001', title: 'Asset Alpha', type: 'residential', badgeClass: 'badge-a', badgeLabel: 'Residential', desc: 'Tokenized residential property. Fractional ownership settled on Bitcoin via OP_NET smart contract.', apy: '15%', apyClass: 'pos', change: '+1.2%', available: 450, total: 1000, delay: 'd1' },
     { id: 'ID-002', title: 'Asset Beta', type: 'commercial', badgeClass: 'badge-b', badgeLabel: 'Commercial', desc: 'Commercial office space tokenized on OP_NET. Dividends distributed in satoshis monthly.', apy: '12%', apyClass: 'gold', change: '+0.8%', available: 700, total: 1000, delay: 'd2', imgStyle: { background: 'linear-gradient(135deg,#1a1a2e,#252540)' } as React.CSSProperties },
     { id: 'ID-003', title: 'Asset Gamma', type: 'industrial', badgeClass: 'badge-warn', badgeLabel: 'Industrial', desc: 'Industrial logistics hub. Tokenization pending final regulatory clearance. Join the waitlist.', apy: '~18%', apyClass: 'gold', change: '—', available: 300, total: 1000, delay: 'd3', imgStyle: { background: 'linear-gradient(135deg,#1a2e1a,#1a2520)' } as React.CSSProperties },
   ]
+
+  const filteredAssets = assets.filter(a => {
+    const matchType = activeFilter === 'all' || a.type === activeFilter
+    const matchSearch = a.title.toLowerCase().includes(search.toLowerCase())
+    return matchType && matchSearch
+  })
 
   return (
     <>
@@ -273,20 +281,17 @@ export default function Home() {
         </div>
         <div className="filter-row">
           <div className="filter-tabs">
-            <button className="filter-tab active">All</button>
-            <button className="filter-tab">Residential</button>
-            <button className="filter-tab">Commercial</button>
-            <button className="filter-tab">Industrial</button>
+            {["all","residential","commercial","industrial"].map(f => (<button key={f} className={`filter-tab${activeFilter===f ? " active" : ""}`} onClick={() => setActiveFilter(f)}>{f.charAt(0).toUpperCase()+f.slice(1)}</button>))}
           </div>
           <div className="filter-right">
             <select className="filter-select"><option>Sort: APY</option><option>Sort: Price</option><option>Sort: Volume</option></select>
             <div className="filter-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <input type="text" placeholder="Search asset..." />
+              <input type="text" placeholder="Search asset..." value={search} onChange={e => setSearch(e.target.value)} />
             </div>
           </div>
         </div>
-        <div className="ativos-grid">{assets.map(a => <AssetCard key={a.id} {...a} />)}</div>
+        <div className="ativos-grid">{filteredAssets.map(a => <AssetCard key={a.id} {...a} />)}</div>
       </section>
 
       <div className="section-divider" />
