@@ -1,25 +1,37 @@
-import { create } from 'zustand'
+﻿import { create } from 'zustand'
 
 interface AppState {
-  connected: boolean; wallet: string | null; walletAddr: string | null
-  walletSats: number; publicKey: string | null; network: string
-  btcPrice: number | null; gasPrice: number; theme: 'dark' | 'light'
-  setWallet: (d: Partial<AppState>) => void
+  connected: boolean
+  wallet: string
+  walletAddr: string
+  walletSats: number
+  publicKey: string
+  network: string
+  btcPrice: number
+  gasPrice: number
+  theme: 'dark' | 'light'
+  setWallet: (wallet: string, addr: string, sats: number, pubKey: string) => void
   disconnect: () => void
-  setPrices: (btc: number | null, gas: number) => void
+  setPrices: (btcPrice: number, gasPrice: number) => void
   setNetwork: (network: string) => void
-  setTheme: (t: 'dark' | 'light') => void
+  setTheme: (theme: 'dark' | 'light') => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  connected: false, wallet: null, walletAddr: null,
-  walletSats: 0, publicKey: null, network: 'OP_NET Testnet',
-  btcPrice: null, gasPrice: 10,
-  theme: (typeof localStorage !== 'undefined'
-    ? (localStorage.getItem('opwa-theme') as 'dark' | 'light') : null) || 'dark',
-  setWallet: (d) => set(d),
-  disconnect: () => set({ connected: false, wallet: null, walletAddr: null, walletSats: 0, publicKey: null }),
+  connected: false,
+  wallet: '',
+  walletAddr: '',
+  walletSats: 0,
+  publicKey: '',
+  network: 'testnet',
+  btcPrice: 0,
+  gasPrice: 1,
+  theme: 'dark',
+  setWallet: (wallet, walletAddr, walletSats, publicKey) =>
+    set({ connected: true, wallet, walletAddr, walletSats, publicKey }),
+  disconnect: () =>
+    set({ connected: false, wallet: '', walletAddr: '', walletSats: 0, publicKey: '' }),
   setPrices: (btcPrice, gasPrice) => set({ btcPrice, gasPrice }),
   setNetwork: (network) => set({ network }),
-  setTheme: (theme) => { localStorage.setItem('opwa-theme', theme); set({ theme }) },
+  setTheme: (theme) => set({ theme }),
 }))
