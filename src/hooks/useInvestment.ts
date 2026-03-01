@@ -1,6 +1,5 @@
 import {
   getContract,
-  OP_20_ABI,
   JSONRpcProvider,
   TransactionOutputFlags,
   ABIDataTypes,
@@ -14,35 +13,30 @@ import { networks, Satoshi } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
 
-// Endereço do contrato OPWAP deployado na testnet OPNet
-// Usa env var se configurada no Vercel, senão usa o endereço hardcoded como fallback
 const CONTRACT_ADDRESS: string =
   (import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string) ||
   'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp';
+
 const NETWORK = networks.opnetTestnet;
 export const SATS_PER_TOKEN = 1000;
 export const BTC_TO_SATS = 100_000_000;
 
+// FIX (Bob): contrato é OP-721, mint() recebe string metadataURI — NÃO address
+// Selector correto: mint(string) conforme contrato deployado
 const MINT_ABI: BitcoinInterfaceAbi = [
-  ...OP_20_ABI,
   {
     name: 'mint',
     type: BitcoinAbiTypes.Function,
     constant: false,
     inputs: [
-      { name: 'to', type: ABIDataTypes.ADDRESS },
+      { name: 'metadataURI', type: ABIDataTypes.STRING },
     ],
     outputs: [
-      { name: 'tokensMinted', type: ABIDataTypes.UINT256 },
+      { name: 'tokenId', type: ABIDataTypes.UINT256 },
     ],
   },
 ];
 
-// Constrói Address via window.opnet sem depender de useWalletConnect.
-// O construtor Address(mldsaBytes, pubkeyBytes) auto-hasha a raw MLDSA key
-// (1312/1952/2592 bytes → SHA-256 internamente), logo não precisamos de hash manual.
-// Para wallets sem MLDSA (Unisat/Xverse/OKX): Address(new Uint8Array(32), pubkeyBytes)
-// — zero hash no slot MLDSA, identificado apenas pela pubkey clássica.
 function _hexToBytes(hex: string): Uint8Array {
   const clean = hex.replace(/^0x/, '');
   const out = new Uint8Array(clean.length / 2);
@@ -51,29 +45,25 @@ function _hexToBytes(hex: string): Uint8Array {
   }
   return out;
 }
+
 async function buildSenderAddress(publicKey: string): Promise<Address> {
   const pubkeyBytes = _hexToBytes(publicKey);
-  // Cast to any: @btc-vision/transaction declara window.opnet como OPWallet
-  // sem getMLDSAPublicKey, mas OP_Wallet expõe esse método em runtime
   const opnet = window.opnet as any; // eslint-disable-line @typescript-eslint/no-explicit-any
   if (opnet && typeof opnet.getMLDSAPublicKey === 'function') {
     try {
       const raw: string = await opnet.getMLDSAPublicKey();
       const mldsaBytes = _hexToBytes(raw);
-      // construtor auto-hasha raw MLDSA → não precisamos de crypto.subtle
       return new Address(mldsaBytes, pubkeyBytes);
-    } catch (_) {
-      // getMLDSAPublicKey falhou → cai para fallback abaixo
-    }
+    } catch (_) {}
   }
-  // Fallback: wallets sem MLDSA — zero hash no 1º slot, pubkey clássica no 2º
   return new Address(new Uint8Array(32), pubkeyBytes);
 }
 
-// FIX 3: NAO extende IOP20Contract — usa BaseContractProperties direto
+// FIX (Bob): interface corrigida — mint(metadataURI: string), não mint(to: Address)
+// Recipient é sempre Blockchain.tx.origin (inferido do signer)
 interface IMintableToken extends BaseContractProperties {
   balanceOf(owner: Address): Promise<CallResult<{ balance: bigint }, []>>;
-  mint(to: Address): Promise<CallResult<{ tokensMinted: bigint }, []>>;
+  mint(metadataURI: string): Promise<CallResult<{ tokenId: bigint }, []>>;
 }
 
 export interface InvestmentResult {
@@ -82,8 +72,6 @@ export interface InvestmentResult {
 }
 
 export function useInvestment() {
-  // FIX 4: lê publicKey do Zustand store (salvo por useWallet.ts no connect)
-  // em vez de useWalletConnect() que retorna null quando não inicializado
   const { walletAddr, publicKey } = useAppStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -93,38 +81,20 @@ export function useInvestment() {
     setError(null);
     setResult(null);
 
-    if (!walletAddr) {
-      setError('Connect your wallet first.');
-      return;
-    }
+    if (!walletAddr) { setError('Connect your wallet first.'); return; }
 
-    // publicKey pode ser null no store se getPublicKey() falhou no connect
-    // tenta obtê-lo on-demand via window.opnet como fallback
     let effectivePublicKey = publicKey;
     if (!effectivePublicKey && window.opnet) {
       try {
         effectivePublicKey = await (window.opnet as any).getPublicKey(); // eslint-disable-line @typescript-eslint/no-explicit-any
-        console.log('[OPWA] publicKey obtido on-demand:', effectivePublicKey);
       } catch (_) {}
     }
-    if (!effectivePublicKey) {
-      setError('Could not retrieve public key from wallet. Reconnect and try again.');
-      return;
-    }
-    if (!CONTRACT_ADDRESS) {
-      setError('Contract address not configured.');
-      return;
-    }
-    if (btcAmount <= 0) {
-      setError('Enter a valid BTC amount.');
-      return;
-    }
+    if (!effectivePublicKey) { setError('Could not retrieve public key. Reconnect and try again.'); return; }
+    if (!CONTRACT_ADDRESS) { setError('Contract address not configured.'); return; }
+    if (btcAmount <= 0) { setError('Enter a valid BTC amount.'); return; }
 
     const satsAmount = BigInt(Math.round(btcAmount * BTC_TO_SATS));
-    if (satsAmount < BigInt(SATS_PER_TOKEN)) {
-      setError('Minimum: 1000 sats (0.00001 BTC).');
-      return;
-    }
+    if (satsAmount < BigInt(SATS_PER_TOKEN)) { setError('Minimum: 1000 sats (0.00001 BTC).'); return; }
 
     setLoading(true);
     try {
@@ -157,8 +127,11 @@ export function useInvestment() {
         ],
       });
 
+      // FIX (Bob): mint() recebe metadataURI string — recipient inferido do tx.origin
+      // URI pode ser IPFS real ou placeholder enquanto não há metadata real
       console.log('[OPWA] 3. simulating mint...');
-      const sim = await contract.mint(senderAddress);
+      const metadataURI = `ipfs://opwa-property/${CONTRACT_ADDRESS}/${Date.now()}`;
+      const sim = await contract.mint(metadataURI);
       console.log('[OPWA] 4. sim result:', sim);
 
       if (!sim || 'error' in sim || (sim as any).revert || (sim as any).ok === false) {
@@ -183,7 +156,6 @@ export function useInvestment() {
 
       if (!receipt) throw new Error('Transaction rejected or timed out.');
 
-      // FIX 4: campo correto e transactionId, NAO receipt.hash
       const txHash: string = receipt.transactionId ?? '';
       const opscanUrl = 'https://opscan.org/transactions/' + txHash + '?network=testnet';
       setResult({ txHash, opscanUrl });
@@ -195,17 +167,13 @@ export function useInvestment() {
     } finally {
       setLoading(false);
     }
-  }, [walletAddr, publicKey]); // effectivePublicKey é derivado de publicKey dentro do callback
+  }, [walletAddr, publicKey]);
 
-  const reset = useCallback(() => {
-    setError(null);
-    setResult(null);
-  }, []);
+  const reset = useCallback(() => { setError(null); setResult(null); }, []);
 
   return { invest, loading, error, result, reset };
 }
 
 export function calcTokens(btcAmount: number): number {
-  const sats = Math.round(btcAmount * BTC_TO_SATS);
-  return Math.floor(sats / SATS_PER_TOKEN);
+  return Math.floor(Math.round(btcAmount * BTC_TO_SATS) / SATS_PER_TOKEN);
 }
