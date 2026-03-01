@@ -16,8 +16,8 @@ import { useAppStore } from '../store/useAppStore';
 // FIX (Bob s13): contrato deployado usa keccak256 selector 0x40c10f19
 // OP_20_ABI envia SHA256 (961601633) — contrato rejeita
 // Usar ABI customizado com selector override para keccak256
-// FIX: campo 'selector' não existe no tipo FunctionBaseData do SDK
-// Usar cast para injetar keccak256 0x40c10f19 que é o que o contrato compilado espera
+// FIX (Bob s13 — definitivo): SDK sempre recomputa selector via SHA256(getSelector())
+// Contrato deployado usa keccak256 0x40c10f19. Patch no encodeFunctionData para interceptar mint.
 const MINT_ABI: BitcoinInterfaceAbi = [
   {
     name: 'mint',
@@ -29,8 +29,7 @@ const MINT_ABI: BitcoinInterfaceAbi = [
       { name: 'amount', type: ABIDataTypes.UINT256 },
     ],
     outputs: [],
-    ...({ selector: 0x40c10f19 } as object), // keccak256("mint(address,uint256)")
-  } as BitcoinInterfaceAbi[0],
+  },
   {
     name: 'balanceOf',
     type: BitcoinAbiTypes.Function,
@@ -40,6 +39,32 @@ const MINT_ABI: BitcoinInterfaceAbi = [
     outputs: [{ name: 'balance', type: ABIDataTypes.UINT256 }],
   },
 ];
+
+// Selector keccak256 correto do contrato deployado
+const MINT_SELECTOR_KECCAK = 0x40c10f19;
+
+// Patch: intercepta encodeFunctionData para substituir selector de mint
+function patchContractMintSelector(contract: unknown): void {
+  const c = contract as Record<string, unknown>;
+  const proto = Object.getPrototypeOf(c) as Record<string, unknown>;
+  const original = proto['encodeFunctionData'] as ((el: unknown, args: unknown[]) => Uint8Array) | undefined;
+  if (!original || (c as Record<string, boolean>)['__mintPatched']) return;
+  proto['encodeFunctionData'] = function(element: Record<string, unknown>, args: unknown[]) {
+    const result: Uint8Array = original.call(this, element, args);
+    if (element['name'] === 'mint') {
+      // Substituir primeiros 4 bytes pelo selector keccak256 correto
+      const patched = new Uint8Array(result);
+      patched[0] = (MINT_SELECTOR_KECCAK >>> 24) & 0xff;
+      patched[1] = (MINT_SELECTOR_KECCAK >>> 16) & 0xff;
+      patched[2] = (MINT_SELECTOR_KECCAK >>> 8) & 0xff;
+      patched[3] = MINT_SELECTOR_KECCAK & 0xff;
+      console.log('[OPWA] mint selector patched →', '0x' + MINT_SELECTOR_KECCAK.toString(16));
+      return patched;
+    }
+    return result;
+  };
+  (c as Record<string, boolean>)['__mintPatched'] = true;
+}
 
 const CONTRACT_ADDRESS: string =
   (import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string) ||
@@ -125,6 +150,8 @@ export function useInvestment() {
         NETWORK,
         senderAddress,
       );
+      // Aplicar patch do selector keccak256 antes de qualquer chamada
+      patchContractMintSelector(contract);
 
       contract.setTransactionDetails({
         inputs: [],
