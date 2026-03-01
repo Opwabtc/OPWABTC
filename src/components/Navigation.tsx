@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAppStore } from '../store/useAppStore'
 import { useWallet } from '../hooks/useWallet'
 import { ThemeToggle } from './ThemeToggle'
@@ -10,6 +11,7 @@ export function Navigation() {
   const [ddOpen, setDdOpen] = useState(false)
   const { connected, walletAddr, walletSats, btcPrice, gasPrice } = useAppStore()
   const { disconnect } = useWallet()
+  const navigate = useNavigate()
 
   const shortAddr = walletAddr ? walletAddr.slice(0, 8) + '…' + walletAddr.slice(-6) : ''
   const btcBal = (walletSats / 1e8).toFixed(6)
@@ -105,6 +107,15 @@ export function Navigation() {
                     </div>
                   )}
                   <div className="wd-divider" />
+                  {/* Dashboard link no dropdown */}
+                  <button className="wd-action" onClick={() => { navigate('/dashboard'); setDdOpen(false) }} style={{ color: 'var(--accent)', fontWeight: 700 }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    My Dashboard
+                  </button>
+                  <div className="wd-divider" />
                   <div className="wd-actions">
                     <button className="wd-action" onClick={copyAddress}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -146,7 +157,17 @@ export function Navigation() {
               {l.label}
             </a>
           ))}
-          <div style={{ padding: '12px 14px', borderTop: '1px solid var(--border)', marginTop: 8 }}>
+          <div style={{ padding: '12px 14px', borderTop: '1px solid var(--border)', marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {connected && (
+              <Link to="/dashboard" className="mobile-nav-link" onClick={() => setMenuOpen(false)}
+                style={{ color: 'var(--accent)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                My Dashboard
+              </Link>
+            )}
             {!connected && (
               <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}
                 onClick={() => { setModalOpen(true); setMenuOpen(false) }}>
