@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { useWallet } from '../hooks/useWallet'
+import { useInvestment, calcTokens } from '../hooks/useInvestment'
 
 function filterAssets(type: string, el: EventTarget | null) {
   document.querySelectorAll('#filterTabs .filter-tab').forEach(t => t.classList.remove('active'));
@@ -66,6 +67,10 @@ function toggleValue(e: any, id: string) {
 export default function Home() {
   const { btcPrice } = useAppStore()
   const { requireWallet, connect, disconnect } = useWallet()
+  const inv1 = useInvestment()
+  const inv2 = useInvestment()
+  const btc1 = '0.0001'
+  const btc2 = '0.0001'
 
   function calcSimulator() {
     const initial = parseFloat((document.getElementById('simInitial') as HTMLInputElement)?.value) || 0;
@@ -380,7 +385,7 @@ export default function Home() {
             <label>Number of tokens</label>
             <input className="expand-input" type="number" placeholder="1" min="1"/>
           </div>
-          <button className="btn-invest" onClick={() => { requireWallet() }}>Confirm Investment</button>
+          <button className="btn-invest" onClick={() => inv1.invest(parseFloat(btc1))} disabled={inv1.loading}>{inv1.loading ? 'Processing...' : 'Confirm · ' + calcTokens(parseFloat(btc1)) + ' OPWAP'}</button>
         </div>
       </div>
     </div>
@@ -433,7 +438,7 @@ export default function Home() {
             <label>Number of tokens</label>
             <input className="expand-input" type="number" placeholder="1" min="1"/>
           </div>
-          <button className="btn-invest" onClick={() => { requireWallet() }}>Confirm Investment</button>
+          <button className="btn-invest" onClick={() => inv2.invest(parseFloat(btc2))} disabled={inv2.loading}>{inv2.loading ? 'Processing...' : 'Confirm · ' + calcTokens(parseFloat(btc2)) + ' OPWAP'}</button>
         </div>
       </div>
     </div>
