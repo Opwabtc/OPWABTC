@@ -12,10 +12,10 @@ import {
 import { Address } from '@btc-vision/transaction';
 import { networks, Satoshi } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
-import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAppStore } from '../store/useAppStore';
 
-const CONTRACT_ADDRESS = import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string;
+// FIX 1: nome correto do env var (era VITE_OPWAP_ com P a mais)
+const CONTRACT_ADDRESS = import.meta.env.VITE_OPWA_TOKEN_ADDRESS as string;
 const NETWORK = networks.opnetTestnet;
 export const SATS_PER_TOKEN = 1000;
 export const BTC_TO_SATS = 100_000_000;
@@ -35,7 +35,39 @@ const MINT_ABI: BitcoinInterfaceAbi = [
   },
 ];
 
-// FIX 1: NAO extende IOP20Contract — usa BaseContractProperties direto
+// FIX 2: constrói Address manualmente via window.opnet (sem useWalletConnect)
+// window.opnet.getMLDSAPublicKey() → raw key → SHA-256 → hashedMLDSAKey
+// Para wallets sem MLDSA (Unisat/Xverse/OKX), usa SHA-256 do publicKey como fallback
+function _hexToBytes(hex: string): Uint8Array {
+  const clean = hex.replace(/^0x/, '');
+  const bytes = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
+function _bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function buildSenderAddress(publicKey: string): Promise<Address> {
+  let sourceBytes: Uint8Array;
+  // Cast to any: @btc-vision/transaction declara window.opnet como OPWallet
+  // (sem getMLDSAPublicKey), mas a extensão OP_Wallet expõe esse método em runtime
+  const opnet = window.opnet as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (opnet && typeof opnet.getMLDSAPublicKey === 'function') {
+    const raw: string = await opnet.getMLDSAPublicKey();
+    sourceBytes = _hexToBytes(raw);
+  } else {
+    // wallets não-MLDSA (Unisat/Xverse/OKX): usa SHA-256 do publicKey como fallback
+    sourceBytes = _hexToBytes(publicKey);
+  }
+  // sourceBytes.buffer é sempre ArrayBuffer aqui (criado em _hexToBytes via new Uint8Array)
+  const hashBuf = await crypto.subtle.digest('SHA-256', sourceBytes.buffer as ArrayBuffer);
+  const hashedMLDSAKey = '0x' + _bytesToHex(new Uint8Array(hashBuf));
+  return Address.fromString(hashedMLDSAKey, publicKey);
+}
+
+// FIX 3: NAO extende IOP20Contract — usa BaseContractProperties direto
 interface IMintableToken extends BaseContractProperties {
   balanceOf(owner: Address): Promise<CallResult<{ balance: bigint }, []>>;
   mint(to: Address): Promise<CallResult<{ tokensMinted: bigint }, []>>;
@@ -47,10 +79,9 @@ export interface InvestmentResult {
 }
 
 export function useInvestment() {
-  const { walletAddr } = useAppStore();
-  // address is pre-built by the SDK: Address.fromString(hashedMLDSAKey, publicKey)
-  // window.opnet does NOT expose hashedMLDSAKey — only useWalletConnect() does
-  const { address: senderAddress } = useWalletConnect();
+  // FIX 4: lê publicKey do Zustand store (salvo por useWallet.ts no connect)
+  // em vez de useWalletConnect() que retorna null quando não inicializado
+  const { walletAddr, publicKey } = useAppStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<InvestmentResult | null>(null);
@@ -59,8 +90,22 @@ export function useInvestment() {
     setError(null);
     setResult(null);
 
-    if (!walletAddr || !senderAddress) {
+    if (!walletAddr) {
       setError('Connect your wallet first.');
+      return;
+    }
+
+    // publicKey pode ser null no store se getPublicKey() falhou no connect
+    // tenta obtê-lo on-demand via window.opnet como fallback
+    let effectivePublicKey = publicKey;
+    if (!effectivePublicKey && window.opnet) {
+      try {
+        effectivePublicKey = await (window.opnet as any).getPublicKey(); // eslint-disable-line @typescript-eslint/no-explicit-any
+        console.log('[OPWA] publicKey obtido on-demand:', effectivePublicKey);
+      } catch (_) {}
+    }
+    if (!effectivePublicKey) {
+      setError('Could not retrieve public key from wallet. Reconnect and try again.');
       return;
     }
     if (!CONTRACT_ADDRESS) {
@@ -80,6 +125,10 @@ export function useInvestment() {
 
     setLoading(true);
     try {
+      console.log('[OPWA] 1. building sender address...');
+      const senderAddress = await buildSenderAddress(effectivePublicKey);
+      console.log('[OPWA] 2. senderAddress:', senderAddress);
+
       const provider = new JSONRpcProvider({
         url: 'https://testnet.opnet.org',
         network: NETWORK,
@@ -98,31 +147,36 @@ export function useInvestment() {
         outputs: [
           {
             to: CONTRACT_ADDRESS,
-            value: satsAmount,  // bigint — setTransactionDetails expects bigint, not Satoshi
+            value: satsAmount,
             index: 1,
             flags: TransactionOutputFlags.hasTo,
           },
         ],
       });
 
+      console.log('[OPWA] 3. simulating mint...');
       const sim = await contract.mint(senderAddress);
-      if ('error' in sim) {
-        throw new Error('Simulation reverted: ' + (sim as any).error);
+      console.log('[OPWA] 4. sim result:', sim);
+
+      if (!sim || 'error' in sim || (sim as any).revert || (sim as any).ok === false) {
+        throw new Error('Simulation failed: ' + JSON.stringify(sim));
       }
 
+      console.log('[OPWA] 5. sending transaction...');
       const receipt = await sim.sendTransaction({
         signer: null,
         mldsaSigner: null,
-        refundTo: walletAddr,           // bech32 string - ok aqui
+        refundTo: walletAddr,
         maximumAllowedSatToSpend: satsAmount + 50_000n,
         network: NETWORK,
         extraOutputs: [
           {
             address: CONTRACT_ADDRESS,
-            value: Number(satsAmount) as unknown as Satoshi,  // Satoshi = branded number, not bigint
+            value: Number(satsAmount) as unknown as Satoshi,
           },
         ],
       });
+      console.log('[OPWA] 6. receipt:', receipt);
 
       if (!receipt) throw new Error('Transaction rejected or timed out.');
 
@@ -138,7 +192,7 @@ export function useInvestment() {
     } finally {
       setLoading(false);
     }
-  }, [walletAddr, senderAddress]);
+  }, [walletAddr, publicKey]); // effectivePublicKey é derivado de publicKey dentro do callback
 
   const reset = useCallback(() => {
     setError(null);
