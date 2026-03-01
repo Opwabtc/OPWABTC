@@ -18,7 +18,7 @@ export function GasConverterWidget() {
 
   return (
     <>
-      {/* Widget panel — abre acima do botão */}
+      {/* Widget panel */}
       <div className={'gas-converter-widget' + (open ? ' open' : '')} id="gasWidget">
         <div className="gcw-header">
           <span className="gcw-title">Gas Converter</span>
@@ -26,11 +26,6 @@ export function GasConverterWidget() {
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)', display: 'inline-block' }} />
             Live
           </div>
-          <button className="gcw-close" onClick={() => setOpen(false)}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
         </div>
 
         <div className="gcw-rows">
@@ -84,13 +79,40 @@ export function GasConverterWidget() {
         {result && <div className="gcw-result">{result}</div>}
       </div>
 
-      {/* Botão toggle roxo — fixo bottom-right, some quando widget está aberto */}
+      {/* Botão toggle fixo bottom-right
+          Fechado: borda #ae005b, fundo transparente, ícone #ae005b
+          Aberto:  fundo #ae005b sólido, ícone branco */}
       <button
-        className={'gcw-toggle-btn' + (open ? ' widget-open' : '')}
         onClick={() => setOpen(v => !v)}
-        title="Gas Converter"
+        title={open ? 'Close Gas Converter' : 'Gas Converter'}
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          zIndex: 999,
+          width: 46,
+          height: 46,
+          borderRadius: '50%',
+          border: '2px solid #ae005b',
+          background: open ? '#ae005b' : 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          transition: 'background 0.2s, box-shadow 0.2s',
+          boxShadow: open
+            ? '0 0 0 4px rgba(174,0,91,0.25), 0 4px 20px rgba(174,0,91,0.4)'
+            : '0 4px 16px rgba(174,0,91,0.3)',
+        }}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={open ? 'white' : '#ae005b'}
+          strokeWidth="2.2"
+        >
           <path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/>
         </svg>
       </button>
