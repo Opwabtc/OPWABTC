@@ -1,8 +1,10 @@
+import { getContract, JSONRpcProvider, TransactionOutputFlags } from 'opnet';
+import { networks } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
 
-const OPWAP_CONTRACT = import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string;
-const MINT_SELECTOR = '0xa3cd6885';
+const CONTRACT_ADDRESS = import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string;
+const NETWORK = networks.opnetTestnet;
 
 export const SATS_PER_TOKEN = 1000;
 export const BTC_TO_SATS = 100_000_000;
@@ -13,7 +15,7 @@ export interface InvestmentResult {
 }
 
 export function useInvestment() {
-  const { connected, walletAddr } = useAppStore();
+  const { walletAddr } = useAppStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<InvestmentResult | null>(null);
@@ -22,11 +24,11 @@ export function useInvestment() {
     setError(null);
     setResult(null);
 
-    if (!connected || !walletAddr) {
+    if (!walletAddr) {
       setError('Connect your wallet first.');
       return;
     }
-    if (!OPWAP_CONTRACT) {
+    if (!CONTRACT_ADDRESS) {
       setError('Contract address not configured.');
       return;
     }
@@ -35,24 +37,57 @@ export function useInvestment() {
       return;
     }
 
-    const satsAmount = Math.round(btcAmount * BTC_TO_SATS);
+    const satsAmount = BigInt(Math.round(btcAmount * BTC_TO_SATS));
 
-    if (satsAmount < SATS_PER_TOKEN) {
+    if (satsAmount < BigInt(SATS_PER_TOKEN)) {
       setError('Minimum: 1000 sats (0.00001 BTC).');
       return;
     }
 
     setLoading(true);
     try {
-      const opnet = (window as any).opnet;
-      if (!opnet) throw new Error('OPWallet not found.');
+      const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: NETWORK });
 
-      const txHash: string = await opnet.sendTransaction({
-        to: OPWAP_CONTRACT,
-        value: satsAmount,
-        data: MINT_SELECTOR,
+      const contract = getContract(
+        CONTRACT_ADDRESS,
+        [] as any,
+        provider,
+        NETWORK,
+        walletAddr as any,
+      );
+
+      contract.setTransactionDetails({
+        inputs: [],
+        outputs: [
+          {
+            to: CONTRACT_ADDRESS,
+            value: satsAmount,
+            index: 1,
+            flags: TransactionOutputFlags.hasTo,
+          },
+        ],
       });
 
+      const sim = await (contract as any).mint(walletAddr);
+      if (sim && typeof sim === 'object' && 'error' in sim) {
+        throw new Error('Simulation failed: ' + (sim as any).error);
+      }
+
+      const receipt = await sim.sendTransaction({
+        signer: null,
+        mldsaSigner: null,
+        refundTo: walletAddr as any,
+        maximumAllowedSatToSpend: satsAmount + 50000n,
+        network: NETWORK,
+        extraOutputs: [
+          {
+            address: CONTRACT_ADDRESS,
+            value: Number(satsAmount),
+          },
+        ],
+      });
+
+      const txHash: string = receipt?.hash ?? '';
       const opscanUrl = 'https://opscan.org/transactions/' + txHash + '?network=testnet';
       setResult({ txHash, opscanUrl });
     } catch (err: unknown) {
@@ -61,7 +96,7 @@ export function useInvestment() {
     } finally {
       setLoading(false);
     }
-  }, [connected, walletAddr]);
+  }, [walletAddr]);
 
   const reset = useCallback(() => {
     setError(null);
