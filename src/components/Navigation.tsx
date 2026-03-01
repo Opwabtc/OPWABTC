@@ -39,7 +39,7 @@ const MoonIcon = () => (
   </svg>
 )
 
-export default function Navigation({ onConnectClick }: { onConnectClick: () => void }) {
+export default function Navigation({ onConnectClick = () => {} }: { onConnectClick?: () => void }) {
   const { connected, walletAddr, walletSats, btcPrice, gasPrice, theme, setTheme, disconnect } = useAppStore()
   const location = useLocation()
   const [dropdownOpen, setDropdownOpen] = useState(false)
