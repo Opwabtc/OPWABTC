@@ -3,138 +3,170 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAppStore } from '../store/useAppStore'
 import { useWallet } from '../hooks/useWallet'
 
-export function Navigation() {
-  const { connected, walletAddr, walletSats, btcPrice, gasPrice, theme, setTheme } = useAppStore()
-  const { connect, disconnect } = useWallet()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [walletModal, setWalletModal] = useState(false)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const location = useLocation()
+const MenuIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+    <rect x="2" y="4" width="16" height="2" rx="1"/>
+    <rect x="2" y="9" width="16" height="2" rx="1"/>
+    <rect x="2" y="14" width="16" height="2" rx="1"/>
+  </svg>
+)
 
-  const short = walletAddr ? walletAddr.slice(0, 6) + '...' + walletAddr.slice(-4) : ''
-  const balBtc = walletSats != null ? (walletSats / 1e8).toFixed(6) : null
-  const btcPriceStr = btcPrice ? '$' + btcPrice.toLocaleString() : null
-  const gasPriceStr = gasPrice != null ? gasPrice + ' sat/vB' : '—'
+const GridIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+    <rect x="0" y="0" width="6" height="6" rx="1"/>
+    <rect x="8" y="0" width="6" height="6" rx="1"/>
+    <rect x="0" y="8" width="6" height="6" rx="1"/>
+    <rect x="8" y="8" width="6" height="6" rx="1"/>
+  </svg>
+)
+
+const SunIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/>
+    <line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+)
+
+const MoonIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+)
+
+export default function Navigation({ onConnectClick }: { onConnectClick: () => void }) {
+  const { connected, walletAddr, walletSats, btcPrice, gasPrice, theme, setTheme, disconnect } = useAppStore()
+  const location = useLocation()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  const balUsd = btcPrice && walletSats ? (walletSats / 1e8 * btcPrice) : 0
+  const shortAddr = walletAddr ? walletAddr.slice(0, 6) + '…' + walletAddr.slice(-4) : ''
 
   const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Assets', href: '/#assets' },
-    { label: 'Simulator', href: '/#simulator' },
-    { label: 'How It Works', href: '/#how-it-works' },
-  ]
-
-  const wallets = [
-    { id: 'opwallet', name: 'OP_Wallet', desc: 'Official OP_NET wallet', badge: 'Recommended', color: '#f97316' },
-    { id: 'unisat',   name: 'Unisat',    desc: 'Bitcoin native · OP_NET compatible', badge: null, color: '#f59e0b' },
-    { id: 'xverse',   name: 'Xverse',    desc: 'Bitcoin · Ordinals · OP_NET', badge: null, color: '#8b5cf6' },
-    { id: 'okx',      name: 'OKX Wallet', desc: 'Multi-chain · Web3', badge: null, color: '#64748b' },
+    { href: '/#assets', label: 'Assets' },
+    { href: '/#simulator', label: 'Simulator' },
+    { href: '/#how-it-works', label: 'How It Works' },
   ]
 
   return (
-    <>
-      <nav className="nav-bar" role="navigation">
-        <div className="nav-inner">
-          <Link to="/" className="nav-logo">
-            <span className="nav-logo-op">OP</span>
-            <span className="nav-logo-opwa">OPWA</span>
-            <span className="nav-logo-platform">Platform</span>
-          </Link>
+    <nav className="navbar">
+      <div className="navbar-inner">
+        {/* Logo */}
+        <Link to="/" className="logo">
+          <div className="logo-mark">OP</div>
+          <div className="logo-text">
+            <span className="logo-name">OPWA</span>
+            <span className="logo-tagline">Platform</span>
+          </div>
+        </Link>
 
-          <div className="nav-links-desktop">
-            {navLinks.map(l => (
-              <a key={l.href} href={l.href} className="nav-link">{l.label}</a>
-            ))}
-            {connected && (
+        {/* Nav links — desktop */}
+        <ul className="nav-links">
+          {navLinks.map(l => (
+            <li key={l.href}>
+              <a href={l.href} className="nav-link">{l.label}</a>
+            </li>
+          ))}
+          {connected && (
+            <li>
               <Link
                 to="/dashboard"
-                className={'nav-link nav-link-dashboard' + (location.pathname === '/dashboard' ? ' active' : '')}
+                className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <rect x="3" y="3" width="7" height="7" rx="1"/>
-                  <rect x="14" y="3" width="7" height="7" rx="1"/>
-                  <rect x="14" y="14" width="7" height="7" rx="1"/>
-                  <rect x="3" y="14" width="7" height="7" rx="1"/>
-                </svg>
-                Dashboard
+                <GridIcon /> Dashboard
               </Link>
-            )}
+            </li>
+          )}
+        </ul>
+
+        {/* Right side */}
+        <div className="navbar-right">
+          {/* Gas pill */}
+          <div className="gas-ticker">
+            <span className="gas-dot" />
+            <span>{gasPrice} sat/vB</span>
           </div>
 
-          <div className="nav-gas">
-            <span className="nav-gas-dot" />
-            <span className="nav-gas-label">Gas</span>
-            <span className="nav-gas-value">{gasPriceStr}</span>
-            {btcPriceStr && <span className="nav-gas-btc">{btcPriceStr}</span>}
-          </div>
-
-          <button className="nav-theme-btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle theme">
-            {theme === 'dark' ? '☀️' : '🌙'}
+          {/* Theme toggle */}
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
 
-          {!connected ? (
-            <button className="nav-connect-btn" onClick={() => setWalletModal(true)}>Connect Wallet</button>
-          ) : (
-            <div className="nav-wallet-wrap">
-              <button className="nav-wallet-btn" onClick={() => setDropdownOpen(o => !o)}>
-                <span className="nav-wallet-dot" />
-                <span>{short}</span>
-                {balBtc && <span className="nav-wallet-bal">&#x20BF; {balBtc}</span>}
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
-              </button>
+          {/* Wallet */}
+          {connected ? (
+            <div className="wallet-connected" onClick={() => setDropdownOpen(o => !o)}>
+              <span className="wallet-dot" />
+              <span className="wallet-balance">${balUsd.toFixed(2)}</span>
+              <span className="wallet-addr">{shortAddr}</span>
+              <span className="wallet-chevron">{dropdownOpen ? '▲' : '▼'}</span>
               {dropdownOpen && (
-                <div className="nav-dropdown">
-                  <div className="nav-dropdown-addr">{walletAddr}</div>
-                  <hr className="nav-dropdown-sep"/>
-                  <a href={'https://opscan.org/accounts/' + walletAddr + '?network=op_testnet'} target="_blank" rel="noreferrer" className="nav-dropdown-link">View on OPScan</a>
-                  <button className="nav-dropdown-disc" onClick={() => { disconnect(); setDropdownOpen(false) }}>Disconnect</button>
+                <div className="wallet-dropdown" onClick={e => e.stopPropagation()}>
+                  <Link to="/dashboard" className="wd-item" onClick={() => setDropdownOpen(false)}>
+                    <GridIcon /> Dashboard
+                  </Link>
+                  <a
+                    href={`https://opscan.org/accounts/${walletAddr}?network=op_testnet`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="wd-item"
+                  >
+                    ↗ OPScan
+                  </a>
+                  <button className="wd-item wd-disconnect" onClick={() => { disconnect(); setDropdownOpen(false) }}>
+                    ✕ Disconnect
+                  </button>
                 </div>
               )}
             </div>
+          ) : (
+            <button className="btn-connect" onClick={onConnectClick}>
+              Connect Wallet
+            </button>
           )}
 
-          <button className="nav-hamburger" onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
-            <span /><span /><span />
+          {/* Hamburger */}
+          <button className="btn-menu" onClick={() => setMobileOpen(o => !o)} aria-label="Menu">
+            <MenuIcon />
           </button>
         </div>
+      </div>
 
-        {menuOpen && (
-          <div className="nav-mobile-menu">
-            {navLinks.map(l => <a key={l.href} href={l.href} className="nav-mobile-link" onClick={() => setMenuOpen(false)}>{l.label}</a>)}
-            {connected && <Link to="/dashboard" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>Dashboard</Link>}
-            {!connected
-              ? <button className="nav-connect-btn" style={{margin:'12px 16px'}} onClick={() => { setWalletModal(true); setMenuOpen(false) }}>Connect Wallet</button>
-              : <button className="nav-dropdown-disc" style={{margin:'12px 16px'}} onClick={() => { disconnect(); setMenuOpen(false) }}>Disconnect</button>
-            }
-          </div>
-        )}
-      </nav>
-
-      {walletModal && (
-        <div className="modal-overlay" onClick={() => setWalletModal(false)}>
-          <div className="wallet-modal" onClick={e => e.stopPropagation()}>
-            <div className="wallet-modal-header">
-              <h2>Connect Wallet</h2>
-              <button className="wallet-modal-close" onClick={() => setWalletModal(false)}>x</button>
-            </div>
-            <p className="wallet-modal-sub">Choose your Bitcoin wallet to connect to the OP_NET platform.</p>
-            {wallets.map(w => (
-              <button key={w.id} className="wallet-option" onClick={() => { connect(w.id); setWalletModal(false) }}>
-                <span className="wallet-option-icon" style={{background: w.color + '22', border: '1.5px solid ' + w.color + '55'}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill={w.color}><circle cx="12" cy="12" r="9"/></svg>
-                </span>
-                <span className="wallet-option-info">
-                  <span className="wallet-option-name">{w.name}</span>
-                  <span className="wallet-option-desc">{w.desc}</span>
-                </span>
-                {w.badge && <span className="wallet-option-badge">{w.badge}</span>}
-              </button>
-            ))}
-            <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" rel="noreferrer" className="wallet-get-banner">
-              No OP_Wallet? Install from Chrome Web Store
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="mobile-menu">
+          {navLinks.map(l => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="mobile-nav-link"
+              onClick={() => setMobileOpen(false)}
+            >
+              {l.label}
             </a>
-          </div>
+          ))}
+          {connected && (
+            <Link to="/dashboard" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
+              Dashboard
+            </Link>
+          )}
+          {!connected && (
+            <button className="mobile-nav-link btn-connect" onClick={() => { onConnectClick(); setMobileOpen(false) }}>
+              Connect Wallet
+            </button>
+          )}
         </div>
       )}
-    </>
+    </nav>
   )
 }
