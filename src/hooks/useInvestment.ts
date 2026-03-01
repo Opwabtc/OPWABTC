@@ -1,10 +1,8 @@
 import {
   getContract,
+  OP_20_ABI,
   JSONRpcProvider,
   TransactionOutputFlags,
-  ABIDataTypes,
-  BitcoinAbiTypes,
-  BitcoinInterfaceAbi,
   CallResult,
   BaseContractProperties,
 } from 'opnet';
@@ -21,22 +19,6 @@ const NETWORK = networks.opnetTestnet;
 export const SATS_PER_TOKEN = 1000;
 export const BTC_TO_SATS = 100_000_000;
 
-// FIX (Bob): contrato é OP-721, mint() recebe string metadataURI — NÃO address
-// Selector correto: mint(string) conforme contrato deployado
-const MINT_ABI: BitcoinInterfaceAbi = [
-  {
-    name: 'mint',
-    type: BitcoinAbiTypes.Function,
-    constant: false,
-    inputs: [
-      { name: 'metadataURI', type: ABIDataTypes.STRING },
-    ],
-    outputs: [
-      { name: 'tokenId', type: ABIDataTypes.UINT256 },
-    ],
-  },
-];
-
 function _hexToBytes(hex: string): Uint8Array {
   const clean = hex.replace(/^0x/, '');
   const out = new Uint8Array(clean.length / 2);
@@ -52,18 +34,17 @@ async function buildSenderAddress(publicKey: string): Promise<Address> {
   if (opnet && typeof opnet.getMLDSAPublicKey === 'function') {
     try {
       const raw: string = await opnet.getMLDSAPublicKey();
-      const mldsaBytes = _hexToBytes(raw);
-      return new Address(mldsaBytes, pubkeyBytes);
+      return new Address(_hexToBytes(raw), pubkeyBytes);
     } catch (_) {}
   }
   return new Address(new Uint8Array(32), pubkeyBytes);
 }
 
-// FIX (Bob): interface corrigida — mint(metadataURI: string), não mint(to: Address)
-// Recipient é sempre Blockchain.tx.origin (inferido do signer)
+// FIX (Bob s13): contrato é OP-20 fungível
+// OP_20_ABI já contém mint(address,uint256) — selector 961601633
 interface IMintableToken extends BaseContractProperties {
   balanceOf(owner: Address): Promise<CallResult<{ balance: bigint }, []>>;
-  mint(metadataURI: string): Promise<CallResult<{ tokenId: bigint }, []>>;
+  mint(to: Address, amount: bigint): Promise<CallResult<Record<string, never>, []>>;
 }
 
 export interface InvestmentResult {
@@ -109,7 +90,7 @@ export function useInvestment() {
 
       const contract = getContract<IMintableToken>(
         CONTRACT_ADDRESS,
-        MINT_ABI,
+        OP_20_ABI,
         provider,
         NETWORK,
         senderAddress,
@@ -127,11 +108,11 @@ export function useInvestment() {
         ],
       });
 
-      // FIX (Bob): mint() recebe metadataURI string — recipient inferido do tx.origin
-      // URI pode ser IPFS real ou placeholder enquanto não há metadata real
-      console.log('[OPWA] 3. simulating mint...');
-      const metadataURI = `ipfs://opwa-property/${CONTRACT_ADDRESS}/${Date.now()}`;
-      const sim = await contract.mint(metadataURI);
+      // tokenAmount em base units (8 decimais): sats / SATS_PER_TOKEN * 10^8
+      const tokenAmount = (satsAmount * BigInt(10 ** 8)) / BigInt(SATS_PER_TOKEN);
+
+      console.log('[OPWA] 3. simulating mint...', { satsAmount: satsAmount.toString(), tokenAmount: tokenAmount.toString() });
+      const sim = await contract.mint(senderAddress, tokenAmount);
       console.log('[OPWA] 4. sim result:', sim);
 
       if (!sim || 'error' in sim || (sim as any).revert || (sim as any).ok === false) {
@@ -170,7 +151,6 @@ export function useInvestment() {
   }, [walletAddr, publicKey]);
 
   const reset = useCallback(() => { setError(null); setResult(null); }, []);
-
   return { invest, loading, error, result, reset };
 }
 
