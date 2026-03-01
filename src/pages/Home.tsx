@@ -237,34 +237,52 @@ function Simulator() {
               </button>
             </div>
 
-            {/* Investimento Inicial */}
+            {/* Initial Investment */}
             <div className="sim-field">
-              <label>Investimento Inicial
+              <label>Initial Investment
                 <span style={{ color: 'var(--text-3)', marginLeft: 8, fontWeight: 400 }}>
-                  {currency === 'btc' ? fmtUsd(initialUsd) : fmtBtc(initialBtc)}
+                  ≈ {currency === 'btc' ? fmtUsd(initialUsd) : fmtBtc(initialBtc)}
                 </span>
               </label>
               <div className="sim-stepper">
                 <button className="sim-stepper-btn" onClick={() => setInitialBtc(v => Math.max(0.00001, +(v - stepInitial).toFixed(8)))}>−</button>
-                <div className="sim-stepper-input" style={{ textAlign: 'center', padding: '10px 0', fontFamily: 'DM Mono, monospace', fontSize: 15, color: 'var(--text-1)' }}>
-                  {currency === 'btc' ? fmtBtc(initialBtc) : fmtUsd(initialUsd)}
-                </div>
+                <input
+                  className="sim-stepper-input"
+                  type="number"
+                  step={stepInitial}
+                  min={0.00001}
+                  value={currency === 'btc' ? +initialBtc.toFixed(8) : +initialUsd.toFixed(2)}
+                  onChange={e => {
+                    const v = parseFloat(e.target.value)
+                    if (!isNaN(v) && v > 0) setInitialBtc(currency === 'btc' ? v : v / price)
+                  }}
+                  style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15 }}
+                />
                 <button className="sim-stepper-btn" onClick={() => setInitialBtc(v => +(v + stepInitial).toFixed(8))}>+</button>
               </div>
             </div>
 
-            {/* Investimento Mensal */}
+            {/* Monthly Investment */}
             <div className="sim-field">
-              <label>Investimento Mensal
+              <label>Monthly Investment
                 <span style={{ color: 'var(--text-3)', marginLeft: 8, fontWeight: 400 }}>
-                  {currency === 'btc' ? fmtUsd(monthlyUsd) : fmtBtc(monthlyBtc)}
+                  ≈ {currency === 'btc' ? fmtUsd(monthlyUsd) : fmtBtc(monthlyBtc)}
                 </span>
               </label>
               <div className="sim-stepper">
                 <button className="sim-stepper-btn" onClick={() => setMonthlyBtc(v => Math.max(0, +(v - stepMonthly).toFixed(8)))}>−</button>
-                <div className="sim-stepper-input" style={{ textAlign: 'center', padding: '10px 0', fontFamily: 'DM Mono, monospace', fontSize: 15, color: 'var(--text-1)' }}>
-                  {currency === 'btc' ? fmtBtc(monthlyBtc) : fmtUsd(monthlyUsd)}
-                </div>
+                <input
+                  className="sim-stepper-input"
+                  type="number"
+                  step={stepMonthly}
+                  min={0}
+                  value={currency === 'btc' ? +monthlyBtc.toFixed(8) : +monthlyUsd.toFixed(2)}
+                  onChange={e => {
+                    const v = parseFloat(e.target.value)
+                    if (!isNaN(v) && v >= 0) setMonthlyBtc(currency === 'btc' ? v : v / price)
+                  }}
+                  style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15 }}
+                />
                 <button className="sim-stepper-btn" onClick={() => setMonthlyBtc(v => +(v + stepMonthly).toFixed(8))}>+</button>
               </div>
             </div>
