@@ -20,7 +20,7 @@ export function useSyncWallet() {
 
   const sync = useCallback(async () => {
     if (!isConnected || !walletAddress) {
-      setWallet({ isConnected: false, balance: 0, network: 'testnet' });
+      setWallet({ connected: false });
       return;
     }
 
@@ -46,9 +46,9 @@ export function useSyncWallet() {
         walletNetwork?.bech32 === 'bc' ? 'mainnet' : 'testnet';
 
       setWallet({
-        isConnected: true,
-        address: walletAddress,
-        balance: btcSats,
+        connected: true,
+        walletAddr: walletAddress,
+        walletSats: btcSats,
         network: networkName,
       });
     } catch (err) {

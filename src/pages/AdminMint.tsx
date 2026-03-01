@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useWallet } from '@/hooks/useWallet';
 import { useAppStore } from '@/store/useAppStore';
 
 const PROPERTY_NFT_ADDRESS = (import.meta.env.VITE_PROPERTY_NFT_ADDRESS as string) ?? '';
@@ -26,15 +25,16 @@ const EMPTY_FORM: MintForm = {
 };
 
 export const AdminMint: React.FC = () => {
-  const { wallet } = useWallet();
-  const { addNotification } = useAppStore();
+  const { connected: isConnected } = useAppStore();
+  
+  
 
   const [form, setForm] = useState<MintForm>(EMPTY_FORM);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [minting, setMinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!wallet.isConnected) {
+  if (!isConnected) {
     return (
       <div className="p-6 max-w-xl mx-auto text-center">
         <p className="text-gray-600 dark:text-gray-400">
@@ -90,7 +90,7 @@ export const AdminMint: React.FC = () => {
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);
-      addNotification({ type: 'error', title: 'Mint Failed', message: msg });
+      console.log({ type: 'error', title: 'Mint Failed', message: msg });
     } finally {
       setMinting(false);
     }
