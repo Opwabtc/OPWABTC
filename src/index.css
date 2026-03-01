@@ -1190,3 +1190,31 @@ section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
   .sim-stepper-btn { width: 36px !important; height: 36px !important; font-size: 18px !important; }
   .btn-invest, .btn-card { font-size: 13px !important; }
 }
+
+/* ═══ PATCH s13-final: slider trilho laranja + gato ═══ */
+
+/* Esconder thumb nativo completamente */
+.sim-slider-cat { -webkit-appearance: none !important; appearance: none !important; }
+.sim-slider-cat::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  width: 1px !important; height: 1px !important;
+  opacity: 0 !important; background: transparent !important;
+}
+.sim-slider-cat::-moz-range-thumb {
+  width: 1px !important; height: 1px !important;
+  opacity: 0 !important; background: transparent !important; border: none !important;
+}
+
+/* Trilho preenchido dinamicamente via linear-gradient inline — fallback aqui */
+.sim-slider-cat::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px;
+  background: var(--border);
+}
+.sim-slider-cat::-moz-range-track {
+  height: 4px; border-radius: 2px;
+  background: var(--border);
+}
+.sim-slider-cat::-moz-range-progress {
+  height: 4px; border-radius: 2px;
+  background: var(--accent);
+}

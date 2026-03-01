@@ -341,21 +341,24 @@ function Simulator() {
             {/* Slider anos com thumb gato laranja */}
             <div className="sim-field">
               <label>Duration: <span style={{ color: 'var(--accent)' }}>{years} year{years > 1 ? 's' : ''}</span></label>
-              <div style={{ position: 'relative', padding: '12px 0 4px' }}>
+              <div style={{ position: 'relative', height: 44, display: 'flex', alignItems: 'center' }}>
                 <input
                   type="range"
                   className="sim-slider sim-slider-cat"
                   min={1} max={10} step={1}
                   value={years}
                   onChange={e => setYears(+e.target.value)}
-                  style={{ position: 'relative', zIndex: 1 }}
+                  style={{
+                    position: 'absolute', left: 0, right: 0, zIndex: 1, margin: 0,
+                    background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${((years-1)/9)*100}%, var(--border) ${((years-1)/9)*100}%, var(--border) 100%)`,
+                  }}
                 />
-                {/* Gato centralizado sobre o thumb — offset 11px (metade de 22px) */}
+                {/* Gato: fórmula correta — thumb de 22px, track começa em 11px e termina em calc(100%-11px) */}
                 <div style={{
                   position: 'absolute',
+                  left: `calc(11px + ${((years - 1) / 9)} * (100% - 22px))`,
                   top: '50%',
-                  left: `calc(${((years - 1) / 9) * 100}% * (1 - 22px / 100%) + 11px - 11px)`,
-                  transform: 'translate(-50%, -110%)',
+                  transform: 'translate(-50%, -130%)',
                   pointerEvents: 'none',
                   lineHeight: 0,
                   zIndex: 2,
@@ -540,15 +543,18 @@ export default function Home() {
               icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
             { n: '04', label: 'Earn', title: 'Receive Yield', desc: 'Hold OPWAP tokens and receive stablecoin yield distributed directly on-chain.',
               icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> },
-          ].map(s => (
-            <div className="step" key={s.n}>
-              <div className="step-number">{s.n}</div>
+          ].map(s => {
+            const [hov, setHov] = React.useState(false)
+            return (
+            <div className="step" key={s.n} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+              <div className="step-number" style={{ color: hov ? '#fb923c' : undefined, textShadow: hov ? '0 0 20px rgba(249,115,22,.4)' : undefined, transition: 'color .2s, text-shadow .2s' }}>{s.n}</div>
               <div className="step-icon-wrap">{s.icon}</div>
               <div className="step-label">{s.label}</div>
               <div className="step-title">{s.title}</div>
               <div className="step-desc">{s.desc}</div>
             </div>
-          ))}
+            )
+          })}
         </div>
       </section>
 
