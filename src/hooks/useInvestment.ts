@@ -133,6 +133,7 @@ export function useInvestment() {
 
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Transaction failed.';
+      console.error('OPWA MINT ERROR:', err);
       setError(msg);
     } finally {
       setLoading(false);
