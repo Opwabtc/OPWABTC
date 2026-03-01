@@ -1,18 +1,25 @@
-import { useEffect } from 'react'
-import { useAppStore } from '../store/useAppStore'
+import React, { useState, useEffect } from 'react'
 import Navigation from './Navigation'
+import WalletModal from './WalletModal'
 import { GasConverterWidget } from './GasConverterWidget'
 import { ToastContainer } from './ToastContainer'
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  const theme = useAppStore(s => s.theme)
-  useEffect(() => { document.documentElement.setAttribute('data-theme', theme) }, [theme])
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const [walletOpen, setWalletOpen] = useState(false)
+
+  useEffect(() => {
+    const handler = () => setWalletOpen(true)
+    window.addEventListener('opwa:open-wallet-modal', handler)
+    return () => window.removeEventListener('opwa:open-wallet-modal', handler)
+  }, [])
+
   return (
     <>
-      <Navigation />
-      <div style={{ paddingTop: 'var(--navbar-h)' }}>{children}</div>
+      <Navigation onConnectClick={() => setWalletOpen(true)} />
+      <main style={{ paddingTop: 'var(--navbar-h)' }}>{children}</main>
       <GasConverterWidget />
       <ToastContainer />
+      <WalletModal open={walletOpen} onClose={() => setWalletOpen(false)} />
     </>
   )
 }
