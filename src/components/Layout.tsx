@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import { Navigation } from './Navigation'
+import Navigation from './Navigation'
 import { GasConverterWidget } from './GasConverterWidget'
 import { ToastContainer } from './ToastContainer'
 

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAppStore } from '../store/useAppStore'
-import { useWallet } from '../hooks/useWallet'
 
 const MenuIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
