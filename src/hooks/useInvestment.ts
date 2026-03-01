@@ -12,6 +12,7 @@ import {
 import { Address } from '@btc-vision/transaction';
 import { networks, Satoshi } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
+import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAppStore } from '../store/useAppStore';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string;
@@ -46,7 +47,10 @@ export interface InvestmentResult {
 }
 
 export function useInvestment() {
-  const { walletAddr, publicKey } = useAppStore();
+  const { walletAddr } = useAppStore();
+  // address is pre-built by the SDK: Address.fromString(hashedMLDSAKey, publicKey)
+  // window.opnet does NOT expose hashedMLDSAKey — only useWalletConnect() does
+  const { address: senderAddress } = useWalletConnect();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<InvestmentResult | null>(null);
@@ -55,7 +59,7 @@ export function useInvestment() {
     setError(null);
     setResult(null);
 
-    if (!walletAddr) {
+    if (!walletAddr || !senderAddress) {
       setError('Connect your wallet first.');
       return;
     }
@@ -81,10 +85,6 @@ export function useInvestment() {
         network: NETWORK,
       });
 
-      // FIX 2: converter string -> Address usando publicKey do store
-      // walletAddr aqui e o hashedMLDSAKey (0x...), publicKey e o compressed pubkey (0x...)
-      const senderAddress: Address = Address.fromString(walletAddr, publicKey ?? '');
-
       const contract = getContract<IMintableToken>(
         CONTRACT_ADDRESS,
         MINT_ABI,
@@ -98,7 +98,7 @@ export function useInvestment() {
         outputs: [
           {
             to: CONTRACT_ADDRESS,
-            value: satsAmount as unknown as Satoshi,  // FIX 3: Satoshi e branded bigint
+            value: satsAmount,  // bigint — setTransactionDetails expects bigint, not Satoshi
             index: 1,
             flags: TransactionOutputFlags.hasTo,
           },
@@ -119,7 +119,7 @@ export function useInvestment() {
         extraOutputs: [
           {
             address: CONTRACT_ADDRESS,
-            value: satsAmount as unknown as Satoshi,  // FIX 3: branded bigint
+            value: Number(satsAmount) as unknown as Satoshi,  // Satoshi = branded number, not bigint
           },
         ],
       });
@@ -137,7 +137,7 @@ export function useInvestment() {
     } finally {
       setLoading(false);
     }
-  }, [walletAddr, publicKey]);
+  }, [walletAddr, senderAddress]);
 
   const reset = useCallback(() => {
     setError(null);
