@@ -809,6 +809,8 @@ section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
   -webkit-appearance: none; width: 100%; height: 4px;
   background: var(--bg-elevated); border-radius: 2px; outline: none;
 }
+.sim-slider-cat::-webkit-slider-thumb { opacity: 0 !important; }
+.sim-slider-cat::-moz-range-thumb { opacity: 0 !important; }
 .sim-slider::-webkit-slider-thumb {
   -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
   background: linear-gradient(135deg,#f97316,#ea580c); border: 3px solid var(--bg-card);
