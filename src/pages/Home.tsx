@@ -142,34 +142,14 @@ function AssetCard({ id, title, desc, apy, apyClass, change, available, total, t
 }
 
 // Gato laranja SVG para o thumb do slider
-function CatThumb() {
+function SliderThumb() {
   return (
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* círculo laranja base */}
-      <circle cx="11" cy="13" r="8" fill="#f97316"/>
-      {/* orelha esquerda */}
-      <polygon points="5,9 3,3 8,7" fill="#f97316"/>
-      {/* orelha direita */}
-      <polygon points="17,9 19,3 14,7" fill="#f97316"/>
-      {/* brilho orelha esquerda */}
-      <polygon points="5.5,7.5 4,4 7.5,6.5" fill="#fb923c"/>
-      {/* brilho orelha direita */}
-      <polygon points="16.5,7.5 18,4 14.5,6.5" fill="#fb923c"/>
-      {/* olhos */}
-      <ellipse cx="8" cy="12" rx="1.3" ry="1.5" fill="#1a1a1a"/>
-      <ellipse cx="14" cy="12" rx="1.3" ry="1.5" fill="#1a1a1a"/>
-      {/* brilho olhos */}
-      <circle cx="8.5" cy="11.3" r="0.4" fill="white"/>
-      <circle cx="14.5" cy="11.3" r="0.4" fill="white"/>
-      {/* nariz */}
-      <polygon points="11,14 10,15.2 12,15.2" fill="#c2410c"/>
-      {/* bigodes esquerda */}
-      <line x1="4" y1="14.5" x2="9" y2="14" stroke="#c2410c" strokeWidth="0.5"/>
-      <line x1="4" y1="15.5" x2="9" y2="15" stroke="#c2410c" strokeWidth="0.5"/>
-      {/* bigodes direita */}
-      <line x1="18" y1="14.5" x2="13" y2="14" stroke="#c2410c" strokeWidth="0.5"/>
-      <line x1="18" y1="15.5" x2="13" y2="15" stroke="#c2410c" strokeWidth="0.5"/>
-    </svg>
+    <div style={{
+      width: 20, height: 20, borderRadius: '50%',
+      background: 'var(--accent)',
+      border: '2px solid #fff',
+      boxShadow: '0 0 8px rgba(249,115,22,.6)',
+    }} />
   )
 }
 
@@ -344,7 +324,7 @@ function Simulator() {
               <div style={{ position: 'relative', height: 44, display: 'flex', alignItems: 'center' }}>
                 <input
                   type="range"
-                  className="sim-slider sim-slider-cat"
+                  className="sim-slider"
                   min={1} max={10} step={1}
                   value={years}
                   onChange={e => setYears(+e.target.value)}
@@ -363,7 +343,7 @@ function Simulator() {
                   lineHeight: 0,
                   zIndex: 2,
                 }}>
-                  <CatThumb />
+                  <SliderThumb />
                 </div>
               </div>
               <div className="sim-slider-labels"><span>1y</span><span>5y</span><span>10y</span></div>
@@ -547,7 +527,7 @@ export default function Home() {
             const [hov, setHov] = React.useState(false)
             return (
             <div className="step" key={s.n} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
-              <div className="step-number" style={{ color: hov ? '#fb923c' : undefined, textShadow: hov ? '0 0 20px rgba(249,115,22,.4)' : undefined, transition: 'color .2s, text-shadow .2s' }}>{s.n}</div>
+              <div className="step-number" style={{ color: hov ? '#ffffff' : undefined, transition: 'color .2s' }}>{s.n}</div>
               <div className="step-icon-wrap">{s.icon}</div>
               <div className="step-label">{s.label}</div>
               <div className="step-title">{s.title}</div>

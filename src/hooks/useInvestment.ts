@@ -78,59 +78,27 @@ export interface InvestmentResult {
 // Patch: intercepta getSelector para mint retornar string que o SDK hasheia para 0x40c10f19
 // Descoberta: 0x40c10f19 = 1086394137 é keccak256, não SHA256
 // Solução: patch no writeSelector do writer dentro de encodeFunctionData
+// FIX DEFINITIVO (Bob confirmou): BinaryWriter tem campo 'buffer' como Uint8Array
+// writer.buffer[0..3] = selector bytes em big-endian após writeSelector()
 function applyMintSelectorPatch(contract: unknown): (() => void) {
   const c = contract as Record<string, unknown>;
   const proto = Object.getPrototypeOf(c) as Record<string, unknown>;
-
-  // Patch no getSelector — retorna string que SHA256 → 0x40c10f19
-  // Como não há tal string, interceptamos writeSelector via patch temporário no proto
-  const origGetSelector = proto['getSelector'] as ((el: unknown) => string) | undefined;
-  if (!origGetSelector) return () => {};
-
-  proto['getSelector'] = function(element: Record<string, unknown>): string {
-    const result = origGetSelector.call(this, element);
-    if (element['name'] === 'mint') {
-      // Retornar a assinatura que o bitcoinAbiCoder.encodeSelector() converterá para 0x40c10f19
-      // Descoberta necessária: qual string o encodeSelector transforma em 40c10f19?
-      // Por enquanto usar a string original e fazer patch no nível do BinaryWriter
-      console.log('[OPWA] getSelector for mint:', result);
-    }
-    return result;
-  };
-
-  // Mais direto: patch no encodeFunctionData para modificar o writer ANTES de retornar
-  const origEncode = proto['encodeFunctionData'] as ((el: unknown, args: unknown[]) => unknown) | undefined;
-  if (!origEncode) return () => { proto['getSelector'] = origGetSelector; };
+  const origEncode = proto['encodeFunctionData'] as ((el: unknown, args: unknown[]) => Record<string, unknown>) | undefined;
+  if (!origEncode) return () => {};
 
   proto['encodeFunctionData'] = function(element: Record<string, unknown>, args: unknown[]) {
     const writer = origEncode.call(this, element, args) as Record<string, unknown>;
     if (element['name'] === 'mint') {
-      // Tentar todos os campos possíveis do BinaryWriter
-      const possibleBufs = ['_buffer', 'buffer', 'bytes', 'data', '_bytes', '_data'];
-      let patched = false;
-      for (const field of possibleBufs) {
-        const buf = writer[field];
-        if (buf instanceof Uint8Array && buf.length >= 4) {
-          buf[0] = 0x40; buf[1] = 0xc1; buf[2] = 0x0f; buf[3] = 0x19;
-          console.log(`[OPWA] selector patched via writer.${field} → 0x40C10F19`);
-          patched = true;
-          break;
-        }
-      }
-      if (!patched) {
-        // Inspecionar o writer para debug
-        console.log('[OPWA] writer keys:', Object.keys(writer));
-        const proto2 = Object.getPrototypeOf(writer);
-        if (proto2) console.log('[OPWA] writer proto keys:', Object.getOwnPropertyNames(proto2).slice(0, 20));
+      const buf = writer['buffer'] as Uint8Array | undefined;
+      if (buf && buf.length >= 4) {
+        buf[0] = 0x40; buf[1] = 0xc1; buf[2] = 0x0f; buf[3] = 0x19;
+        console.log('[OPWA] ✓ mint selector patched → 0x40C10F19');
       }
     }
     return writer;
   };
 
-  return () => {
-    proto['getSelector'] = origGetSelector;
-    proto['encodeFunctionData'] = origEncode;
-  };
+  return () => { proto['encodeFunctionData'] = origEncode; };
 }
 
 export function useInvestment() {
