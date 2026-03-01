@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
 import { useWallet } from '../hooks/useWallet';
-import { useLivePrices } from '../hooks/useLivePrices';
 
 export function Navigation() {
   const { connected, walletAddr, walletSats, theme, setTheme } = useAppStore();
   const { connect, disconnect } = useWallet();
-  const { btcPrice, gasPrice } = useLivePrices();
+  // useLivePrices stores values in zustand — read with any cast
+  const st = useAppStore() as any;
+  const btcPrice: number | null = st.btcPrice ?? null;
+  const gasPrice: number | null = st.gasPrice ?? null;
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletModal, setWalletModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -15,7 +17,7 @@ export function Navigation() {
 
   const short = walletAddr ? walletAddr.slice(0, 6) + '...' + walletAddr.slice(-4) : '';
   const balBtc = walletSats != null ? (walletSats / 1e8).toFixed(6) : null;
-  const balUsd = btcPrice && walletSats != null ? ((walletSats / 1e8) * btcPrice).toFixed(2) : null;
+  const btcPriceStr = btcPrice ? '$' + btcPrice.toLocaleString() : null;
 
   const navLinks = [
     { label: 'Home', href: '/' },
@@ -30,8 +32,6 @@ export function Navigation() {
     { id: 'xverse',   name: 'Xverse',    desc: 'Bitcoin · Ordinals · OP_NET', badge: null, color: '#8b5cf6' },
     { id: 'okx',      name: 'OKX Wallet', desc: 'Multi-chain · Web3', badge: null, color: '#64748b' },
   ];
-
-  const btcPriceStr = btcPrice ? '$' + btcPrice.toLocaleString() : '';
 
   return (
     <>
@@ -67,7 +67,7 @@ export function Navigation() {
             <span className="nav-gas-dot" />
             <span className="nav-gas-label">Gas</span>
             <span className="nav-gas-value">{gasPrice != null ? gasPrice + ' sat/vB' : '—'}</span>
-            {btcPrice && <span className="nav-gas-btc">{btcPriceStr}</span>}
+            {btcPriceStr && <span className="nav-gas-btc">{btcPriceStr}</span>}
           </div>
 
           <button className="nav-theme-btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle theme">
@@ -87,7 +87,6 @@ export function Navigation() {
               {dropdownOpen && (
                 <div className="nav-dropdown">
                   <div className="nav-dropdown-addr">{walletAddr}</div>
-                  {balUsd && <div className="nav-dropdown-bal">approx. {balUsd} USD</div>}
                   <hr className="nav-dropdown-sep"/>
                   <a href={'https://opscan.org/accounts/' + walletAddr + '?network=op_testnet'} target="_blank" rel="noreferrer" className="nav-dropdown-link">View on OPScan</a>
                   <button className="nav-dropdown-disc" onClick={() => { disconnect(); setDropdownOpen(false); }}>Disconnect</button>
