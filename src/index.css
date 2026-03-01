@@ -1096,3 +1096,97 @@ section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
 }
 .mobile-nav-link:hover { color: var(--text-1); background: var(--bg-card); }
 .mobile-nav-link.active { color: var(--accent); background: var(--accent-dim); }
+/* ═══════════════════════════════════════════════════════════════
+   PATCH s13 — polimento mobile + slider cat + step hover
+═══════════════════════════════════════════════════════════════ */
+
+/* Slider — esconder thumb nativo, manter trilho laranja */
+.sim-slider-cat { -webkit-appearance: none; appearance: none; cursor: pointer; }
+.sim-slider-cat::-webkit-slider-thumb { opacity: 0 !important; width: 0 !important; height: 0 !important; }
+.sim-slider-cat::-moz-range-thumb    { opacity: 0 !important; width: 0 !important; height: 0 !important; }
+
+/* Step cards — hover ilumina só o número */
+.step { cursor: default; }
+.step:hover .step-number { color: #fb923c !important; text-shadow: 0 0 20px rgba(249,115,22,.4); transition: color .2s, text-shadow .2s; }
+.step-number { transition: color .2s, text-shadow .2s; }
+
+/* Gas Converter — garantir visível no mobile */
+.gcw-toggle-btn {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 16px !important;
+  z-index: 9999 !important;
+  width: 46px !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.gas-converter-widget {
+  z-index: 9998 !important;
+  position: fixed !important;
+  bottom: 76px !important;
+  right: 16px !important;
+}
+
+/* ═══ MOBILE RESPONSIVO ═══ */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  .nav-links { display: none !important; }
+  .nav-gas   { display: none !important; }
+
+  /* Hero */
+  .hero-section { padding: 60px 20px 40px !important; text-align: center; }
+  .hero-title   { font-size: clamp(28px, 8vw, 52px) !important; }
+  .hero-subtitle { font-size: 14px !important; }
+  .hero-ctas    { flex-direction: column !important; gap: 12px !important; align-items: center !important; }
+  .hero-ctas .btn-primary-lg, .hero-ctas .btn-ghost-lg { width: 100% !important; max-width: 320px !important; }
+  .hero-stats   { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; padding: 20px 16px !important; }
+
+  /* Assets */
+  .assets-grid  { grid-template-columns: 1fr !important; }
+  .assets-filters { flex-wrap: wrap !important; gap: 8px !important; }
+  .filter-tab   { font-size: 11px !important; padding: 5px 12px !important; }
+
+  /* Asset cards */
+  .ativo-stats  { grid-template-columns: repeat(2, 1fr) !important; }
+  .ativo-tx-details { grid-template-columns: 1fr 1fr !important; }
+
+  /* Simulator */
+  .simulador-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .sim-panel    { padding: 16px !important; }
+  .sim-compare-card { padding: 14px !important; }
+
+  /* Steps */
+  .steps-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+  .step         { padding: 16px !important; }
+  .step-number  { font-size: 40px !important; }
+  .step-title   { font-size: 14px !important; }
+  .step-desc    { font-size: 12px !important; }
+
+  /* Partners */
+  .partners-track { animation-duration: 20s !important; }
+
+  /* Footer */
+  .footer-grid  { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .footer-bottom { flex-direction: column !important; gap: 12px !important; text-align: center !important; }
+
+  /* Status bar */
+  .status-bar   { flex-wrap: wrap !important; gap: 8px !important; font-size: 10px !important; }
+
+  /* Gas converter — menor no mobile */
+  .gas-converter-widget { width: calc(100vw - 32px) !important; right: 16px !important; left: 16px !important; }
+
+  /* Expand panel */
+  .ativo-expand-inner { padding: 12px !important; }
+  .expand-input { font-size: 14px !important; }
+}
+
+@media (max-width: 480px) {
+  /* Extra small — ajustes adicionais */
+  .hero-stats   { grid-template-columns: 1fr 1fr !important; font-size: 11px !important; }
+  .steps-grid   { grid-template-columns: 1fr !important; }
+  .sim-stepper-btn { width: 36px !important; height: 36px !important; font-size: 18px !important; }
+  .btn-invest, .btn-card { font-size: 13px !important; }
+}

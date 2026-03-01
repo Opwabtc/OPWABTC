@@ -1,15 +1,43 @@
 import {
   getContract,
-  OP_20_ABI,
   JSONRpcProvider,
   TransactionOutputFlags,
   CallResult,
   BaseContractProperties,
+  BitcoinInterfaceAbi,
+  BitcoinAbiTypes,
+  ABIDataTypes,
 } from 'opnet';
 import { Address } from '@btc-vision/transaction';
 import { networks, Satoshi } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
+
+// FIX (Bob s13): contrato deployado usa keccak256 selector 0x40c10f19
+// OP_20_ABI envia SHA256 (961601633) — contrato rejeita
+// Usar ABI customizado com selector override para keccak256
+const MINT_ABI: BitcoinInterfaceAbi = [
+  {
+    name: 'mint',
+    type: BitcoinAbiTypes.Function,
+    constant: false,
+    payable: true,
+    selector: 0x40c10f19, // keccak256("mint(address,uint256)") — selector do contrato compilado
+    inputs: [
+      { name: 'to', type: ABIDataTypes.ADDRESS },
+      { name: 'amount', type: ABIDataTypes.UINT256 },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'balanceOf',
+    type: BitcoinAbiTypes.Function,
+    constant: true,
+    payable: false,
+    inputs: [{ name: 'account', type: ABIDataTypes.ADDRESS }],
+    outputs: [{ name: 'balance', type: ABIDataTypes.UINT256 }],
+  },
+];
 
 const CONTRACT_ADDRESS: string =
   (import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string) ||
@@ -90,7 +118,7 @@ export function useInvestment() {
 
       const contract = getContract<IMintableToken>(
         CONTRACT_ADDRESS,
-        OP_20_ABI,
+        MINT_ABI,
         provider,
         NETWORK,
         senderAddress,

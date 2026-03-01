@@ -144,18 +144,31 @@ function AssetCard({ id, title, desc, apy, apyClass, change, available, total, t
 // Gato laranja SVG para o thumb do slider
 function CatThumb() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* corpo */}
-      <circle cx="10" cy="11" r="7" fill="#f97316"/>
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* círculo laranja base */}
+      <circle cx="11" cy="13" r="8" fill="#f97316"/>
       {/* orelha esquerda */}
-      <polygon points="4,6 2,1 7,4" fill="#f97316"/>
+      <polygon points="5,9 3,3 8,7" fill="#f97316"/>
       {/* orelha direita */}
-      <polygon points="16,6 18,1 13,4" fill="#f97316"/>
+      <polygon points="17,9 19,3 14,7" fill="#f97316"/>
+      {/* brilho orelha esquerda */}
+      <polygon points="5.5,7.5 4,4 7.5,6.5" fill="#fb923c"/>
+      {/* brilho orelha direita */}
+      <polygon points="16.5,7.5 18,4 14.5,6.5" fill="#fb923c"/>
       {/* olhos */}
-      <ellipse cx="7.5" cy="10" rx="1.2" ry="1.4" fill="#1a1a1a"/>
-      <ellipse cx="12.5" cy="10" rx="1.2" ry="1.4" fill="#1a1a1a"/>
+      <ellipse cx="8" cy="12" rx="1.3" ry="1.5" fill="#1a1a1a"/>
+      <ellipse cx="14" cy="12" rx="1.3" ry="1.5" fill="#1a1a1a"/>
+      {/* brilho olhos */}
+      <circle cx="8.5" cy="11.3" r="0.4" fill="white"/>
+      <circle cx="14.5" cy="11.3" r="0.4" fill="white"/>
       {/* nariz */}
-      <polygon points="10,12 9,13.2 11,13.2" fill="#ea580c"/>
+      <polygon points="11,14 10,15.2 12,15.2" fill="#c2410c"/>
+      {/* bigodes esquerda */}
+      <line x1="4" y1="14.5" x2="9" y2="14" stroke="#c2410c" strokeWidth="0.5"/>
+      <line x1="4" y1="15.5" x2="9" y2="15" stroke="#c2410c" strokeWidth="0.5"/>
+      {/* bigodes direita */}
+      <line x1="18" y1="14.5" x2="13" y2="14" stroke="#c2410c" strokeWidth="0.5"/>
+      <line x1="18" y1="15.5" x2="13" y2="15" stroke="#c2410c" strokeWidth="0.5"/>
     </svg>
   )
 }
@@ -328,22 +341,24 @@ function Simulator() {
             {/* Slider anos com thumb gato laranja */}
             <div className="sim-field">
               <label>Duration: <span style={{ color: 'var(--accent)' }}>{years} year{years > 1 ? 's' : ''}</span></label>
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', padding: '12px 0 4px' }}>
                 <input
                   type="range"
                   className="sim-slider sim-slider-cat"
                   min={1} max={10} step={1}
                   value={years}
                   onChange={e => setYears(+e.target.value)}
+                  style={{ position: 'relative', zIndex: 1 }}
                 />
-                {/* Gato posicionado sobre o thumb */}
+                {/* Gato centralizado sobre o thumb — offset 11px (metade de 22px) */}
                 <div style={{
                   position: 'absolute',
                   top: '50%',
-                  left: `calc(${((years - 1) / 9) * 100}% - 10px)`,
-                  transform: 'translateY(-80%)',
+                  left: `calc(${((years - 1) / 9) * 100}% * (1 - 22px / 100%) + 11px - 11px)`,
+                  transform: 'translate(-50%, -110%)',
                   pointerEvents: 'none',
                   lineHeight: 0,
+                  zIndex: 2,
                 }}>
                   <CatThumb />
                 </div>
@@ -517,14 +532,18 @@ export default function Home() {
         </div>
         <div className="steps-grid">
           {[
-            { n: '01', label: 'Connect', title: 'Link Your Wallet', desc: 'Connect OP_Wallet, UniSat, Xverse or OKX via Bitcoin browser extension to get started.' },
-            { n: '02', label: 'Select', title: 'Choose an Asset', desc: 'Browse tokenized properties. Each asset has real data: APY, availability, and contract info.' },
-            { n: '03', label: 'Invest', title: 'Send BTC', desc: '1,000 sats per token. Transaction is simulated then signed and sent to the OP_NET L1 contract.' },
-            { n: '04', label: 'Earn', title: 'Receive Yield', desc: 'Hold OPWAP tokens and receive stablecoin yield distributed directly on-chain.' },
+            { n: '01', label: 'Connect', title: 'Link Your Wallet', desc: 'Connect OP_Wallet, UniSat, Xverse or OKX via Bitcoin browser extension to get started.',
+              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/><path d="M22 7V5a2 2 0 00-2-2H4a2 2 0 00-2 2v2"/></svg> },
+            { n: '02', label: 'Select', title: 'Choose an Asset', desc: 'Browse tokenized properties. Each asset has real data: APY, availability, and contract info.',
+              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
+            { n: '03', label: 'Invest', title: 'Send BTC', desc: '1,000 sats per token. Transaction is simulated then signed and sent to the OP_NET L1 contract.',
+              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
+            { n: '04', label: 'Earn', title: 'Receive Yield', desc: 'Hold OPWAP tokens and receive stablecoin yield distributed directly on-chain.',
+              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> },
           ].map(s => (
             <div className="step" key={s.n}>
               <div className="step-number">{s.n}</div>
-              <div className="step-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+              <div className="step-icon-wrap">{s.icon}</div>
               <div className="step-label">{s.label}</div>
               <div className="step-title">{s.title}</div>
               <div className="step-desc">{s.desc}</div>
