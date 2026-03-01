@@ -1,37 +1,34 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAppStore } from '../store/useAppStore';
-import { useWallet } from '../hooks/useWallet';
+import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useAppStore } from '../store/useAppStore'
+import { useWallet } from '../hooks/useWallet'
 
 export function Navigation() {
-  const { connected, walletAddr, walletSats, theme, setTheme } = useAppStore();
-  const { connect, disconnect } = useWallet();
-  // useLivePrices stores values in zustand — read with any cast
-  const st = useAppStore() as any;
-  const btcPrice: number | null = st.btcPrice ?? null;
-  const gasPrice: number | null = st.gasPrice ?? null;
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [walletModal, setWalletModal] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const location = useLocation();
+  const { connected, walletAddr, walletSats, btcPrice, gasPrice, theme, setTheme } = useAppStore()
+  const { connect, disconnect } = useWallet()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [walletModal, setWalletModal] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const location = useLocation()
 
-  const short = walletAddr ? walletAddr.slice(0, 6) + '...' + walletAddr.slice(-4) : '';
-  const balBtc = walletSats != null ? (walletSats / 1e8).toFixed(6) : null;
-  const btcPriceStr = btcPrice ? '$' + btcPrice.toLocaleString() : null;
+  const short = walletAddr ? walletAddr.slice(0, 6) + '...' + walletAddr.slice(-4) : ''
+  const balBtc = walletSats != null ? (walletSats / 1e8).toFixed(6) : null
+  const btcPriceStr = btcPrice ? '$' + btcPrice.toLocaleString() : null
+  const gasPriceStr = gasPrice != null ? gasPrice + ' sat/vB' : '—'
 
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Assets', href: '/#assets' },
     { label: 'Simulator', href: '/#simulator' },
     { label: 'How It Works', href: '/#how-it-works' },
-  ];
+  ]
 
   const wallets = [
     { id: 'opwallet', name: 'OP_Wallet', desc: 'Official OP_NET wallet', badge: 'Recommended', color: '#f97316' },
     { id: 'unisat',   name: 'Unisat',    desc: 'Bitcoin native · OP_NET compatible', badge: null, color: '#f59e0b' },
     { id: 'xverse',   name: 'Xverse',    desc: 'Bitcoin · Ordinals · OP_NET', badge: null, color: '#8b5cf6' },
     { id: 'okx',      name: 'OKX Wallet', desc: 'Multi-chain · Web3', badge: null, color: '#64748b' },
-  ];
+  ]
 
   return (
     <>
@@ -66,7 +63,7 @@ export function Navigation() {
           <div className="nav-gas">
             <span className="nav-gas-dot" />
             <span className="nav-gas-label">Gas</span>
-            <span className="nav-gas-value">{gasPrice != null ? gasPrice + ' sat/vB' : '—'}</span>
+            <span className="nav-gas-value">{gasPriceStr}</span>
             {btcPriceStr && <span className="nav-gas-btc">{btcPriceStr}</span>}
           </div>
 
@@ -89,7 +86,7 @@ export function Navigation() {
                   <div className="nav-dropdown-addr">{walletAddr}</div>
                   <hr className="nav-dropdown-sep"/>
                   <a href={'https://opscan.org/accounts/' + walletAddr + '?network=op_testnet'} target="_blank" rel="noreferrer" className="nav-dropdown-link">View on OPScan</a>
-                  <button className="nav-dropdown-disc" onClick={() => { disconnect(); setDropdownOpen(false); }}>Disconnect</button>
+                  <button className="nav-dropdown-disc" onClick={() => { disconnect(); setDropdownOpen(false) }}>Disconnect</button>
                 </div>
               )}
             </div>
@@ -105,8 +102,8 @@ export function Navigation() {
             {navLinks.map(l => <a key={l.href} href={l.href} className="nav-mobile-link" onClick={() => setMenuOpen(false)}>{l.label}</a>)}
             {connected && <Link to="/dashboard" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>Dashboard</Link>}
             {!connected
-              ? <button className="nav-connect-btn" style={{margin:'12px 16px'}} onClick={() => { setWalletModal(true); setMenuOpen(false); }}>Connect Wallet</button>
-              : <button className="nav-dropdown-disc" style={{margin:'12px 16px'}} onClick={() => { disconnect(); setMenuOpen(false); }}>Disconnect</button>
+              ? <button className="nav-connect-btn" style={{margin:'12px 16px'}} onClick={() => { setWalletModal(true); setMenuOpen(false) }}>Connect Wallet</button>
+              : <button className="nav-dropdown-disc" style={{margin:'12px 16px'}} onClick={() => { disconnect(); setMenuOpen(false) }}>Disconnect</button>
             }
           </div>
         )}
@@ -121,7 +118,7 @@ export function Navigation() {
             </div>
             <p className="wallet-modal-sub">Choose your Bitcoin wallet to connect to the OP_NET platform.</p>
             {wallets.map(w => (
-              <button key={w.id} className="wallet-option" onClick={() => { connect(w.id); setWalletModal(false); }}>
+              <button key={w.id} className="wallet-option" onClick={() => { connect(w.id); setWalletModal(false) }}>
                 <span className="wallet-option-icon" style={{background: w.color + '22', border: '1.5px solid ' + w.color + '55'}}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill={w.color}><circle cx="12" cy="12" r="9"/></svg>
                 </span>
@@ -139,5 +136,5 @@ export function Navigation() {
         </div>
       )}
     </>
-  );
+  )
 }

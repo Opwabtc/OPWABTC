@@ -1,71 +1,69 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAppStore } from '../store/useAppStore';
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useAppStore } from '../store/useAppStore'
 
-const OPWAP_ADDR = (import.meta as any).env?.VITE_OPWAP_TOKEN_ADDRESS || 'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp';
+const OPWAP_ADDR = (import.meta as any).env?.VITE_OPWAP_TOKEN_ADDRESS || 'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp'
 
 export default function Dashboard() {
-  const { connected, walletAddr, walletSats } = useAppStore();
-  const st = useAppStore() as any;
-  const btcPrice: number | null = st.btcPrice ?? null;
-  const [opwapBal, setOpwapBal] = useState<number | null>(null);
-  const [totalSupply, setTotalSupply] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { connected, walletAddr, walletSats, btcPrice } = useAppStore()
+  const [opwapBal, setOpwapBal] = useState<number | null>(null)
+  const [totalSupply, setTotalSupply] = useState<number | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const btcVal = walletSats != null ? walletSats / 1e8 : 0;
-  const usdVal = btcPrice ? btcVal * btcPrice : 0;
+  const btcVal = walletSats != null ? walletSats / 1e8 : 0
+  const usdVal = btcPrice ? btcVal * btcPrice : 0
 
   useEffect(() => {
-    if (!connected || !walletAddr) { setLoading(false); return; }
-    let cancelled = false;
+    if (!connected || !walletAddr) { setLoading(false); return }
+    let cancelled = false
     async function load() {
       try {
-        const opnet = await import('opnet');
-        const { JSONRpcProvider, getContract, OP_20_ABI } = opnet as any;
-        const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org' });
-        const c = getContract(OPWAP_ADDR, OP_20_ABI, provider);
+        const opnet = await import('opnet')
+        const { JSONRpcProvider, getContract, OP_20_ABI } = opnet as any
+        const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org' })
+        const c = getContract(OPWAP_ADDR, OP_20_ABI, provider)
         const [b, s] = await Promise.allSettled([
           c.balanceOf(walletAddr),
           c.totalSupply(),
-        ]);
-        if (cancelled) return;
+        ])
+        if (cancelled) return
         if (b.status === 'fulfilled') {
-          const raw = (b.value as any)?.balance ?? (b.value as any)?.result?.balance;
-          if (raw != null) setOpwapBal(Number(raw));
+          const raw = (b.value as any)?.balance ?? (b.value as any)?.result?.balance
+          if (raw != null) setOpwapBal(Number(raw))
         }
         if (s.status === 'fulfilled') {
-          const raw = (s.value as any)?.totalSupply ?? (s.value as any)?.result?.totalSupply;
-          if (raw != null) setTotalSupply(Number(raw));
+          const raw = (s.value as any)?.totalSupply ?? (s.value as any)?.result?.totalSupply
+          if (raw != null) setTotalSupply(Number(raw))
         }
-      } catch(e) { console.warn('[Dashboard]', e); }
-      finally { if (!cancelled) setLoading(false); }
+      } catch(e) { console.warn('[Dashboard]', e) }
+      finally { if (!cancelled) setLoading(false) }
     }
-    load();
-    const iv = setInterval(load, 30000);
-    return () => { cancelled = true; clearInterval(iv); };
-  }, [connected, walletAddr]);
+    load()
+    const iv = setInterval(load, 30000)
+    return () => { cancelled = true; clearInterval(iv) }
+  }, [connected, walletAddr])
 
   if (!connected) return (
     <div className="dashboard-gate">
       <div className="dashboard-gate-card">
-        <div style={{fontSize:'3rem',marginBottom:'16px'}}>🔒</div>
+        <div style={{fontSize:'3rem',marginBottom:'16px'}}>&#x1F512;</div>
         <h2 style={{marginBottom:'8px'}}>Connect Your Wallet</h2>
         <p style={{color:'rgba(255,255,255,.45)',marginBottom:'24px'}}>Connect to view your portfolio.</p>
         <Link to="/" className="btn-primary" style={{display:'inline-block',textDecoration:'none',padding:'12px 28px'}}>Go to Home</Link>
       </div>
     </div>
-  );
+  )
 
-  const short = walletAddr ? walletAddr.slice(0,8) + '...' + walletAddr.slice(-6) : '';
-  const supplyPct = totalSupply != null ? Math.min((totalSupply / 1e9) * 100, 100) : 0;
-  const opwapDisplay = loading ? '...' : (opwapBal != null ? (opwapBal / 1e8).toFixed(4) : '0.0000');
+  const short = walletAddr ? walletAddr.slice(0,8) + '...' + walletAddr.slice(-6) : ''
+  const supplyPct = totalSupply != null ? Math.min((totalSupply / 1e9) * 100, 100) : 0
+  const opwapDisplay = loading ? '...' : (opwapBal != null ? (opwapBal / 1e8).toFixed(4) : '0.0000')
 
   const stats = [
     { label: 'BTC Balance', value: btcVal.toFixed(6), unit: 'BTC', color: '#f97316', sub: 'approx $' + usdVal.toFixed(2) + ' USD' },
-    { label: 'OPWAP Tokens', value: opwapDisplay, unit: 'OPWAP', color: '#fbbf24', sub: 'Asset Alpha · 15% APY' },
+    { label: 'OPWAP Tokens', value: opwapDisplay, unit: 'OPWAP', color: '#fbbf24', sub: 'Asset Alpha - 15% APY' },
     { label: 'Est. Annual Yield', value: '15%', unit: 'APY', color: '#22c55e', sub: 'Platform target rate' },
     { label: 'Network', value: 'Testnet4', unit: '', color: '#60a5fa', sub: 'OP_NET Signet fork' },
-  ];
+  ]
 
   return (
     <div className="dashboard-page">
@@ -118,13 +116,12 @@ export default function Dashboard() {
                   <span className="dashboard-holding-badge">Active</span>
                 </div>
                 <div className="dashboard-holding-val">{(opwapBal / 1e8).toFixed(4)}</div>
-                <div className="dashboard-holding-sub">OPWAProperty · Asset Alpha</div>
+                <div className="dashboard-holding-sub">OPWAProperty - Asset Alpha</div>
                 <div className="dashboard-holding-apy">15% APY</div>
               </div>
             </div>
           ) : (
             <div className="dashboard-empty">
-              <div style={{fontSize:'2.5rem',marginBottom:'12px'}}>📦</div>
               <p style={{color:'rgba(255,255,255,.35)'}}>No holdings yet. <Link to="/#assets" style={{color:'var(--accent)'}}>Invest in an asset</Link> to start.</p>
             </div>
           )}
@@ -138,5 +135,5 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }
