@@ -2618,8 +2618,7 @@ async function confirmInvest(asset) {
     const mod = await import('https://esm.sh/opnet?bundle');
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, TransactionOutputFlags, ABIDataTypes } = mod;
     const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
-    const { networks } = await import('https://esm.sh/@btc-vision/bitcoin?bundle');
-    const _net = networks.opnetTestnet;
+    const _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     const OPWACOIN_ABI = [
       ...OP_20_ABI,
       { name:'buy', type:BitcoinAbiTypes.Function, payable:true,
@@ -2878,8 +2877,7 @@ async function mintPropertyNFT() {
     var mod = await import('https://esm.sh/opnet?bundle');
     var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
-    var { networks } = await import('https://esm.sh/@btc-vision/bitcoin?bundle');
-    var _net = networks.opnetTestnet;
+    var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
@@ -2931,8 +2929,7 @@ async function loadVault() {
     var mod = await import('https://esm.sh/opnet?bundle');
     var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
-    var { networks } = await import('https://esm.sh/@btc-vision/bitcoin?bundle');
-    var _net = networks.opnetTestnet;
+    var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
     var provider   = new JSONRpcProvider('https://testnet.opnet.org');
     var senderAddr = await buildSenderAddress(Address);
