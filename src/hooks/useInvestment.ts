@@ -9,13 +9,10 @@ import {
   ABIDataTypes,
 } from 'opnet';
 import { Address } from '@btc-vision/transaction';
-import { networks, Satoshi } from '@btc-vision/bitcoin';
+import { networks } from '@btc-vision/bitcoin';
 import { useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
-
-const CONTRACT_ADDRESS: string =
-  (import.meta.env.VITE_OPWAP_TOKEN_ADDRESS as string) ||
-  'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp';
+import { CONTRACTS, TREASURY_P2TR } from '../contracts/config';
 
 const NETWORK = networks.opnetTestnet;
 export const SATS_PER_TOKEN = 1000;
@@ -42,18 +39,18 @@ async function buildSenderAddress(publicKey: string): Promise<Address> {
   return new Address(new Uint8Array(32), pubkeyBytes);
 }
 
-// ABI com OP_20 padrão
+// ABI: buy(address, uint256) → bool
 const OPWAP_ABI: BitcoinInterfaceAbi = [
   {
-    name: 'mint',
+    name: 'buy',
     type: BitcoinAbiTypes.Function,
     constant: false,
     payable: true,
     inputs: [
-      { name: 'to', type: ABIDataTypes.ADDRESS },
+      { name: 'to',     type: ABIDataTypes.ADDRESS },
       { name: 'amount', type: ABIDataTypes.UINT256 },
     ],
-    outputs: [],
+    outputs: [{ name: 'success', type: ABIDataTypes.BOOL }],
   },
   {
     name: 'balanceOf',
@@ -65,40 +62,14 @@ const OPWAP_ABI: BitcoinInterfaceAbi = [
   },
 ];
 
-interface IMintableToken extends BaseContractProperties {
+interface IBuyableToken extends BaseContractProperties {
   balanceOf(owner: Address): Promise<CallResult<{ balance: bigint }, []>>;
-  mint(to: Address, amount: bigint): Promise<CallResult<Record<string, never>, []>>;
+  buy(to: Address, amount: bigint): Promise<CallResult<{ success: boolean }, []>>;
 }
 
 export interface InvestmentResult {
   txHash: string;
   opscanUrl: string;
-}
-
-// Patch: intercepta getSelector para mint retornar string que o SDK hasheia para 0x40c10f19
-// Descoberta: 0x40c10f19 = 1086394137 é keccak256, não SHA256
-// Solução: patch no writeSelector do writer dentro de encodeFunctionData
-// FIX DEFINITIVO (Bob confirmou): BinaryWriter tem campo 'buffer' como Uint8Array
-// writer.buffer[0..3] = selector bytes em big-endian após writeSelector()
-function applyMintSelectorPatch(contract: unknown): (() => void) {
-  const c = contract as Record<string, unknown>;
-  const proto = Object.getPrototypeOf(c) as Record<string, unknown>;
-  const origEncode = proto['encodeFunctionData'] as ((el: unknown, args: unknown[]) => Record<string, unknown>) | undefined;
-  if (!origEncode) return () => {};
-
-  proto['encodeFunctionData'] = function(element: Record<string, unknown>, args: unknown[]) {
-    const writer = origEncode.call(this, element, args) as Record<string, unknown>;
-    if (element['name'] === 'mint') {
-      const buf = writer['buffer'] as Uint8Array | undefined;
-      if (buf && buf.length >= 4) {
-        buf[0] = 0x40; buf[1] = 0xc1; buf[2] = 0x0f; buf[3] = 0x19;
-        console.log('[OPWA] ✓ mint selector patched → 0x40C10F19');
-      }
-    }
-    return writer;
-  };
-
-  return () => { proto['encodeFunctionData'] = origEncode; };
 }
 
 export function useInvestment() {
@@ -120,14 +91,14 @@ export function useInvestment() {
       } catch (_) {}
     }
     if (!effectivePublicKey) { setError('Could not retrieve public key. Reconnect and try again.'); return; }
-    if (!CONTRACT_ADDRESS) { setError('Contract address not configured.'); return; }
-    if (btcAmount <= 0) { setError('Enter a valid BTC amount.'); return; }
+    if (!CONTRACTS.opwaCoin)  { setError('Contract address not configured.'); return; }
+    if (!TREASURY_P2TR)       { setError('Treasury address not configured.'); return; }
+    if (btcAmount <= 0)       { setError('Enter a valid BTC amount.'); return; }
 
     const satsAmount = BigInt(Math.round(btcAmount * BTC_TO_SATS));
     if (satsAmount < BigInt(SATS_PER_TOKEN)) { setError('Minimum: 1000 sats (0.00001 BTC).'); return; }
 
     setLoading(true);
-    let removePatch: (() => void) | undefined;
 
     try {
       console.log('[OPWA] 1. building sender address...');
@@ -139,22 +110,23 @@ export function useInvestment() {
         network: NETWORK,
       });
 
-      const contract = getContract<IMintableToken>(
-        CONTRACT_ADDRESS,
+      const contract = getContract<IBuyableToken>(
+        CONTRACTS.opwaCoin,
         OPWAP_ABI,
         provider,
         NETWORK,
         senderAddress,
       );
 
-      // Aplicar patch para inspecionar o BinaryWriter e tentar corrigir selector
-      removePatch = applyMintSelectorPatch(contract);
+      // Token amount with 8 decimals: sats / price_per_token * 10^8
+      const tokenAmount = (satsAmount * BigInt(10 ** 8)) / BigInt(SATS_PER_TOKEN);
 
+      // STEP 1 — register the BTC output to treasury so simulation can verify it
       contract.setTransactionDetails({
         inputs: [],
         outputs: [
           {
-            to: CONTRACT_ADDRESS,
+            to:    TREASURY_P2TR,
             value: satsAmount,
             index: 1,
             flags: TransactionOutputFlags.hasTo,
@@ -162,44 +134,36 @@ export function useInvestment() {
         ],
       });
 
-      const tokenAmount = (satsAmount * BigInt(10 ** 8)) / BigInt(SATS_PER_TOKEN);
-
-      console.log('[OPWA] 3. simulating mint...', { satsAmount: satsAmount.toString(), tokenAmount: tokenAmount.toString() });
-      const sim = await contract.mint(senderAddress, tokenAmount);
+      console.log('[OPWA] 3. simulating buy...', { satsAmount: satsAmount.toString(), tokenAmount: tokenAmount.toString() });
+      const sim = await contract.buy(senderAddress, tokenAmount);
       console.log('[OPWA] 4. sim result:', sim);
 
-      if (!sim || 'error' in sim || (sim as any).revert || (sim as any).ok === false) {
-        throw new Error('Simulation failed: ' + JSON.stringify(sim));
-      }
+      if (sim.revert) throw new Error('Simulation reverted: ' + sim.revert);
 
+      // STEP 2 — send with matching extra output to treasury
       console.log('[OPWA] 5. sending transaction...');
       const receipt = await sim.sendTransaction({
-        signer: null,
+        signer:      null,   // frontend — wallet handles signing
         mldsaSigner: null,
-        refundTo: walletAddr,
+        refundTo:    walletAddr,
         maximumAllowedSatToSpend: satsAmount + 50_000n,
         network: NETWORK,
-        extraOutputs: [
-          {
-            address: CONTRACT_ADDRESS,
-            value: Number(satsAmount) as unknown as Satoshi,
-          },
-        ],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        extraOutputs: [{ address: TREASURY_P2TR, value: satsAmount as any }],
       });
       console.log('[OPWA] 6. receipt:', receipt);
 
       if (!receipt) throw new Error('Transaction rejected or timed out.');
 
       const txHash: string = receipt.transactionId ?? '';
-      const opscanUrl = 'https://opscan.org/transactions/' + txHash + '?network=testnet';
+      const opscanUrl = 'https://testnet.opscan.io/transactions/' + txHash;
       setResult({ txHash, opscanUrl });
 
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Transaction failed.';
-      console.error('OPWA MINT ERROR:', err);
+      console.error('OPWA BUY ERROR:', err);
       setError(msg);
     } finally {
-      if (removePatch) removePatch();
       setLoading(false);
     }
   }, [walletAddr, publicKey]);
