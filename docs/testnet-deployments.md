@@ -10,10 +10,10 @@ Explorer: `https://testnet.opscan.io`
 
 | Field | Value |
 |-------|-------|
-| Contract Address | `opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88` |
-| Funding TX | `c0d7e2bb4586be6d88ed767a6beca0fac556db038cf53861e7f0e6d360ae7ac3` |
-| Reveal TX | `b429b350330f306dd77db69a6358311b9c3f764b3e2405f64d4ea123a4138426` |
-| setTreasury TX | `2ee6ec6de5e579ba2bee42c07b0f1f4dee8f5acee9760097c52d75914aba3e1e` |
+| Contract Address | `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp` |
+| Funding TX | `bc18a99eecf59292a89e3341413d6a979c4755121d486402d92b4205f79ac124` |
+| Reveal TX | `8f755248524e6b035b96e9c03aed54d1d6506bf8527b419fb7de1f7c07b1e45f` |
+| setTreasury TX | `(pending — run set-treasury.ts)` |
 | Symbol | OPWA |
 | Decimals | 8 |
 | Max Supply | 1,000,000 OPWA |
@@ -22,6 +22,10 @@ Explorer: `https://testnet.opscan.io`
 | Treasury pubkey | `5efba299a9b980c664a2fa82e675473fe471af7e745cea1bac4e8c909f994658` |
 | Source | `contracts/op20/OPWACoin.ts` |
 | ABI | `contracts/abis/OPWACoin.abi.json` |
+
+**Payment check (v2 — dual-path):**
+- Simulation: `output.to === treasury.toHex()` (hasTo flag + hex pubkey string)
+- Real tx: `output.scriptPublicKey` P2TR bytes match treasury pubkey
 
 **Key methods:**
 - `buy(to: address, amount: uint256)` — payable; verifies BTC output to treasury, mints tokens

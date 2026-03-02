@@ -13,7 +13,7 @@
 // Platform-level contracts
 export const CONTRACTS = {
   /** OPWACoin OP-20 — has built-in buy() function */
-  opwaCoin:    'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88' as string,
+  opwaCoin:    'opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp' as string,
   propertyNft: 'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6' as string,
 } as const;
 
