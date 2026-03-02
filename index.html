@@ -2629,11 +2629,12 @@ async function confirmInvest(asset) {
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, _net, senderAddr);
     // Build raw P2TR scriptPubKey: OP_1 PUSH32 <32-byte-x-only-tweaked-pubkey>
-    // Using hasScriptPubKey instead of hasTo — server directly uses script bytes,
-    // avoiding any opt1p... address parsing issues on the simulator.
+    // Provide both `to` (server requires it) AND `scriptPubKey` bytes (so server
+    // uses the raw script directly, bypassing any opt1p... address decoding issues).
+    // flags = hasTo(1) | hasScriptPubKey(2) = 3
     const _tpk = _hexToBytes('5efba299a9b980c664a2fa82e675473fe471af7e745cea1bac4e8c909f994658');
     const _tscript = new Uint8Array(34); _tscript[0]=0x51; _tscript[1]=0x20; _tscript.set(_tpk,2);
-    contract.setTransactionDetails({ inputs:[], outputs:[{ scriptPubKey:_tscript, value:satsAmt, index:1, flags:TransactionOutputFlags.hasScriptPubKey }] });
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, scriptPubKey:_tscript, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo|TransactionOutputFlags.hasScriptPubKey }] });
     const simulation = await contract.buy(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
