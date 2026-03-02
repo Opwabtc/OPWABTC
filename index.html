@@ -2616,9 +2616,10 @@ async function confirmInvest(asset) {
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
     const mod = await import('https://esm.sh/opnet?bundle');
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, networks, TransactionOutputFlags, ABIDataTypes } = mod;
-  var _net = networks.opnetTestnet || networks.testnet || (networks && Object.values(networks).find(function(n){return n&&typeof n==='object'&&JSON.stringify(n).includes('testnet');})) || {name:'op_testnet',chainId:'op_testnet',pubKeyHash:111,scriptHash:196,wif:239,bech32:'opt',bip32:{public:70617039,private:70615956}};
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, TransactionOutputFlags, ABIDataTypes } = mod;
     const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    const { networks } = await import('https://esm.sh/@btc-vision/bitcoin?bundle');
+    const _net = networks.opnetTestnet;
     const OPWACOIN_ABI = [
       ...OP_20_ABI,
       { name:'buy', type:BitcoinAbiTypes.Function, payable:true,
@@ -2875,9 +2876,10 @@ async function mintPropertyNFT() {
   status.style.color = 'var(--text-2)';
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks, ABIDataTypes } = mod;
-  var _net = networks.opnetTestnet || networks.testnet || (networks && Object.values(networks).find(function(n){return n&&typeof n==='object'&&JSON.stringify(n).includes('testnet');})) || {name:'op_testnet',chainId:'op_testnet',pubKeyHash:111,scriptHash:196,wif:239,bech32:'opt',bip32:{public:70617039,private:70615956}};
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { networks } = await import('https://esm.sh/@btc-vision/bitcoin?bundle');
+    var _net = networks.opnetTestnet;
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
@@ -2927,9 +2929,10 @@ async function loadVault() {
 
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks, ABIDataTypes } = mod;
-  var _net = networks.opnetTestnet || networks.testnet || (networks && Object.values(networks).find(function(n){return n&&typeof n==='object'&&JSON.stringify(n).includes('testnet');})) || {name:'op_testnet',chainId:'op_testnet',pubKeyHash:111,scriptHash:196,wif:239,bech32:'opt',bip32:{public:70617039,private:70615956}};
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { networks } = await import('https://esm.sh/@btc-vision/bitcoin?bundle');
+    var _net = networks.opnetTestnet;
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
     var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
     var senderAddr = await buildSenderAddress(Address);
