@@ -78,7 +78,7 @@ export function useInvestment() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<InvestmentResult | null>(null);
 
-  const invest = useCallback(async (btcAmount: number) => {
+  const invest = useCallback(async (tokenCount: number) => {
     setError(null);
     setResult(null);
 
@@ -93,10 +93,12 @@ export function useInvestment() {
     if (!effectivePublicKey) { setError('Could not retrieve public key. Reconnect and try again.'); return; }
     if (!CONTRACTS.opwaCoin)  { setError('Contract address not configured.'); return; }
     if (!TREASURY_P2TR)       { setError('Treasury address not configured.'); return; }
-    if (btcAmount <= 0)       { setError('Enter a valid BTC amount.'); return; }
+    if (tokenCount <= 0 || !Number.isInteger(tokenCount)) { setError('Enter a valid number of tokens.'); return; }
 
-    const satsAmount = BigInt(Math.round(btcAmount * BTC_TO_SATS));
-    if (satsAmount < BigInt(SATS_PER_TOKEN)) { setError('Minimum: 1000 sats (0.00001 BTC).'); return; }
+    // exact sats from token count — no floating point
+    const satsAmount  = BigInt(tokenCount) * BigInt(SATS_PER_TOKEN);
+    // raw token amount with 8 decimals (contract stores with 8 decimal places)
+    const tokenAmount = BigInt(tokenCount) * 10n ** 8n;
 
     setLoading(true);
 
@@ -117,9 +119,6 @@ export function useInvestment() {
         NETWORK,
         senderAddress,
       );
-
-      // Token amount with 8 decimals: sats / price_per_token * 10^8
-      const tokenAmount = (satsAmount * BigInt(10 ** 8)) / BigInt(SATS_PER_TOKEN);
 
       // STEP 1 — register the BTC output to treasury so simulation can verify it
       contract.setTransactionDetails({

@@ -48,17 +48,17 @@ function AssetCard({ id, title, desc, apy, apyClass, change, available, total, t
 
   const handleConfirm = useCallback(async () => {
     if (!connected) { connect('opnet'); return }
-    const btc = normalizeBtcInput(btcRaw)
-    if (btc <= 0) return
-    await invest(btc)
-  }, [connected, connect, btcRaw, invest])
+    const tokens = parseInt(tokensRaw, 10)
+    if (!tokens || tokens <= 0) return
+    await invest(tokens)
+  }, [connected, connect, tokensRaw, invest])
 
   const handleOpen = useCallback(() => { reset(); setBtcRaw(''); setTokensRaw(''); setOpen(true) }, [reset])
 
   const progressPct = Math.min(100, Math.round(((total - available) / total) * 100))
   const btcValue = normalizeBtcInput(btcRaw)
-  const tokenCount = calcTokensFromBtc(btcValue)
-  const isValidAmount = btcValue >= BTC_PER_TOKEN
+  const tokenCount = parseInt(tokensRaw, 10) || 0
+  const isValidAmount = tokenCount >= 1
 
   return (
     <div className={`ativo-card fade-in-up ${delay}`} data-type={type} data-name={title}>
