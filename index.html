@@ -1369,17 +1369,17 @@ footer{
         Home
       </a>
       <!-- Assets -->
-      <a class="nav-link" href="#assets">
+      <a class="nav-link" href="#assets" onclick="navigate('/');setTimeout(function(){document.getElementById('assets')&&document.getElementById('assets').scrollIntoView({behavior:'smooth'})},200);return false;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
         Assets
       </a>
       <!-- Simulator -->
-      <a class="nav-link" href="#simulator">
+      <a class="nav-link" href="#simulator" onclick="navigate('/');setTimeout(function(){document.getElementById('simulator')&&document.getElementById('simulator').scrollIntoView({behavior:'smooth'})},200);return false;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
         Simulator
       </a>
       <!-- How It Works -->
-      <a class="nav-link" href="#how-it-works">
+      <a class="nav-link" href="#how-it-works" onclick="navigate('/');setTimeout(function(){document.getElementById('how-it-works')&&document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})},200);return false;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
         How It Works
       </a>
@@ -1431,9 +1431,9 @@ footer{
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobile-menu" style="display:none">
-  <a class="mobile-nav-link" href="#assets" onclick="closeMobileMenu()">Assets</a>
-  <a class="mobile-nav-link" href="#simulator" onclick="closeMobileMenu()">Simulator</a>
-  <a class="mobile-nav-link" href="#how-it-works" onclick="closeMobileMenu()">How It Works</a>
+  <a class="mobile-nav-link" href="#assets" onclick="navigate('/');setTimeout(function(){document.getElementById('assets')&&document.getElementById('assets').scrollIntoView({behavior:'smooth'})},200);closeMobileMenu();return false;">Assets</a>
+  <a class="mobile-nav-link" href="#simulator" onclick="navigate('/');setTimeout(function(){document.getElementById('simulator')&&document.getElementById('simulator').scrollIntoView({behavior:'smooth'})},200);closeMobileMenu();return false;">Simulator</a>
+  <a class="mobile-nav-link" href="#how-it-works" onclick="navigate('/');setTimeout(function(){document.getElementById('how-it-works')&&document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})},200);closeMobileMenu();return false;">How It Works</a>
   <button class="mobile-nav-link" onclick="openWalletModal();closeMobileMenu()">Connect Wallet</button>
 </div>
 
