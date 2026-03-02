@@ -2610,7 +2610,11 @@ async function confirmInvest(asset) {
   const btn   = panel ? panel.querySelector('.btn-confirm') : null;
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
   try {
-    const TREASURY_P2TR = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
+    // Native Signet P2TR address for treasury (tb1p = bech32m of 5efba299... pubkey)
+    // The OPNet RPC node runs on Signet and decodes tb1p... correctly.
+    // The opt1p... OPNet-encoded address was causing "Insufficient BTC payment"
+    // because the server couldn't build the P2TR scriptPubKey from it.
+    const TREASURY_SIGNET = 'tb1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevq3ksn4g';
     const OPWACOIN_ADDR = 'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88';
     const count    = BigInt(tokenCount);
     const satsAmt  = count * 1000n;
@@ -2628,19 +2632,15 @@ async function confirmInvest(asset) {
     const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, _net, senderAddr);
-    // Build raw P2TR scriptPubKey: OP_1 PUSH32 <32-byte-x-only-tweaked-pubkey>
-    // Provide both `to` (server requires it) AND `scriptPubKey` bytes (so server
-    // uses the raw script directly, bypassing any opt1p... address decoding issues).
-    // flags = hasTo(1) | hasScriptPubKey(2) = 3
-    const _tpk = _hexToBytes('5efba299a9b980c664a2fa82e675473fe471af7e745cea1bac4e8c909f994658');
-    const _tscript = new Uint8Array(34); _tscript[0]=0x51; _tscript[1]=0x20; _tscript.set(_tpk,2);
-    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, scriptPubKey:_tscript, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo|TransactionOutputFlags.hasScriptPubKey }] });
+    // Use native Signet tb1p... address — reference repos (frogop-pub) use native
+    // Bitcoin addresses (bcrt1q...) in setTransactionDetails, not OPNet opt1p...
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_SIGNET, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo, scriptPubKey:undefined }] });
     const simulation = await contract.buy(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:satsAmt + 100_000n,
-      extraOutputs:[{ address:TREASURY_P2TR, value:satsAmt }],
+      extraOutputs:[{ address:TREASURY_SIGNET, value:satsAmt }],
     });
     const txid = receipt.transactionId;
     showToast('✅ ' + tokenCount + ' OPWAP bought! TX: ' + txid.slice(0,12) + '…', 'success');
