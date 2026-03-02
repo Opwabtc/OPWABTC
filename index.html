@@ -1936,7 +1936,8 @@ async function connectWallet(type) {
     if (accounts && accounts.length > 0) {
       const addr = accounts[0];
       const short = addr.slice(0,8) + '…' + addr.slice(-6);
-      document.getElementById('connect-btn-label').textContent = short;
+      const btn = document.getElementById('connect-btn');
+      if (btn) { btn.textContent = short; btn.classList.add('connected'); }
       showToast('Connected: ' + short, 'success');
       closeWallet();
     } else {
@@ -2090,9 +2091,20 @@ function toggleDisp(btn, mode, assetId) {
 /* ── LIVE PRICES ── */
 async function fetchPrices() {
   try {
-    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-    const d = await r.json();
-    btcPrice = d.bitcoin.usd;
+    const proxies = [
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
+      'https://api.coinpaprika.com/v1/tickers/btc-bitcoin',
+    ];
+    let fetched = false;
+    for (const url of proxies) {
+      try {
+        const r = await fetch(url);
+        const d = await r.json();
+        if (d.bitcoin) { btcPrice = d.bitcoin.usd; fetched = true; break; }
+        if (d.quotes)  { btcPrice = d.quotes.USD.price; fetched = true; break; }
+      } catch(_) {}
+    }
+    if (!fetched) return;
     const fmt = '$' + btcPrice.toLocaleString();
     document.getElementById('hero-btc-price').textContent = fmt;
     document.getElementById('g-btc').textContent = fmt;
