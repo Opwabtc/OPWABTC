@@ -14,9 +14,12 @@
 
 // Platform-level contracts
 export const CONTRACTS = {
-  opwaCoin:    '' as string,   // OPWACoin OP-20 governance token
-  propertyNft: '' as string,   // PropertyNFT OP-721
+  opwaCoin:    'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp' as string,
+  propertyNft: 'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6' as string,
 } as const;
+
+/** Price: 1 OPWA token = 0.00001 BTC = 1 000 satoshis */
+export const OPWA_SATS_PER_TOKEN = 1_000n;
 
 /**
  * Maps each property ID (from the Zustand store / useAppStore) to the
