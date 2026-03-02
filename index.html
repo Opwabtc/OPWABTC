@@ -132,20 +132,21 @@
 /* ── BASE ── */
 html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px}
 body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden}
-*{cursor:none!important}
 a{text-decoration:none;color:inherit}
-button{cursor:none!important;font-family:inherit}
+button{font-family:inherit}
 input,select,textarea{font-family:inherit}
 
-/* ── CURSOR (split pill) ── */
+/* ── CURSOR (dot trail — pointer-events:none, never blocks clicks) ── */
 #cur{
-  position:fixed;pointer-events:none;z-index:99999;
-  width:20px;height:10px;border-radius:999px;overflow:hidden;
-  transform:translate(-50%,-50%) rotate(45deg);
-  box-shadow:0 2px 14px rgba(249,115,22,.55);
+  position:fixed;pointer-events:none;z-index:9999;
+  width:10px;height:10px;border-radius:50%;
+  background:#f97316;
+  transform:translate(-50%,-50%);
+  mix-blend-mode:difference;
+  transition:transform .12s ease,width .12s ease,height .12s ease;
   will-change:left,top;
 }
-#cur::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 50%,#f97316 50%)}
+#cur.hovering{width:22px;height:22px;background:rgba(249,115,22,.35);border:1.5px solid #f97316}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -395,7 +396,7 @@ input,select,textarea{font-family:inherit}
 /* =====================================================================
    SHARED SECTION
    ===================================================================== */
-.section{padding:88px 80px;border-top:1px solid var(--border)}
+.section{padding:88px max(24px,calc((100vw - 1200px)/2 + 80px));border-top:1px solid var(--border);overflow-x:hidden}
 .s-label{
   display:flex;align-items:center;gap:8px;
   font-family:'DM Mono',monospace;font-size:10px;font-weight:700;
@@ -411,6 +412,7 @@ input,select,textarea{font-family:inherit}
    ASSETS SECTION
    ===================================================================== */
 .assets-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:10px}
+.section-inner{max-width:1200px;margin:0 auto;width:100%}
 .asset-filters{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:28px}
 .f-btn{
   padding:5px 13px;border-radius:7px;
@@ -1516,19 +1518,14 @@ footer{
      ASSETS
 ════════════════════════════════════════ -->
 <section class="section" id="assets">
+  <div class="section-inner">
   <div class="s-label">Portfolio</div>
   <div class="assets-toolbar">
     <div>
       <h2 class="s-title">Available <span class="acc">Assets</span></h2>
       <p class="s-sub">Fractionalized real estate backed by Bitcoin smart contracts on OP_NET.</p>
     </div>
-    <a href="https://github.com/Opwabtc/" target="_blank"
-      style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-2);border:1px solid var(--border);padding:7px 13px;border-radius:8px;background:var(--bg-elevated);transition:all .15s;white-space:nowrap;align-self:flex-start"
-      onmouseover="this.style.borderColor='var(--accent-border)';this.style.color='var(--accent)'"
-      onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-2)'">
-      View all on GitHub
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
-    </a>
+
   </div>
   <div class="asset-filters">
     <button class="f-btn active" onclick="filterAssets('all',this)">All</button>
@@ -1702,6 +1699,7 @@ footer{
       </div>
     </div>
 
+  </div>
   </div>
 </section>
 
@@ -1971,15 +1969,15 @@ sendTransaction({ extraOutputs })
         <div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">OPWACoin OP-20</span>
-            <a href="https://opscan.org/?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqq…eksycrz88 ↗</a>
+            <a href="https://opscan.org/accounts/opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqq…eksycrz88 ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">PropertyNFT OP-721</span>
-            <a href="https://opscan.org/?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr9…hc0uyqa6 ↗</a>
+            <a href="https://opscan.org/accounts/opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr9…hc0uyqa6 ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">Treasury P2TR</span>
-            <a href="https://opscan.org/?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1ptm…q58h3t ↗</a>
+            <a href="https://opscan.org/accounts/opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1ptm…q58h3t ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">Rate</span>
@@ -2009,25 +2007,29 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </div>
       <!-- Card 4: Wallets -->
       <div class="tech-card">
-        <div class="tech-card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+        <div class="tech-card-icon" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.2)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v1m0 8v1M9.5 9.5c.5-.8 1.4-1.5 2.5-1.5s2.5.7 2.5 2c0 2.5-5 1.5-5 4s2 2 2.5 2 2.5-.7 2.5-2" stroke="#22c55e" stroke-linecap="round"/></svg>
         </div>
-        <div class="tech-card-tag">Wallets · Supported</div>
-        <div class="tech-card-title">Wallet Compatibility</div>
-        <div class="tech-card-desc">OPWA supports all major Bitcoin wallets with OP_NET integration. The wallet signs transactions — the protocol never holds private keys.</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
-          <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
-            🔶 OP_Wallet
-          </a>
-          <a href="https://unisat.io/" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
-            🟡 UniSat
-          </a>
-          <a href="https://www.xverse.app/" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
-            🔷 Xverse
-          </a>
-          <a href="https://www.okx.com/web3" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
-            ⬛ OKX
-          </a>
+        <div class="tech-card-tag" style="color:#22c55e">Yield · Stablecoin</div>
+        <div class="tech-card-title">Earn in Stablecoin — On-Chain</div>
+        <div class="tech-card-desc">Real estate yields distributed in stablecoin — no volatility, no middlemen. Every payment recorded permanently on Bitcoin and verifiable by anyone.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+          <div style="padding:10px 12px;border-radius:9px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18)">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#22c55e;margin-bottom:3px">Immutable</div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.45">Every yield block-confirmed on Bitcoin forever</div>
+          </div>
+          <div style="padding:10px 12px;border-radius:9px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18)">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#22c55e;margin-bottom:3px">Traceable</div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.45">Audit any payment via OPScan in real time</div>
+          </div>
+          <div style="padding:10px 12px;border-radius:9px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18)">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#22c55e;margin-bottom:3px">Non-Custodial</div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.45">Smart contract sends directly to your wallet</div>
+          </div>
+          <div style="padding:10px 12px;border-radius:9px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18)">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#22c55e;margin-bottom:3px">Stable</div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.45">Yield protected from BTC price volatility</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2046,13 +2048,14 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </div>
       <p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>
       <div class="ft-social">
-        <a href="https://x.com/" class="soc-btn" title="X / Twitter" target="_blank">
+        <a href="https://x.com/" class="soc-btn" title="X / Twitter">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
         <a href="https://github.com/Opwabtc/OPWABTC" class="soc-btn soc-btn-github" target="_blank" title="GitHub">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
         </a>
       </div>
+      
     </div>
     <div>
       <div class="ft-col-title">Platform</div>
@@ -2098,7 +2101,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     </div>
     <div>
       <div class="ft-col-title">Resources</div>
-      <a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link" target="_blank" style="color:var(--gold)">
+      <a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link" target="_blank">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Whitepaper ↗
       </a>
@@ -2235,24 +2238,23 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       <br>
       <a id="dash-opscan-link" href="https://opscan.org/?network=op_testnet" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:14px;font-weight:600;text-decoration:none;border:1px solid var(--accent-border);border-radius:9px;padding:11px 18px;background:var(--accent-dim)">&#x2197; View all transactions on OPScan</a>
 
-      <!-- ── PORTFOLIO GROWTH CHART ── -->
       <div style="margin-top:28px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 22px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
           <div>
             <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px">Portfolio Growth</div>
-            <div style="display:flex;align-items:center;gap:16px;font-size:11px;font-family:'DM Mono',monospace">
+            <div style="display:flex;align-items:center;gap:14px;font-size:11px;font-family:'DM Mono',monospace">
               <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:2px;background:#f97316;display:inline-block;border-radius:2px"></span><span style="color:var(--text-3)">BTC Value</span></span>
               <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:2px;background:#7c3aed;display:inline-block;border-radius:2px"></span><span style="color:var(--text-3)">OPWAP Value</span></span>
             </div>
           </div>
-          <div style="display:flex;gap:6px" id="chart-range-btns">
+          <div style="display:flex;gap:6px">
             <button onclick="setChartRange('1w',this)" class="chart-range-btn chart-range-active">1W</button>
             <button onclick="setChartRange('1m',this)" class="chart-range-btn">1M</button>
             <button onclick="setChartRange('all',this)" class="chart-range-btn">All</button>
           </div>
         </div>
         <div style="display:flex;gap:0">
-          <div style="display:flex;flex-direction:column;justify-content:space-between;padding-right:10px;padding-bottom:24px;min-width:46px">
+          <div style="display:flex;flex-direction:column;justify-content:space-between;padding-right:10px;padding-bottom:22px;min-width:46px">
             <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--text-3);text-align:right">$50k</span>
             <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--text-3);text-align:right">$40k</span>
             <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--text-3);text-align:right">$30k</span>
@@ -2267,20 +2269,19 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div style="font-size:10px;color:var(--text-3);text-align:center;margin-top:8px;font-family:'DM Mono',monospace" id="chart-status">Loading on-chain data…</div>
       </div>
 
-      <!-- ── TRANSACTION LIST ── -->
-      <div style="margin-top:24px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;margin-bottom:8px">
-        <div style="padding:16px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center">
+      <div style="margin-top:20px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;margin-bottom:8px">
+        <div style="padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center">
           <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">Transaction History</div>
           <div style="font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace" id="tx-count-label"></div>
         </div>
-        <div style="display:grid;grid-template-columns:116px 1fr 88px 96px 76px;padding:9px 22px;border-bottom:1px solid rgba(255,255,255,.04)">
+        <div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.04)">
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)">Hash</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)">Action</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Value</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Time</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Status</span>
         </div>
-        <div id="tx-list"><div style="padding:28px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div></div>
+        <div id="tx-list"><div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div></div>
       </div>
     </div>
   </div>
@@ -2476,6 +2477,9 @@ const cur = document.getElementById('cur');
 document.addEventListener('mousemove', e => {
   cur.style.left = e.clientX + 'px';
   cur.style.top  = e.clientY + 'px';
+  const t = e.target;
+  const isInteractive = t.closest('a,button,input,select,textarea,[role="button"],[onclick]');
+  cur.classList.toggle('hovering', !!isInteractive);
 }, {passive:true});
 
 /* ── THEME ── */
@@ -2583,102 +2587,49 @@ function syncInvest(asset, field, raw) {
 }
 
 async function confirmInvest(asset) {
-  if (!walletState.connected || !walletState.addr) {
-    openWalletModal();
-    showToast('Connect your wallet first', 'info');
-    return;
-  }
-
-  const tokensEl  = document.getElementById(asset + '-tokens');
+  if (!walletState.connected || !walletState.addr) { openWalletModal(); showToast('Connect your wallet first','info'); return; }
+  const tokensEl = document.getElementById(asset + '-tokens');
   const tokenCount = parseInt(tokensEl ? tokensEl.value : 0);
-  if (!tokenCount || tokenCount < 1) {
-    showToast('Enter number of tokens (min 1)', 'info');
-    return;
-  }
-
+  if (!tokenCount || tokenCount < 1) { showToast('Enter number of tokens (min 1)','info'); return; }
   const panel = document.getElementById('p-' + asset);
   const btn   = panel ? panel.querySelector('.btn-confirm') : null;
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
-
   try {
     const TREASURY_P2TR = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
-    const OPWACOIN_ADDR  = 'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88';
-    const SATS_PER_TOKEN = 1000n;
-    const DECIMALS       = 100_000_000n;
-
+    const OPWACOIN_ADDR = 'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88';
     const count    = BigInt(tokenCount);
-    const satsAmt  = count * SATS_PER_TOKEN;
-    const tokenAmt = count * DECIMALS;
-
-    // Per Bob: esm.sh/opnet?bundle, JSONRpcProvider, signer:null, receipt.transactionId
+    const satsAmt  = count * 1000n;
+    const tokenAmt = count * 100_000_000n;
     const mod = await import('https://esm.sh/opnet?bundle');
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, networks, TransactionOutputFlags } = mod;
     const { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
-
     const OPWACOIN_ABI = [
       ...OP_20_ABI,
-      {
-        name: 'buy',
-        type: BitcoinAbiTypes.Function,
-        payable: true,
-        inputs: [
-          { name: 'to',     type: ABIDataTypes.ADDRESS },
-          { name: 'amount', type: ABIDataTypes.UINT256 },
-        ],
-        outputs: [{ name: 'success', type: ABIDataTypes.BOOL }],
-      },
+      { name:'buy', type:BitcoinAbiTypes.Function, payable:true,
+        inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
+        outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-
     const provider = new JSONRpcProvider('https://testnet.opnet.org');
     const contract = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, networks.opnetTestnet, walletState.addr);
-
-    // setTransactionDetails BEFORE simulate — treasury output
-    contract.setTransactionDetails({
-      inputs: [],
-      outputs: [{
-        to:    TREASURY_P2TR,
-        value: satsAmt,
-        index: 1,
-        flags: TransactionOutputFlags.hasTo,
-      }],
-    });
-
-    // Simulate buy()
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
     const simulation = await contract.buy(walletState.addr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
-
-    // Send — signer:null, receipt.transactionId
     const receipt = await simulation.sendTransaction({
-      signer:      null,
-      mldsaSigner: null,
-      refundTo:    walletState.addr,
-      network:     networks.opnetTestnet,
-      maximumAllowedSatToSpend: satsAmt + 100_000n,
-      extraOutputs: [{ address: TREASURY_P2TR, value: satsAmt }],
+      signer:null, mldsaSigner:null, refundTo:walletState.addr,
+      network:networks.opnetTestnet, maximumAllowedSatToSpend:satsAmt + 100_000n,
+      extraOutputs:[{ address:TREASURY_P2TR, value:satsAmt }],
     });
-
     const txid = receipt.transactionId;
     showToast('✅ ' + tokenCount + ' OPWAP bought! TX: ' + txid.slice(0,12) + '…', 'success');
-
     const rcpt = document.getElementById(asset + '-receipt');
-    if (rcpt) {
-      rcpt.style.display = 'block';
-      const link = rcpt.querySelector('.rcpt-scan');
-      if (link) link.href = 'https://opscan.org/transactions/' + txid + '?network=op_testnet';
-    }
-
-    _txCache = {};  // invalidate tx cache
-
+    if (rcpt) { rcpt.style.display = 'block'; const link = rcpt.querySelector('.rcpt-scan'); if (link) link.href = 'https://opscan.org/transactions/' + txid + '?network=op_testnet'; }
+    _txCache = {};
   } catch(err) {
     console.error('[confirmInvest]', err);
     const msg = err.message || String(err);
-    if (msg.includes('User rejected') || msg.includes('cancelled') || msg.includes('denied')) {
-      showToast('Transaction cancelled', 'info');
-    } else if (msg.includes('insufficient') || msg.includes('balance')) {
-      showToast('Insufficient balance — need ' + (Number(BigInt(tokenCount) * 1000n) / 1e8).toFixed(5) + ' BTC', 'error');
-    } else {
-      showToast('Transaction failed: ' + msg.slice(0, 60), 'error');
-    }
+    if (msg.includes('User rejected') || msg.includes('cancelled') || msg.includes('denied')) { showToast('Transaction cancelled','info'); }
+    else if (msg.includes('insufficient') || msg.includes('balance')) { showToast('Insufficient balance — need ' + (Number(count * 1000n) / 1e8).toFixed(5) + ' BTC','error'); }
+    else { showToast('Transaction failed: ' + msg.slice(0,60),'error'); }
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '✓ Confirm Investment'; }
   }
@@ -2754,28 +2705,27 @@ function calcSim() {
   const sa   = calc(initBtc, monBtc, 0.042, months);
   const gain    = opwa - initBtc;
   const gainUsd = gain * bp;
-  // initStr handled per currency below
-  // Show correct currency icon in result
+  // initStr per-currency below
   var iconEl = document.getElementById('sim-icon-left');
   if (iconEl) iconEl.textContent = simCurrency === 'usd' ? '$' : '\u20BF';
   if (simCurrency === 'usd') {
     document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2});
     document.getElementById('res-total').textContent  = 'Total accumulated: $' + (opwa * bp).toLocaleString('en', {maximumFractionDigits:2});
-    var initStr = '$' + (initBtc * bp).toLocaleString('en', {maximumFractionDigits:0}) + ' initial';
-    document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
-    document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
-    document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+    var initStrD = '$' + (initBtc * bp).toLocaleString('en', {maximumFractionDigits:0}) + ' initial';
+    document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStrD;
+    document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStrD;
+    document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStrD;
     document.getElementById('opwa-val').textContent = '$' + ((opwa - initBtc) * bp).toLocaleString('en', {maximumFractionDigits:2});
     document.getElementById('fi-val').textContent   = '$' + ((fi - initBtc) * bp).toLocaleString('en', {maximumFractionDigits:2});
     document.getElementById('sa-val').textContent   = '$' + ((sa - initBtc) * bp).toLocaleString('en', {maximumFractionDigits:2});
   } else {
-    var gain = opwa - initBtc;
-    document.getElementById('res-gain').textContent   = gain.toFixed(6);
+    var gainBtc = opwa - initBtc;
+    document.getElementById('res-gain').textContent   = gainBtc.toFixed(6);
     document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
-    var initStr = '\u20BF ' + initBtc.toFixed(4) + ' initial';
-    document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
-    document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
-    document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+    var initStrB = '\u20BF ' + initBtc.toFixed(4) + ' initial';
+    document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStrB;
+    document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStrB;
+    document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStrB;
     document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa - initBtc).toFixed(6);
     document.getElementById('fi-val').textContent   = '\u20BF ' + (fi - initBtc).toFixed(6);
     document.getElementById('sa-val').textContent   = '\u20BF ' + (sa - initBtc).toFixed(6);
@@ -2898,78 +2848,42 @@ async function mintPropertyNFT() {
     showToast('Connect your wallet first', 'info');
     return;
   }
-
   var btn    = document.getElementById('vault-mint-btn');
   var status = document.getElementById('vault-mint-status');
-
   btn.disabled = true;
   btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Minting...';
   status.textContent = 'Waiting for wallet confirmation…';
   status.style.color = 'var(--text-2)';
-
   try {
-    // Per Bob's briefing: esm.sh/opnet?bundle, JSONRpcProvider, networks.opnetTestnet, signer:null
     var mod = await import('https://esm.sh/opnet?bundle');
-    var getContract         = mod.getContract;
-    var JSONRpcProvider     = mod.JSONRpcProvider;
-    var BitcoinAbiTypes     = mod.BitcoinAbiTypes;
-    var OP_721_ABI          = mod.OP_721_ABI;
-    var networks            = mod.networks;
-    var ABIDataTypes        = (await import('https://esm.sh/@btc-vision/transaction?bundle')).ABIDataTypes;
-
-    // Full ABI — never empty []
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks } = mod;
+    var { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
-      {
-        name: 'mint',
-        type: BitcoinAbiTypes.Function,
-        payable: false,
-        inputs: [],
-        outputs: [{ name: 'tokenId', type: ABIDataTypes.UINT256 }],
-      },
-      {
-        name: 'mintPrice',
-        type: BitcoinAbiTypes.Function,
-        payable: false,
-        inputs: [],
-        outputs: [{ name: 'price', type: ABIDataTypes.UINT256 }],
-      },
+      { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
+      { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-
     var provider = new JSONRpcProvider('https://testnet.opnet.org');
     var contract = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, networks.opnetTestnet, walletState.addr);
-
-    // Check mint price
     var priceRes = await contract.mintPrice();
     var mintSats = priceRes && priceRes.properties ? BigInt(priceRes.properties.price) : 10000n;
-
-    // Simulate mint()
     var simulation = await contract.mint();
     if (simulation.revert) throw new Error(simulation.revert);
-
-    // sendTransaction — signer:null (wallet signs), receipt.transactionId
     var receipt = await simulation.sendTransaction({
-      signer:      null,
-      mldsaSigner: null,
-      refundTo:    walletState.addr,
-      network:     networks.opnetTestnet,
-      maximumAllowedSatToSpend: mintSats + 50000n,
+      signer:null, mldsaSigner:null, refundTo:walletState.addr,
+      network:networks.opnetTestnet, maximumAllowedSatToSpend:mintSats + 50000n,
     });
-
     var txid = receipt.transactionId;
-    status.textContent = '✅ Minted! TX: ' + txid.slice(0, 14) + '…';
+    status.textContent = '✅ Minted! TX: ' + txid.slice(0,14) + '…';
     status.style.color = 'var(--success)';
     showToast('🏠 Real Asset minted!', 'success');
     setTimeout(function(){ loadVault(); }, 3000);
-
   } catch(err) {
     var msg = err.message || String(err);
     if (msg.includes('User rejected') || msg.includes('cancelled') || msg.includes('denied')) {
-      status.textContent = 'Cancelled by user';
-      status.style.color = 'var(--text-3)';
+      status.textContent = 'Cancelled by user'; status.style.color = 'var(--text-3)';
     } else {
-      status.textContent = 'Error: ' + msg.slice(0, 80);
-      status.style.color = 'var(--danger)';
+      status.textContent = 'Error: ' + msg.slice(0,80); status.style.color = 'var(--danger)';
       console.error('[mintPropertyNFT]', msg);
     }
     btn.disabled = false;
@@ -2992,16 +2906,9 @@ async function loadVault() {
 
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var getContract     = mod.getContract;
-    var JSONRpcProvider = mod.JSONRpcProvider;
-    var BitcoinAbiTypes = mod.BitcoinAbiTypes;
-    var OP_721_ABI      = mod.OP_721_ABI;
-    var networks        = mod.networks;
-    var ABIDataTypes    = (await import('https://esm.sh/@btc-vision/transaction?bundle')).ABIDataTypes;
-    var VAULT_ABI = [
-      ...OP_721_ABI,
-      { name: 'mint', type: BitcoinAbiTypes.Function, payable: false, inputs: [], outputs: [{ name: 'tokenId', type: ABIDataTypes.UINT256 }] },
-    ];
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks } = mod;
+    var { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
     var provider = new JSONRpcProvider('https://testnet.opnet.org');
     var contract = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, networks.opnetTestnet, walletState.addr);
 
@@ -3186,336 +3093,157 @@ document.addEventListener('click', function(e) {
   if (w && d && !w.contains(e.target)) d.classList.remove('open');
 });
 
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   PORTFOLIO CHART — real Mempool BTC history + OPWAP value
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-var chartRange = '1w';
-var chartBtcPoints = [];   // [{date, usd}]
-var chartOpwapPoints = []; // [{date, usd}]
+/* ━━━ PORTFOLIO CHART ━━━ */
+var chartRange = '1w', chartBtcPts = [], chartOpwapPts = [];
 
 function setChartRange(r, btn) {
   chartRange = r;
-  document.querySelectorAll('.chart-range-btn').forEach(function(b){
-    b.classList.remove('chart-range-active');
-  });
+  document.querySelectorAll('.chart-range-btn').forEach(function(b){ b.classList.remove('chart-range-active'); });
   if (btn) btn.classList.add('chart-range-active');
   void loadChartData();
 }
 
-/* Fetch real BTC price history from Mempool */
 async function loadChartData() {
   if (!walletState.addr) return;
   var statusEl = document.getElementById('chart-status');
   if (statusEl) statusEl.textContent = 'Loading on-chain data…';
-
   var days = chartRange === '1w' ? 7 : chartRange === '1m' ? 30 : 90;
-  var now = Math.floor(Date.now() / 1000);
-  var since = now - days * 86400;
-
   try {
-    /* 1. Fetch BTC price history from CoinGecko via CORS-friendly proxy */
-    var priceHistory = [];
+    var priceHist = [];
     try {
-      var cgRes = await fetch(
-        'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=' + days + '&interval=daily',
-        { signal: AbortSignal.timeout(8000) }
-      );
-      if (cgRes.ok) {
-        var cgData = await cgRes.json();
-        priceHistory = cgData.prices || []; // [[timestamp_ms, price], ...]
-      }
+      var cgR = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days='+days+'&interval=daily',{signal:AbortSignal.timeout(8000)});
+      if (cgR.ok) priceHist = (await cgR.json()).prices || [];
     } catch(_) {}
-
-    /* 2. Fetch wallet UTXO history from Mempool to get daily BTC balance */
-    var txHistory = [];
-    try {
-      var mRes = await fetch(
-        'https://mempool.space/testnet4/api/address/' + walletState.addr + '/txs',
-        { signal: AbortSignal.timeout(8000) }
-      );
-      if (mRes.ok) txHistory = await mRes.json();
-    } catch(_) {
-      // fallback to opnet mempool
-      try {
-        var mRes2 = await fetch(
-          'https://mempool.opnet.org/api/address/' + walletState.addr + '/txs',
-          { signal: AbortSignal.timeout(8000) }
-        );
-        if (mRes2.ok) txHistory = await mRes2.json();
-      } catch(_) {}
+    var txHist = [];
+    var sources = ['https://mempool.space/testnet4/api/address/'+walletState.addr+'/txs','https://mempool.opnet.org/api/address/'+walletState.addr+'/txs'];
+    for (var si=0; si<sources.length && !txHist.length; si++) {
+      try { var mR = await fetch(sources[si],{signal:AbortSignal.timeout(7000)}); if (mR.ok) txHist = await mR.json(); } catch(_) {}
     }
-
-    /* 3. Build daily BTC balance from transactions */
-    var currentSats = walletState.sats;
-    var dailyBalance = {}; // date string → sats
-
-    // Start from current balance and work backwards
-    var runningBalance = currentSats;
-    var today = new Date();
-
-    for (var d = 0; d < days; d++) {
-      var day = new Date(today);
-      day.setDate(today.getDate() - d);
+    var currentSats = walletState.sats, runBalance = currentSats;
+    var dailyBal = {}, today = new Date();
+    for (var d=0; d<days; d++) {
+      var day = new Date(today); day.setDate(today.getDate()-d);
       var dayStr = day.toISOString().split('T')[0];
-      var dayStart = Math.floor(day.setHours(0,0,0,0) / 1000);
-      var dayEnd = dayStart + 86400;
-
-      // Find txs on this day and adjust balance backwards
-      txHistory.forEach(function(tx) {
-        var ts = tx.status && tx.status.block_time ? tx.status.block_time : 0;
-        if (ts >= dayStart && ts < dayEnd) {
-          var isSent = tx.vin && tx.vin.some(function(v) {
-            return v.prevout && v.prevout.scriptpubkey_address === walletState.addr;
-          });
-          var value = 0;
-          if (tx.vout) {
-            tx.vout.forEach(function(o) {
-              if (o.scriptpubkey_address === walletState.addr) value += (o.value || 0);
-            });
-          }
-          if (isSent) runningBalance += value; else runningBalance -= value;
+      var dayStart = Math.floor(new Date(day.setHours(0,0,0,0))/1000), dayEnd = dayStart+86400;
+      txHist.forEach(function(tx){
+        var ts = tx.status&&tx.status.block_time?tx.status.block_time:0;
+        if (ts>=dayStart&&ts<dayEnd){
+          var isSent=tx.vin&&tx.vin.some(function(v){return v.prevout&&v.prevout.scriptpubkey_address===walletState.addr;});
+          var val=0; if(tx.vout) tx.vout.forEach(function(o){if(o.scriptpubkey_address===walletState.addr)val+=(o.value||0);});
+          if(isSent) runBalance+=val; else runBalance-=val;
         }
       });
-
-      dailyBalance[dayStr] = Math.max(0, runningBalance);
+      dailyBal[dayStr] = Math.max(0, runBalance);
     }
-
-    /* 4. Build chart data points */
-    chartBtcPoints = [];
-    chartOpwapPoints = [];
-    var opwapBals = Number(BigInt(dashOpwapBal || '0'));
-
-    for (var i = days - 1; i >= 0; i--) {
-      var pd = new Date();
-      pd.setDate(pd.getDate() - i);
-      var pdStr = pd.toISOString().split('T')[0];
-
-      // Match price from CoinGecko
-      var price = btcPrice || 65000;
-      if (priceHistory.length) {
-        var targetTs = pd.getTime();
-        var closest = priceHistory.reduce(function(prev, cur) {
-          return Math.abs(cur[0] - targetTs) < Math.abs(prev[0] - targetTs) ? cur : prev;
-        });
-        price = closest[1] || price;
-      }
-
-      var sats = dailyBalance[pdStr] !== undefined ? dailyBalance[pdStr] : currentSats;
-      var btcUsdVal = (sats / 1e8) * price;
-
-      // OPWAP: assume linear accumulation over time (simple model)
-      var opwapFrac = (days - i) / days;
-      var opwapUsdVal = (opwapBals / 1e8) * 0.00001 * price * opwapFrac;
-
-      var label = i === 0 ? 'Now' : (chartRange === '1w'
-        ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][pd.getDay()]
-        : (pd.getMonth()+1) + '/' + pd.getDate());
-
-      chartBtcPoints.push({ label: label, usd: btcUsdVal });
-      chartOpwapPoints.push({ label: label, usd: opwapUsdVal });
+    chartBtcPts=[]; chartOpwapPts=[];
+    var opwapBig = Number(BigInt(dashOpwapBal||'0'));
+    for (var i=days-1; i>=0; i--) {
+      var pd=new Date(); pd.setDate(pd.getDate()-i);
+      var pdStr=pd.toISOString().split('T')[0];
+      var price=btcPrice||65000;
+      if(priceHist.length){var tgt=pd.getTime(),cl=priceHist.reduce(function(p,c){return Math.abs(c[0]-tgt)<Math.abs(p[0]-tgt)?c:p;});price=cl[1]||price;}
+      var sats=dailyBal[pdStr]!==undefined?dailyBal[pdStr]:currentSats;
+      var label=i===0?'Now':(chartRange==='1w'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][pd.getDay()]:(pd.getMonth()+1)+'/'+pd.getDate());
+      chartBtcPts.push({label:label,usd:(sats/1e8)*price});
+      chartOpwapPts.push({label:label,usd:(opwapBig/1e8)*0.00001*price*((days-i)/days)});
     }
-
     drawPortfolioChart();
-    if (statusEl) statusEl.textContent = 'Mempool API + OPNet · Updated ' + new Date().toLocaleTimeString();
-  } catch(e) {
-    console.error('[chart]', e);
-    if (statusEl) statusEl.textContent = 'Could not load chart data';
-  }
+    if (statusEl) statusEl.textContent = 'Mempool + OPNet · Updated '+new Date().toLocaleTimeString();
+  } catch(e) { if(statusEl) statusEl.textContent='Chart unavailable'; }
 }
 
 function drawPortfolioChart() {
   var canvas = document.getElementById('portfolio-chart');
   if (!canvas) return;
-  var container = canvas.parentElement;
-  var w = container.offsetWidth || 600;
-  canvas.width = w;
-  canvas.height = 200;
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, w, 200);
-
-  if (!chartBtcPoints.length) return;
-
-  var padL = 0, padR = 8, padT = 10, padB = 24;
-  var cw = w - padL - padR;
-  var ch = 200 - padT - padB;
-  var pts = chartBtcPoints.length;
-
-  var allVals = chartBtcPoints.map(function(p){return p.usd;})
-    .concat(chartOpwapPoints.map(function(p){return p.usd;}));
-  var maxVal = Math.max.apply(null, allVals);
-  // Round up to next 10k milestone
-  var milestones = [1000, 5000, 10000, 20000, 30000, 40000, 50000, 75000, 100000];
-  var topVal = milestones.find(function(m){return m >= maxVal * 1.2;}) || Math.ceil(maxVal * 1.2 / 10000) * 10000;
-  if (topVal < 500) topVal = 500;
-
-  function xPos(i) { return padL + (i / (pts - 1)) * cw; }
-  function yPos(v) { return padT + ch - (v / topVal) * ch; }
-
-  // Grid lines (5 horizontal)
-  ctx.strokeStyle = 'rgba(255,255,255,.06)';
-  ctx.lineWidth = 1;
-  for (var g = 0; g <= 5; g++) {
-    var gy = padT + (g / 5) * ch;
-    ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(padL + cw, gy); ctx.stroke();
+  var w = canvas.parentElement.offsetWidth||600;
+  canvas.width=w; canvas.height=200;
+  var ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,w,200);
+  if (!chartBtcPts.length) return;
+  var pL=0,pR=8,pT=10,pB=24,cw=w-pL-pR,ch=200-pT-pB,pts=chartBtcPts.length;
+  var allV=chartBtcPts.map(function(p){return p.usd;}).concat(chartOpwapPts.map(function(p){return p.usd;}));
+  var maxV=Math.max.apply(null,allV);
+  var tops=[500,1000,2000,5000,10000,20000,30000,40000,50000,75000,100000];
+  var topV=tops.find(function(m){return m>=maxV*1.2;})||Math.ceil(maxV*1.25/10000)*10000||500;
+  function xp(i){return pL+(i/(pts-1))*cw;}
+  function yp(v){return pT+ch-(v/topV)*ch;}
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=1;
+  for(var g=0;g<=5;g++){var gy=pT+(g/5)*ch;ctx.beginPath();ctx.moveTo(pL,gy);ctx.lineTo(pL+cw,gy);ctx.stroke();}
+  function drawLine(data,color,alpha){
+    ctx.beginPath(); ctx.moveTo(xp(0),yp(data[0].usd));
+    for(var i=1;i<data.length;i++) ctx.lineTo(xp(i),yp(data[i].usd));
+    ctx.lineTo(xp(data.length-1),pT+ch); ctx.lineTo(xp(0),pT+ch); ctx.closePath();
+    var grad=ctx.createLinearGradient(0,pT,0,pT+ch);
+    grad.addColorStop(0,color.replace('1)',alpha+')')); grad.addColorStop(1,color.replace('1)','0)'));
+    ctx.fillStyle=grad; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(xp(0),yp(data[0].usd));
+    for(var i=1;i<data.length;i++) ctx.lineTo(xp(i),yp(data[i].usd));
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
   }
-
-  function drawLine(data, color, fillAlpha) {
-    if (!data.length) return;
-    // Fill area
-    ctx.beginPath();
-    ctx.moveTo(xPos(0), yPos(data[0].usd));
-    for (var i = 1; i < data.length; i++) ctx.lineTo(xPos(i), yPos(data[i].usd));
-    ctx.lineTo(xPos(data.length-1), padT + ch);
-    ctx.lineTo(xPos(0), padT + ch);
-    ctx.closePath();
-    var grad = ctx.createLinearGradient(0, padT, 0, padT + ch);
-    grad.addColorStop(0, color.replace('1)', fillAlpha + ')'));
-    grad.addColorStop(1, color.replace('1)', '0)'));
-    ctx.fillStyle = grad;
-    ctx.fill();
-    // Line
-    ctx.beginPath();
-    ctx.moveTo(xPos(0), yPos(data[0].usd));
-    for (var i = 1; i < data.length; i++) ctx.lineTo(xPos(i), yPos(data[i].usd));
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.lineJoin = 'round';
-    ctx.stroke();
-  }
-
-  drawLine(chartOpwapPoints, 'rgba(124,58,237,1)', '0.18');
-  drawLine(chartBtcPoints, 'rgba(249,115,22,1)', '0.22');
-
-  // X-axis labels
-  ctx.fillStyle = 'rgba(255,255,255,.3)';
-  ctx.font = '9px DM Mono, monospace';
-  ctx.textAlign = 'center';
-  var step = Math.max(1, Math.floor(pts / 7));
-  for (var i = 0; i < pts; i += step) {
-    ctx.fillText(chartBtcPoints[i].label, xPos(i), 200 - 4);
-  }
-
-  // Current value dot + label on BTC line
-  if (chartBtcPoints.length) {
-    var lastX = xPos(pts-1);
-    var lastY = yPos(chartBtcPoints[pts-1].usd);
-    ctx.beginPath();
-    ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#f97316';
-    ctx.fill();
-    var valLabel = '$' + chartBtcPoints[pts-1].usd.toLocaleString('en', {maximumFractionDigits:0});
-    ctx.fillStyle = '#f97316';
-    ctx.font = 'bold 10px DM Mono, monospace';
-    ctx.textAlign = lastX > cw * 0.8 ? 'right' : 'left';
-    ctx.fillText(valLabel, lastX + (lastX > cw * 0.8 ? -8 : 8), lastY - 8);
+  drawLine(chartOpwapPts,'rgba(124,58,237,1)','0.18');
+  drawLine(chartBtcPts,'rgba(249,115,22,1)','0.22');
+  // X labels
+  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.font='9px DM Mono,monospace'; ctx.textAlign='center';
+  var step=Math.max(1,Math.floor(pts/7));
+  for(var i=0;i<pts;i+=step) ctx.fillText(chartBtcPts[i].label,xp(i),200-4);
+  // Dot + label on last BTC point
+  if(chartBtcPts.length){
+    var lx=xp(pts-1),ly=yp(chartBtcPts[pts-1].usd);
+    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fillStyle='#f97316';ctx.fill();
+    ctx.fillStyle='#f97316';ctx.font='bold 10px DM Mono,monospace';
+    ctx.textAlign=lx>cw*.8?'right':'left';
+    ctx.fillText('$'+chartBtcPts[pts-1].usd.toLocaleString('en',{maximumFractionDigits:0}),lx+(lx>cw*.8?-8:8),ly-8);
   }
 }
+window.addEventListener('resize',function(){if(chartBtcPts.length)drawPortfolioChart();});
 
-/* Hook into dashFetch to also load chart */
-var _origDashFetch = dashFetch;
-dashFetch = async function() {
-  await _origDashFetch();
-  await loadChartData();
-  await loadTxHistory();
-};
+/* Hook dashFetch to trigger chart + txs */
+var _origDashFetch=dashFetch;
+dashFetch=async function(){await _origDashFetch();await loadChartData();await loadTxHistory();};
 
-/* Resize handler */
-window.addEventListener('resize', function() { if (chartBtcPoints.length) drawPortfolioChart(); });
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   TRANSACTION HISTORY
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-var _txCache = {};
-
-async function loadTxHistory() {
-  if (!walletState.addr) return;
-  var addr = walletState.addr;
-  var listEl = document.getElementById('tx-list');
-  var countEl = document.getElementById('tx-count-label');
-  if (!listEl) return;
-
-  var OPWA_CONTRACTS = [
-    'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88',
-    'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6',
-  ].map(function(s){return s.toLowerCase();});
-
-  if (_txCache[addr]) { renderTxList(_txCache[addr]); return; }
-  listEl.innerHTML = '<div style="padding:28px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
-
-  try {
-    var txs = [];
-    // Try mempool testnet4
-    var sources = [
-      'https://mempool.space/testnet4/api/address/' + addr + '/txs',
-      'https://mempool.opnet.org/api/address/' + addr + '/txs',
-    ];
-    for (var i = 0; i < sources.length && !txs.length; i++) {
-      try {
-        var r = await fetch(sources[i], {signal: AbortSignal.timeout(7000)});
-        if (r.ok) { txs = await r.json(); if (!Array.isArray(txs)) txs = []; }
-      } catch(_) {}
-    }
-
-    var allTxs = txs.slice(0, 30).map(function(tx) {
-      var sent = tx.vin && tx.vin.some(function(v){
-        return v.prevout && v.prevout.scriptpubkey_address === addr;
-      });
-      // Check if any output goes to OPWA contracts
-      var toContract = false, contractName = '';
-      if (tx.vout) {
-        tx.vout.forEach(function(o) {
-          var a = (o.scriptpubkey_address||'').toLowerCase();
-          if (OPWA_CONTRACTS[0] && a.includes(OPWA_CONTRACTS[0].slice(0,12))) {
-            toContract = true; contractName = 'Buy OPWAP';
-          }
-          if (OPWA_CONTRACTS[1] && a.includes(OPWA_CONTRACTS[1].slice(0,12))) {
-            toContract = true; contractName = 'Mint NFT';
-          }
-        });
-      }
-      var valueOut = 0;
-      if (tx.vout) tx.vout.forEach(function(o){ valueOut += (o.value||0); });
-      return {
-        hash: tx.txid || '',
-        action: toContract ? contractName : (sent ? 'Send BTC' : 'Receive BTC'),
-        value: (valueOut/1e8).toFixed(6) + ' BTC',
-        time: tx.status && tx.status.block_time ? new Date(tx.status.block_time*1000) : null,
-        status: tx.status && tx.status.confirmed ? 'Confirmed' : 'Pending',
-        isOpwa: toContract,
-      };
+/* ━━━ TRANSACTION LIST ━━━ */
+var _txCache={};
+async function loadTxHistory(){
+  if(!walletState.addr)return;
+  var addr=walletState.addr, listEl=document.getElementById('tx-list'), countEl=document.getElementById('tx-count-label');
+  if(!listEl)return;
+  var OPWA_CONTRACTS=['opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88','opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6'];
+  if(_txCache[addr]){renderTxList(_txCache[addr]);return;}
+  listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
+  try{
+    var txs=[];
+    var srcs=['https://mempool.space/testnet4/api/address/'+addr+'/txs','https://mempool.opnet.org/api/address/'+addr+'/txs'];
+    for(var i=0;i<srcs.length&&!txs.length;i++){try{var r=await fetch(srcs[i],{signal:AbortSignal.timeout(7000)});if(r.ok){txs=await r.json();if(!Array.isArray(txs))txs=[];}}catch(_){}}
+    var all=txs.slice(0,30).map(function(tx){
+      var sent=tx.vin&&tx.vin.some(function(v){return v.prevout&&v.prevout.scriptpubkey_address===addr;});
+      var toC=false,cName='';
+      if(tx.vout)tx.vout.forEach(function(o){var a=(o.scriptpubkey_address||'').toLowerCase();if(a.includes(OPWA_CONTRACTS[0].slice(0,12))){toC=true;cName='Buy OPWAP';}if(a.includes(OPWA_CONTRACTS[1].slice(0,12))){toC=true;cName='Mint NFT';}});
+      var vOut=0; if(tx.vout)tx.vout.forEach(function(o){vOut+=(o.value||0);});
+      return{hash:tx.txid||'',action:toC?cName:(sent?'Send BTC':'Receive BTC'),value:(vOut/1e8).toFixed(6)+' BTC',time:tx.status&&tx.status.block_time?new Date(tx.status.block_time*1000):null,status:tx.status&&tx.status.confirmed?'Confirmed':'Pending',isOpwa:toC};
     });
-
-    allTxs.sort(function(a,b){ if(!a.time)return -1; if(!b.time)return 1; return b.time-a.time; });
-    _txCache[addr] = allTxs;
-    renderTxList(allTxs);
-  } catch(e) {
-    if (listEl) listEl.innerHTML = '<div style="padding:24px;text-align:center;font-size:12px;color:var(--text-3)">Could not load transactions.</div>';
-  }
+    all.sort(function(a,b){if(!a.time)return -1;if(!b.time)return 1;return b.time-a.time;});
+    _txCache[addr]=all; renderTxList(all);
+  }catch(e){if(listEl)listEl.innerHTML='<div style="padding:24px;text-align:center;font-size:12px;color:var(--text-3)">Could not load transactions.</div>';}
 }
-
-function renderTxList(txs) {
-  var listEl = document.getElementById('tx-list');
-  var countEl = document.getElementById('tx-count-label');
-  if (countEl) countEl.textContent = txs.length + ' transactions';
-  if (!listEl) return;
-  if (!txs.length) {
-    listEl.innerHTML = '<div style="padding:28px 22px;text-align:center;font-size:13px;color:var(--text-3)">No transactions found for this wallet.</div>';
-    return;
-  }
-  listEl.innerHTML = txs.map(function(tx) {
-    var short = tx.hash ? tx.hash.slice(0,8)+'…'+tx.hash.slice(-6) : '—';
-    var timeStr = tx.time ? tx.time.toLocaleDateString()+' '+tx.time.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : 'Pending';
-    var opscanHref = tx.hash ? 'https://opscan.org/transactions/'+tx.hash+'?network=op_testnet' : '#';
-    var actionColor = tx.action==='Buy OPWAP'?'#f97316': tx.action==='Mint NFT'?'#a78bfa': tx.action==='Receive BTC'?'#4ade80':'var(--text-2)';
-    var statusColor = tx.status==='Confirmed'?'#4ade80':'#fbbf24';
-    var dot = tx.isOpwa ? '#7c3aed' : '#f97316';
-    return '<div style="display:grid;grid-template-columns:116px 1fr 88px 96px 76px;padding:11px 22px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.025)'" onmouseout="this.style.background='transparent'">'
-      +'<a href="'+opscanHref+'" target="_blank" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+short+'</a>'
-      +'<span style="font-size:12px;font-weight:600;color:'+actionColor+';display:flex;align-items:center">'+tx.action+'</span>'
-      +'<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-2);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.value+'</span>'
-      +'<span style="font-size:10px;color:var(--text-3);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+timeStr+'</span>'
-      +'<span style="font-size:10px;font-weight:700;color:'+statusColor+';text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.status+'</span>'
+function renderTxList(txs){
+  var listEl=document.getElementById('tx-list'),countEl=document.getElementById('tx-count-label');
+  if(countEl)countEl.textContent=txs.length+' transactions';
+  if(!listEl)return;
+  if(!txs.length){listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">No transactions found.</div>';return;}
+  listEl.innerHTML=txs.map(function(tx){
+    var sh=tx.hash?tx.hash.slice(0,8)+'…'+tx.hash.slice(-6):'—';
+    var ts=tx.time?tx.time.toLocaleDateString()+' '+tx.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'Pending';
+    var href=tx.hash?'https://opscan.org/transactions/'+tx.hash+'?network=op_testnet':'#';
+    var ac=tx.action==='Buy OPWAP'?'#f97316':tx.action==='Mint NFT'?'#a78bfa':tx.action==='Receive BTC'?'#4ade80':'var(--text-2)';
+    var sc=tx.status==='Confirmed'?'#4ade80':'#fbbf24';
+    var dot=tx.isOpwa?'#7c3aed':'#f97316';
+    return '<div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s" onmouseover="this.style.background=\'rgba(255,255,255,.025)\'" onmouseout="this.style.background=\'transparent\'">'
+      +'<a href="'+href+'" target="_blank" style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+sh+'</a>'
+      +'<span style="font-size:12px;font-weight:600;color:'+ac+';display:flex;align-items:center">'+tx.action+'</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-2);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.value+'</span>'
+      +'<span style="font-size:10px;color:var(--text-3);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+ts+'</span>'
+      +'<span style="font-size:10px;font-weight:700;color:'+sc+';text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.status+'</span>'
       +'</div>';
   }).join('');
 }
