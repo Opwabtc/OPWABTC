@@ -2626,7 +2626,7 @@ async function confirmInvest(asset) {
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-    const provider    = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
+    const provider    = new JSONRpcProvider('https://testnet.opnet.org');
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, _net, senderAddr);
     contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
@@ -2885,7 +2885,7 @@ async function mintPropertyNFT() {
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
       { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org');
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, _net, senderAddr);
     var priceRes = await contract.mintPrice();
@@ -2934,7 +2934,7 @@ async function loadVault() {
     var { networks } = await import('https://esm.sh/@btc-vision/bitcoin?bundle');
     var _net = networks.opnetTestnet;
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
-    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org');
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, _net, senderAddr);
 
@@ -3338,11 +3338,11 @@ async function fetchPrices() {
   try {
     let price = 0;
     try {
-      const r0 = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', {signal:AbortSignal.timeout(6000)});
-      const d0 = await r0.json(); price = d0.bitcoin.usd;
+      const r0 = await fetch('https://mempool.space/api/v1/prices', {signal:AbortSignal.timeout(6000)});
+      const d0 = await r0.json(); price = d0.USD;
     } catch(_) {
-      const r1 = await fetch('https://api.coinpaprika.com/v1/tickers/btc-bitcoin', {signal:AbortSignal.timeout(6000)});
-      const d1 = await r1.json(); price = d1.quotes.USD.price;
+      const r1 = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT', {signal:AbortSignal.timeout(6000)});
+      const d1 = await r1.json(); price = parseFloat(d1.price);
     }
     btcPrice = price;
     const fmt = '$' + btcPrice.toLocaleString();
