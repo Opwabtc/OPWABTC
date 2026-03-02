@@ -1,77 +1,147 @@
-/**
- * Contract Name:  OPWACoin
- * Standard:       OP-20 (Bitcoin L1 Fungible Token)
- * Network:        testnet → mainnet (Q2 2026)
- * Version:        0.1.0
- * WASM SHA256:    [TO BE FILLED AFTER COMPILATION]
- * Deploy TXID:    [TO BE FILLED AFTER DEPLOYMENT]
- * Block Number:   [TO BE FILLED AFTER DEPLOYMENT]
- * Author:         OPWA Team
- * License:        MIT
- *
- * Description:
- *   OPWACoin is the platform utility and governance token for the OPWA
- *   real estate tokenization protocol on Bitcoin Layer 1 via OP_NET.
- *
- *   Max supply mirrors Bitcoin: 21,000,000 OPWA.
- *   8 decimal places for satoshi-level precision.
- *
- * Dependencies:
- *   @btc-vision/btc-runtime (AssemblyScript Bitcoin runtime)
- *   opnet SDK (frontend interaction)
- *
- * References:
- *   OP-20 Standard: https://github.com/btc-vision/btc-runtime
- *   OP_NET Docs:    https://docs.opnet.org
- */
-
+import { u256 } from '@btc-vision/as-bignum/assembly';
 import {
-  OP20,
-  OP20InitParameters,
-} from '@btc-vision/btc-runtime/runtime/contracts/OP20';
-import { u256 } from 'as-bignum/assembly';
+    OP20,
+    OP20InitParameters,
+    Blockchain,
+    Address,
+    Calldata,
+    BytesWriter,
+    SafeMath,
+    Revert,
+    StoredU256,
+    StoredAddress,
+} from '@btc-vision/btc-runtime/runtime';
 
-/**
- * OPWACoin — OPWA Platform Token
- *
- * Inherits the full OP-20 standard from btc-runtime.
- * All transfer, approve, allowance, mint, and burn logic
- * is implemented in the parent OP20 class.
- */
+const EMPTY_POINTER = new Uint8Array(30);
+
+// 1,000,000 tokens × 10^8 decimals
+const MAX_SUPPLY: u256 = u256.fromString('100000000000000');
+
+// 10^8 — used to convert raw units → whole tokens
+const DECIMALS: u256 = u256.fromString('100000000');
+
 @final
 export class OPWACoin extends OP20 {
-  // Maximum supply: 21,000,000 OPWA (with 8 decimals = 2,100,000,000,000,000 base units)
-  private readonly MAX_SUPPLY: u256 = u256.fromString('2100000000000000');
+    // Treasury: 32-byte x-only tweaked P2TR pubkey stored as Address bytes
+    private _treasury: StoredAddress = new StoredAddress(Blockchain.nextPointer);
 
-  constructor() {
-    super();
-  }
+    // Price in satoshis per whole token (default 1000 sats/token)
+    private _price: StoredU256 = new StoredU256(Blockchain.nextPointer, EMPTY_POINTER);
 
-  /**
-   * Called once on contract deployment.
-   * Initializes the token with name, symbol, decimals, and max supply.
-   */
-  public override onDeployment(_calldata: Calldata): void {
-    const maxSupply: u256 = this.MAX_SUPPLY;
-    const decimals: u8 = 8;
+    public constructor() {
+        super();
+    }
 
-    this.instantiate(
-      new OP20InitParameters(
-        u256.Zero,    // Initial supply — zero; minted via governance
-        maxSupply,    // Hard cap: 21,000,000 OPWA
-        decimals,     // 8 decimal places
-        'OPWACoin',   // Token name
-        'OPWA',       // Token symbol
-      ),
-    );
-  }
+    public override onDeployment(_calldata: Calldata): void {
+        this.instantiate(
+            new OP20InitParameters(MAX_SUPPLY, 8, 'OPWA Property Token', 'OPWA'),
+        );
+        // Initial price: 1 000 sats per whole token
+        this._price.value = u256.fromU64(1000);
+    }
 
-  /**
-   * Execute — routes incoming contract calls to the correct handler.
-   * Parent OP20 handles: transfer, approve, transferFrom, burn.
-   * Mint is restricted to contract owner via parent onlyOwner modifier.
-   */
-  public override execute(method: Selector, calldata: Calldata): BytesWriter {
-    return super.execute(method, calldata);
-  }
+    // ── Owner functions ─────────────────────────────────────────────────────
+
+    @method({ name: 'pubkey', type: ABIDataTypes.ADDRESS })
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setTreasury(calldata: Calldata): BytesWriter {
+        this.onlyDeployer(Blockchain.tx.sender);
+        const pubkey = calldata.readAddress();
+        this._treasury.value = pubkey;
+        const result = new BytesWriter(1);
+        result.writeBoolean(true);
+        return result;
+    }
+
+    @method({ name: 'newPrice', type: ABIDataTypes.UINT256 })
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setPrice(calldata: Calldata): BytesWriter {
+        this.onlyDeployer(Blockchain.tx.sender);
+        this._price.value = calldata.readU256();
+        const result = new BytesWriter(1);
+        result.writeBoolean(true);
+        return result;
+    }
+
+    // ── View functions ──────────────────────────────────────────────────────
+
+    @method()
+    @returns({ name: 'price', type: ABIDataTypes.UINT256 })
+    public getPrice(_calldata: Calldata): BytesWriter {
+        const result = new BytesWriter(32);
+        result.writeU256(this._price.value);
+        return result;
+    }
+
+    @method()
+    @returns({ name: 'treasury', type: ABIDataTypes.ADDRESS })
+    public getTreasury(_calldata: Calldata): BytesWriter {
+        const result = new BytesWriter(32);
+        result.writeAddress(this._treasury.value);
+        return result;
+    }
+
+    // ── Buy ─────────────────────────────────────────────────────────────────
+
+    @method(
+        { name: 'to',     type: ABIDataTypes.ADDRESS },
+        { name: 'amount', type: ABIDataTypes.UINT256 },
+    )
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public buy(calldata: Calldata): BytesWriter {
+        const treasury = this._treasury.value;
+        if (treasury.equals(Address.zero())) {
+            throw new Revert('Treasury not configured');
+        }
+
+        const to     = calldata.readAddress();
+        const amount = calldata.readU256();
+
+        if (amount.isZero()) {
+            throw new Revert('Amount must be > 0');
+        }
+
+        // requiredSats = floor(amount * price / 10^8)
+        const requiredSats: u256 = SafeMath.div(
+            SafeMath.mul(amount, this._price.value),
+            DECIMALS,
+        );
+
+        // Sum BTC outputs to treasury P2TR address
+        let satsSent: u64 = 0;
+        const outputs = Blockchain.tx.outputs;
+        for (let i = 0; i < outputs.length; i++) {
+            const script: Uint8Array | null = outputs[i].scriptPublicKey;
+            // P2TR = OP_1 (0x51) + PUSH32 (0x20) + 32-byte x-only tweaked pubkey
+            if (
+                script !== null &&
+                script.length == 34 &&
+                script[0] == 0x51 &&
+                script[1] == 0x20 &&
+                this.matchesTreasury(script, treasury)
+            ) {
+                satsSent += outputs[i].value;
+            }
+        }
+
+        if (u256.fromU64(satsSent) < requiredSats) {
+            throw new Revert('Insufficient BTC payment');
+        }
+
+        this._mint(to, amount);
+
+        const result = new BytesWriter(1);
+        result.writeBoolean(true);
+        return result;
+    }
+
+    // ── Helpers ─────────────────────────────────────────────────────────────
+
+    /** Compare script[2..34] with the stored treasury pubkey byte-by-byte */
+    private matchesTreasury(script: Uint8Array, treasury: Address): bool {
+        for (let i = 0; i < 32; i++) {
+            if (script[i + 2] != treasury[i]) return false;
+        }
+        return true;
+    }
 }

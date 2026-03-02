@@ -1,0 +1,20 @@
+{
+    "name": "opwabtc-contracts",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "description": "OPWACoin (OP-20) and PropertyNFT (OP-721) smart contracts for OPWABTC",
+    "scripts": {
+        "build:token": "asc op20/index.ts  --target token --measure --uncheckedBehavior never",
+        "build:nft":   "asc op721/index.ts --target nft   --measure --uncheckedBehavior never",
+        "build":       "npm run build:token && npm run build:nft"
+    },
+    "dependencies": {
+        "@btc-vision/as-bignum": "latest",
+        "@btc-vision/btc-runtime": "rc",
+        "@btc-vision/opnet-transform": "latest"
+    },
+    "devDependencies": {
+        "@btc-vision/assemblyscript": "latest"
+    }
+}

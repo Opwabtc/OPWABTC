@@ -1,0 +1,18 @@
+{
+    "functions": [
+        { "name": "mintPrice",      "type": "Function", "payable": false, "inputs": [],                                           "outputs": [{ "name": "price",   "type": "UINT256" }] },
+        { "name": "mintingOpen",    "type": "Function", "payable": false, "inputs": [],                                           "outputs": [{ "name": "open",    "type": "BOOL"    }] },
+        { "name": "mint",           "type": "Function", "payable": false, "inputs": [],                                           "outputs": [{ "name": "tokenId", "type": "UINT256" }] },
+        { "name": "setMintingOpen", "type": "Function", "payable": false, "inputs": [],                                           "outputs": [{ "name": "success", "type": "BOOL"    }] },
+        { "name": "setMintingClosed","type": "Function","payable": false, "inputs": [],                                           "outputs": [{ "name": "success", "type": "BOOL"    }] },
+        { "name": "setMintPrice",   "type": "Function", "payable": false, "inputs": [{ "name": "newPrice", "type": "UINT256" }],  "outputs": [{ "name": "success", "type": "BOOL"    }] }
+    ],
+    "events": [
+        { "name": "Transferred", "type": "Event", "values": [
+            { "name": "operator", "type": "ADDRESS" },
+            { "name": "from",     "type": "ADDRESS" },
+            { "name": "to",       "type": "ADDRESS" },
+            { "name": "amount",   "type": "UINT256" }
+        ]}
+    ]
+}
