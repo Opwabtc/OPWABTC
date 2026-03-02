@@ -1,14 +1,3159 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f97316" />
-    <meta name="description" content="OPWA — Fractionalized real estate investment platform built natively on Bitcoin via OP_NET." />
-    <title>OPWA — Real Estate on Bitcoin</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#f97316"/>
+<meta name="description" content="OPWA &#x2014; Fractionalized real estate investment platform built natively on Bitcoin via OP_NET."/>
+<title>OPWA &#x2014; Real Estate on Bitcoin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* =====================================================================
+   OPWA DESIGN SYSTEM v4 — SKELETON v7 MERGED
+   Dark-first. Bitcoin orange dominant. Syne/DM Sans/DM Mono typeset.
+   Merged from: index.html (visual) + index__1_.css (tokens/components)
+   ===================================================================== */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── TOKENS DARK (default) ── */
+:root{
+  --bg-base:#0a0a0a;
+  --bg-surface:#111;
+  --bg-card:#161616;
+  --bg-elevated:#1e1e1e;
+  --bg-elevated2:#242424;
+
+  --accent:#f97316;
+  --accent-dark:#ea580c;
+  --accent-hover:#fb923c;
+  --accent-dim:rgba(249,115,22,.12);
+  --accent-border:rgba(249,115,22,.30);
+  --accent-glow:rgba(249,115,22,.25);
+
+  --gold:#fbbf24;
+  --gold-dim:rgba(251,191,36,.12);
+  --gold-border:rgba(251,191,36,.28);
+
+  --purple:#7c3aed;
+  --purple-soft:#a78bfa;
+  --purple-dim:rgba(124,58,237,.12);
+  --purple-border:rgba(124,58,237,.28);
+  --purple-clr:#a78bfa;
+
+  --text-1:#f0ede8;
+  --text-2:#a3a3a3;
+  --text-3:#525252;
+  --text-4:#333;
+
+  --border:rgba(255,255,255,.06);
+  --border-hover:rgba(255,255,255,.12);
+  --border-strong:rgba(255,255,255,.13);
+
+  --success:#10b981;
+  --success-dim:rgba(16,185,129,.12);
+  --success-border:rgba(16,185,129,.28);
+
+  --danger:#ef4444;
+  --danger-dim:rgba(239,68,68,.12);
+  --danger-border:rgba(239,68,68,.28);
+
+  --blue:#3b82f6;
+  --blue-dim:rgba(59,130,246,.15);
+  --blue-border:rgba(59,130,246,.28);
+
+  --gas-toggle:#ae005b;
+
+  --navbar-h:60px;
+  --radius:14px;
+  --transition:.18s cubic-bezier(.4,0,.2,1);
+
+  --step-gradient: linear-gradient(135deg,rgba(249,115,22,.10) 0%,rgba(249,115,22,.04) 40%,rgba(0,0,0,0) 100%);
+  --step-gradient-2: linear-gradient(135deg,rgba(249,115,22,.14) 0%,rgba(249,115,22,.06) 40%,rgba(0,0,0,0) 100%);
+}
+
+/* ── TOKENS LIGHT — 70% branco · 20% roxo · 10% laranja ── */
+[data-theme="light"]{
+  /* 70% — base branca limpa */
+  --bg-base:#ffffff;
+  --bg-surface:#fafafa;
+  --bg-card:#f6f5f3;
+  --bg-elevated:#eeecea;
+  --bg-elevated2:#e6e3df;
+
+  /* 20% — roxo como cor principal de UI, links, pills, destaques */
+  --accent:#7c3aed;
+  --accent-dark:#6d28d9;
+  --accent-hover:#8b5cf6;
+  --accent-dim:rgba(124,58,237,.09);
+  --accent-border:rgba(124,58,237,.28);
+  --accent-glow:rgba(124,58,237,.18);
+
+  /* 10% — laranja apenas em CTAs principais e números em destaque */
+  --gold:#f97316;
+  --gold-dim:rgba(249,115,22,.09);
+  --gold-border:rgba(249,115,22,.28);
+
+  /* roxo como cor estrutural */
+  --purple:#7c3aed;
+  --purple-soft:#6d28d9;
+  --purple-dim:rgba(124,58,237,.09);
+  --purple-border:rgba(124,58,237,.22);
+  --purple-clr:#6d28d9;
+  --lavender-bg:rgba(237,233,254,.55);
+  --lavender-border:rgba(167,139,250,.22);
+
+  /* texto — quase-preto para legibilidade */
+  --text-1:#0f0a1a;
+  --text-2:#4a3f6e;
+  --text-3:#9585c0;
+  --text-4:#d4cfe8;
+
+  --border:rgba(124,58,237,.09);
+  --border-hover:rgba(124,58,237,.18);
+  --border-strong:rgba(124,58,237,.15);
+
+  --success:#059669;
+  --success-dim:rgba(5,150,105,.09);
+  --success-border:rgba(5,150,105,.22);
+
+  --danger:#dc2626;
+  --danger-dim:rgba(220,38,38,.07);
+  --danger-border:rgba(220,38,38,.20);
+
+  --blue:#2563eb;
+  --blue-dim:rgba(37,99,235,.09);
+  --blue-border:rgba(37,99,235,.22);
+
+  --step-gradient: linear-gradient(135deg,rgba(124,58,237,.07) 0%,rgba(124,58,237,.02) 50%,transparent 100%);
+  --step-gradient-2: linear-gradient(135deg,rgba(124,58,237,.11) 0%,rgba(124,58,237,.04) 50%,transparent 100%);
+}
+
+/* ── BASE ── */
+html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden}
+*{cursor:none!important}
+a{text-decoration:none;color:inherit}
+button{cursor:none!important;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* ── CURSOR (split pill) ── */
+#cur{
+  position:fixed;pointer-events:none;z-index:99999;
+  width:20px;height:10px;border-radius:999px;overflow:hidden;
+  transform:translate(-50%,-50%) rotate(45deg);
+  box-shadow:0 2px 14px rgba(249,115,22,.55);
+  will-change:left,top;
+}
+#cur::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 50%,#f97316 50%)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg-base)}
+::-webkit-scrollbar-thumb{background:var(--bg-elevated);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* =====================================================================
+   NAVBAR — DS v2 style: floating pill, backdrop blur
+   ===================================================================== */
+.navbar{
+  position:fixed;top:12px;left:50%;transform:translateX(-50%);
+  z-index:1000;
+  width:calc(100% - 48px);max-width:1200px;
+  height:58px;
+  background:rgba(10,10,10,.94);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:14px;
+  display:flex;align-items:center;
+  padding:0 16px;
+  gap:0;
+  transition:box-shadow .3s,border-color .3s;
+}
+[data-theme="light"] .navbar{background:rgba(255,255,255,.98);border-color:rgba(124,58,237,.12);box-shadow:0 2px 24px rgba(124,58,237,.07),0 1px 4px rgba(0,0,0,.05)}
+.navbar.scrolled{box-shadow:0 8px 40px rgba(0,0,0,.55);border-color:rgba(255,255,255,.09)}
+[data-theme="light"] .navbar.scrolled{box-shadow:0 8px 24px rgba(0,0,0,.10)}
+
+.nb-left{display:flex;align-items:center;flex:1;min-width:0}
+.logo{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.logo-mark{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,#f97316,#ea580c);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;
+  box-shadow:0 0 18px rgba(249,115,22,.35);flex-shrink:0;
+}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--text-1);letter-spacing:.02em}
+.logo-sub{font-size:9px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;margin-top:-1px}
+
+/* Nav links — centralizados, generosos, com ícone */
+.nav-links{
+  display:flex;align-items:center;gap:2px;
+  flex:1;justify-content:center;
+  padding:0 16px;
+}
+.nav-link{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 13px;border-radius:9px;font-size:13px;font-weight:500;
+  color:var(--text-2);transition:color .15s,background .15s;
+  white-space:nowrap;letter-spacing:.01em;
+}
+.nav-link svg{opacity:.55;transition:opacity .15s;flex-shrink:0}
+.nav-link:hover{color:var(--text-1);background:rgba(255,255,255,.07)}
+.nav-link:hover svg{opacity:.9}
+.nav-link.active{color:var(--accent);background:var(--accent-dim)}
+.nav-link.active svg{opacity:1}
+[data-theme="light"] .nav-link{color:var(--text-2)}
+[data-theme="light"] .nav-link:hover{background:rgba(124,58,237,.08);color:var(--purple)}
+[data-theme="light"] .nav-link:hover svg{opacity:1}
+[data-theme="light"] .nav-link.active{color:var(--purple);background:var(--accent-dim)}
+
+/* Terms/Privacy — mesmo estilo dos outros, só levemente mais suave */
+.nav-link-legal{
+  opacity:.65;
+}
+.nav-link-legal:hover{opacity:1!important}
+[data-theme="light"] .nav-link-legal{color:var(--text-2)!important}
+
+/* Dashboard pill */
+.nav-link-dashboard{
+  background:var(--purple-dim)!important;
+  border:1px solid var(--purple-border)!important;
+  color:var(--purple-soft)!important;
+  font-weight:700!important;border-radius:20px!important;
+  padding:5px 12px!important;font-size:12px!important;gap:5px!important;
+}
+.nav-link-dashboard:hover{background:rgba(124,58,237,.20)!important;color:#c4b5fd!important}
+.nav-dash-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
+
+
+.nb-right{display:flex;align-items:center;gap:8px}
+.gas-pill{
+  display:flex;align-items:center;gap:6px;padding:5px 10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:20px;font-size:11px;color:var(--text-3);
+  font-family:'DM Mono',monospace;
+}
+[data-theme="light"] .gas-pill{background:rgba(249,115,22,.05);border-color:rgba(249,115,22,.14)}
+.gas-pill .led{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 5px var(--success);animation:blink 2s infinite;flex-shrink:0}
+
+.btn-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--bg-card);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.btn-icon:hover{border-color:rgba(255,255,255,.14);color:var(--text-1)}
+.btn-connect{
+  padding:8px 16px;background:var(--accent);color:#fff;border:none;
+  border-radius:10px;font-size:13px;font-weight:600;
+  box-shadow:0 3px 12px rgba(249,115,22,.35);
+  transition:opacity .2s,transform .12s;
+}
+.btn-connect:hover{opacity:.88;transform:translateY(-1px)}
+.btn-connect.connected{background:rgba(255,255,255,.06);color:var(--text-1);border:1px solid rgba(255,255,255,.10);box-shadow:none}
+[data-theme="light"] .btn-connect{background:var(--purple);box-shadow:0 3px 14px rgba(124,58,237,.32)}
+[data-theme="light"] .btn-connect:hover{box-shadow:0 5px 18px rgba(124,58,237,.40)}
+[data-theme="light"] .btn-connect.connected{background:rgba(124,58,237,.09);color:var(--purple);border:1px solid var(--purple-border);box-shadow:none}
+
+/* wallet dropdown */
+.wallet-btn-wrap{position:relative}
+.wallet-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:248px;background:#1c1c1c;border:1px solid rgba(249,115,22,.28);border-radius:14px;padding:14px;z-index:9999;box-shadow:0 16px 40px rgba(0,0,0,.7);display:none}
+.wallet-dropdown.open{display:block}
+.wd-btn{display:block;width:100%;text-align:left;padding:8px 8px;background:transparent;border:none;border-radius:7px;color:var(--text-2);font-size:13px;margin-bottom:2px;font-family:inherit;transition:all .15s}
+.wd-btn:hover{background:rgba(255,255,255,.07);color:var(--text-1)}
+.wd-disconnect{color:var(--danger)!important}
+.wd-disconnect:hover{background:var(--danger-dim)!important}
+
+/* ── MOBILE NAV ── */
+.btn-menu{display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-2)}
+.mobile-menu{position:fixed;top:calc(58px + 16px);left:0;right:0;background:rgba(14,14,14,.98);border-bottom:1px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:4px;z-index:999;backdrop-filter:blur(20px)}
+.mobile-nav-link{display:block;padding:10px 14px;border-radius:9px;font-size:14px;font-weight:500;color:var(--text-2);background:transparent;border:none;text-align:left;width:100%;transition:all .15s}
+.mobile-nav-link:hover{background:rgba(255,255,255,.06);color:var(--text-1)}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .gas-pill{display:none}
+  .btn-menu{display:flex}
+}
+
+/* =====================================================================
+   HERO — grid bg, glow orbs, 3-line title
+   ===================================================================== */
+.hero{
+  padding-top:calc(58px + 12px + 80px);
+  padding-bottom:80px;
+  padding-left:80px;
+  padding-right:80px;
+  position:relative;overflow:hidden;
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+  background-image:
+    linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:58px 58px;
+}
+[data-theme="light"] .hero{
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);
+  background-size:58px 58px;
+}
+.hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:240px;
+  background:linear-gradient(to top,var(--bg-base),transparent);
+  pointer-events:none;
+}
+.hero-glow-tl{
+  position:absolute;top:-120px;left:-80px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(249,115,22,.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-glow-br{
+  position:absolute;bottom:-160px;right:-60px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(249,115,22,.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:5px 14px;border-radius:20px;
+  background:rgba(10,10,10,.7);border:1px solid rgba(255,255,255,.12);
+  margin-bottom:30px;
+  backdrop-filter:blur(8px);
+  position:relative;z-index:1;
+}
+[data-theme="light"] .hero-badge{background:rgba(247,244,239,.8);border-color:rgba(0,0,0,.12)}
+.hero-badge-led{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 5px var(--success);animation:blink 2s infinite}
+.hero-badge-text{font-size:10px;font-weight:700;color:var(--text-2);letter-spacing:.14em;text-transform:uppercase;font-family:'DM Mono',monospace}
+
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(48px,7.5vw,96px);
+  font-weight:800;line-height:.98;
+  margin-bottom:22px;
+  text-align:center;
+  position:relative;z-index:1;
+}
+@media(max-width:700px){.hero-title{font-size:clamp(36px,10vw,60px)}}
+.hero-title .line-white{color:var(--text-1)}
+.hero-title .line-orange{color:var(--accent)}
+/* Bitcoin — sempre laranja em ambos os temas */
+.hero-title .line-bitcoin{color:#f97316!important}
+
+.hero-sub{
+  font-size:16px;color:var(--text-2);
+  max-width:480px;line-height:1.75;margin-bottom:40px;
+  text-align:center;position:relative;z-index:1;
+}
+
+.hero-cta{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:72px;position:relative;z-index:1}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:13px 26px;border-radius:11px;
+  background:linear-gradient(135deg,#f97316,#ea580c);
+  color:#fff;font-size:14px;font-weight:600;border:none;
+  position:relative;overflow:hidden;
+  box-shadow:0 4px 20px rgba(249,115,22,.40);
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.14),transparent);pointer-events:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(249,115,22,.50)}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:12px 22px;border-radius:11px;
+  border:1px solid var(--border);
+  background:transparent;color:var(--text-2);font-size:14px;font-weight:500;
+  transition:all .15s;
+}
+.btn-ghost:hover{border-color:var(--border-hover);color:var(--text-1);background:rgba(255,255,255,.04)}
+[data-theme="light"] .btn-ghost{border-color:rgba(0,0,0,.14)}
+
+/* HERO STATS BAR */
+.hero-stats{
+  display:grid;grid-template-columns:repeat(6,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:14px;overflow:hidden;
+  max-width:820px;width:100%;position:relative;z-index:1;
+}
+@media(max-width:1100px){.hero-stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.hero-stats{grid-template-columns:repeat(2,1fr)}}
+.hero-stat{
+  background:var(--bg-card);padding:18px 14px;text-align:center;
+  transition:background .2s;
+}
+.hero-stat:hover{background:var(--bg-elevated)}
+.hs-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);margin-bottom:7px;font-family:'DM Mono',monospace}
+.hs-value{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--gold)}
+.hs-value.sm{font-size:13px;padding-top:2px}
+.hs-sub{font-size:9px;color:var(--text-3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
+
+/* =====================================================================
+   SHARED SECTION
+   ===================================================================== */
+.section{padding:88px 80px;border-top:1px solid var(--border)}
+.s-label{
+  display:flex;align-items:center;gap:8px;
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);
+  margin-bottom:14px;
+}
+.s-label::before{content:'';display:block;width:16px;height:1px;background:var(--accent)}
+.s-title{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,38px);font-weight:800;line-height:1.08;margin-bottom:12px}
+.s-title .acc{color:var(--accent)}
+.s-sub{font-size:15px;color:var(--text-2);max-width:520px;line-height:1.72;margin-bottom:48px}
+
+/* =====================================================================
+   ASSETS SECTION
+   ===================================================================== */
+.assets-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:10px}
+.asset-filters{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:28px}
+.f-btn{
+  padding:5px 13px;border-radius:7px;
+  border:1px solid var(--border);background:var(--bg-elevated);
+  color:var(--text-2);font-size:12px;font-weight:500;transition:all .15s;
+}
+.f-btn:hover,.f-btn.active{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
+.sort-select{
+  background:var(--bg-elevated);border:1px solid var(--border);border-radius:7px;
+  padding:5px 11px;color:var(--text-2);font-size:12px;outline:none;
+  transition:border-color .15s;
+}
+.sort-select:focus{border-color:var(--accent-border)}
+.search-wrap{position:relative}
+.search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none}
+.search-input{
+  background:var(--bg-elevated);border:1px solid var(--border);
+  border-radius:9px;padding:7px 12px 7px 32px;
+  color:var(--text-1);font-size:13px;outline:none;width:200px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-input::placeholder{color:var(--text-3)}
+.search-input:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px var(--accent-dim)}
+
+.assets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(336px,1fr));gap:18px}
+
+/* Asset Card */
+.card-asset{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:14px;
+  padding:20px;transition:transform .22s,box-shadow .22s,border-color .22s;
+  position:relative;overflow:hidden;
+}
+.card-asset::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(249,115,22,.45),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.card-asset:hover{transform:translateY(-5px);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px var(--accent-border)}
+.card-asset:hover::after{opacity:1}
+[data-theme="light"] .card-asset{background:#ffffff;border-color:rgba(0,0,0,.10);box-shadow:0 2px 12px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05)}
+[data-theme="light"] .card-asset:hover{border-color:rgba(249,115,22,.40);box-shadow:0 12px 40px rgba(249,115,22,.12),0 4px 12px rgba(0,0,0,.08)}
+
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.bdg{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 7px;border-radius:5px;font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.07em;border:1px solid;
+}
+.bdg-res{background:rgba(59,130,246,.18);color:#60a5fa;border-color:rgba(59,130,246,.28)}
+.bdg-com{background:var(--purple-dim);color:var(--purple-clr);border-color:var(--purple-border)}
+.bdg-ind{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border)}
+.bdg-act{background:var(--success-dim);color:var(--success);border-color:var(--success-border)}
+.bdg-soon{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border)}
+[data-theme="light"] .bdg-res{background:rgba(37,99,235,.10);color:#1d4ed8;border-color:rgba(37,99,235,.25)}
+[data-theme="light"] .bdg-com{background:rgba(124,58,237,.10);color:#6d28d9;border-color:rgba(124,58,237,.25)}
+
+.card-id-small{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3)}
+.card-pair{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);margin-bottom:4px}
+.card-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text-1);margin-bottom:5px}
+.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:16px}
+
+.disp-toggle{display:flex;gap:3px;margin-bottom:14px}
+.dt-btn{
+  padding:3px 9px;border-radius:5px;border:1px solid var(--border);
+  background:transparent;color:var(--text-3);font-size:11px;font-weight:600;
+  font-family:'DM Mono',monospace;transition:all .15s;
+}
+.dt-btn.active{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
+
+.card-stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+  margin-bottom:16px;padding:13px;background:var(--bg-elevated);border-radius:9px;
+}
+.cs-item{text-align:center}
+.cs-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:3px}
+.cs-value{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text-1)}
+.cs-value.apy{color:var(--success)}
+.cs-value.pos{color:var(--success)}
+
+.prog-bar{height:3px;background:var(--bg-base);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px}
+.avail-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-bottom:16px;font-family:'DM Mono',monospace}
+.avail-row span{color:var(--text-2);font-weight:500}
+
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding-top:13px;border-top:1px solid var(--border);margin-bottom:16px}
+.meta-item{display:flex;flex-direction:column;gap:2px}
+.meta-lbl{font-size:9.5px;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;font-family:'DM Mono',monospace}
+.meta-val{font-size:12px;color:var(--text-2);font-weight:500}
+.meta-val.acc{color:var(--accent)}
+
+.btn-invest{
+  width:100%;padding:11px;border-radius:9px;
+  background:linear-gradient(135deg,#f97316,#ea580c);
+  color:#fff;font-size:14px;font-weight:600;border:none;
+  box-shadow:0 4px 16px rgba(249,115,22,.25);
+  transition:transform .15s,box-shadow .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn-invest:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.40)}
+.btn-waitlist{
+  width:100%;padding:11px;border-radius:9px;
+  background:var(--gold-dim);border:1px solid var(--gold-border);
+  color:var(--gold);font-size:14px;font-weight:600;
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn-waitlist:hover{background:rgba(251,191,36,.2)}
+
+.invest-panel{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.invest-panel.open{display:block}
+.invest-panel-title{
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.16em;
+  color:var(--text-3);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.invest-panel-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.invest-label{
+  font-size:10px;font-weight:700;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:6px;display:block;font-family:'DM Mono',monospace;
+}
+.invest-input{
+  width:100%;background:var(--bg-elevated);border:1px solid var(--border);
+  border-radius:9px;padding:10px 13px;color:var(--text-1);
+  font-family:'DM Mono',monospace;font-size:15px;font-weight:500;
+  outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:12px;
+}
+.invest-input:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px var(--accent-dim)}
+.invest-hint{
+  font-size:10.5px;color:var(--text-3);margin:-8px 0 12px;
+  font-family:'DM Mono',monospace;
+}
+.invest-receipt{
+  background:linear-gradient(135deg, rgba(249,115,22,.08), rgba(234,88,12,.04));
+  border:1px solid rgba(249,115,22,.18);
+  border-radius:11px;padding:16px;
+  text-align:center;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.invest-receipt::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(249,115,22,.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+.invest-receipt-lbl{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em;font-family:'DM Mono',monospace;margin-bottom:8px}
+.invest-receipt-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--accent);letter-spacing:.02em;margin-bottom:5px;text-shadow:0 0 24px rgba(249,115,22,.25)}
+.invest-receipt-btc{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-3)}
+.btn-confirm{
+  width:100%;padding:11px;border-radius:9px;
+  background:var(--success-dim);border:1px solid var(--success-border);
+  color:var(--success);font-size:14px;font-weight:600;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn-confirm:hover{background:var(--success);color:#fff;border-color:var(--success)}
+
+/* =====================================================================
+   SIMULATOR
+   ===================================================================== */
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:1100px){.sim-grid{grid-template-columns:1fr}}
+.sim-left{display:flex;flex-direction:column;gap:16px}
+
+.curr-toggle{display:flex;gap:7px}
+.curr-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg-elevated);color:var(--text-2);
+  font-size:13px;font-weight:600;font-family:'DM Mono',monospace;transition:all .15s;
+}
+.curr-btn.active-btc{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(249,115,22,.35)}
+.curr-btn.active-usd{background:var(--success);color:#fff;border-color:var(--success);box-shadow:0 4px 14px rgba(16,185,129,.35)}
+.curr-btn .ico{font-size:12px}
+
+.sim-box{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:17px}
+.sim-box-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.sim-box-label{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;font-family:'DM Mono',monospace}
+.sim-box-conv{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-3)}
+
+.sim-row{display:flex;align-items:center;gap:8px}
+.sim-pm{
+  width:30px;height:30px;border-radius:7px;
+  background:var(--bg-elevated);border:1px solid var(--border);
+  color:var(--text-2);font-size:17px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;font-weight:300;
+}
+.sim-pm:hover{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
+.sim-pfx{font-family:'DM Mono',monospace;font-size:16px;color:var(--accent);font-weight:500;flex-shrink:0}
+.sim-input{
+  flex:1;background:var(--bg-elevated);border:1px solid var(--border);
+  border-radius:9px;padding:8px 12px;color:var(--text-1);
+  font-family:'DM Mono',monospace;font-size:16px;font-weight:500;
+  outline:none;text-align:center;transition:border-color .2s;
+}
+.sim-input:focus{border-color:var(--accent-border)}
+
+.dur-box{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:17px}
+.dur-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.dur-label{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;font-family:'DM Mono',monospace}
+.dur-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--accent)}
+.mo-btns{display:flex;gap:7px;margin-bottom:14px}
+.mo-btn{
+  flex:1;padding:7px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg-elevated);color:var(--text-2);
+  font-size:12px;font-weight:600;font-family:'DM Mono',monospace;
+  transition:all .15s;text-align:center;
+}
+.mo-btn:hover{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
+.mo-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 10px rgba(249,115,22,.30)}
+.slider-wrap{padding:0 3px}
+.dur-slider{
+  width:100%;-webkit-appearance:none;appearance:none;
+  height:4px;border-radius:2px;outline:none;display:block;margin:0;
+  background:linear-gradient(to right,var(--accent) var(--fill,31%),rgba(255,255,255,.10) var(--fill,31%));
+}
+[data-theme="light"] .dur-slider{background:linear-gradient(to right,var(--accent) var(--fill,31%),rgba(0,0,0,.12) var(--fill,31%))}
+.dur-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:3px solid var(--bg-base);box-shadow:0 0 0 2px var(--accent),0 4px 10px rgba(249,115,22,.4)}
+.dur-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);border:3px solid var(--bg-base)}
+.slider-ticks{display:grid;grid-template-columns:1fr 1fr 1fr;padding:0 3px;margin-top:9px}
+.slider-ticks span{font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace}
+.slider-ticks span:nth-child(2){text-align:center}
+.slider-ticks span:last-child{text-align:right}
+
+/* RESULT BOX */
+.sim-result{
+  background:rgba(25,12,0,.85);
+  border:1px solid rgba(249,115,22,.18);
+  border-radius:14px;padding:22px;
+  display:flex;flex-direction:column;
+}
+[data-theme="light"] .sim-result{background:var(--bg-card)}
+.res-top{
+  text-align:center;padding:20px 0 18px;
+  border-bottom:1px solid rgba(249,115,22,.14);
+  margin-bottom:18px;
+}
+.res-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);font-family:'DM Mono',monospace;margin-bottom:10px}
+.res-main-val{
+  font-family:'Syne',sans-serif;font-size:46px;font-weight:800;
+  color:var(--accent);margin-bottom:4px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.res-main-val .val-icon{font-size:36px;opacity:.9}
+.res-btc{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-top:2px}
+
+.cmp-header{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);font-family:'DM Mono',monospace;margin-bottom:12px}
+.cmp-card{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 16px;border-radius:11px;border:1px solid var(--border);
+  background:var(--bg-card);margin-bottom:9px;transition:border-color .2s;
+}
+.cmp-card.hi{background:rgba(249,115,22,.06);border-color:rgba(249,115,22,.22)}
+[data-theme="light"] .cmp-card.hi{background:rgba(249,115,22,.07)}
+.cmp-left{display:flex;align-items:center;gap:9px}
+.cmp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cmp-dot.orange{background:var(--accent);box-shadow:0 0 6px rgba(249,115,22,.5)}
+.cmp-dot.gray{background:var(--text-3)}
+.cmp-dot.dim{background:var(--text-3);opacity:.4}
+.cmp-name{font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:1px;font-family:'Syne',sans-serif}
+.cmp-sub{font-size:10.5px;color:var(--text-3)}
+.cmp-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.cmp-val.green{color:var(--accent)}
+.cmp-val.dim{color:var(--text-3)}
+.apy-tag{
+  display:inline-flex;padding:2px 6px;border-radius:4px;
+  font-size:9.5px;font-weight:700;font-family:'DM Mono',monospace;
+  letter-spacing:.06em;margin-left:5px;
+}
+.apy-tag.orange{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border)}
+.apy-tag.gray{background:var(--bg-elevated);color:var(--text-3);border:1px solid var(--border)}
+.apy-tag.red{background:var(--danger-dim);color:#f87171;border:1px solid var(--danger-border)}
+.apy-tag.green{background:var(--success-dim);color:var(--success);border:1px solid var(--success-border)}
+
+/* .diff-card — defined in light mode + upgrade block */
+.diff-ico{font-size:20px;flex-shrink:0}
+.diff-title{font-size:12.5px;font-weight:600;color:var(--accent);margin-bottom:1px}
+.diff-sub{font-size:11px;color:var(--text-2)}
+.sim-note{font-size:10.5px;color:var(--text-3);text-align:center;margin-top:12px;line-height:1.6}
+
+/* =====================================================================
+   PARTNERS TICKER
+   ===================================================================== */
+.ticker-wrap{
+  overflow:hidden;position:relative;
+  padding:26px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  margin-top:52px;
+}
+.ticker-wrap::before,.ticker-wrap::after{
+  content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;
+}
+.ticker-wrap::before{left:0;background:linear-gradient(to right,var(--bg-base),transparent)}
+.ticker-wrap::after{right:0;background:linear-gradient(to left,var(--bg-base),transparent)}
+.ticker-track{display:flex;gap:44px;white-space:nowrap;animation:ticker 24s linear infinite}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.t-item{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--text-3);flex-shrink:0;transition:color .2s}
+.t-item:hover{color:var(--accent)}
+.t-dot{width:5px;height:5px;border-radius:50%;background:var(--text-3)}
+
+/* =====================================================================
+   HOW IT WORKS
+   ===================================================================== */
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1100px){.steps-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.steps-grid{grid-template-columns:1fr}}
+
+.step-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:13px;padding:22px;
+  position:relative;overflow:hidden;transition:all .22s;
+}
+.step-card::before{
+  content:attr(data-num);
+  position:absolute;top:-8px;right:10px;
+  font-family:'Syne',sans-serif;font-size:90px;font-weight:800;line-height:1;
+  color:rgba(255,255,255,.04);pointer-events:none;user-select:none;
+  transition:color .2s;
+}
+[data-theme="light"] .step-card::before{color:rgba(0,0,0,.04)}
+.step-card.active{
+  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.05));
+  border-color:rgba(249,115,22,.28);
+  transform:translateY(-3px);
+  box-shadow:0 8px 30px rgba(249,115,22,.12);
+}
+.step-card.active::before{color:rgba(249,115,22,.14)}
+[data-theme="light"] .step-card.active{background:linear-gradient(135deg,rgba(249,115,22,.10),rgba(249,115,22,.03))}
+.step-card:hover{border-color:var(--accent-border);box-shadow:0 8px 30px rgba(249,115,22,.06);transform:translateY(-2px)}
+.step-card:hover::before{color:rgba(249,115,22,.18)}
+
+.step-ico-box{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--bg-elevated);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:13px;transition:background .2s,border-color .2s;
+}
+.step-ico-box svg{stroke:var(--text-3);transition:stroke .2s}
+.step-card:hover .step-ico-box{background:var(--accent-dim);border-color:var(--accent-border)}
+.step-card:hover .step-ico-box svg{stroke:var(--accent)}
+.step-card.active .step-ico-box{background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px rgba(249,115,22,.3)}
+.step-card.active .step-ico-box svg{stroke:#fff}
+
+.step-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-3);font-family:'DM Mono',monospace;margin-bottom:6px}
+.step-card:hover .step-tag,.step-card.active .step-tag{color:var(--accent)}
+.step-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:7px}
+.step-text{font-size:12.5px;color:var(--text-2);line-height:1.68;margin-bottom:14px}
+.step-link{font-size:12px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:4px;transition:gap .15s}
+.step-link:hover{gap:8px}
+
+.status-band{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 22px;background:var(--success-dim);border:1px solid var(--success-border);
+  border-radius:11px;flex-wrap:wrap;gap:10px;margin-top:44px;
+}
+.status-left{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--success)}
+.status-led{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:blink 2s infinite}
+.status-right{display:flex;gap:14px;flex-wrap:wrap}
+.status-item{font-size:11.5px;color:var(--text-3)}
+.status-item strong{color:var(--text-2)}
+
+/* =====================================================================
+   LIVE TICKER BAR (bottom fixed)
+   ===================================================================== */
+.live-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  height:28px;
+  background:rgba(8,8,8,.95);border-top:1px solid var(--border);
+  display:flex;align-items:center;overflow:hidden;
+  backdrop-filter:blur(10px);
+}
+.live-bar-inner{display:flex;align-items:center;gap:24px;white-space:nowrap;animation:livebarScroll 40s linear infinite;padding:0 16px}
+@keyframes livebarScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text-3);flex-shrink:0}
+.lb-item .lb-led{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);flex-shrink:0}
+.lb-label{color:var(--text-3)}
+.lb-val{color:var(--text-2)}
+.lb-acc{color:var(--accent);font-weight:500}
+.lb-addr{color:var(--accent-hover)}
+.lb-sep{color:var(--text-4)}
+
+/* =====================================================================
+   FOOTER
+   ===================================================================== */
+footer{
+  border-top:1px solid var(--border);
+  padding:64px 80px 100px;
+  background:var(--bg-surface);
+}
+[data-theme="light"] footer{border-top-color:rgba(124,58,237,.13)}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1.2fr 1fr;gap:44px;margin-bottom:44px}
+@media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.footer-grid{grid-template-columns:1fr}}
+.ft-logo-row{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.ft-brand-desc{font-size:13px;color:var(--text-2);line-height:1.72;max-width:250px;margin-bottom:16px}
+.ft-social{display:flex;gap:7px}
+.soc-btn{
+  width:32px;height:32px;border-radius:7px;
+  background:var(--bg-elevated);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  color:var(--text-2);transition:all .15s;
+}
+.soc-btn:hover{border-color:var(--accent-border);background:var(--accent-dim);color:var(--accent)}
+.soc-btn-github:hover{border-color:var(--purple-border)!important;background:var(--purple-dim)!important;color:var(--purple-soft)!important}
+.ft-col-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);margin-bottom:14px;letter-spacing:.06em;text-transform:uppercase}
+.ft-link{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-2);margin-bottom:8px;transition:color .15s}
+.ft-link:hover{color:var(--accent)}
+.ft-link svg{flex-shrink:0;color:var(--text-3);transition:color .15s}
+.ft-link:hover svg{color:var(--accent)}
+.ft-faucet{color:var(--accent);font-weight:600}
+.ft-faucet:hover{color:var(--accent-hover)}
+.ft-sep{border:none;border-top:1px solid var(--border);margin-bottom:24px}
+[data-theme="light"] .ft-sep{border-top-color:rgba(124,58,237,.12)}
+.ft-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.ft-copy{font-size:11.5px;color:var(--text-3)}
+.ft-copy a{color:var(--accent)}
+.ft-net-badge{
+  background:var(--success-dim);color:var(--success);
+  border:1px solid var(--success-border);
+  padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:600;
+  display:flex;align-items:center;gap:5px;
+}
+.ft-legal{display:flex;gap:14px}
+.ft-legal a{font-size:11.5px;color:var(--text-3);transition:color .15s}
+.ft-legal a:hover{color:var(--text-1)}
+[data-theme="light"] .ft-legal a:hover{color:var(--purple)}
+
+/* =====================================================================
+   GAS WIDGET — fixed bottom-right, #ae005b trigger
+   ===================================================================== */
+.gas-popup{
+  position:fixed;
+  bottom:calc(28px + 52px + 8px);
+  right:22px;
+  background:#141414;border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;padding:18px;width:244px;
+  z-index:150;
+  display:none;
+  box-shadow:0 16px 50px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.03);
+  animation:gasIn .18s ease;
+}
+@keyframes gasIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.gas-popup.open{display:block}
+[data-theme="light"] .gas-popup{background:#ffffff;border-color:rgba(26,20,9,.1);box-shadow:0 8px 32px rgba(26,20,9,.14)}
+
+.gas-trigger{
+  position:fixed;
+  bottom:calc(28px + 8px);
+  right:22px;
+  width:42px;height:42px;border-radius:50%;
+  background:var(--gas-toggle);
+  border:2px solid var(--gas-toggle);
+  color:#fff;font-size:17px;
+  box-shadow:0 4px 16px rgba(174,0,91,.55);
+  z-index:151;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,color .2s,box-shadow .2s,border-color .2s;
+}
+.gas-trigger:hover{box-shadow:0 6px 22px rgba(174,0,91,.75)}
+.gas-trigger.open{
+  background:transparent;
+  border-color:var(--gas-toggle);
+  color:var(--gas-toggle);
+  box-shadow:0 0 0 2px rgba(174,0,91,.28);
+}
+
+.gas-widget-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.gas-widget-title{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:#a3a3a3;letter-spacing:.12em;text-transform:uppercase}
+[data-theme="light"] .gas-widget-title{color:#5c4f3a}
+.gas-live-badge{display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--success)}
+.gas-live-dot{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);animation:blink 2s infinite}
+
+.gas-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+[data-theme="light"] .gas-row{border-bottom-color:rgba(26,20,9,.06)}
+.gas-row:last-of-type{border-bottom:none}
+.gas-row-left{display:flex;align-items:center;gap:9px}
+.gas-row-ico{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.gas-row-ico.g-ico{background:rgba(16,185,129,.15);color:var(--success)}
+.gas-row-ico.b-ico{background:rgba(249,115,22,.12);color:var(--accent)}
+.gas-row-ico.u-ico{background:rgba(251,191,36,.10);color:var(--gold)}
+.gas-row-lbl{font-size:12px;color:#525252;font-family:'DM Mono',monospace}
+[data-theme="light"] .gas-row-lbl{color:#9c8e7a}
+.gas-row-val{font-size:12.5px;font-weight:600;font-family:'DM Mono',monospace;color:#f5f5f5}
+[data-theme="light"] .gas-row-val{color:#1a1409}
+.gas-row-val.v-green{color:var(--success)}
+.gas-row-val.v-orange{color:var(--accent)}
+.gas-row-val.v-gold{color:var(--gold)}
+
+.gas-convert-row{display:flex;gap:7px;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.05);align-items:center}
+[data-theme="light"] .gas-convert-row{border-top-color:rgba(26,20,9,.07)}
+.gas-inp{
+  flex:1;min-width:0;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;padding:7px 10px;
+  color:#f5f5f5;font-family:'DM Mono',monospace;font-size:12px;
+  outline:none;transition:border-color .2s;
+}
+[data-theme="light"] .gas-inp{background:#f5f3ef;border-color:rgba(26,20,9,.1);color:#1a1409}
+.gas-inp::placeholder{color:#525252}
+.gas-inp:focus{border-color:rgba(249,115,22,.4)}
+.gas-conv-btn{
+  flex-shrink:0;padding:8px 11px;border-radius:8px;
+  background:var(--accent);color:#fff;
+  font-size:11px;font-weight:700;border:none;
+  font-family:'DM Mono',monospace;transition:opacity .15s;
+  white-space:nowrap;
+}
+.gas-conv-btn:hover{opacity:.88}
+
+/* =====================================================================
+   TOAST
+   ===================================================================== */
+.toast-wrap{position:fixed;bottom:44px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{
+  padding:11px 16px;border-radius:9px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:9px;border-left:3px solid;
+  max-width:340px;pointer-events:auto;backdrop-filter:blur(12px);
+  animation:toastIn .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.toast-info{background:rgba(22,22,22,.95);border-color:var(--accent);color:var(--text-1)}
+.toast-success{background:rgba(16,185,129,.12);border-color:var(--success);color:var(--success)}
+.toast-error{background:rgba(239,68,68,.12);border-color:var(--danger);color:#f87171}
+
+/* =====================================================================
+   WALLET MODAL
+   ===================================================================== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);
+  backdrop-filter:blur(8px);z-index:5000;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:#1a1a1a;border:1px solid rgba(255,255,255,.07);
+  border-radius:18px;padding:24px;width:100%;max-width:340px;
+  box-shadow:0 32px 80px rgba(0,0,0,.7);
+  animation:modalIn .22s ease;
+}
+[data-theme="light"] .modal{background:#1c1c1c}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#f5f5f5;line-height:1.2}
+.modal-sub{font-size:13px;color:#a3a3a3;margin-top:4px;line-height:1.5}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;
+  color:#a3a3a3;font-size:16px;transition:all .15s;position:relative;
+}
+.modal-close::after{
+  content:'';position:absolute;top:-2px;right:-2px;
+  width:10px;height:5px;border-radius:99px;overflow:hidden;
+  background:linear-gradient(90deg,#fff 50%,#f97316 50%);
+  transform:rotate(45deg);opacity:.9;
+}
+.modal-close:hover{color:#f5f5f5;border-color:rgba(255,255,255,.14)}
+.modal-sec{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;font-family:'DM Mono',monospace}
+
+.wallet-opt{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.03);margin-bottom:8px;transition:all .15s;
+}
+.wallet-opt:hover{border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.06)}
+.wallet-opt.featured{border-color:rgba(249,115,22,.32);background:rgba(249,115,22,.08)}
+.w-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;font-weight:800;font-family:'Syne',sans-serif}
+.w-ico.op{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;box-shadow:0 3px 12px rgba(249,115,22,.35);font-size:13px}
+.w-ico.uni{background:linear-gradient(135deg,#ff007a,#7b0035);color:#fff}
+.w-ico.xv{background:linear-gradient(135deg,#5546ff,#2a1a9a);color:#fff}
+.w-ico.okx{background:#111;color:#fff;border:1px solid rgba(255,255,255,.12)}
+.w-name{font-size:14px;font-weight:600;color:#f5f5f5;margin-bottom:2px;line-height:1}
+.w-desc{font-size:11.5px;color:#6b6b6b}
+.w-badge{margin-left:auto;padding:3px 8px;border-radius:5px;flex-shrink:0;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.28);color:var(--accent)}
+.wallet-install{font-size:11px;color:#525252;text-align:center;padding:6px 4px;margin-bottom:4px}
+.wallet-install a{color:var(--accent);text-decoration:none}
+.wallet-install a:hover{text-decoration:underline}
+
+.net-row{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)}
+.net-btn{flex:1;padding:10px;border-radius:9px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:4px;align-items:center;transition:all .15s}
+.net-btn.active{border-color:rgba(249,115,22,.32);background:rgba(249,115,22,.08)}
+.net-name{font-size:12px;font-weight:600;color:#f5f5f5}
+.net-sub{font-size:10px;color:#525252;display:flex;align-items:center;gap:4px}
+.net-sub .net-led{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success)}
+
+/* =====================================================================
+   DASHBOARD PAGE
+   ===================================================================== */
+.dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 80px;background:var(--bg-base)}
+.dash-page.active{display:block}
+.dash-wrap{max-width:960px;margin:0 auto}
+.dash-stat{background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:22px 20px;flex:1;min-width:180px}
+[data-theme="light"] .dash-stat{background:var(--bg-card);border-color:var(--border)}
+.dash-token-card{background:linear-gradient(135deg,rgba(249,115,22,.09),rgba(251,191,36,.04));border:1px solid rgba(249,115,22,.22);border-radius:14px;padding:22px;display:inline-block;min-width:200px;margin-bottom:20px}
+.dash-noconn{min-height:60vh;display:flex;align-items:center;justify-content:center}
+.dash-btn-small{padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text-2);font-size:12px;transition:all .15s}
+.dash-btn-small:hover{border-color:var(--accent-border);color:var(--accent)}
+
+/* =====================================================================
+   LEGAL PAGES
+   ===================================================================== */
+.legal-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 100px;background:var(--bg-base)}
+.legal-page.active{display:block}
+.legal-wrap{max-width:760px;margin:0 auto}
+.legal-sec{margin-bottom:24px}
+.legal-sec h2{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:7px}
+.legal-sec p{font-size:14px;color:var(--text-2);line-height:1.72}
+
+/* =====================================================================
+   LIGHT MODE — contraste real, 3D cards, lavanda no footer
+   ===================================================================== */
+
+/* Superfícies com sombra real no light */
+[data-theme="light"] .sim-box,
+[data-theme="light"] .dur-box{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.09);
+  box-shadow:0 2px 8px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+}
+[data-theme="light"] .sim-result{
+  background:linear-gradient(145deg,#fff 0%,#fef9f5 100%);
+  border-color:rgba(249,115,22,.22);
+  box-shadow:0 4px 20px rgba(249,115,22,.08),0 2px 6px rgba(0,0,0,.05);
+}
+[data-theme="light"] .cmp-card{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.08);
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+[data-theme="light"] .cmp-card.hi{
+  background:linear-gradient(135deg,rgba(249,115,22,.06),rgba(249,115,22,.02));
+  border-color:rgba(249,115,22,.28);
+  box-shadow:0 2px 10px rgba(249,115,22,.08);
+}
+[data-theme="light"] .step-card{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.08);
+  box-shadow:0 2px 12px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
+}
+[data-theme="light"] .step-card:hover{
+  box-shadow:0 8px 28px rgba(249,115,22,.10),0 4px 10px rgba(0,0,0,.06);
+}
+[data-theme="light"] .hero-stat{
+  background:#ffffff;
+  border-right-color:rgba(0,0,0,.07);
+}
+[data-theme="light"] .card-stats{
+  background:#f5f4f2;
+  border:1px solid rgba(0,0,0,.07);
+}
+[data-theme="light"] .invest-input,
+[data-theme="light"] .sim-input{
+  background:#fafaf9;
+  border-color:rgba(0,0,0,.12);
+  color:var(--text-1);
+}
+[data-theme="light"] .invest-input:focus,
+[data-theme="light"] .sim-input:focus{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 3px rgba(249,115,22,.10);
+}
+[data-theme="light"] .meta-grid{border-top-color:rgba(0,0,0,.08)}
+
+/* ── BOTÕES 3D — alto padrão ── */
+[data-theme="light"] .btn-primary{
+  box-shadow:0 4px 0 #c2460a,0 6px 20px rgba(249,115,22,.30);
+}
+[data-theme="light"] .btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 0 #c2460a,0 10px 28px rgba(249,115,22,.38);
+}
+[data-theme="light"] .btn-primary:active{
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #c2460a,0 2px 10px rgba(249,115,22,.20);
+}
+[data-theme="light"] .btn-invest{
+  box-shadow:0 3px 0 #c2460a,0 5px 14px rgba(249,115,22,.25);
+}
+[data-theme="light"] .btn-invest:hover{
+  transform:translateY(-2px);
+  box-shadow:0 5px 0 #c2460a,0 8px 20px rgba(249,115,22,.32);
+}
+[data-theme="light"] .f-btn{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.11);
+  box-shadow:0 1px 3px rgba(0,0,0,.07);
+}
+[data-theme="light"] .f-btn:hover,[data-theme="light"] .f-btn.active{
+  box-shadow:0 2px 8px rgba(249,115,22,.14);
+}
+
+/* ── GAS PILL light — visível ── */
+[data-theme="light"] .gas-pill{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.11);
+  color:var(--text-2);
+  box-shadow:0 1px 4px rgba(0,0,0,.07);
+}
+
+[data-theme="light"] footer{
+  background:var(--bg-surface);
+  border-top:1px solid var(--border);
+}
+[data-theme="light"] .ft-col-title{color:var(--text-1)}
+[data-theme="light"] .ft-link{color:var(--text-2)}
+[data-theme="light"] .ft-link:hover{color:var(--purple)}
+[data-theme="light"] .ft-link:hover svg{color:var(--purple)}
+[data-theme="light"] .soc-btn{background:var(--bg-elevated);border-color:var(--border)}
+[data-theme="light"] .soc-btn:hover{border-color:var(--purple-border);background:var(--purple-dim);color:var(--purple)}
+[data-theme="light"] .ft-sep{border-top-color:var(--border)}
+[data-theme="light"] .ft-bottom{color:var(--text-3)}
+[data-theme="light"] .ft-copy a{color:var(--purple)}
+[data-theme="light"] .ft-legal a:hover{color:var(--purple)}
+[data-theme="light"] .ft-net-badge{background:var(--success-dim);border-color:var(--success-border)}
+[data-theme="light"] .ft-faucet{color:var(--gold)!important}
+[data-theme="light"] .ft-faucet:hover{color:var(--purple)!important}
+
+/* ── STATUS BAND light ── */
+[data-theme="light"] .status-band{
+  background:rgba(5,150,105,.07);
+  border-color:rgba(5,150,105,.20);
+}
+
+/* ── LIVE BAR light — mantém dark para legibilidade ── */
+[data-theme="light"] .live-bar{
+  background:rgba(15,10,5,.92);
+  border-top-color:rgba(249,115,22,.25);
+}
+
+/* ── HERO LIGHT ── */
+[data-theme="light"] .hero-stats{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.08);
+  box-shadow:0 2px 16px rgba(0,0,0,.06);
+}
+
+/* ── TICKER LIGHT ── */
+[data-theme="light"] .ticker-wrap{
+  background:#fafaf9;
+}
+[data-theme="light"] .ticker-wrap::before{background:linear-gradient(to right,#fafaf9,transparent)}
+[data-theme="light"] .ticker-wrap::after{background:linear-gradient(to left,#fafaf9,transparent)}
+
+/* =====================================================================
+   GAS WIDGET — bug fix: input/row sempre visível em ambos os temas
+   ===================================================================== */
+.gas-popup *{color:inherit}
+[data-theme="light"] .gas-popup{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.10);
+  box-shadow:0 8px 40px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.06);
+}
+[data-theme="light"] .gas-widget-title{color:#5c4e3a}
+[data-theme="light"] .gas-row{border-bottom-color:rgba(0,0,0,.06)}
+[data-theme="light"] .gas-row-lbl{color:#9a8c76}
+[data-theme="light"] .gas-row-val{color:#18120a}
+[data-theme="light"] .gas-inp{
+  background:#f5f4f2;
+  border-color:rgba(0,0,0,.11);
+  color:#18120a;
+}
+[data-theme="light"] .gas-inp::placeholder{color:#a08c76}
+[data-theme="light"] .gas-convert-row{border-top-color:rgba(0,0,0,.07)}
+
+/* =====================================================================
+   DIFF CARD — upgrade visual
+   ===================================================================== */
+.diff-card{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:16px 18px;border-radius:13px;
+  background:linear-gradient(135deg,rgba(249,115,22,.10),rgba(249,115,22,.04));
+  border:1px solid rgba(249,115,22,.28);
+  margin-top:10px;
+  position:relative;overflow:hidden;
+}
+.diff-card::before{
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  background:radial-gradient(circle at top right,rgba(249,115,22,.15),transparent 70%);
+  pointer-events:none;
+}
+[data-theme="light"] .diff-card{
+  background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(249,115,22,.03));
+  box-shadow:0 2px 10px rgba(249,115,22,.10);
+}
+.diff-ico{font-size:22px;flex-shrink:0;margin-top:1px}
+.diff-amount{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent);line-height:1}
+.diff-title{font-size:12px;font-weight:600;color:var(--text-2);margin-top:3px}
+.diff-sub{font-size:10.5px;color:var(--text-3);margin-top:4px;font-style:italic}
+
+/* =====================================================================
+   SECTION TECH INFO — elegante e tecnológico
+   ===================================================================== */
+.tech-section{
+  padding:80px;
+  border-top:1px solid var(--border);
+  background:var(--bg-surface);
+  position:relative;overflow:hidden;
+}
+[data-theme="light"] .tech-section{
+  background:linear-gradient(180deg,#fafaf9 0%,rgba(237,233,254,.20) 100%);
+  border-top-color:rgba(167,139,250,.15);
+}
+.tech-section::before{
+  content:'';position:absolute;top:0;right:0;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(124,58,237,.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+.tech-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1200px;margin:0 auto;
+}
+@media(max-width:900px){.tech-grid{grid-template-columns:1fr}}
+.tech-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+  padding:28px;position:relative;overflow:hidden;
+  transition:transform .22s,box-shadow .22s,border-color .22s;
+}
+[data-theme="light"] .tech-card{
+  background:#ffffff;
+  border-color:rgba(0,0,0,.09);
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+}
+.tech-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--purple-border);
+  box-shadow:0 12px 40px rgba(124,58,237,.10);
+}
+[data-theme="light"] .tech-card:hover{
+  box-shadow:0 12px 40px rgba(109,40,217,.10),0 4px 12px rgba(0,0,0,.06);
+}
+.tech-card-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--purple-dim);border:1px solid var(--purple-border);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;
+  box-shadow:0 0 0 4px rgba(124,58,237,.05);
+}
+[data-theme="light"] .tech-card-icon{
+  background:rgba(237,233,254,.7);
+  border-color:rgba(109,40,217,.22);
+}
+.tech-card-icon svg{stroke:var(--purple-soft)}
+[data-theme="light"] .tech-card-icon svg{stroke:var(--purple-soft)}
+.tech-card-tag{
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--purple-soft);margin-bottom:8px;
+}
+.tech-card-title{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+  color:var(--text-1);margin-bottom:10px;
+}
+.tech-card-desc{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px}
+.tech-code-block{
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);
+  border-radius:9px;padding:12px 14px;font-family:'DM Mono',monospace;
+  font-size:11px;color:#a78bfa;line-height:1.7;
+  overflow-x:auto;
+}
+[data-theme="light"] .tech-code-block{
+  background:rgba(237,233,254,.5);
+  border-color:rgba(109,40,217,.15);
+  color:#6d28d9;
+}
+.tech-code-comment{color:var(--text-3);font-style:italic}
+[data-theme="light"] .tech-code-comment{color:#a08c76}
+.tech-badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tech-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:6px;
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:600;
+  background:var(--purple-dim);border:1px solid var(--purple-border);
+  color:var(--purple-soft);
+}
+[data-theme="light"] .tech-badge{
+  background:rgba(237,233,254,.7);
+  border-color:rgba(109,40,217,.20);
+  color:#6d28d9;
+}
+.tech-contract-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.tech-contract-row:last-child{border-bottom:none}
+.tech-contract-label{color:var(--text-3);font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.tech-contract-addr{
+  font-family:'DM Mono',monospace;font-size:10.5px;color:var(--accent);
+  background:var(--accent-dim);border:1px solid var(--accent-border);
+  padding:2px 8px;border-radius:5px;
+}
+
+/* ── SEPARADOR DE SEÇÃO com linha lavanda ── */
+[data-theme="light"] .section{border-top-color:rgba(0,0,0,.07)}
+
+/* =====================================================================
+   NAVBAR — Terms/Privacy links + Dashboard pill spacing
+   ===================================================================== */
+.nav-link-legal{
+  font-size:11px!important;
+  color:var(--text-3)!important;
+  padding:4px 8px!important;
+  opacity:.75;
+}
+.nav-link-legal:hover{opacity:1;color:var(--text-2)!important}
+
+/* ── Dashboard sempre último, separado ── */
+.nav-dash-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
+
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .65s ease forwards}
+.fu-1{animation:fadeUp .65s ease .1s both}
+.fu-2{animation:fadeUp .65s ease .22s both}
+.fu-3{animation:fadeUp .65s ease .36s both}
+.fu-4{animation:fadeUp .65s ease .48s both}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media(max-width:900px){
+  .hero{padding:calc(var(--navbar-h) + 70px) 24px 60px;min-height:auto}
+  .section{padding:60px 24px}
+  footer{padding:44px 24px 66px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .assets-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .navbar{padding:0 18px}
+}
+@media(max-width:600px){
+  .footer-grid{grid-template-columns:1fr}
+  .hero-title{font-size:44px}
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- CURSOR -->
+<div id="cur"></div>
+
+<!-- ═══════════════════════════════════════
+     NAVBAR — floating pill
+════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nb-left">
+    <a href="/" class="logo" onclick="navigate('/');return false;">
+      <div class="logo-mark">OP</div>
+      <div>
+        <div class="logo-text">OPWA</div>
+        <div class="logo-sub">Platform</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <!-- Home -->
+      <a class="nav-link" href="/" onclick="navigate('/');return false;" id="nav-home">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </a>
+      <!-- Assets -->
+      <a class="nav-link" href="#assets">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
+        Assets
+      </a>
+      <!-- Simulator -->
+      <a class="nav-link" href="#simulator">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Simulator
+      </a>
+      <!-- How It Works -->
+      <a class="nav-link" href="#how-it-works">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
+        How It Works
+      </a>
+      <div style="width:1px;height:14px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
+      <!-- Terms -->
+      <a class="nav-link nav-link-legal" href="/terms" onclick="navigate('/terms');return false;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Terms
+      </a>
+      <!-- Privacy -->
+      <a class="nav-link nav-link-legal" href="/privacy" onclick="navigate('/privacy');return false;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Privacy
+      </a>
+      <div class="nav-dash-sep"></div>
+      <a class="nav-link nav-link-dashboard" href="/dashboard" onclick="navigate('/dashboard');return false;" id="nav-dashboard" style="display:none">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+    </div>
+  </div>
+  <div class="nb-right">
+    <div class="gas-pill">
+      <span class="led"></span>
+      <span id="nav-gas">&#x2014; sat/vB</span>
+    </div>
+    <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" id="theme-btn" aria-label="Toggle theme">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <div class="wallet-btn-wrap" id="wallet-btn-wrap">
+      <button class="btn-connect" onclick="handleConnectClick()" id="connect-btn">Connect Wallet</button>
+      <div class="wallet-dropdown" id="wallet-dropdown">
+        <div id="wd-address" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);word-break:break-all;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)">not connected</div>
+        <div id="wd-balance" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text-1);margin-bottom:2px">&#x20BF; 0.00000</div>
+        <div id="wd-balance-usd" style="font-size:12px;color:var(--text-2);margin-bottom:12px">&#x2248; $0.00</div>
+        <div style="height:1px;background:var(--border);margin:6px 0"></div>
+        <button onclick="navigate('/dashboard')" class="wd-btn">&#x25A6; Dashboard</button>
+        <button onclick="wdCopy()" class="wd-btn">&#x2398; Copy Address</button>
+        <button onclick="wdExplorer()" class="wd-btn">&#x2197; View on Explorer</button>
+        <div style="height:1px;background:var(--border);margin:4px 0"></div>
+        <button onclick="wdDisconnect()" class="wd-btn wd-disconnect">Disconnect</button>
+      </div>
+    </div>
+    <button class="btn-menu" onclick="toggleMobileMenu()" id="btn-menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu" style="display:none">
+  <a class="mobile-nav-link" href="#assets" onclick="closeMobileMenu()">Assets</a>
+  <a class="mobile-nav-link" href="#simulator" onclick="closeMobileMenu()">Simulator</a>
+  <a class="mobile-nav-link" href="#how-it-works" onclick="closeMobileMenu()">How It Works</a>
+  <button class="mobile-nav-link" onclick="openWalletModal();closeMobileMenu()">Connect Wallet</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════ -->
+<div id="main-content">
+
+<!-- ═══════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-glow-tl"></div>
+  <div class="hero-glow-br"></div>
+
+  <div class="hero-badge fu">
+    <span class="hero-badge-led"></span>
+    <span class="hero-badge-text">Real Estate Investment Platform</span>
+  </div>
+
+  <h1 class="hero-title fu-1">
+    <span class="line-white">Invest in Tokenized</span><br>
+    <span class="line-orange">Real Estate with</span><br>
+    <span class="line-bitcoin">Bitcoin</span>
+  </h1>
+
+  <p class="hero-sub fu-2">
+    Diversify your portfolio with real estate assets that outperform
+    savings accounts. Invest as little as 0.001 BTC in premium properties.
+  </p>
+
+  <div class="hero-cta fu-3">
+    <button class="btn-primary" onclick="openWalletModal()">
+      Connect Wallet
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <a href="#simulator" class="btn-ghost">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 9h8M8 13h5"/></svg>
+      View Simulator
+    </a>
+  </div>
+
+  <div class="hero-stats fu-4">
+    <div class="hero-stat">
+      <div class="hs-label">&#x20BF; Layer</div>
+      <div class="hs-value sm">Bitcoin</div>
+      <div class="hs-sub">Native Settlement</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-label">Protocol</div>
+      <div class="hs-value sm">OP_NET</div>
+      <div class="hs-sub">Smart Contracts</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-label">BTC Price (Live)</div>
+      <div class="hs-value" id="hero-btc-price">&#x2014;</div>
+      <div class="hs-sub">USD</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-label">Projected APY</div>
+      <div class="hs-value">15%</div>
+      <div class="hs-sub">Annual yield</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-label">Early Investors</div>
+      <div class="hs-value">500+</div>
+      <div class="hs-sub">Early access</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-label">Volume Target</div>
+      <div class="hs-value">$2M+</div>
+      <div class="hs-sub">Total</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     ASSETS
+════════════════════════════════════════ -->
+<section class="section" id="assets">
+  <div class="s-label">Portfolio</div>
+  <div class="assets-toolbar">
+    <div>
+      <h2 class="s-title">Available <span class="acc">Assets</span></h2>
+      <p class="s-sub">Fractionalized real estate backed by Bitcoin smart contracts on OP_NET.</p>
+    </div>
+    <a href="https://github.com/Opwabtc/" target="_blank"
+      style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-2);border:1px solid var(--border);padding:7px 13px;border-radius:8px;background:var(--bg-elevated);transition:all .15s;white-space:nowrap;align-self:flex-start"
+      onmouseover="this.style.borderColor='var(--accent-border)';this.style.color='var(--accent)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-2)'">
+      View all on GitHub
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    </a>
+  </div>
+  <div class="asset-filters">
+    <button class="f-btn active" onclick="filterAssets('all',this)">All</button>
+    <button class="f-btn" onclick="filterAssets('residential',this)">Residential</button>
+    <button class="f-btn" onclick="filterAssets('commercial',this)">Commercial</button>
+    <button class="f-btn" onclick="filterAssets('industrial',this)">Industrial</button>
+    <select class="sort-select" onchange="sortAssets(this.value)" style="margin-left:auto">
+      <option value="apy">Sort: APY</option>
+      <option value="price">Sort: Price</option>
+    </select>
+    <div class="search-wrap">
+      <span class="search-ico">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input class="search-input" type="text" placeholder="Search asset..." oninput="searchAssets(this.value)"/>
+    </div>
+  </div>
+  <div class="assets-grid" id="assets-grid">
+
+    <!-- ASSET ALPHA -->
+    <div class="card-asset" data-category="residential" data-name="asset alpha">
+      <div class="card-head">
+        <div class="badges">
+          <span class="bdg bdg-res">Residential</span>
+          <span class="bdg bdg-act">Active</span>
+        </div>
+        <span class="card-id-small">ID-001</span>
+      </div>
+      <div class="card-pair">OP_NET/OPWA</div>
+      <h3 class="card-name">Asset Alpha</h3>
+      <p class="card-desc">Tokenized residential property. Fractional ownership settled on Bitcoin via OP_NET smart contract.</p>
+      <div class="disp-toggle">
+        <button class="dt-btn active" onclick="toggleDisp(this,'btc','alpha')">&#x20BF; BTC</button>
+        <button class="dt-btn" onclick="toggleDisp(this,'usd','alpha')">$ USD</button>
+      </div>
+      <div class="card-stats">
+        <div class="cs-item"><div class="cs-label">Price</div><div class="cs-value" id="alpha-price">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value apy">15%</div></div>
+        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value pos">+1.2%</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:55%"></div></div>
+      <div class="avail-row">450 / 1000 tokens <span>55% available</span></div>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc" id="alpha-gas">&#x2014;</div></div>
+        <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
+        <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
+        <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
+      </div>
+      <button class="btn-invest" onclick="toggleInvest('p-alpha',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Invest Now
+      </button>
+      <div class="invest-panel" id="p-alpha">
+        <div class="invest-panel-title">Investment Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
+          <div>
+            <span class="invest-label">Amount (BTC)</span>
+            <input class="invest-input" type="number" id="alpha-btc" step="0.00001" placeholder="0.00001" min="0.00001" oninput="syncInvest('alpha','btc',this.value)" style="margin-bottom:0"/>
+          </div>
+          <div>
+            <span class="invest-label">Number of Tokens</span>
+            <input class="invest-input" type="number" id="alpha-tokens" step="1" placeholder="1" min="1" oninput="syncInvest('alpha','tokens',this.value)" style="margin-bottom:0"/>
+          </div>
+        </div>
+        <div class="invest-hint" style="margin-top:6px;margin-bottom:12px">1 token = 0.00001 BTC (1,000 sats)</div>
+        <div class="invest-receipt" id="alpha-receipt" style="display:none">
+          <div class="invest-receipt-lbl">You will receive</div>
+          <div class="invest-receipt-val" id="alpha-receipt-tokens">&#x2014; OPWAP</div>
+          <div class="invest-receipt-btc" id="alpha-receipt-btc">&#x2248; &#x2014; BTC</div>
+        </div>
+        <button class="btn-confirm" onclick="confirmInvest('alpha')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirm Investment
+        </button>
+      </div>
+    </div>
+
+    <!-- ASSET BETA -->
+    <div class="card-asset" data-category="commercial" data-name="asset beta">
+      <div class="card-head">
+        <div class="badges">
+          <span class="bdg bdg-com">Commercial</span>
+          <span class="bdg bdg-act">Active</span>
+        </div>
+        <span class="card-id-small">ID-002</span>
+      </div>
+      <div class="card-pair">OP_NET/OPWA</div>
+      <h3 class="card-name">Asset Beta</h3>
+      <p class="card-desc">Commercial office space tokenized on OP_NET. Dividends distributed in satoshis monthly.</p>
+      <div class="disp-toggle">
+        <button class="dt-btn active" onclick="toggleDisp(this,'btc','beta')">&#x20BF; BTC</button>
+        <button class="dt-btn" onclick="toggleDisp(this,'usd','beta')">$ USD</button>
+      </div>
+      <div class="card-stats">
+        <div class="cs-item"><div class="cs-label">Price</div><div class="cs-value" id="beta-price">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value apy">12%</div></div>
+        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value pos">+0.8%</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:30%"></div></div>
+      <div class="avail-row">700 / 1000 tokens <span>30% available</span></div>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc">&#x2014;</div></div>
+        <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
+        <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
+        <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
+      </div>
+      <button class="btn-invest" onclick="toggleInvest('p-beta',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Invest Now
+      </button>
+      <div class="invest-panel" id="p-beta">
+        <div class="invest-panel-title">Investment Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
+          <div>
+            <span class="invest-label">Amount (BTC)</span>
+            <input class="invest-input" type="number" id="beta-btc" step="0.00001" placeholder="0.00001" min="0.00001" oninput="syncInvest('beta','btc',this.value)" style="margin-bottom:0"/>
+          </div>
+          <div>
+            <span class="invest-label">Number of Tokens</span>
+            <input class="invest-input" type="number" id="beta-tokens" step="1" placeholder="1" min="1" oninput="syncInvest('beta','tokens',this.value)" style="margin-bottom:0"/>
+          </div>
+        </div>
+        <div class="invest-hint" style="margin-top:6px;margin-bottom:12px">1 token = 0.00001 BTC (1,000 sats)</div>
+        <div class="invest-receipt" id="beta-receipt" style="display:none">
+          <div class="invest-receipt-lbl">You will receive</div>
+          <div class="invest-receipt-val" id="beta-receipt-tokens">&#x2014; OPWAP</div>
+          <div class="invest-receipt-btc" id="beta-receipt-btc">&#x2248; &#x2014; BTC</div>
+        </div>
+        <button class="btn-confirm" onclick="confirmInvest('beta')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirm Investment
+        </button>
+      </div>
+    </div>
+
+    <!-- ASSET GAMMA -->
+    <div class="card-asset" data-category="industrial" data-name="asset gamma">
+      <div class="card-head">
+        <div class="badges">
+          <span class="bdg bdg-ind">Industrial</span>
+          <span class="bdg bdg-soon">Coming Soon</span>
+        </div>
+        <span class="card-id-small">ID-003</span>
+      </div>
+      <div class="card-pair">OP_NET/OPWA</div>
+      <h3 class="card-name">Asset Gamma</h3>
+      <p class="card-desc">Industrial logistics hub. Tokenization pending final regulatory clearance. Join the waitlist.</p>
+      <div class="disp-toggle">
+        <button class="dt-btn active">&#x20BF; BTC</button>
+        <button class="dt-btn">$ USD</button>
+      </div>
+      <div class="card-stats">
+        <div class="cs-item"><div class="cs-label">Price</div><div class="cs-value" style="color:var(--text-3)">TBA</div></div>
+        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value" style="color:var(--gold)">~18%</div></div>
+        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value" style="color:var(--text-3)">&#x2014;</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:30%;background:linear-gradient(90deg,var(--gold),#f59e0b)"></div></div>
+      <div class="avail-row">300 / 1000 signups <span>Waitlist open</span></div>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-lbl">Status</div><div class="meta-val" style="color:var(--gold)">Upcoming</div></div>
+        <div class="meta-item"><div class="meta-lbl">Type</div><div class="meta-val">Industrial</div></div>
+      </div>
+      <button class="btn-waitlist" onclick="toggleInvest('p-gamma',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Join Waitlist
+      </button>
+      <div class="invest-panel" id="p-gamma">
+        <span class="invest-label">Your Bitcoin Address</span>
+        <input class="invest-input" type="text" placeholder="bc1q..."/>
+        <button class="btn-confirm" style="background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)">Register Interest</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SIMULATOR
+════════════════════════════════════════ -->
+<section class="section" id="simulator">
+  <div class="s-label">Tool</div>
+  <h2 class="s-title">Investment <span class="acc">Simulator</span></h2>
+  <p class="s-sub">Model your returns and compare the platform against traditional alternatives.</p>
+
+  <div class="sim-grid">
+    <!-- LEFT: controls -->
+    <div class="sim-left">
+      <div class="curr-toggle">
+        <button class="curr-btn active-btc" id="btn-btc" onclick="setCurrency('btc')">
+          <span class="ico">&#x20BF;</span> BTC
+        </button>
+        <button class="curr-btn" id="btn-usd" onclick="setCurrency('usd')">
+          <span class="ico">$</span> USD
+        </button>
+      </div>
+
+      <div class="sim-box">
+        <div class="sim-box-head">
+          <span class="sim-box-label">Initial Investment</span>
+          <span class="sim-box-conv" id="initial-conv">&#x2248; $ 0</span>
+        </div>
+        <div class="sim-row">
+          <button class="sim-pm" onclick="adjVal('initial-val',-1)">&#x2212;</button>
+          <span class="sim-pfx" id="pfx1">&#x20BF;</span>
+          <input class="sim-input" type="number" id="initial-val" value="0.005" step="0.001" min="0" oninput="calcSim()"/>
+          <button class="sim-pm" onclick="adjVal('initial-val',1)">+</button>
+        </div>
+      </div>
+
+      <div class="sim-box">
+        <div class="sim-box-head">
+          <span class="sim-box-label">Monthly Investment</span>
+          <span class="sim-box-conv" id="monthly-conv">&#x2248; $ 0</span>
+        </div>
+        <div class="sim-row">
+          <button class="sim-pm" onclick="adjVal('monthly-val',-1)">&#x2212;</button>
+          <span class="sim-pfx" id="pfx2">&#x20BF;</span>
+          <input class="sim-input" type="number" id="monthly-val" value="0" step="0.001" min="0" oninput="calcSim()"/>
+          <button class="sim-pm" onclick="adjVal('monthly-val',1)">+</button>
+        </div>
+      </div>
+
+      <div class="dur-box">
+        <div class="dur-head">
+          <span class="dur-label">Duration</span>
+          <span class="dur-val" id="dur-display">12 months</span>
+        </div>
+        <div class="mo-btns">
+          <button class="mo-btn" onclick="setMonths(1)">1mo</button>
+          <button class="mo-btn active" onclick="setMonths(12)">12mo</button>
+          <button class="mo-btn" onclick="setMonths(36)">36mo</button>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" class="dur-slider" id="dur-slider" min="1" max="36" value="12" oninput="sliderUpd(this)" style="--fill:31%"/>
+        </div>
+        <div class="slider-ticks">
+          <span>1mo</span><span>18mo</span><span>36mo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: result -->
+    <div class="sim-result">
+      <div class="res-top">
+        <div class="res-lbl">OPWA Return (15% APY &middot; <span id="res-period">1y</span>)</div>
+        <div class="res-main-val">
+          <span class="val-icon">$</span>
+          <span id="res-gain">0</span>
+          <span class="val-icon" style="font-size:28px;opacity:.7">&#x20BF;</span>
+        </div>
+        <div class="res-btc" id="res-total">Total accumulated: &#x2014;</div>
+      </div>
+
+      <p class="cmp-header">Comparison</p>
+
+      <div class="cmp-card hi">
+        <div class="cmp-left">
+          <span class="cmp-dot orange"></span>
+          <div>
+            <div class="cmp-name">OPWA Platform <span class="apy-tag orange">15% APY</span></div>
+            <div class="cmp-sub" id="opwa-sub">&#x2014;</div>
+          </div>
+        </div>
+        <div class="cmp-val green" id="opwa-val">&#x2014;</div>
+      </div>
+
+      <div class="cmp-card">
+        <div class="cmp-left">
+          <span class="cmp-dot gray"></span>
+          <div>
+            <div class="cmp-name">Fixed Income <span class="apy-tag green">6.9% APY</span></div>
+            <div class="cmp-sub" id="fi-sub">&#x2014;</div>
+          </div>
+        </div>
+        <div class="cmp-val dim" id="fi-val">&#x2014;</div>
+      </div>
+
+      <div class="cmp-card">
+        <div class="cmp-left">
+          <span class="cmp-dot dim"></span>
+          <div>
+            <div class="cmp-name">Savings Account <span class="apy-tag red">4.2% APY</span></div>
+            <div class="cmp-sub" id="sa-sub">&#x2014;</div>
+          </div>
+        </div>
+        <div class="cmp-val dim" id="sa-val">&#x2014;</div>
+      </div>
+
+      <div class="diff-card" id="diff-card" style="display:none">
+        <span class="diff-ico">📈</span>
+        <div>
+          <div class="diff-amount" id="diff-amount">+$0.00</div>
+          <div class="diff-title" id="diff-title">more than Fixed Income</div>
+          <div class="diff-sub" id="diff-sub">after 12mo with OPWA at 15% APY</div>
+        </div>
+      </div>
+
+      <p class="sim-note">* Simulation is illustrative only and does not constitute a guarantee.</p>
+    </div>
+  </div>
+
+  <!-- Partners ticker -->
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      <span class="t-item"><span class="t-dot"></span>OP_NET Protocol</span>
+      <span class="t-item"><span class="t-dot"></span>Bitcoin Layer</span>
+      <span class="t-item"><span class="t-dot"></span>OPWA Platform</span>
+      <span class="t-item"><span class="t-dot"></span>Testnet4</span>
+      <span class="t-item"><span class="t-dot"></span>OPScan Explorer</span>
+      <span class="t-item"><span class="t-dot"></span>Vibecode Ecosystem</span>
+      <span class="t-item"><span class="t-dot"></span>DeFi Bible</span>
+      <span class="t-item"><span class="t-dot"></span>OP_NET Protocol</span>
+      <span class="t-item"><span class="t-dot"></span>Bitcoin Layer</span>
+      <span class="t-item"><span class="t-dot"></span>OPWA Platform</span>
+      <span class="t-item"><span class="t-dot"></span>Testnet4</span>
+      <span class="t-item"><span class="t-dot"></span>OPScan Explorer</span>
+      <span class="t-item"><span class="t-dot"></span>Vibecode Ecosystem</span>
+      <span class="t-item"><span class="t-dot"></span>DeFi Bible</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════ -->
+<section class="section" id="how-it-works">
+  <div class="s-label">Process</div>
+  <h2 class="s-title" style="text-align:center">How It <span class="acc">Works</span></h2>
+  <p class="s-sub" style="max-width:560px;margin-left:auto;margin-right:auto;text-align:center;margin-bottom:40px">
+    Four steps from Bitcoin wallet to tokenized real estate investment &#x2014; fully on-chain.
+  </p>
+
+  <div class="steps-grid">
+    <div class="step-card" data-num="01">
+      <div class="step-ico-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/><circle cx="17" cy="15" r="1" fill="var(--accent)" stroke="none"/></svg>
+      </div>
+      <div class="step-tag">Connect</div>
+      <h3 class="step-title">Link Your Wallet</h3>
+      <p class="step-text">Connect OP_Wallet, UniSat, Xverse or OKX via Bitcoin browser extension to get started.</p>
+      <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" class="step-link">
+        Get OP_Wallet
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="step-card" data-num="02">
+      <div class="step-ico-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="3" y="2" width="18" height="20" rx="1"/><path d="M9 22V12h6v10M3 9h18M3 15h18"/></svg>
+      </div>
+      <div class="step-tag">Select</div>
+      <h3 class="step-title">Choose an Asset</h3>
+      <p class="step-text">Browse tokenized properties. Each asset has real data: APY, availability, and contract info.</p>
+      <a href="#assets" class="step-link">
+        View Assets
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="step-card" data-num="03">
+      <div class="step-ico-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="step-tag">Invest</div>
+      <h3 class="step-title">Send BTC</h3>
+      <p class="step-text">1000 sats per token. Transaction is simulated then signed and sent to the OP_NET L1 contract.</p>
+      <a href="https://dev.opnet.org/" target="_blank" class="step-link">
+        Build on OP_NET
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="step-card" data-num="04">
+      <div class="step-ico-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <div class="step-tag">Earn</div>
+      <h3 class="step-title">Receive Yield</h3>
+      <p class="step-text">Hold OPWAP tokens and receive stablecoin yield distributed directly on-chain.</p>
+      <a href="https://faucet.opnet.org/" target="_blank" class="step-link">
+        Testnet Faucet
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="status-band">
+    <div class="status-left">
+      <span class="status-led"></span>
+      All systems operational
+    </div>
+    <div class="status-right">
+      <span class="status-item">&middot; Network: <strong>OP_NET Testnet</strong></span>
+      <span class="status-item">&middot; v1.0.0</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════
+     TECH INFO — Elegante, tecnológico, útil
+════════════════════════════════════════ -->
+<section class="tech-section" id="tech-info">
+  <div style="max-width:1200px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:52px">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--purple-soft);margin-bottom:12px">Protocol Infrastructure</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:800;color:var(--text-1);margin-bottom:12px">Built on Bitcoin's L1</h2>
+      <p style="font-size:14px;color:var(--text-2);max-width:520px;margin:0 auto;line-height:1.7">OPWA uses OP_NET smart contracts running natively on Bitcoin — no bridges, no wrapped tokens, no compromises.</p>
+    </div>
+    <div class="tech-grid">
+      <!-- Card 1: Smart Contracts -->
+      <div class="tech-card">
+        <div class="tech-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="tech-card-tag">Smart Contracts · OP-20</div>
+        <div class="tech-card-title">OPWACoin Token</div>
+        <div class="tech-card-desc">The OPWAP token is an OP-20 standard contract on Bitcoin L1 via OP_NET. Buy tokens by sending BTC directly to the treasury — the contract mints OPWAP tokens atomically in the same transaction.</div>
+        <div class="tech-code-block">
+<span class="tech-code-comment">// buy() flow — atomic on Bitcoin</span>
+setTransactionDetails(treasury, sats)
+contract.buy(sender, tokenAmount)
+sendTransaction({ extraOutputs })
+        </div>
+        <div class="tech-badge-row">
+          <span class="tech-badge">OP-20</span>
+          <span class="tech-badge">Tapscript</span>
+          <span class="tech-badge">opt1s... HRP</span>
+        </div>
+      </div>
+      <!-- Card 2: Contracts deployed -->
+      <div class="tech-card">
+        <div class="tech-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div class="tech-card-tag">Deployed Contracts · Testnet</div>
+        <div class="tech-card-title">Contract Addresses</div>
+        <div class="tech-card-desc">All contracts are live on OP_NET Testnet. Verifiable on OPScan — no upgrade proxy, immutable after deployment.</div>
+        <div>
+          <div class="tech-contract-row">
+            <span class="tech-contract-label">OPWACoin OP-20</span>
+            <a href="https://opscan.org/?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqq…eksycrz88 ↗</a>
+          </div>
+          <div class="tech-contract-row">
+            <span class="tech-contract-label">PropertyNFT OP-721</span>
+            <a href="https://opscan.org/?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr9…hc0uyqa6 ↗</a>
+          </div>
+          <div class="tech-contract-row">
+            <span class="tech-contract-label">Treasury P2TR</span>
+            <a href="https://opscan.org/?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1ptm…q58h3t ↗</a>
+          </div>
+          <div class="tech-contract-row">
+            <span class="tech-contract-label">Rate</span>
+            <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent)">1 OPWAP = 1,000 sats = 0.00001 BTC</span>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3: Network -->
+      <div class="tech-card">
+        <div class="tech-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        </div>
+        <div class="tech-card-tag">Network · Bitcoin Testnet4</div>
+        <div class="tech-card-title">OP_NET Protocol</div>
+        <div class="tech-card-desc">OPWA runs on OP_NET — a smart contract layer that indexes and executes contracts inside Bitcoin Tapscript transactions. No sidechain, no rollup. Native L1.</div>
+        <div class="tech-code-block">
+<span class="tech-code-comment">// correct network import</span>
+import { networks } from '@btc-vision/transaction'
+networks.opnetTestnet  <span class="tech-code-comment">// ✓</span>
+networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</span>
+        </div>
+        <div class="tech-badge-row">
+          <span class="tech-badge">Bitcoin L1</span>
+          <span class="tech-badge">No Bridge</span>
+          <span class="tech-badge">Testnet4</span>
+        </div>
+      </div>
+      <!-- Card 4: Wallets -->
+      <div class="tech-card">
+        <div class="tech-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+        </div>
+        <div class="tech-card-tag">Wallets · Supported</div>
+        <div class="tech-card-title">Wallet Compatibility</div>
+        <div class="tech-card-desc">OPWA supports all major Bitcoin wallets with OP_NET integration. The wallet signs transactions — the protocol never holds private keys.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
+            🔶 OP_Wallet
+          </a>
+          <a href="https://unisat.io/" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
+            🟡 UniSat
+          </a>
+          <a href="https://www.xverse.app/" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
+            🔷 Xverse
+          </a>
+          <a href="https://www.okx.com/web3" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:var(--bg-elevated);border:1px solid var(--border);font-size:11.5px;color:var(--text-1);transition:all .18s" onmouseover="this.style.borderColor='var(--accent-border)'" onmouseout="this.style.borderColor='var(--border)'">
+            ⬛ OKX
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="ft-logo-row">
+        <div class="logo-mark">OP</div>
+        <div>
+          <div class="logo-text">OPWA</div>
+          <div class="logo-sub">Platform</div>
+        </div>
+      </div>
+      <p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>
+      <div class="ft-social">
+        <a href="https://x.com/" class="soc-btn" title="X / Twitter">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://github.com/Opwabtc/" class="soc-btn soc-btn-github" target="_blank" title="GitHub">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        </a>
+      </div>
+      <!-- GitHub banner mini -->
+      <a href="https://github.com/Opwabtc/" target="_blank" style="display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:7px 12px;border-radius:8px;background:var(--purple-dim);border:1px solid var(--purple-border);color:var(--purple-soft);font-family:'DM Mono',monospace;font-size:10.5px;font-weight:600;transition:all .18s;text-decoration:none" onmouseover="this.style.background='rgba(124,58,237,.20)'" onmouseout="this.style.background='var(--purple-dim)'">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        Opwabtc ↗
+      </a>
+    </div>
+    <div>
+      <div class="ft-col-title">Platform</div>
+      <a href="#assets" class="ft-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Assets
+      </a>
+      <a href="#simulator" class="ft-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
+        Simulator
+      </a>
+      <a href="#how-it-works" class="ft-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        How It Works
+      </a>
+      <a href="/dashboard" onclick="navigate('/dashboard');return false;" class="ft-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+    </div>
+    <div>
+      <div class="ft-col-title">Build &amp; Tools</div>
+      <a href="https://dev.opnet.org/" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Build on OP_NET ↗
+      </a>
+      <a href="https://faucet.opnet.org/" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>
+        Testnet Faucet ↗
+      </a>
+      <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+        Get OP_Wallet ↗
+      </a>
+      <a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        OPScan Explorer ↗
+      </a>
+      <a href="https://mempool.opnet.org/pt/testnet4" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Mempool Testnet ↗
+      </a>
+    </div>
+    <div>
+      <div class="ft-col-title">Resources</div>
+      <a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Whitepaper ↗
+      </a>
+      <a href="https://defibible.org/" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        DeFi Bible ↗
+      </a>
+      <a href="https://vibecode.finance/ecosystem" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+        Vibecode Ecosystem ↗
+      </a>
+      <a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        My OPScan Profile ↗
+      </a>
+      <hr style="border:none;border-top:1px solid var(--border);margin:11px 0"/>
+      <a href="https://faucet.opnet.org/" class="ft-link ft-faucet" target="_blank">Get Testnet BTC →</a>
+    </div>
+  </div>
+  <hr class="ft-sep"/>
+  <div class="ft-bottom">
+    <div class="ft-copy">&copy; 2025 OPWA Protocol. All rights reserved.</div>
+    <div class="ft-net-badge">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);display:inline-block;animation:blink 2s infinite"></span>
+      OP_NET Testnet
+    </div>
+    <div class="ft-legal">
+      <a href="/terms" onclick="navigate('/terms');return false;">Terms</a>
+      <a href="/privacy" onclick="navigate('/privacy');return false;">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+</div><!-- end #main-content -->
+
+<!-- ═══════════════════════════════════════
+     DASHBOARD PAGE
+════════════════════════════════════════ -->
+<div id="page-dashboard" class="dash-page">
+  <div class="dash-wrap">
+    <div id="dash-noconn" class="dash-noconn">
+      <div style="text-align:center;max-width:360px;padding:48px 32px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px">
+        <div style="font-size:42px;margin-bottom:14px">&#x1F512;</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:10px">Connect Your Wallet</div>
+        <div style="font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.6">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</div>
+        <button onclick="navigate('/');setTimeout(function(){openWalletModal();},200)" style="padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;color:#fff;font-weight:600;font-size:14px">Go Home to Connect</button>
+      </div>
+    </div>
+    <div id="dash-content" style="display:none">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap">
+        <div>
+          <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text-1);margin:0 0 6px">My Portfolio</h1>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span id="dash-addr-short">-</span>
+            <span>&middot;</span>
+            <span style="color:var(--accent)">OP_NET Testnet</span>
+            <span id="dash-updated" style="font-size:11px"></span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="padding:5px 13px;border-radius:20px;background:var(--success-dim);border:1px solid var(--success-border);font-size:11px;font-weight:700;color:var(--success)">&#x25CF; CONNECTED</span>
+          <button onclick="dashFetch()" class="dash-btn-small">&#x21BB; Refresh</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap">
+        <div class="dash-stat">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">BTC Balance</div>
+          <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--text-1);margin-bottom:4px" id="dash-btc-val">&#x20BF; 0.00000</div>
+          <div style="font-size:12px;color:var(--text-2)" id="dash-btc-usd">&#x2248; $0.00 USD</div>
+        </div>
+        <div class="dash-stat">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">OPWAP Tokens</div>
+          <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--accent);margin-bottom:4px" id="dash-opwap-val">0</div>
+          <div style="font-size:12px;color:var(--text-2)">&#x25B2; +12.4% this month</div>
+        </div>
+        <div class="dash-stat">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Portfolio USD</div>
+          <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--gold);margin-bottom:4px" id="dash-total-usd">$0</div>
+          <div style="font-size:12px;color:var(--text-2)">Live price</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-2)">OPWAP Supply Progress</span>
+          <span style="color:var(--accent);font-weight:700;font-size:12px" id="dash-supply-pct">0.00%</span>
+        </div>
+        <div style="height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:6px">
+          <div id="dash-bar-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:4px;transition:width .6s"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)">
+          <span id="dash-supply-minted">0 minted</span><span>18B max</span>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">Token Holdings</div>
+      <div class="dash-token-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-weight:800;font-size:16px;color:var(--accent)">OPWAP</span>
+          <span style="font-size:10px;background:rgba(34,197,94,.18);color:#4ade80;border-radius:20px;padding:3px 9px;font-weight:700">OP_20</span>
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:900;color:var(--text-1);margin-bottom:4px" id="dash-opwap-bal">0</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:8px" id="dash-opwap-btc">&#x2248; 0.000000 BTC</div>
+        <div style="font-size:12px;color:#4ade80;font-weight:700;margin-bottom:12px">&#x25B2; 15% APY</div>
+        <!-- Endereço correto: CONTRACTS.opwaCoin -->
+        <a href="https://opscan.org/token/opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88?network=op_testnet" target="_blank" style="color:var(--accent);font-size:11px;font-weight:600;text-decoration:none">View on OPScan &#x2197;</a>
+      </div>
+
+      <!-- ── MY REAL ASSETS (Vault) ── -->
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin:24px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)">My Real Assets</div>
+      <!-- Collection info -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div>
+          <span style="font-size:12px;font-weight:700;color:var(--text-1)">PropertyNFT</span>
+          <span style="font-size:10.5px;color:var(--text-3);margin-left:8px">10,000 sats · <span id="vault-supply">?</span>/100 minted</span>
+        </div>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--purple-dim);color:var(--purple-soft);border:1px solid var(--purple-border);border-radius:5px;padding:2px 7px">OP-721</span>
+      </div>
+      <!-- NFT cards container -->
+      <div id="vault-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px"></div>
+      <!-- Empty state -->
+      <div id="vault-empty" style="display:none;padding:20px;text-align:center;background:var(--bg-elevated);border-radius:12px;border:1px dashed var(--border)">
+        <div style="font-size:28px;margin-bottom:8px">🏠</div>
+        <div style="font-size:13px;color:var(--text-2);margin-bottom:4px;font-weight:600">No Real Assets yet</div>
+        <div style="font-size:11.5px;color:var(--text-3)">Mint your first PropertyNFT to own a piece of real estate on Bitcoin</div>
+      </div>
+      <!-- Mint button -->
+      <div id="vault-mint-wrap" style="margin-top:12px">
+        <button id="vault-mint-btn" onclick="mintPropertyNFT()" style="display:flex;align-items:center;gap:8px;width:100%;padding:12px 16px;background:linear-gradient(135deg,var(--purple),var(--purple-soft));border:none;border-radius:11px;color:#fff;font-size:13px;font-weight:700;justify-content:center;box-shadow:0 4px 16px rgba(124,58,237,.32);transition:all .2s">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Mint Real Asset — 0.0001 BTC
+        </button>
+        <div id="vault-mint-status" style="margin-top:8px;font-size:12px;color:var(--text-2);text-align:center;min-height:18px"></div>
+      </div>
+
+      <br>
+      <a id="dash-opscan-link" href="https://opscan.org/?network=op_testnet" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:14px;font-weight:600;text-decoration:none;border:1px solid var(--accent-border);border-radius:9px;padding:11px 18px;background:var(--accent-dim)">&#x2197; View all transactions on OPScan</a>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS PAGE -->
+<div id="page-terms" class="legal-page">
+  <div class="legal-wrap">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Terms of Service</h1>
+    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: January 2025 &middot; OPWA Protocol</p>
+    <div class="legal-sec"><h2>1. Acceptance of Terms</h2><p>By accessing or using the OPWA platform, you agree to be bound by these Terms. OPWA is a decentralized real estate tokenization protocol built on Bitcoin via OP_NET smart contracts.</p></div>
+    <div class="legal-sec"><h2>2. Nature of the Platform</h2><p>OPWA enables fractional ownership of real-world assets through blockchain tokenization on OP_NET Testnet. The Platform does not guarantee returns, liquidity, or token value.</p></div>
+    <div class="legal-sec"><h2>3. Eligibility</h2><p>You must be at least 18 years old and legally permitted to participate in digital asset transactions in your jurisdiction.</p></div>
+    <div class="legal-sec"><h2>4. Wallet and Private Keys</h2><p>OPWA does not custody your funds or private keys. You are solely responsible for your wallet security. All transactions are irreversible once confirmed on-chain.</p></div>
+    <div class="legal-sec"><h2>5. Risks</h2><p>Digital assets involve significant risk including price volatility and smart contract bugs. Do not invest more than you can afford to lose.</p></div>
+    <div class="legal-sec"><h2>6. Disclaimers</h2><p>THE PLATFORM IS PROVIDED AS IS WITHOUT WARRANTIES. OPWA IS NOT RESPONSIBLE FOR ANY LOSSES FROM USE OF THE PLATFORM.</p></div>
+    <div class="legal-sec"><h2>7. Contact</h2><p>Contact us via GitHub at github.com/Opwabtc or official OPWA community channels.</p></div>
+    <div style="margin-top:40px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-3)">By using OPWA, you agree to these Terms.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="color:var(--text-3);text-decoration:none">Privacy &#x2192;</a></div></div>
+  </div>
+</div>
+
+<!-- PRIVACY PAGE -->
+<div id="page-privacy" class="legal-page">
+  <div class="legal-wrap">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Privacy Policy</h1>
+    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: January 2025 &middot; OPWA Protocol</p>
+    <div class="legal-sec"><h2>1. Overview</h2><p>OPWA Protocol is committed to transparency. This policy explains what data we collect, how we use it, and your rights.</p></div>
+    <div class="legal-sec"><h2>2. Information We Collect</h2><p>We do not collect personally identifiable information. Your wallet address and transaction data are recorded on the OP_NET blockchain and are publicly visible.</p></div>
+    <div class="legal-sec"><h2>3. Blockchain Data</h2><p>All transactions are permanently recorded on Bitcoin via OP_NET. This data is public and immutable.</p></div>
+    <div class="legal-sec"><h2>4. Analytics</h2><p>We may use privacy-respecting analytics to understand usage patterns. We do not use cookies for advertising.</p></div>
+    <div class="legal-sec"><h2>5. Third-Party Services</h2><p>We integrate with CoinGecko, Mempool.opnet.org, and OPScan. Each has its own privacy policy.</p></div>
+    <div class="legal-sec"><h2>6. Wallet Extensions</h2><p>OPWA only reads your public key. We never request private keys or seed phrases.</p></div>
+    <div class="legal-sec"><h2>7. Contact</h2><p>For privacy inquiries, contact us via GitHub at github.com/Opwabtc.</p></div>
+    <div style="margin-top:40px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-3)">We are committed to protecting your privacy.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back</a><a href="/terms" onclick="navigate('/terms');return false;" style="color:var(--text-3);text-decoration:none">Terms &#x2192;</a></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     LIVE TICKER BAR (bottom)
+════════════════════════════════════════ -->
+<div class="live-bar" id="live-bar">
+  <div class="live-bar-inner" id="lb-inner">
+    <span class="lb-item"><span class="lb-led"></span><span class="lb-label">OP_NET Testnet</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">Rate&nbsp;</span><span class="lb-acc" id="lb-gas">1 sat/vB</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">1 OPWAP&nbsp;</span><span class="lb-acc">0.00001 BTC</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">BTC&nbsp;</span><span class="lb-acc" id="lb-btc">$&#x2014;</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">Wallet&nbsp;</span><span class="lb-addr" id="lb-wallet">opt1sqq047...g6xnp</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
+    <span class="lb-sep">&bull;</span>
+    <!-- duplicate for loop -->
+    <span class="lb-item"><span class="lb-led"></span><span class="lb-label">OP_NET Testnet</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">Rate&nbsp;</span><span class="lb-acc" id="lb-gas2">1 sat/vB</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">1 OPWAP&nbsp;</span><span class="lb-acc">0.00001 BTC</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">BTC&nbsp;</span><span class="lb-acc" id="lb-btc2">$&#x2014;</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">Wallet&nbsp;</span><span class="lb-addr">opt1sqq047...g6xnp</span></span>
+    <span class="lb-sep">&bull;</span>
+    <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     GAS WIDGET
+════════════════════════════════════════ -->
+<div class="gas-popup" id="gas-popup">
+  <div class="gas-widget-header">
+    <span class="gas-widget-title">Gas Converter</span>
+    <span class="gas-live-badge"><span class="gas-live-dot"></span> Live</span>
+  </div>
+  <div class="gas-row">
+    <div class="gas-row-left">
+      <span class="gas-row-ico g-ico">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+      </span>
+      <span class="gas-row-lbl">Gas</span>
+    </div>
+    <span class="gas-row-val v-green" id="g-rate">&#x2014; sat/vB</span>
+  </div>
+  <div class="gas-row">
+    <div class="gas-row-left">
+      <span class="gas-row-ico b-ico">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M9 8h4.5a2 2 0 010 4H9zm0 0v8m0-8V4m0 8h5a2 2 0 010 4H9"/></svg>
+      </span>
+      <span class="gas-row-lbl">BTC Price</span>
+    </div>
+    <span class="gas-row-val v-orange" id="g-btc">&#x2014;</span>
+  </div>
+  <div class="gas-row">
+    <div class="gas-row-left">
+      <span class="gas-row-ico u-ico">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      </span>
+      <span class="gas-row-lbl">Tx Cost</span>
+    </div>
+    <span class="gas-row-val v-gold" id="g-tx">&#x2014;</span>
+  </div>
+  <div class="gas-convert-row">
+    <input class="gas-inp" type="number" id="g-inp" placeholder="BTC amount" step="0.0001" oninput="calcGas(this.value)"/>
+    <button class="gas-conv-btn" id="g-res-btn">&#x2192; USD</button>
+  </div>
+</div>
+<button class="gas-trigger" id="gas-trigger-btn" onclick="toggleGas()">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+</button>
+
+<!-- ═══════════════════════════════════════
+     WALLET MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="wallet-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Connect Wallet</div>
+        <div class="modal-sub">Choose your Bitcoin wallet to connect to the OP_NET platform.</div>
+      </div>
+      <button class="modal-close" onclick="closeWallet()">&#x2715;</button>
+    </div>
+    <p class="modal-sec">Recommended</p>
+    <div class="wallet-opt featured" onclick="connectWallet('OP_Wallet')">
+      <div class="w-ico op">OP</div>
+      <div>
+        <div class="w-name">OP_Wallet</div>
+        <div class="w-desc">Official OP_NET wallet &middot; Chrome Extension</div>
+      </div>
+      <span class="w-badge">Official</span>
+    </div>
+    <div class="wallet-install">
+      Don&#x2019;t have OP_Wallet?
+      <a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" target="_blank">Install from Chrome Web Store &#x2197;</a>
+    </div>
+    <p class="modal-sec" style="margin-top:14px">Other Options</p>
+    <div class="wallet-opt" onclick="connectWallet('Unisat')">
+      <div class="w-ico uni">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <div>
+        <div class="w-name">Unisat</div>
+        <div class="w-desc">Bitcoin native &middot; OP_NET compatible</div>
+      </div>
+    </div>
+    <div class="wallet-opt" onclick="connectWallet('Xverse')">
+      <div class="w-ico xv">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 8l8 8M16 8l-8 8"/></svg>
+      </div>
+      <div>
+        <div class="w-name">Xverse</div>
+        <div class="w-desc">Bitcoin &middot; Ordinals &middot; OP_NET</div>
+      </div>
+    </div>
+    <div class="wallet-opt" onclick="connectWallet('OKX')">
+      <div class="w-ico okx">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+      </div>
+      <div>
+        <div class="w-name">OKX Wallet</div>
+        <div class="w-desc">Multi-chain &middot; Web3</div>
+      </div>
+    </div>
+    <div class="net-row">
+      <button class="net-btn active">
+        <span class="net-name">Testnet</span>
+        <span class="net-sub"><span class="net-led"></span> Active</span>
+      </button>
+      <button class="net-btn">
+        <span class="net-name">Mainnet</span>
+        <span class="net-sub">Soon</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── CURSOR ── */
+const cur = document.getElementById('cur');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+}, {passive:true});
+
+/* ── THEME ── */
+let theme = 'dark';
+const themeBtn = document.getElementById('theme-btn');
+function toggleTheme() {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  themeBtn.innerHTML = theme === 'dark'
+    ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
+    : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+}
+
+/* ── NAVBAR SCROLL ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY > 20);
+}, {passive:true});
+
+/* ── MOBILE MENU ── */
+function toggleMobileMenu() {
+  const m = document.getElementById('mobile-menu');
+  m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').style.display = 'none';
+}
+
+/* ── STEP CARDS CLICK HIGHLIGHT ── */
+document.querySelectorAll('.step-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const wasActive = card.classList.contains('active');
+    document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
+    if (!wasActive) card.classList.add('active');
+  });
+});
+
+/* ── WALLET MODAL ── */
+function openWalletModal() { document.getElementById('wallet-modal').classList.add('open'); }
+function closeWallet()     { document.getElementById('wallet-modal').classList.remove('open'); }
+document.getElementById('wallet-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeWallet();
+});
+
+/* ── GAS WIDGET ── */
+let gasOpen = false;
+function toggleGas() {
+  gasOpen = !gasOpen;
+  document.getElementById('gas-popup').classList.toggle('open', gasOpen);
+  document.getElementById('gas-trigger-btn').classList.toggle('open', gasOpen);
+}
+document.addEventListener('click', function(e) {
+  if (gasOpen && !document.getElementById('gas-popup').contains(e.target) && !document.getElementById('gas-trigger-btn').contains(e.target)) {
+    gasOpen = false;
+    document.getElementById('gas-popup').classList.remove('open');
+    document.getElementById('gas-trigger-btn').classList.remove('open');
+  }
+});
+let btcPrice = 0;
+function calcGas(val) {
+  if (!btcPrice || !val) return;
+  const usd = parseFloat(val) * btcPrice;
+  document.getElementById('g-res-btn').textContent = '\u2192 $' + usd.toFixed(2);
+}
+
+/* ── TOAST ── */
+function showToast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + (type || 'info');
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ── INVEST PANELS ── */
+const SATS_PER_TOKEN = 1000;
+const BTC_PER_TOKEN  = 0.00001;
+
+function syncInvest(asset, field, raw) {
+  const val = parseFloat(raw);
+  const btcEl    = document.getElementById(asset + '-btc');
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const receipt  = document.getElementById(asset + '-receipt');
+  const rTokens  = document.getElementById(asset + '-receipt-tokens');
+  const rBtc     = document.getElementById(asset + '-receipt-btc');
+  if (!val || val <= 0) { receipt.style.display = 'none'; return; }
+  let tokens, btcAmt;
+  if (field === 'btc') {
+    tokens = Math.floor(val / BTC_PER_TOKEN);
+    btcAmt = val;
+    if (tokensEl) tokensEl.value = tokens;
+  } else {
+    tokens = Math.floor(val);
+    btcAmt = tokens * BTC_PER_TOKEN;
+    if (btcEl) btcEl.value = btcAmt.toFixed(5);
+  }
+  if (tokens > 0) {
+    receipt.style.display = 'block';
+    rTokens.textContent = tokens.toLocaleString('en') + ' OPWAP';
+    const sats = tokens * SATS_PER_TOKEN;
+    rBtc.textContent = '\u2248 ' + btcAmt.toFixed(8) + ' BTC (' + sats.toLocaleString('en') + ' sats)';
+  } else {
+    receipt.style.display = 'none';
+  }
+}
+
+async function confirmInvest(asset) {
+  // Require wallet connection
+  if (!appState.connected || !appState.publicKey) {
+    openWalletModal();
+    showToast('Connect your wallet first', 'info');
+    return;
+  }
+
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const tokenCount = parseInt(tokensEl ? tokensEl.value : 0);
+  if (!tokenCount || tokenCount < 1) {
+    showToast('Enter number of tokens (min 1)', 'info');
+    return;
+  }
+
+  // Find and update confirm button
+  const panel = document.getElementById('p-' + asset);
+  const btn = panel ? panel.querySelector('.btn-confirm') : null;
+  if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
+
+  try {
+    // Constants matching src/contracts/config.ts
+    const TREASURY_P2TR = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
+    const OPWACOIN_ADDR  = 'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88';
+    const SATS_PER_TOKEN = 1000n;
+    const DECIMALS       = 100_000_000n; // 10^8
+
+    const count     = BigInt(tokenCount);
+    const satsAmt   = count * SATS_PER_TOKEN;
+    const tokenAmt  = count * DECIMALS;
+
+    // --- Step 1: Import OPNet SDK ---
+    const { getContract, OPNetLimitedProvider, networks } = await import('https://cdn.skypack.dev/@btc-vision/opnet@latest');
+    const provider = new OPNetLimitedProvider('https://testnet.opnet.org');
+    const contract = getContract(OPWACOIN_ADDR, /* OPWACoin ABI */ [], provider, networks.opnetTestnet);
+
+    // --- Step 2: setTransactionDetails (treasury output MUST come before simulate) ---
+    contract.setTransactionDetails({
+      utxos: await provider.getUTXOs(appState.walletAddr),
+      output: { address: TREASURY_P2TR, value: satsAmt }
+    });
+
+    // --- Step 3: Simulate buy() ---
+    const simulation = await contract.buy(appState.walletAddr, tokenAmt);
+    if (!simulation || simulation.error) throw new Error(simulation?.error || 'Simulation failed');
+
+    // --- Step 4: Send with extraOutputs (treasury P2TR output attached) ---
+    const result = await simulation.sendTransaction({
+      signer: null,        // wallet signs — never the code
+      mldsaSigner: null,
+      extraOutputs: [{
+        address: TREASURY_P2TR,
+        value: satsAmt
+      }]
+    });
+
+    if (!result || !result.txHash) throw new Error('Transaction failed');
+
+    // Success — show receipt
+    showToast('✅ ' + tokenCount + ' OPWAP minted! TX: ' + result.txHash.slice(0,12) + '…', 'success');
+    const rcpt = document.getElementById(asset + '-receipt');
+    if (rcpt) {
+      rcpt.style.display = 'block';
+      const link = rcpt.querySelector('.rcpt-scan');
+      if (link) link.href = 'https://opscan.org/tx/' + result.txHash + '?network=op_testnet';
+    }
+
+  } catch (err) {
+    console.error('[confirmInvest]', err);
+    const msg = err.message || String(err);
+    // User-facing friendly messages
+    if (msg.includes('User rejected') || msg.includes('cancelled')) {
+      showToast('Transaction cancelled by user', 'info');
+    } else if (msg.includes('Insufficient')) {
+      showToast('Insufficient BTC balance', 'error');
+    } else {
+      showToast('Error: ' + msg.slice(0, 80), 'error');
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Confirm Investment'; }
+  }
+}
+
+function toggleInvest(id, btn) {
+  const panel = document.getElementById(id);
+  const open = panel.classList.toggle('open');
+  const isGamma = id === 'p-gamma';
+  if (!open) {
+    const asset = id.replace('p-','');
+    const r = document.getElementById(asset + '-receipt');
+    if (r) r.style.display = 'none';
+    const btcEl = document.getElementById(asset + '-btc');
+    const tokEl = document.getElementById(asset + '-tokens');
+    if (btcEl) btcEl.value = '';
+    if (tokEl) tokEl.value = '';
+  }
+  if (open) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
+  } else {
+    if (isGamma) {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
+    } else {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
+    }
+  }
+}
+
+/* ── ASSET FILTERS / SEARCH ── */
+function filterAssets(cat, btn) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+  });
+}
+function searchAssets(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = card.dataset.name.includes(lq) ? '' : 'none';
+  });
+}
+function sortAssets(by) { /* placeholder */ }
+
+/* ── DISPLAY TOGGLE (BTC/USD on cards) ── */
+function toggleDisp(btn, mode, assetId) {
+  const wrap = btn.closest('.card-asset');
+  wrap.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const priceEl = document.getElementById(assetId + '-price');
+  if (!priceEl) return;
+  if (mode === 'btc') {
+    priceEl.textContent = '\u2014';
+  } else {
+    priceEl.textContent = btcPrice ? '$' + (btcPrice * 0.001).toFixed(2) : '\u2014';
+  }
+}
+
+/* ── LIVE PRICES ── */
+async function fetchPrices() {
+  try {
+    let price = 0;
+    try {
+      const r0 = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const d0 = await r0.json(); price = d0.bitcoin.usd;
+    } catch(_) {
+      const r1 = await fetch('https://api.coinpaprika.com/v1/tickers/btc-bitcoin');
+      const d1 = await r1.json(); price = d1.quotes.USD.price;
+    }
+    btcPrice = price;
+    const fmt = '$' + btcPrice.toLocaleString();
+    document.getElementById('hero-btc-price').textContent = fmt;
+    document.getElementById('g-btc').textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
+}
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = feeStr; });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c === 'btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c === 'usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c === 'btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c === 'btc' ? '\u20BF' : '$';
+  if (c === 'btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m === 1 ? '' : 's');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m - 1) / 35 * 100).toFixed(1);
+  sl.style.setProperty('--fill', pct + '%');
+  document.querySelectorAll('.mo-btn').forEach((b, i) => b.classList.toggle('active', [1,12,36][i] === m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m - 1) / 35 * 100).toFixed(1) + '%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m === 1 ? '' : 's');
+  document.querySelectorAll('.mo-btn').forEach((b, i) => b.classList.toggle('active', [1,12,36][i] === m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  const step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value) || 0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency === 'btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value) || 0;
+  let mv = parseFloat(document.getElementById('monthly-val').value) || 0;
+  const bp = btcPrice || 65000;
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency === 'usd') {
+    initBtc = iv / bp; monBtc = mv / bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv * bp).toLocaleString('en', {maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv * bp).toLocaleString('en', {maximumFractionDigits:0});
+  }
+  const months = simMonths;
+  const label = months < 12 ? months + 'mo' : (months / 12).toFixed(1).replace('.0','') + 'y';
+  document.getElementById('res-period').textContent = label;
+  function calc(p, m, r, mo) { const mr = r/12; let a = p; for (let i = 0; i < mo; i++) { a = a * (1 + mr) + m; } return a; }
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+  const gain    = opwa - initBtc;
+  const gainUsd = gain * bp;
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa - initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi - initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa - initBtc).toFixed(6);
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff > 0 && initBtc > 0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-amount').textContent = '+$' + (diff * bp).toFixed(2);
+    document.getElementById('diff-title').textContent = 'more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after ' + label + ' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+
+/* ── WALLET STATE ── */
+var walletState = {connected:false, addr:'', sats:0, type:''};
+
+function handleConnectClick() {
+  if (walletState.connected) {
+    document.getElementById('wallet-dropdown').classList.toggle('open');
+  } else {
+    openWalletModal();
+  }
+}
+
+function walletConnected(addr, sats, type) {
+  walletState = {connected:true, addr:addr, sats:sats, type:type};
+  const short = addr.slice(0, 8) + '...' + addr.slice(-6);
+  const btn = document.getElementById('connect-btn');
+  if (btn) { btn.textContent = short; btn.classList.add('connected'); }
+  let e;
+  e = document.getElementById('wd-address'); if (e) e.textContent = addr;
+  e = document.getElementById('wd-balance'); if (e) e.textContent = '\u20BF ' + (sats / 1e8).toFixed(5);
+  e = document.getElementById('wd-balance-usd'); if (e) e.textContent = '\u2248 $' + ((sats / 1e8) * (btcPrice || 65000)).toFixed(2);
+  e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'inline-flex';
+  e = document.getElementById('lb-wallet'); if (e) e.textContent = short;
+  showToast('Connected: ' + short, 'success');
+  closeWallet();
+  dashRender();
+  dashFetch();
+}
+
+function wdDisconnect() {
+  walletState = {connected:false, addr:'', sats:0, type:''};
+  const btn = document.getElementById('connect-btn');
+  if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
+  let e;
+  e = document.getElementById('wallet-dropdown'); if (e) e.classList.remove('open');
+  e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'none';
+  e = document.getElementById('lb-wallet'); if (e) e.textContent = 'not connected';
+  showToast('Wallet disconnected', 'info');
+  if (window.location.pathname === '/dashboard') navigate('/');
+  dashRender();
+}
+
+function wdCopy() {
+  if (walletState.addr) navigator.clipboard.writeText(walletState.addr).then(() => { showToast('Address copied!', 'success'); });
+}
+function wdExplorer() {
+  if (walletState.addr) window.open('https://opscan.org/accounts/' + walletState.addr + '?network=op_testnet', '_blank');
+}
+
+/* ── REAL WALLET CONNECT ── */
+window.connectWallet = async function(type) {
+  showToast('Connecting to ' + type + '...', 'info');
+  try {
+    var accounts = [], sats = 0;
+    if (type === 'OP_Wallet') {
+      if (!window.opnet) { showToast('OP_Wallet not found. Please install it.', 'error'); return; }
+      accounts = await window.opnet.requestAccounts();
+      try { var b = await window.opnet.getBalance(); sats = b.total || 0; } catch(_) {}
+    } else if (type === 'Unisat') {
+      if (!window.unisat) { showToast('Unisat not found.', 'error'); return; }
+      accounts = await window.unisat.requestAccounts();
+      try { var b2 = await window.unisat.getBalance(); sats = b2.total || 0; } catch(_) {}
+    } else if (type === 'Xverse') {
+      if (!window.BitcoinProvider) { showToast('Xverse not found.', 'error'); return; }
+      var res = await window.BitcoinProvider.request('getAccounts', {purposes:['payment','ordinals']});
+      accounts = res.result ? res.result.map(a => a.address) : [];
+    } else if (type === 'OKX') {
+      if (!window.okxwallet) { showToast('OKX not found.', 'error'); return; }
+      accounts = await window.okxwallet.bitcoin.requestAccounts();
+    }
+    if (accounts && accounts.length > 0) {
+      walletConnected(accounts[0], sats, type);
+    } else {
+      showToast('No accounts returned.', 'error');
+    }
+  } catch(e) {
+    showToast('Connection failed: ' + (e.message || e), 'error');
+  }
+};
+
+/* ── DASHBOARD ── */
+var dashOpwapBal = '0', dashSupply = '0';
+
+/* ──────────────────────────────────────────
+   CONTRACTS (mirrors src/contracts/config.ts)
+   ────────────────────────────────────────── */
+var CONTRACTS = {
+  opwaCoin:    'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88',
+  propertyNft: 'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6'
+};
+var TREASURY_P2TR    = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
+var OPWA_SATS_PER_TOKEN = 1000n;
+var PROPERTY_MINT_SATS  = 10000n;  // maximumAllowedSatToSpend: 50_000n no hook
+
+/* ──────────────────────────────────────────
+   MINT PropertyNFT — lógica do Bob (useMintNFT)
+   payable: false no ABI, custo cobrado como gas OPNet
+   NÃO precisa de extraOutputs para treasury
+   ────────────────────────────────────────── */
+async function mintPropertyNFT() {
+  if (!appState.connected || !appState.publicKey) {
+    openWalletModal();
+    showToast('Connect your wallet first', 'info');
+    return;
+  }
+
+  var btn    = document.getElementById('vault-mint-btn');
+  var status = document.getElementById('vault-mint-status');
+
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Minting...';
+  status.textContent = 'Waiting for wallet confirmation…';
+  status.style.color = 'var(--text-2)';
+
+  try {
+    var { getContract, OPNetLimitedProvider, networks } = await import('https://cdn.skypack.dev/@btc-vision/opnet@latest');
+    var provider = new OPNetLimitedProvider('https://testnet.opnet.org');
+    var contract = getContract(CONTRACTS.propertyNft, [], provider, networks.opnetTestnet, appState.walletAddr);
+
+    // Verificar se minting está aberto e supply disponível
+    var supplyRes = await dashRpcCallRaw('eth_call', {
+      to: CONTRACTS.propertyNft,
+      data: '0x18160ddd'  // totalSupply()
+    });
+    var currentSupply = supplyRes ? parseInt(supplyRes, 16) : 0;
+    if (currentSupply >= 100) {
+      throw new Error('Collection fully minted (100/100)');
+    }
+
+    // mint() — payable:false, SDK cobra 10.000 sats como gas automaticamente
+    var simulation = await contract.mint();
+    if (!simulation || simulation.error) throw new Error(simulation?.error || 'Simulation failed');
+
+    // signer: null — wallet assina, nunca o código
+    var result = await simulation.sendTransaction({
+      signer: null,
+      mldsaSigner: null
+    });
+
+    if (!result || !result.txHash) throw new Error('Transaction failed');
+
+    status.textContent = '✅ Minted! TX: ' + result.txHash.slice(0, 14) + '…';
+    status.style.color = 'var(--success)';
+    showToast('🏠 Real Asset minted!', 'success');
+
+    // Recarregar vault após mint
+    setTimeout(function(){ loadVault(); }, 3000);
+
+  } catch(err) {
+    var msg = err.message || String(err);
+    if (msg.includes('User rejected') || msg.includes('cancelled')) {
+      status.textContent = 'Cancelled by user';
+    } else if (msg.includes('fully minted')) {
+      status.textContent = '⚠️ Collection fully minted';
+      btn.disabled = true;
+    } else {
+      status.textContent = 'Error: ' + msg.slice(0, 70);
+      status.style.color = 'var(--danger)';
+    }
+    btn.disabled = false;
+  } finally {
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Mint Real Asset — 0.0001 BTC';
+  }
+}
+
+/* ──────────────────────────────────────────
+   LOAD VAULT — lista NFTs do usuário on-chain
+   balanceOf → tokenOfOwnerByIndex → cards
+   ────────────────────────────────────────── */
+async function loadVault() {
+  if (!appState.connected || !appState.walletAddr) return;
+
+  var cardsEl = document.getElementById('vault-cards');
+  var emptyEl = document.getElementById('vault-empty');
+  var supplyEl = document.getElementById('vault-supply');
+  cardsEl.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px">Loading assets…</div>';
+
+  try {
+    var { getContract, OPNetLimitedProvider, networks } = await import('https://cdn.skypack.dev/@btc-vision/opnet@latest');
+    var provider = new OPNetLimitedProvider('https://testnet.opnet.org');
+    var contract = getContract(CONTRACTS.propertyNft, [], provider, networks.opnetTestnet, appState.walletAddr);
+
+    // totalSupply para info da collection
+    try {
+      var supRes = await dashRpcCallRaw('eth_call', { to: CONTRACTS.propertyNft, data: '0x18160ddd' });
+      if (supRes) supplyEl.textContent = parseInt(supRes, 16);
+    } catch(e) { supplyEl.textContent = '?'; }
+
+    // balanceOf(walletAddr) — quantos NFTs o usuário tem
+    var balRes = await contract.balanceOf(appState.walletAddr);
+    var balance = balRes && balRes.properties ? BigInt(balRes.properties.balance || 0) : 0n;
+
+    if (balance === 0n) {
+      cardsEl.innerHTML = '';
+      emptyEl.style.display = 'block';
+      return;
+    }
+
+    emptyEl.style.display = 'none';
+
+    // tokenOfOwnerByIndex — buscar cada tokenId
+    var tokenIds = [];
+    for (var i = 0n; i < balance; i++) {
+      try {
+        var tokRes = await contract.tokenOfOwnerByIndex(appState.walletAddr, i);
+        if (tokRes && tokRes.properties && tokRes.properties.tokenId !== undefined) {
+          tokenIds.push(BigInt(tokRes.properties.tokenId));
+        }
+      } catch(e) { /* skip */ }
+    }
+
+    // Renderizar cards
+    cardsEl.innerHTML = tokenIds.map(function(id) {
+      var opscanUrl = 'https://opscan.org/token/' + CONTRACTS.propertyNft + '/' + id + '?network=op_testnet';
+      return '<div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .18s" onmouseover="this.style.borderColor=\'var(--purple-border)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
+        '<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple-soft);margin-bottom:6px">Real Asset</div>' +
+        '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:16px;color:var(--text-1);margin-bottom:4px">#' + id + '</div>' +
+        '<div style="display:flex;gap:5px;margin-bottom:10px">' +
+          '<span style="font-size:9px;background:var(--purple-dim);color:var(--purple-soft);border:1px solid var(--purple-border);border-radius:4px;padding:2px 6px;font-weight:700">OPWANFT</span>' +
+          '<span style="font-size:9px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border);border-radius:4px;padding:2px 6px;font-weight:700">OP-721</span>' +
+        '</div>' +
+        '<a href="' + opscanUrl + '" target="_blank" style="font-size:10.5px;color:var(--accent);font-weight:600;text-decoration:none">View on OPScan ↗</a>' +
+      '</div>';
+    }).join('');
+
+  } catch(err) {
+    cardsEl.innerHTML = '<div style="font-size:12px;color:var(--danger);padding:8px">Error loading assets</div>';
+    console.error('[loadVault]', err);
+  }
+}
+
+/* helper RPC raw para totalSupply no vault */
+async function dashRpcCallRaw(method, params) {
+  var res = await fetch('https://testnet.opnet.org', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ jsonrpc:'2.0', id:1, method, params })
+  });
+  var j = await res.json();
+  return j && j.result ? j.result : null;
+}
+
+function fmtAmt(raw, dec) {
+  if (!raw || raw === '0') return '0';
+  try {
+    var n = BigInt(raw), d = BigInt(Math.pow(10, dec)), w = n/d, f = n%d;
+    return f === 0n ? w.toLocaleString() : w.toLocaleString() + '.' + f.toString().padStart(dec, '0').replace(/0+$/,'').slice(0,4);
+  } catch(e) { return '0'; }
+}
+
+async function dashRpcCall(data) {
+  try {
+    var r = await fetch('https://testnet.opnet.org', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to: CONTRACTS.opwaCoin, data:data},'latest']}),
+      signal:AbortSignal.timeout(8000)
+    });
+    var j = await r.json();
+    return j.result || null;
+  } catch(e) { return null; }
+}
+
+async function dashFetch() {
+  if (!walletState.connected || !walletState.addr) return;
+  try {
+    var a64 = walletState.addr.replace('0x','').padStart(64,'0');
+    var res = await Promise.all([dashRpcCall('0x70a08231' + a64), dashRpcCall('0x18160ddd')]);
+    if (res[0]) dashOpwapBal = BigInt(res[0]).toString();
+    if (res[1]) dashSupply = BigInt(res[1]).toString();
+    dashRenderData();
+    var el = document.getElementById('dash-updated');
+    if (el) el.textContent = 'Updated ' + new Date().toLocaleTimeString();
+  } catch(e) {}
+}
+
+function dashRenderData() {
+  var bp = btcPrice || 65000;
+  var bb = walletState.sats / 1e8;
+  var bu = bb * bp;
+  var on = fmtAmt(dashOpwapBal, 8);
+  var ob = Number(BigInt(dashOpwapBal || '0')) / 1e8 * 0.00001;
+  var ou = ob * bp;
+  var sn = Number(BigInt(dashSupply || '0')) / 1e8;
+  var pct = Math.min(100, (sn / 18000000000) * 100);
+  function s(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
+  s('dash-btc-val', '\u20BF ' + bb.toFixed(5));
+  s('dash-btc-usd', '\u2248 $' + bu.toFixed(2) + ' USD');
+  s('dash-opwap-val', on);
+  s('dash-total-usd', '$' + (bu + ou).toFixed(0));
+  s('dash-opwap-bal', on);
+  s('dash-opwap-btc', '\u2248 ' + ob.toFixed(6) + ' BTC');
+  s('dash-supply-pct', pct.toFixed(2) + '%');
+  s('dash-supply-minted', fmtAmt(dashSupply, 8) + ' minted');
+  var fill = document.getElementById('dash-bar-fill');
+  if (fill) fill.style.width = pct + '%';
+  var lnk = document.getElementById('dash-opscan-link');
+  if (lnk) lnk.href = 'https://opscan.org/accounts/' + walletState.addr + '?network=op_testnet';
+  s('dash-addr-short', walletState.addr.slice(0,10) + '...' + walletState.addr.slice(-4));
+}
+
+function dashRender() {
+  var nc = document.getElementById('dash-noconn'), ct = document.getElementById('dash-content');
+  if (!nc || !ct) return;
+  if (walletState.connected) {
+    nc.style.display = 'none'; ct.style.display = 'block';
+    dashRenderData();
+    loadVault();  // carrega NFTs do usuário
+  } else {
+    nc.style.display = 'flex'; ct.style.display = 'none';
+  }
+}
+
+/* ── ROUTING ── */
+function navigate(p) {
+  window.history.pushState({}, '', p);
+  renderRoute();
+}
+
+function renderRoute() {
+  var p = window.location.pathname;
+  var main = document.getElementById('main-content');
+  var terms = document.getElementById('page-terms');
+  var privacy = document.getElementById('page-privacy');
+  var dash = document.getElementById('page-dashboard');
+  if (main) main.style.display = 'none';
+  if (terms) terms.classList.remove('active');
+  if (privacy) privacy.classList.remove('active');
+  if (dash) dash.classList.remove('active');
+  if (p === '/terms') {
+    if (terms) terms.classList.add('active');
+  } else if (p === '/privacy') {
+    if (privacy) privacy.classList.add('active');
+  } else if (p === '/dashboard') {
+    if (dash) { dash.classList.add('active'); dashRender(); }
+  } else {
+    if (main) main.style.display = 'block';
+  }
+  window.scrollTo(0, 0);
+}
+
+window.addEventListener('popstate', renderRoute);
+renderRoute();
+
+/* close wallet dropdown on outside click */
+document.addEventListener('click', function(e) {
+  var w = document.getElementById('wallet-btn-wrap'), d = document.getElementById('wallet-dropdown');
+  if (w && d && !w.contains(e.target)) d.classList.remove('open');
+});
+</script>
+</body>
 </html>
