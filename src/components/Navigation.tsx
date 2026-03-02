@@ -11,7 +11,7 @@ const MenuIcon = () => (
 )
 
 const GridIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+  <svg width="13" height="13" viewBox="0 0 14 14" fill="currentColor">
     <rect x="0" y="0" width="6" height="6" rx="1"/>
     <rect x="8" y="0" width="6" height="6" rx="1"/>
     <rect x="0" y="8" width="6" height="6" rx="1"/>
@@ -22,14 +22,10 @@ const GridIcon = () => (
 const SunIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1" x2="12" y2="3"/>
-    <line x1="12" y1="21" x2="12" y2="23"/>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-    <line x1="1" y1="12" x2="3" y2="12"/>
-    <line x1="21" y1="12" x2="23" y2="12"/>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
   </svg>
 )
 
@@ -48,10 +44,10 @@ export default function Navigation({ onConnectClick = () => {} }: { onConnectCli
   const balUsd = btcPrice && walletSats ? (walletSats / 1e8 * btcPrice) : 0
   const shortAddr = walletAddr ? walletAddr.slice(0, 6) + '…' + walletAddr.slice(-4) : ''
 
-  const navLinks = [
-    { href: '/#assets', label: 'Assets' },
-    { href: '/#simulator', label: 'Simulator' },
-    { href: '/#how-it-works', label: 'How It Works' },
+  const mainLinks = [
+    { href: '/#assets',      label: 'Assets' },
+    { href: '/#simulator',   label: 'Simulator' },
+    { href: '/#how-it-works',label: 'How It Works' },
   ]
 
   return (
@@ -68,16 +64,22 @@ export default function Navigation({ onConnectClick = () => {} }: { onConnectCli
 
         {/* Nav links — desktop */}
         <ul className="nav-links">
-          {navLinks.map(l => (
+          {mainLinks.map(l => (
             <li key={l.href}>
               <a href={l.href} className="nav-link">{l.label}</a>
             </li>
           ))}
+
+          {/* Terms / Privacy — subtle, after main links */}
+          <li><Link to="/terms"   className="nav-link nav-link-legal">Terms</Link></li>
+          <li><Link to="/privacy" className="nav-link nav-link-legal">Privacy</Link></li>
+
+          {/* Dashboard — purple pill, separated, LAST */}
           {connected && (
             <li>
               <Link
                 to="/dashboard"
-                className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+                className={`nav-link nav-link-dashboard${location.pathname === '/dashboard' ? ' active' : ''}`}
               >
                 <GridIcon /> Dashboard
               </Link>
@@ -88,7 +90,7 @@ export default function Navigation({ onConnectClick = () => {} }: { onConnectCli
         {/* Right side */}
         <div className="navbar-right">
           {/* Gas pill */}
-          <div className="gas-ticker">
+          <div className="gas-pill">
             <span className="gas-dot" />
             <span>{gasPrice} sat/vB</span>
           </div>
@@ -116,8 +118,7 @@ export default function Navigation({ onConnectClick = () => {} }: { onConnectCli
                   </Link>
                   <a
                     href={`https://opscan.org/accounts/${walletAddr}?network=op_testnet`}
-                    target="_blank"
-                    rel="noreferrer"
+                    target="_blank" rel="noreferrer"
                     className="wd-item"
                   >
                     ↗ OPScan
@@ -129,9 +130,7 @@ export default function Navigation({ onConnectClick = () => {} }: { onConnectCli
               )}
             </div>
           ) : (
-            <button className="btn-connect" onClick={onConnectClick}>
-              Connect Wallet
-            </button>
+            <button className="btn-connect" onClick={onConnectClick}>Connect Wallet</button>
           )}
 
           {/* Hamburger */}
@@ -144,16 +143,13 @@ export default function Navigation({ onConnectClick = () => {} }: { onConnectCli
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="mobile-menu">
-          {navLinks.map(l => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="mobile-nav-link"
-              onClick={() => setMobileOpen(false)}
-            >
+          {mainLinks.map(l => (
+            <a key={l.href} href={l.href} className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
               {l.label}
             </a>
           ))}
+          <Link to="/terms"   className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Terms</Link>
+          <Link to="/privacy" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Privacy</Link>
           {connected && (
             <Link to="/dashboard" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
               Dashboard

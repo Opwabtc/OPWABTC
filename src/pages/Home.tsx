@@ -141,34 +141,19 @@ function AssetCard({ id, title, desc, apy, apyClass, change, available, total, t
   )
 }
 
-// Gato laranja SVG para o thumb do slider
-function SliderThumb() {
-  return (
-    <div style={{
-      width: 20, height: 20, borderRadius: '50%',
-      background: 'var(--accent)',
-      border: '2px solid #fff',
-      boxShadow: '0 0 8px rgba(249,115,22,.6)',
-    }} />
-  )
-}
-
 function Simulator() {
   const { btcPrice } = useAppStore()
   const price = btcPrice || 65000
 
   const [currency, setCurrency] = useState<'btc' | 'usd'>('btc')
-  // strings para permitir apagar tudo
   const [initialRaw, setInitialRaw] = useState('0.005')
   const [monthlyRaw, setMonthlyRaw] = useState('0')
   const [years, setYears] = useState(1)
 
-  // parse seguro — retorna 0 se vazio/inválido
   const parseRaw = (s: string) => { const v = parseFloat(s.replace(',', '.')); return isNaN(v) ? 0 : Math.max(0, v) }
 
   const initialBtc = currency === 'btc' ? parseRaw(initialRaw) : parseRaw(initialRaw) / price
   const monthlyBtc = currency === 'btc' ? parseRaw(monthlyRaw) : parseRaw(monthlyRaw) / price
-
   const initialUsd = initialBtc * price
   const monthlyUsd = monthlyBtc * price
 
@@ -189,12 +174,12 @@ function Simulator() {
     return { total: fv, returns: fv - initialBtc - monthlyBtc * n }
   }
 
-  const opwa = calcTotal(OPWA_APY)
-  const altA = calcTotal(ALT_APY_A)
-  const altB = calcTotal(ALT_APY_B)
+  const opwa  = calcTotal(OPWA_APY)
+  const altA  = calcTotal(ALT_APY_A)
+  const altB  = calcTotal(ALT_APY_B)
 
-  const stepInitial = currency === 'btc' ? 0.001 : 100
-  const stepMonthly = currency === 'btc' ? 0.0001 : 10
+  const stepInitial  = currency === 'btc' ? 0.001 : 100
+  const stepMonthly  = currency === 'btc' ? 0.0001 : 10
 
   const bumpInitial = (dir: number) => {
     const cur = parseRaw(initialRaw)
@@ -207,9 +192,14 @@ function Simulator() {
     setMonthlyRaw(currency === 'btc' ? next.toFixed(5) : next.toFixed(2))
   }
 
+  // Diff vs Fixed Income (altA)
+  const diffVsFixedIncome = currency === 'btc'
+    ? opwa.returns - altA.returns
+    : (opwa.returns - altA.returns) * price
+
   const comparisons = [
-    { name: 'OPWA Platform', apy: OPWA_APY, data: opwa, main: true, apyColor: '#22c55e' },
-    { name: 'Fixed Income', apy: ALT_APY_A, data: altA, main: false, apyColor: '#eab308' },
+    { name: 'OPWA Platform', apy: OPWA_APY, data: opwa, main: true,  apyColor: '#22c55e' },
+    { name: 'Fixed Income',  apy: ALT_APY_A, data: altA, main: false, apyColor: '#eab308' },
     { name: 'Savings Account', apy: ALT_APY_B, data: altB, main: false, apyColor: '#ef4444' },
   ]
 
@@ -223,43 +213,20 @@ function Simulator() {
         </p>
         <div className="simulador-grid">
           <div className="sim-panel">
-
-            {/* Toggle BTC/USD */}
+            {/* BTC/USD toggle */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-              <button
-                onClick={() => setCurrency('btc')}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700,
-                  border: '1.5px solid',
-                  borderColor: currency === 'btc' ? 'var(--accent)' : 'var(--border)',
-                  background: currency === 'btc' ? 'var(--accent-dim)' : 'transparent',
-                  color: currency === 'btc' ? 'var(--accent)' : '#444',
-                  cursor: 'pointer', transition: 'all .15s',
-                }}
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-                BTC
-              </button>
-              <button
-                onClick={() => setCurrency('usd')}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700,
-                  border: '1.5px solid',
-                  borderColor: currency === 'usd' ? '#22c55e' : 'var(--border)',
-                  background: currency === 'usd' ? 'rgba(34,197,94,.1)' : 'transparent',
-                  color: currency === 'usd' ? '#22c55e' : '#444',
-                  cursor: 'pointer', transition: 'all .15s',
-                }}
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-                </svg>
-                USD
-              </button>
+              {[
+                { key: 'btc' as const, color: 'var(--accent)', label: 'BTC' },
+                { key: 'usd' as const, color: '#22c55e',       label: 'USD' },
+              ].map(c => (
+                <button key={c.key} onClick={() => setCurrency(c.key)} style={{
+                  display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 8,
+                  fontSize: 12, fontWeight: 700, border: '1.5px solid', cursor: 'pointer', transition: 'all .15s',
+                  borderColor: currency === c.key ? c.color : 'var(--border)',
+                  background:  currency === c.key ? c.color + '18' : 'transparent',
+                  color:       currency === c.key ? c.color : 'var(--text-3)',
+                }}>{c.label}</button>
+              ))}
             </div>
 
             {/* Initial Investment */}
@@ -273,16 +240,9 @@ function Simulator() {
                 <button className="sim-stepper-btn" onClick={() => bumpInitial(-1)}>−</button>
                 <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
                   <span style={{ position: 'absolute', left: 10, fontSize: 13, color: currency === 'btc' ? 'var(--accent)' : '#22c55e', fontWeight: 700, pointerEvents: 'none' }}>{prefix}</span>
-                  <input
-                    className="sim-stepper-input"
-                    type="text"
-                    inputMode="decimal"
-                    value={initialRaw}
+                  <input className="sim-stepper-input" type="text" inputMode="decimal" value={initialRaw}
                     onChange={e => setInitialRaw(e.target.value)}
-                    onBlur={e => {
-                      const v = parseRaw(e.target.value)
-                      setInitialRaw(currency === 'btc' ? v.toFixed(5) : v.toFixed(2))
-                    }}
+                    onBlur={e => { const v = parseRaw(e.target.value); setInitialRaw(currency === 'btc' ? v.toFixed(5) : v.toFixed(2)) }}
                     style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15, paddingLeft: 22 }}
                   />
                 </div>
@@ -301,16 +261,9 @@ function Simulator() {
                 <button className="sim-stepper-btn" onClick={() => bumpMonthly(-1)}>−</button>
                 <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
                   <span style={{ position: 'absolute', left: 10, fontSize: 13, color: currency === 'btc' ? 'var(--accent)' : '#22c55e', fontWeight: 700, pointerEvents: 'none' }}>{prefix}</span>
-                  <input
-                    className="sim-stepper-input"
-                    type="text"
-                    inputMode="decimal"
-                    value={monthlyRaw}
+                  <input className="sim-stepper-input" type="text" inputMode="decimal" value={monthlyRaw}
                     onChange={e => setMonthlyRaw(e.target.value)}
-                    onBlur={e => {
-                      const v = parseRaw(e.target.value)
-                      setMonthlyRaw(currency === 'btc' ? v.toFixed(5) : v.toFixed(2))
-                    }}
+                    onBlur={e => { const v = parseRaw(e.target.value); setMonthlyRaw(currency === 'btc' ? v.toFixed(5) : v.toFixed(2)) }}
                     style={{ textAlign: 'center', fontFamily: 'DM Mono, monospace', fontSize: 15, paddingLeft: 22 }}
                   />
                 </div>
@@ -318,34 +271,13 @@ function Simulator() {
               </div>
             </div>
 
-            {/* Slider anos com thumb gato laranja */}
+            {/* Slider */}
             <div className="sim-field">
               <label>Duration: <span style={{ color: 'var(--accent)' }}>{years} year{years > 1 ? 's' : ''}</span></label>
-              <div style={{ position: 'relative', height: 44, display: 'flex', alignItems: 'center' }}>
-                <input
-                  type="range"
-                  className="sim-slider"
-                  min={1} max={10} step={1}
-                  value={years}
-                  onChange={e => setYears(+e.target.value)}
-                  style={{
-                    position: 'absolute', left: 0, right: 0, zIndex: 1, margin: 0,
-                    background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${((years-1)/9)*100}%, var(--border) ${((years-1)/9)*100}%, var(--border) 100%)`,
-                  }}
-                />
-                {/* Gato: fórmula correta — thumb de 22px, track começa em 11px e termina em calc(100%-11px) */}
-                <div style={{
-                  position: 'absolute',
-                  left: `calc(11px + ${((years - 1) / 9)} * (100% - 22px))`,
-                  top: '50%',
-                  transform: 'translate(-50%, -130%)',
-                  pointerEvents: 'none',
-                  lineHeight: 0,
-                  zIndex: 2,
-                }}>
-                  <SliderThumb />
-                </div>
-              </div>
+              <input type="range" className="sim-slider" min={1} max={10} step={1} value={years}
+                onChange={e => setYears(+e.target.value)}
+                style={{ background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${((years-1)/9)*100}%, var(--border) ${((years-1)/9)*100}%, var(--border) 100%)` }}
+              />
               <div className="sim-slider-labels"><span>1y</span><span>5y</span><span>10y</span></div>
             </div>
 
@@ -366,13 +298,7 @@ function Simulator() {
                   <div>
                     <div className="sim-compare-name">
                       {c.name}
-                      <span style={{
-                        marginLeft: 8, padding: '2px 8px', borderRadius: 20,
-                        fontSize: 11, fontWeight: 700,
-                        background: c.apyColor + '18',
-                        color: c.apyColor,
-                        border: `1px solid ${c.apyColor}40`,
-                      }}>{c.apy}% APY</span>
+                      <span style={{ marginLeft: 8, padding: '2px 8px', borderRadius: 20, fontSize: 11, fontWeight: 700, background: c.apyColor + '18', color: c.apyColor, border: `1px solid ${c.apyColor}40` }}>{c.apy}% APY</span>
                     </div>
                     <div className="sim-compare-rate">
                       {years}y · {fmt(initialBtc)} inicial
@@ -383,6 +309,23 @@ function Simulator() {
                 </div>
               ))}
             </div>
+
+            {/* Diff card — shows how much MORE than Fixed Income */}
+            {diffVsFixedIncome > 0 && initialBtc > 0 && (
+              <div className="sim-diff-card">
+                <span style={{ fontSize: 20, flexShrink: 0 }}>📈</span>
+                <div>
+                  <div className="sim-diff-amount">
+                    +{currency === 'usd'
+                      ? '$' + diffVsFixedIncome.toFixed(2)
+                      : '₿ ' + (opwa.returns - altA.returns).toFixed(6)
+                    } more than Fixed Income
+                  </div>
+                  <div className="sim-diff-label">after {years}y with OPWA at {OPWA_APY}% APY</div>
+                  <div className="sim-diff-note">* Simulation is illustrative only and does not constitute a guarantee.</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -400,6 +343,42 @@ function FL({ href, label, ext, icon, color }: { href: string; label: string; ex
   )
 }
 
+// ── Live info ticker items ────────────────────────────────────────────────────
+function LiveTicker() {
+  const { btcPrice, gasPrice } = useAppStore()
+  const items = [
+    { label: '• OP_NET Testnet',  val: null },
+    { label: 'Rate',   val: '1 OPWAP = 0.00001 BTC' },
+    { label: 'Gas',    val: `${gasPrice ?? 1} sat/vB` },
+    { label: 'BTC',    val: btcPrice ? '$' + btcPrice.toLocaleString('en-US') : '—' },
+    { label: 'APY',    val: '15% p.a.' },
+    { label: 'Token',  val: 'OPWAP · OP_20' },
+    { label: 'Network','val': 'Bitcoin Testnet4' } as unknown as {label:string;val:string},
+    { label: 'Wallet', val: 'opt1sqq047…g6xnp' },
+    { label: 'Min inv',val: '0.00001 BTC' },
+    { label: 'Supply', val: '18B max' },
+    { label: 'Slippage',val:'0.5%' },
+    { label: 'Protocol',val:'OP_NET' },
+  ]
+  // duplicate for seamless loop
+  const all = [...items, ...items]
+  return (
+    <div className="ticker-wrap">
+      <div className="ticker-track">
+        {all.map((item, i) => (
+          <span className="t-item" key={i}>
+            <span className="t-dot" />
+            {item.val
+              ? <><span className="t-label">{item.label}</span><span className="t-val">{item.val}</span></>
+              : <span className="t-neutral">{item.label}</span>
+            }
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Home() {
   const { btcPrice } = useAppStore()
   const { connect } = useWallet()
@@ -409,8 +388,8 @@ export default function Home() {
 
   const assets = [
     { id: 'ID-001', title: 'Asset Alpha', type: 'residential', badgeClass: 'badge-a', badgeLabel: 'Residential', desc: 'Tokenized residential property. Fractional ownership settled on Bitcoin via OP_NET smart contract.', apy: '15%', apyClass: 'pos', change: '+1.2%', available: 450, total: 1000, delay: 'd1' },
-    { id: 'ID-002', title: 'Asset Beta', type: 'commercial', badgeClass: 'badge-b', badgeLabel: 'Commercial', desc: 'Commercial office space tokenized on OP_NET. Dividends distributed in satoshis monthly.', apy: '12%', apyClass: 'gold', change: '+0.8%', available: 700, total: 1000, delay: 'd2', imgStyle: { background: 'linear-gradient(135deg,#1a1a2e,#252540)' } as React.CSSProperties },
-    { id: 'ID-003', title: 'Asset Gamma', type: 'industrial', badgeClass: 'badge-warn', badgeLabel: 'Industrial', desc: 'Industrial logistics hub. Tokenization pending final regulatory clearance. Join the waitlist.', apy: '~18%', apyClass: 'gold', change: '—', available: 300, total: 1000, delay: 'd3', imgStyle: { background: 'linear-gradient(135deg,#1a2e1a,#1a2520)' } as React.CSSProperties },
+    { id: 'ID-002', title: 'Asset Beta',  type: 'commercial',  badgeClass: 'badge-b', badgeLabel: 'Commercial',  desc: 'Commercial office space tokenized on OP_NET. Dividends distributed in satoshis monthly.', apy: '12%', apyClass: 'gold', change: '+0.8%', available: 700, total: 1000, delay: 'd2', imgStyle: { background: 'linear-gradient(135deg,#1a1a2e,#252540)' } as React.CSSProperties },
+    { id: 'ID-003', title: 'Asset Gamma', type: 'industrial',  badgeClass: 'badge-warn', badgeLabel: 'Industrial', desc: 'Industrial logistics hub. Tokenization pending final regulatory clearance. Join the waitlist.', apy: '~18%', apyClass: 'gold', change: '—', available: 300, total: 1000, delay: 'd3', imgStyle: { background: 'linear-gradient(135deg,#1a2e1a,#1a2520)' } as React.CSSProperties },
   ]
 
   const filteredAssets = assets.filter(a => {
@@ -468,7 +447,11 @@ export default function Home() {
         </div>
         <div className="filter-row">
           <div className="filter-tabs">
-            {["all","residential","commercial","industrial"].map(f => (<button key={f} className={`filter-tab${activeFilter===f ? " active" : ""}`} onClick={() => setActiveFilter(f)}>{f.charAt(0).toUpperCase()+f.slice(1)}</button>))}
+            {['all','residential','commercial','industrial'].map(f => (
+              <button key={f} className={`filter-tab${activeFilter === f ? ' active' : ''}`} onClick={() => setActiveFilter(f)}>
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
           </div>
           <div className="filter-right">
             <select className="filter-select"><option>Sort: APY</option><option>Sort: Price</option><option>Sort: Volume</option></select>
@@ -526,13 +509,13 @@ export default function Home() {
           ].map(s => {
             const [hov, setHov] = React.useState(false)
             return (
-            <div className="step" key={s.n} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
-              <div className="step-number" style={{ color: hov ? '#ffffff' : undefined, transition: 'color .2s' }}>{s.n}</div>
-              <div className="step-icon-wrap">{s.icon}</div>
-              <div className="step-label">{s.label}</div>
-              <div className="step-title">{s.title}</div>
-              <div className="step-desc">{s.desc}</div>
-            </div>
+              <div className="step" key={s.n} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+                <div className="step-number" style={{ color: hov ? '#ffffff' : undefined, transition: 'color .2s' }}>{s.n}</div>
+                <div className="step-icon-wrap">{s.icon}</div>
+                <div className="step-label">{s.label}</div>
+                <div className="step-title">{s.title}</div>
+                <div className="step-desc">{s.desc}</div>
+              </div>
             )
           })}
         </div>
@@ -552,47 +535,59 @@ export default function Home() {
       <footer className="footer">
         <div className="footer-inner">
           <div className="footer-grid">
-            <div className="footer-brand">
+            {/* Brand */}
+            <div>
               <div className="footer-logo">
                 <div className="footer-logo-mark">OP</div>
                 <div className="footer-logo-name">OPWA</div>
               </div>
               <p className="footer-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>
               <div className="footer-socials">
-                <a href="https://x.com/opwabtc" target="_blank" rel="noopener noreferrer" className="social-btn" aria-label="Twitter / X">
+                {/* Twitter/X */}
+                <a href="https://x.com/opwabtc" target="_blank" rel="noopener noreferrer"
+                  className="social-btn" aria-label="Twitter / X">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  Twitter
+                </a>
+                {/* GitHub — banner style, purple hover */}
+                <a href="https://github.com/Opwabtc/" target="_blank" rel="noopener noreferrer"
+                  className="social-btn social-btn-github" aria-label="GitHub">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  GitHub
                 </a>
               </div>
             </div>
 
+            {/* Platform */}
             <div>
               <div className="footer-col-title">Platform</div>
               <div className="footer-links">
-                <FL href="#assets" label="Assets" icon={<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>} />
-                <FL href="#simulator" label="Simulator" icon={<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>} />
-                <FL href="#how-it-works" label="How It Works" icon={<><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></>} />
-                <FL href="#partners" label="Partners" icon={<><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></>} />
+                <FL href="#assets"      label="Assets"      icon={<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>} />
+                <FL href="#simulator"   label="Simulator"   icon={<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>} />
+                <FL href="#how-it-works"label="How It Works" icon={<><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></>} />
+                <FL href="#partners"    label="Partners"    icon={<><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></>} />
               </div>
             </div>
 
+            {/* Protocol */}
             <div>
-              <div className="footer-col-title">Developers</div>
+              <div className="footer-col-title">Protocol</div>
               <div className="footer-links">
-                <FL href="https://github.com/Opwabtc/" label="GitHub" ext icon={<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>} />
-                <FL href="https://dev.opnet.org/" label="Build on OP_NET" ext icon={<><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></>} />
-                <FL href="https://faucet.opnet.org/" label="Testnet Faucet" ext icon={<path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/>} />
-                <FL href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" label="Get OP_Wallet" ext icon={<><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></>} />
-                <FL href="https://opscan.org/?network=op_testnet" label="OPScan Explorer" ext icon={<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></>} />
-                <FL href="https://mempool.opnet.org/pt/testnet4" label="Mempool Testnet" ext icon={<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>} />
+                <FL href="https://dev.opnet.org/"         label="OP_NET Docs"      ext icon={<><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></>} />
+                <FL href="https://faucet.opnet.org/"       label="Testnet Faucet"   ext icon={<path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/>} />
+                <FL href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" label="OP_Wallet" ext icon={<><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></>} />
+                <FL href="https://opscan.org/?network=op_testnet"   label="OPScan Explorer"  ext icon={<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></>} />
+                <FL href="https://mempool.opnet.org/pt/testnet4"    label="Mempool Testnet"  ext icon={<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>} />
               </div>
             </div>
 
+            {/* Resources */}
             <div>
               <div className="footer-col-title">Resources</div>
               <div className="footer-links">
                 <FL href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/CONTRACTS.md" label="Whitepaper" ext color="var(--gold)"
                   icon={<><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></>} />
-                <FL href="https://defibible.org/" label="DeFi Bible" ext icon={<><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></>} />
+                <FL href="https://defibible.org/"         label="DeFi Bible"           ext icon={<><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></>} />
                 <FL href="https://vibecode.finance/ecosystem" label="Vibecode Ecosystem" ext icon={<><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></>} />
                 <FL href="https://opscan.org/accounts/opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t?network=op_testnet" label="My OPScan Profile" ext icon={<><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></>} />
               </div>
@@ -605,12 +600,15 @@ export default function Home() {
               <span className="dot" style={{ width: 6, height: 6 }} />OP_NET Testnet
             </div>
             <div className="footer-bottom-links">
-              <a href="/terms" className="footer-bottom-link">Terms</a>
+              <a href="/terms"   className="footer-bottom-link">Terms</a>
               <a href="/privacy" className="footer-bottom-link">Privacy</a>
             </div>
           </div>
         </div>
       </footer>
+
+      {/* LIVE INFO TICKER — last element before page end */}
+      <LiveTicker />
     </>
   )
 }
