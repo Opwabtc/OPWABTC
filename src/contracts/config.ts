@@ -12,8 +12,8 @@
 
 // Platform-level contracts
 export const CONTRACTS = {
-  /** OPWACoin OP-20 — has built-in buy() function, deploy via deploy-token.ts */
-  opwaCoin:    '' as string,   // ← paste OPWACoin address after deploy
+  /** OPWACoin OP-20 — has built-in buy() function */
+  opwaCoin:    'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88' as string,
   propertyNft: 'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6' as string,
 } as const;
 
@@ -22,7 +22,7 @@ export const CONTRACTS = {
  * BTC payments from buy() go here directly.
  * Printed by deploy-token.ts / set-treasury.ts — paste after running those scripts.
  */
-export const TREASURY_P2TR = '' as string; // ← paste tb1p... after deploy
+export const TREASURY_P2TR = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t' as string;
 
 /** Price: 1 OPWA token = 0.00001 BTC = 1 000 satoshis */
 export const OPWA_SATS_PER_TOKEN = 1_000n;
