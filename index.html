@@ -2625,7 +2625,7 @@ async function confirmInvest(asset) {
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-    const provider    = new JSONRpcProvider('https://testnet.opnet.org');
+    const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, _net, senderAddr);
     contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
@@ -2883,7 +2883,7 @@ async function mintPropertyNFT() {
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
       { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-    var provider   = new JSONRpcProvider('https://testnet.opnet.org');
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org', _net);
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, _net, senderAddr);
     var priceRes = await contract.mintPrice();
@@ -2931,7 +2931,7 @@ async function loadVault() {
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
-    var provider   = new JSONRpcProvider('https://testnet.opnet.org');
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org', _net);
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, _net, senderAddr);
 
