@@ -4,7 +4,6 @@ import { useBuyOPWA } from '@/hooks/useBuyOPWA';
 import { useOPNETWallet } from '@/hooks/useOPNETWallet';
 
 const OPSCAN = 'https://testnet.opscan.io/tx/';
-const SATS_PER_TOKEN = 1_000;
 const QUICK_AMOUNTS = [1_000, 5_000, 10_000, 50_000, 100_000];
 
 export default function BuyToken() {
@@ -18,11 +17,14 @@ export default function BuyToken() {
     totalSats,
     totalBTC,
     totalUSD,
+    pricePerToken,
     buying,
     txHash,
     error,
     contractAddress,
-    transferTo,
+    treasuryP2TR,
+    contractReady,
+    buy,
     refresh,
   } = useBuyOPWA();
 
@@ -45,8 +47,8 @@ export default function BuyToken() {
     const dest = useOwnWallet ? walletAddress : recipientInput.trim();
     if (!dest) return;
     try {
-      const addr = Address.fromString(dest);
-      await transferTo(addr);
+      const addr = Address.fromString(dest, dest);
+      await buy(addr);
     } catch {
       /* address parse error handled by hook */
     }
@@ -81,9 +83,16 @@ export default function BuyToken() {
               Price per token
             </p>
             <p className="text-2xl font-bold text-bitcoin-orange">
-              {SATS_PER_TOKEN.toLocaleString()} sats
+              {Number(pricePerToken).toLocaleString()} sats
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">= 0.00001 BTC per token</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              = {(Number(pricePerToken) / 100_000_000).toFixed(8)} BTC per token
+            </p>
+            {treasuryP2TR && (
+              <p className="text-xs text-gray-400 mt-1 font-mono truncate max-w-xs">
+                Treasury: {treasuryP2TR.slice(0, 20)}…
+              </p>
+            )}
           </div>
           <button
             onClick={refresh}
@@ -145,7 +154,7 @@ export default function BuyToken() {
         <div className="card p-6 space-y-3">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-2">Order Summary</h2>
           <SummaryRow label="Tokens"          value={parsedQty.toLocaleString()} />
-          <SummaryRow label="Price per token" value={`${SATS_PER_TOKEN.toLocaleString()} sats`} />
+          <SummaryRow label="Price per token" value={`${Number(pricePerToken).toLocaleString()} sats`} />
           <div className="border-t border-gray-200 dark:border-gray-700 pt-3 space-y-2">
             <SummaryRow label="Total (sats)" value={Number(totalSats).toLocaleString()} bold />
             <SummaryRow label="Total (BTC)"  value={`BTC ${totalBTC.toFixed(8)}`} bold />
@@ -186,6 +195,13 @@ export default function BuyToken() {
           </div>
         )}
 
+        {/* Contract not deployed warning */}
+        {!contractAddress && (
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-sm text-yellow-700 dark:text-yellow-400">
+            Contract not deployed yet. Deploy OPWACoin and update config.ts.
+          </div>
+        )}
+
         {/* Feedback */}
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
@@ -210,12 +226,14 @@ export default function BuyToken() {
         {isConnected ? (
           <button
             onClick={handleBuy}
-            disabled={buying || parsedQty <= 0}
+            disabled={buying || parsedQty <= 0 || !contractReady}
             className="w-full bg-bitcoin-orange hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors shadow-lg"
           >
             {buying
-              ? 'Processing...'
-              : `Buy ${parsedQty.toLocaleString()} ${tokenInfo?.symbol ?? 'OPWA'} — BTC ${totalBTC.toFixed(8)}`}
+              ? 'Processing…'
+              : !contractReady
+              ? 'Loading contract…'
+              : `Invest ${parsedQty.toLocaleString()} ${tokenInfo?.symbol ?? 'OPWA'} — Pay BTC ${totalBTC.toFixed(8)}`}
           </button>
         ) : (
           <div className="text-center p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-gray-500 dark:text-gray-400">
