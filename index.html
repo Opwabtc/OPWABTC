@@ -131,22 +131,21 @@
 
 /* ── BASE ── */
 html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px}
+*{cursor:none!important}
 body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
-button{font-family:inherit}
+button{cursor:none!important;font-family:inherit}
 input,select,textarea{font-family:inherit}
 
 /* ── CURSOR (dot trail — pointer-events:none, never blocks clicks) ── */
 #cur{
-  position:fixed;pointer-events:none;z-index:9999;
-  width:40px;height:12px;border-radius:999px;
-  background:#f97316;
-  transform:translate(-50%,-50%);
-  mix-blend-mode:difference;
-  transition:transform .12s ease,width .12s ease,height .12s ease;
+  position:fixed;pointer-events:none;z-index:99999;
+  width:20px;height:10px;border-radius:999px;overflow:hidden;
+  transform:translate(-50%,-50%) rotate(45deg);
+  box-shadow:0 2px 14px rgba(249,115,22,.55);
   will-change:left,top;
 }
-#cur.hovering{width:56px;height:16px;border-radius:999px;background:rgba(249,115,22,.45);border:1.5px solid #f97316}
+#cur::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 50%,#f97316 50%)}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -2586,22 +2585,6 @@ function syncInvest(asset, field, raw) {
   }
 }
 
-/* ── OPNet Address helpers ── */
-function _hexToBytes(hex) {
-  var clean = (hex || '').replace(/^0x/, '');
-  var out = new Uint8Array(clean.length / 2);
-  for (var i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i*2, i*2+2), 16);
-  return out;
-}
-async function buildSenderAddress(Address) {
-  var pubkeyBytes = walletState.publicKey ? _hexToBytes(walletState.publicKey) : new Uint8Array(33);
-  var mldsaKey = new Uint8Array(32);
-  if (window.opnet && typeof window.opnet.getMLDSAPublicKey === 'function') {
-    try { mldsaKey = _hexToBytes(await window.opnet.getMLDSAPublicKey()); } catch(_) {}
-  }
-  return new Address(mldsaKey, pubkeyBytes);
-}
-
 async function confirmInvest(asset) {
   if (!walletState.connected || !walletState.addr) { openWalletModal(); showToast('Connect your wallet first','info'); return; }
   const tokensEl = document.getElementById(asset + '-tokens');
@@ -2617,19 +2600,18 @@ async function confirmInvest(asset) {
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
     const mod = await import('https://esm.sh/opnet?bundle');
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, networks, TransactionOutputFlags, ABIDataTypes } = mod;
-    const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, networks, TransactionOutputFlags } = mod;
+    const { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     const OPWACOIN_ABI = [
       ...OP_20_ABI,
       { name:'buy', type:BitcoinAbiTypes.Function, payable:true,
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-    const provider    = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: networks.opnetTestnet });
-    const senderAddr  = await buildSenderAddress(Address);
-    const contract    = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, networks.opnetTestnet, senderAddr);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org');
+    const contract = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, networks.opnetTestnet, walletState.addr);
     contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
-    const simulation = await contract.buy(senderAddr, tokenAmt);
+    const simulation = await contract.buy(walletState.addr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
@@ -2762,7 +2744,7 @@ calcSim();
 
 
 /* ── WALLET STATE ── */
-var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
+var walletState = {connected:false, addr:'', sats:0, type:''};
 
 function handleConnectClick() {
   if (walletState.connected) {
@@ -2772,8 +2754,8 @@ function handleConnectClick() {
   }
 }
 
-function walletConnected(addr, sats, type, publicKey) {
-  walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || ''};
+function walletConnected(addr, sats, type) {
+  walletState = {connected:true, addr:addr, sats:sats, type:type};
   const short = addr.slice(0, 8) + '...' + addr.slice(-6);
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = short; btn.classList.add('connected'); }
@@ -2790,7 +2772,7 @@ function walletConnected(addr, sats, type, publicKey) {
 }
 
 function wdDisconnect() {
-  walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
+  walletState = {connected:false, addr:'', sats:0, type:''};
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
   let e;
@@ -2813,17 +2795,15 @@ function wdExplorer() {
 window.connectWallet = async function(type) {
   showToast('Connecting to ' + type + '...', 'info');
   try {
-    var accounts = [], sats = 0, publicKey = '';
+    var accounts = [], sats = 0;
     if (type === 'OP_Wallet') {
       if (!window.opnet) { showToast('OP_Wallet not found. Please install it.', 'error'); return; }
       accounts = await window.opnet.requestAccounts();
       try { var b = await window.opnet.getBalance(); sats = b.total || 0; } catch(_) {}
-      try { publicKey = await window.opnet.getPublicKey(); } catch(_) {}
     } else if (type === 'Unisat') {
       if (!window.unisat) { showToast('Unisat not found.', 'error'); return; }
       accounts = await window.unisat.requestAccounts();
       try { var b2 = await window.unisat.getBalance(); sats = b2.total || 0; } catch(_) {}
-      try { publicKey = await window.unisat.getPublicKey(); } catch(_) {}
     } else if (type === 'Xverse') {
       if (!window.BitcoinProvider) { showToast('Xverse not found.', 'error'); return; }
       var res = await window.BitcoinProvider.request('getAccounts', {purposes:['payment','ordinals']});
@@ -2833,7 +2813,7 @@ window.connectWallet = async function(type) {
       accounts = await window.okxwallet.bitcoin.requestAccounts();
     }
     if (accounts && accounts.length > 0) {
-      walletConnected(accounts[0], sats, type, publicKey);
+      walletConnected(accounts[0], sats, type);
     } else {
       showToast('No accounts returned.', 'error');
     }
@@ -2875,16 +2855,15 @@ async function mintPropertyNFT() {
   status.style.color = 'var(--text-2)';
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks, ABIDataTypes } = mod;
-    var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks } = mod;
+    var { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
       { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: networks.opnetTestnet });
-    var senderAddr = await buildSenderAddress(Address);
-    var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, networks.opnetTestnet, senderAddr);
+    var provider = new JSONRpcProvider('https://testnet.opnet.org');
+    var contract = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, networks.opnetTestnet, walletState.addr);
     var priceRes = await contract.mintPrice();
     var mintSats = priceRes && priceRes.properties ? BigInt(priceRes.properties.price) : 10000n;
     var simulation = await contract.mint();
@@ -2926,12 +2905,11 @@ async function loadVault() {
 
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks, ABIDataTypes } = mod;
-    var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks } = mod;
+    var { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
-    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: networks.opnetTestnet });
-    var senderAddr = await buildSenderAddress(Address);
-    var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, networks.opnetTestnet, senderAddr);
+    var provider = new JSONRpcProvider('https://testnet.opnet.org');
+    var contract = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, networks.opnetTestnet, walletState.addr);
 
     // totalSupply para info da collection
     try {
@@ -2940,7 +2918,7 @@ async function loadVault() {
     } catch(e) { supplyEl.textContent = '?'; }
 
     // balanceOf(walletAddr) — quantos NFTs o usuário tem
-    var balRes  = await contract.balanceOf(senderAddr);
+    var balRes = await contract.balanceOf(walletState.addr);
     var balance = balRes && balRes.properties ? BigInt(balRes.properties.balance || 0) : 0n;
 
     if (balance === 0n) {
@@ -2955,7 +2933,7 @@ async function loadVault() {
     var tokenIds = [];
     for (var i = 0n; i < balance; i++) {
       try {
-        var tokRes = await contract.tokenOfOwnerByIndex(senderAddr, i);
+        var tokRes = await contract.tokenOfOwnerByIndex(walletState.addr, i);
         if (tokRes && tokRes.properties && tokRes.properties.tokenId !== undefined) {
           tokenIds.push(BigInt(tokRes.properties.tokenId));
         }
@@ -3268,6 +3246,113 @@ function renderTxList(txs){
       +'</div>';
   }).join('');
 }
+
+/* ── TOGGLE INVEST PANEL ── */
+function toggleInvest(id, btn) {
+  const panel = document.getElementById(id);
+  const open = panel.classList.toggle('open');
+  const isGamma = id === 'p-gamma';
+  if (!open) {
+    const asset = id.replace('p-','');
+    const r = document.getElementById(asset + '-receipt');
+    if (r) r.style.display = 'none';
+    const btcEl = document.getElementById(asset + '-btc');
+    const tokEl = document.getElementById(asset + '-tokens');
+    if (btcEl) btcEl.value = '';
+    if (tokEl) tokEl.value = '';
+  }
+  if (open) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
+  } else {
+    if (isGamma) {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
+    } else {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
+    }
+  }
+}
+
+/* ── FILTER ASSETS ── */
+function filterAssets(cat, btn) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+  });
+}
+
+/* ── SEARCH ASSETS ── */
+function searchAssets(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = card.dataset.name.includes(lq) ? '' : 'none';
+  });
+}
+
+/* ── SORT ASSETS ── */
+function sortAssets(by) { /* placeholder */ }
+
+/* ── TOGGLE DISPLAY MODE (BTC/USD per card) ── */
+function toggleDisp(btn, mode, assetId) {
+  const wrap = btn.closest('.card-asset');
+  wrap.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const priceEl = document.getElementById(assetId + '-price');
+  if (!priceEl) return;
+  if (mode === 'btc') {
+    priceEl.textContent = '—';
+  } else {
+    priceEl.textContent = btcPrice ? '$' + (btcPrice * 0.001).toFixed(2) : '—';
+  }
+}
+
+/* ── FETCH BTC PRICE (CoinGecko → CoinPaprika fallback) ── */
+async function fetchPrices() {
+  try {
+    let price = 0;
+    try {
+      const r0 = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', {signal:AbortSignal.timeout(6000)});
+      const d0 = await r0.json(); price = d0.bitcoin.usd;
+    } catch(_) {
+      const r1 = await fetch('https://api.coinpaprika.com/v1/tickers/btc-bitcoin', {signal:AbortSignal.timeout(6000)});
+      const d1 = await r1.json(); price = d1.quotes.USD.price;
+    }
+    btcPrice = price;
+    const fmt = '$' + btcPrice.toLocaleString();
+    const heroPriceEl = document.getElementById('hero-btc-price');
+    if (heroPriceEl) heroPriceEl.textContent = fmt;
+    const gBtcEl = document.getElementById('g-btc');
+    if (gBtcEl) gBtcEl.textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
+}
+
+/* ── FETCH GAS (mempool.opnet.org) ── */
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended', {signal:AbortSignal.timeout(6000)});
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    const navGas = document.getElementById('nav-gas');
+    if (navGas) navGas.textContent = feeStr;
+    const gRate = document.getElementById('g-rate');
+    if (gRate) gRate.textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = feeStr; });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      const gTx = document.getElementById('g-tx');
+      if (gTx) gTx.textContent = '~$' + txCost.toFixed(4);
+      const alphaGas = document.getElementById('alpha-gas');
+      if (alphaGas) alphaGas.textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
 
 </script>
 </body>
