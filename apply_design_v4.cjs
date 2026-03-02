@@ -1,0 +1,977 @@
+/**
+ * OPWA — apply_design_v4.cjs
+ * ===========================
+ * Aplica o Design System v4 no projeto React existente.
+ * SEGURO: só toca em CSS e index.html. Nunca em .ts/.tsx de lógica.
+ *
+ * COMO RODAR (PowerShell):
+ *   cd C:\Users\peluc\Documents\OPWABTC
+ *   cp ~/Downloads/apply_design_v4.cjs .
+ *   node apply_design_v4.cjs
+ *
+ * O QUE FAZ:
+ *   1. Faz backup de src/index.css → src/index.css.bak
+ *   2. Escreve novo src/index.css com todos os tokens + reset + utils
+ *   3. Atualiza public/index.html (ou index.html raiz) com Google Fonts link
+ *   4. Verifica se src/main.tsx tem o cursor injection (só adiciona se não tiver)
+ *   5. Imprime checklist do que foi feito
+ *
+ * NÃO TOCA EM:
+ *   - src/App.tsx
+ *   - src/components/
+ *   - src/hooks/
+ *   - src/store/
+ *   - tailwind.config.js
+ *   - vite.config.ts
+ *   - package.json
+ */
+
+const fs   = require('fs');
+const path = require('path');
+
+const ROOT = process.cwd();
+const SRC  = path.join(ROOT, 'src');
+
+const log  = (msg) => console.log('\x1b[36m' + msg + '\x1b[0m');
+const ok   = (msg) => console.log('\x1b[32m✓ ' + msg + '\x1b[0m');
+const warn = (msg) => console.log('\x1b[33m⚠ ' + msg + '\x1b[0m');
+const err  = (msg) => console.log('\x1b[31m✗ ' + msg + '\x1b[0m');
+
+// ─────────────────────────────────────────────
+// GUARD: garante que estamos na raiz certa
+// ─────────────────────────────────────────────
+if (!fs.existsSync(path.join(ROOT, 'package.json'))) {
+  err('package.json não encontrado. Rode dentro de C:\\Users\\peluc\\Documents\\OPWABTC');
+  process.exit(1);
+}
+if (!fs.existsSync(path.join(ROOT, 'index.html'))) {
+  err('index.html não encontrado. NUNCA deletar o index.html — é o entry point do Vite.');
+  process.exit(1);
+}
+
+log('\n=== OPWA Design System v4 — Aplicando ===\n');
+
+// ─────────────────────────────────────────────
+// 1. BACKUP do index.css atual
+// ─────────────────────────────────────────────
+const cssPath    = path.join(SRC, 'index.css');
+const cssBakPath = path.join(SRC, 'index.css.bak');
+
+if (fs.existsSync(cssPath)) {
+  fs.copyFileSync(cssPath, cssBakPath);
+  ok('Backup criado: src/index.css.bak');
+} else {
+  warn('src/index.css não encontrado — criando do zero');
+}
+
+// ─────────────────────────────────────────────
+// 2. NOVO index.css — OPWA SKELETON v7
+// ─────────────────────────────────────────────
+const NEW_CSS = `/* ============================================================
+   OPWA SKELETON v7 — Design System v4
+   Gerado por apply_design_v4.cjs
+   NÃO editar manualmente — use o script para regenerar
+   Restaurar original: git checkout f6f6c72d -- src/index.css
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts (fallback CSS — principal está no index.html) ── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+
+/* ============================================================
+   DARK THEME TOKENS (DEFAULT)
+   ============================================================ */
+:root {
+  /* Backgrounds */
+  --bg-base:      #0a0a0a;
+  --bg-surface:   #111111;
+  --bg-card:      #161616;
+  --bg-elevated:  #1e1e1e;
+
+  /* Accent — Bitcoin Orange — NUNCA mudar */
+  --accent:        #f97316;
+  --accent-dark:   #ea580c;
+  --accent-dim:    rgba(249, 115, 22, 0.12);
+  --accent-border: rgba(249, 115, 22, 0.30);
+  --accent-glow:   rgba(249, 115, 22, 0.25);
+
+  /* Gold */
+  --gold:     #fbbf24;
+  --gold-dim: rgba(251, 191, 36, 0.12);
+
+  /* Typography */
+  --text-1: #f5f5f5;
+  --text-2: #a3a3a3;
+  --text-3: #525252;
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.06);
+
+  /* Semantic */
+  --success:        #10b981;
+  --success-dim:    rgba(16, 185, 129, 0.12);
+  --success-border: rgba(16, 185, 129, 0.25);
+  --danger:         #ef4444;
+  --danger-dim:     rgba(239, 68, 68, 0.12);
+  --info:           #3b82f6;
+
+  /* Special — não alterar */
+  --gas-toggle: #ae005b;
+  --navbar-h:   64px;
+
+  /* Badges */
+  --badge-residential-bg:     rgba(59, 130, 246, 0.20);
+  --badge-residential-color:  #60a5fa;
+  --badge-residential-border: rgba(59, 130, 246, 0.30);
+  --badge-commercial-bg:      rgba(139, 92, 246, 0.20);
+  --badge-commercial-color:   #a78bfa;
+  --badge-commercial-border:  rgba(139, 92, 246, 0.30);
+  --badge-active-bg:          rgba(16, 185, 129, 0.15);
+  --badge-active-color:       #34d399;
+  --badge-active-border:      rgba(16, 185, 129, 0.25);
+  --badge-soon-bg:            rgba(251, 191, 36, 0.12);
+  --badge-soon-color:         #fbbf24;
+  --badge-soon-border:        rgba(251, 191, 36, 0.25);
+}
+
+/* ============================================================
+   LIGHT THEME TOKENS
+   Regra Bitcoin: laranja domina tudo BTC — preco, balance, CTA
+   Roxo (10%) apenas para navegacao/UI secondary
+   ============================================================ */
+[data-theme="light"] {
+  --bg-base:      #ffffff;
+  --bg-surface:   #fafaf8;
+  --bg-card:      #f5f3ef;
+  --bg-elevated:  #ede9e1;
+
+  /* Orange mantido — regra Bitcoin */
+  --accent:        #f97316;
+  --accent-dark:   #ea580c;
+  --accent-dim:    rgba(249, 115, 22, 0.10);
+  --accent-border: rgba(249, 115, 22, 0.30);
+  --accent-glow:   rgba(249, 115, 22, 0.20);
+
+  --gold:     #d97706;
+  --gold-dim: rgba(217, 119, 6, 0.10);
+
+  --text-1: #1a1409;
+  --text-2: #5c4f3a;
+  --text-3: #9c8e7a;
+
+  --border: rgba(249, 115, 22, 0.12);
+
+  --success:        #059669;
+  --success-dim:    rgba(5, 150, 105, 0.10);
+  --success-border: rgba(5, 150, 105, 0.22);
+  --danger:         #dc2626;
+  --danger-dim:     rgba(220, 38, 38, 0.08);
+  --info:           #f97316;
+
+  /* Purple — 10% apenas UI secondary */
+  --purple-lt:        #7c3aed;
+  --purple-lt-dim:    rgba(124, 58, 237, 0.08);
+  --purple-lt-border: rgba(124, 58, 237, 0.20);
+
+  /* Badges light */
+  --badge-residential-bg:     rgba(249, 115, 22, 0.10);
+  --badge-residential-color:  #ea580c;
+  --badge-residential-border: rgba(249, 115, 22, 0.25);
+  --badge-commercial-bg:      rgba(124, 58, 237, 0.10);
+  --badge-commercial-color:   #7c3aed;
+  --badge-commercial-border:  rgba(124, 58, 237, 0.22);
+  --badge-active-bg:          rgba(5, 150, 105, 0.10);
+  --badge-active-color:       #047857;
+  --badge-active-border:      rgba(5, 150, 105, 0.22);
+  --badge-soon-bg:            rgba(217, 119, 6, 0.10);
+  --badge-soon-color:         #b45309;
+  --badge-soon-border:        rgba(217, 119, 6, 0.22);
+}
+
+/* ============================================================
+   BASE RESET
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  cursor: none !important;
+}
+
+html {
+  font-family: 'DM Sans', sans-serif;
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-1);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  padding-top: var(--navbar-h);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ============================================================
+   TYPOGRAPHY SCALE
+   ============================================================ */
+.t-hero   { font-family: 'Syne', sans-serif; font-size: clamp(36px, 6vw, 72px); font-weight: 800; line-height: 1.05; }
+.t-h1     { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 700; line-height: 1.1; }
+.t-h2     { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; line-height: 1.15; }
+.t-h3     { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; line-height: 1.2; }
+.t-kpi    { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; line-height: 1.1; }
+.t-body   { font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 400; color: var(--text-2); line-height: 1.65; }
+.t-small  { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.t-label  { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
+.t-caption{ font-size: 11px; color: var(--text-3); line-height: 1.5; }
+.t-mono   { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gold); }
+
+/* ============================================================
+   CURSOR — Split pill: branco/laranja diagonal (marca OPWA)
+   ============================================================ */
+#cur {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  width: 20px;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow: 0 2px 12px rgba(249, 115, 22, 0.5);
+}
+
+#cur::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #ffffff 50%, #f97316 50%);
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+.fade-in     { animation: opwaFadeIn    0.4s ease both; }
+.fade-in-up  { animation: opwaFadeInUp  0.4s ease both; }
+
+@keyframes opwaFadeIn    { from { opacity: 0; }                              to { opacity: 1; } }
+@keyframes opwaFadeInUp  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.d1 { animation-delay: 0.05s; }
+.d2 { animation-delay: 0.10s; }
+.d3 { animation-delay: 0.15s; }
+.d4 { animation-delay: 0.20s; }
+.d5 { animation-delay: 0.25s; }
+
+/* Dot pulse — status ao vivo */
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  display: inline-block;
+  background: var(--success);
+  animation: opwaPulse 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes opwaPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--navbar-h);
+  z-index: 1000;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-mark {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px; color: #fff;
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.35);
+  flex-shrink: 0;
+}
+
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: var(--text-1); }
+.logo-tag  { font-size: 9px; color: var(--text-3); letter-spacing: 1.5px; text-transform: uppercase; }
+
+.nav-links {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+
+.nav-link {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: var(--text-2);
+  text-decoration: none; transition: color 0.15s, background 0.15s;
+}
+
+.nav-link:hover  { color: var(--text-1); background: rgba(255, 255, 255, 0.06); }
+.nav-link.active { color: var(--accent); background: var(--accent-dim); }
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.gas-ticker {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px; color: var(--text-3);
+  font-family: 'DM Mono', monospace;
+}
+
+.gas-ticker .dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+.wallet-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px; font-size: 13px;
+}
+
+.wallet-pill .dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+.btn-connect {
+  padding: 8px 18px;
+  background: var(--accent);
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-connect:hover { opacity: 0.88; }
+
+.btn-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text-2); transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-icon:hover { color: var(--text-1); border-color: rgba(255, 255, 255, 0.14); }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 22px; border-radius: 10px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff; font-size: 14px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; border: none;
+  box-shadow: 0 4px 18px rgba(249, 115, 22, 0.32);
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative; overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.10), transparent);
+  pointer-events: none;
+}
+
+.btn-primary:hover  { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(249, 115, 22, 0.42); }
+.btn-primary:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(249, 115, 22, 0.28); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 22px; border-radius: 10px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-dim); color: var(--accent);
+  font-size: 14px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.btn-ghost:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.btn-subtle {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 15px; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated); color: var(--accent);
+  font-size: 13px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-subtle:hover { background: var(--accent-dim); border-color: var(--accent-border); }
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 6px;
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border: 1px solid;
+}
+
+.badge-pill    { border-radius: 20px !important; }
+.badge-residential { background: var(--badge-residential-bg); color: var(--badge-residential-color); border-color: var(--badge-residential-border); }
+.badge-commercial  { background: var(--badge-commercial-bg);  color: var(--badge-commercial-color);  border-color: var(--badge-commercial-border); }
+.badge-active      { background: var(--badge-active-bg);      color: var(--badge-active-color);      border-color: var(--badge-active-border); }
+.badge-soon        { background: var(--badge-soon-bg);        color: var(--badge-soon-color);        border-color: var(--badge-soon-border); }
+.badge-network     { background: var(--success-dim); color: var(--success); border-color: var(--success-border); padding: 4px 10px; border-radius: 20px; font-size: 11px; }
+.badge-apy         { background: var(--success-dim); color: #34d399; border-color: var(--success-border); }
+.badge-apy-yellow  { background: var(--gold-dim);    color: var(--gold); border-color: rgba(251, 191, 36, 0.25); }
+.badge-apy-red     { background: var(--danger-dim);  color: #f87171;  border-color: rgba(239, 68, 68, 0.2); }
+.badge-orange      { background: var(--accent-dim);  color: var(--accent); border-color: var(--accent-border); }
+
+/* ============================================================
+   HERO BADGE (diagonal)
+   ============================================================ */
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 20px;
+  background: var(--success-dim);
+  border: 1px solid var(--success-border);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--success);
+  transform: rotate(-2.5deg);
+  transform-origin: center;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card-base {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.card-asset {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  position: relative; overflow: hidden;
+}
+
+.card-asset::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.4), transparent);
+  opacity: 0; transition: opacity 0.2s;
+}
+
+.card-asset:hover {
+  transform: translateY(-6px) scale(1.012);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--accent-border);
+  border-color: var(--accent-border);
+}
+
+.card-asset:hover::before { opacity: 1; }
+
+.card-kpi {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: 12px; padding: 20px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden;
+}
+
+.card-kpi:hover {
+  border-color: var(--accent-border);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.10);
+}
+
+.card-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card-stat:hover {
+  border-color: var(--accent-border);
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.08);
+}
+
+/* ============================================================
+   STAT ELEMENTS
+   ============================================================ */
+.stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); }
+.stat-value { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-1); }
+.stat-sub   { font-size: 12px; color: var(--text-3); }
+.stat-up    { font-size: 12px; font-weight: 600; color: var(--success); }
+.stat-down  { font-size: 12px; font-weight: 600; color: var(--danger); }
+
+/* ============================================================
+   HOW IT WORKS STEPS
+   ============================================================ */
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.step-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: 0 8px 32px rgba(249, 115, 22, 0.08);
+  transform: translateY(-3px);
+}
+
+.step-number {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.step-card:hover .step-number { background: var(--accent); color: #fff; }
+
+/* ============================================================
+   STATS BAND (hero)
+   ============================================================ */
+.stats-band {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.stat-item           { background: var(--bg-card); padding: 18px 20px; text-align: center; }
+.stat-item-label     { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 6px; }
+.stat-item-value     { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--gold); }
+.stat-item-sub       { font-size: 10px; color: var(--text-3); margin-top: 3px; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.progress-bar  { height: 4px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden; }
+.progress-bar.md { height: 6px; }
+.progress-bar.lg { height: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 2px; transition: width 0.5s ease; }
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+.field-label  { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: block; }
+.field-hint   { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+.field-error  { font-size: 11px; color: #f87171; margin-top: 3px; }
+
+.input-base {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-1);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-base::placeholder { color: var(--text-3); }
+.input-base:focus        { border-color: var(--accent-border); box-shadow: 0 0 0 3px var(--accent-dim); }
+.input-base.error        { border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 0 3px var(--danger-dim); }
+.input-base:disabled     { opacity: 0.5; }
+
+/* ============================================================
+   SLIDER (Period — meses 1mo/12mo/36mo)
+   ============================================================ */
+.sim-slider-outer {
+  position: relative;
+  padding: 0 10px;
+}
+
+.sim-slider-outer input[type="range"] {
+  width: 100%; margin: 0; display: block;
+  -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 2px; outline: none;
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--fill, 30.5%),
+    rgba(255, 255, 255, 0.10) var(--fill, 30.5%)
+  );
+}
+
+.sim-slider-outer input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-base);
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+.sim-slider-outer input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-base);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.sim-slider-labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 10px;
+  margin-top: 10px;
+}
+
+.sim-slider-labels span          { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+.sim-slider-labels span:nth-child(2) { text-align: center; }
+.sim-slider-labels span:last-child   { text-align: right; }
+
+/* ============================================================
+   COMPARISON CARDS (Simulator)
+   ============================================================ */
+.compare-card {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-card); margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+
+.compare-card.highlighted {
+  background: rgba(249, 115, 22, 0.05);
+  border-color: var(--accent-border);
+}
+
+.compare-name  { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 3px; }
+.compare-sub   { font-size: 11px; color: var(--text-3); }
+.compare-value { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; }
+.compare-value.green  { color: var(--accent); }
+.compare-value.yellow { color: var(--text-2); }
+.compare-value.red    { color: var(--text-3); }
+
+.diff-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px; border-radius: 12px;
+  background: rgba(249, 115, 22, 0.06);
+  border: 1px solid var(--accent-border);
+  margin-top: 4px;
+}
+
+/* ============================================================
+   WALLET MODAL
+   ============================================================ */
+.wallet-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 8px;
+}
+
+.wallet-option:hover    { border-color: var(--accent-border); background: var(--accent-dim); }
+.wallet-option.featured { border-color: var(--accent-border); background: rgba(249, 115, 22, 0.06); }
+
+/* ============================================================
+   GAS CONVERTER WIDGET
+   ============================================================ */
+.gas-widget {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px;
+}
+
+.gas-row            { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.gas-row:last-child { border-bottom: none; }
+.gas-row-label      { font-size: 12px; color: var(--text-3); }
+.gas-row-value      { font-size: 13px; font-weight: 600; color: var(--text-1); font-family: 'DM Mono', monospace; }
+
+.gas-toggle-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--gas-toggle);
+  color: var(--gas-toggle);
+  background: transparent;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.gas-toggle-btn.open { background: var(--gas-toggle); color: #fff; }
+
+/* ============================================================
+   SIDEBAR (app internal)
+   ============================================================ */
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px;
+  font-size: 13.5px; font-weight: 500; color: var(--text-2);
+  transition: color 0.15s, background 0.15s;
+}
+
+.sidebar-item:hover { color: var(--text-1); background: var(--bg-card); }
+
+.sidebar-item.active {
+  color: var(--accent); background: var(--accent-dim);
+  border-left: 2px solid var(--accent);
+  margin-left: -2px; padding-left: 12px;
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+.toast {
+  padding: 12px 16px; border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: flex-start; gap: 10px;
+  border-left: 3px solid; max-width: 320px;
+}
+
+.toast-success { background: var(--success-dim); border-color: var(--success); color: #34d399; }
+.toast-error   { background: var(--danger-dim);  border-color: var(--danger);  color: #f87171; }
+.toast-info    { background: var(--accent-dim);  border-color: var(--accent);  color: #fb923c; }
+.toast-warning { background: var(--gold-dim);    border-color: var(--gold);    color: var(--gold); }
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.hero-section {
+  position: relative; overflow: hidden;
+  padding: 80px 24px 64px;
+  max-width: 1200px; margin: 0 auto;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
+  top: -150px; right: -100px;
+  pointer-events: none;
+}
+
+/* ============================================================
+   ASSETS GRID
+   ============================================================ */
+.assets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  border-top: 1px solid var(--border);
+  background: var(--bg-surface);
+  padding: 48px 24px 32px;
+  margin-top: auto;
+}
+
+.footer-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 32px; margin-bottom: 32px;
+}
+
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--text-3);
+}
+
+.footer-link           { font-size: 13px; color: var(--text-2); text-decoration: none; transition: color 0.15s; }
+.footer-link:hover     { color: var(--text-1); }
+.footer-link.highlight { color: var(--accent); font-weight: 600; }
+
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+`;
+
+fs.writeFileSync(cssPath, NEW_CSS, 'utf8');
+ok('src/index.css escrito — OPWA SKELETON v7');
+
+// ─────────────────────────────────────────────
+// 3. ATUALIZAR index.html — Google Fonts + meta
+// ─────────────────────────────────────────────
+const htmlPath = path.join(ROOT, 'index.html');
+let html = fs.readFileSync(htmlPath, 'utf8');
+
+const fontsLink = `  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />`;
+
+const themeColor = `  <meta name="theme-color" content="#f97316" />`;
+
+let htmlChanged = false;
+
+if (!html.includes('fonts.googleapis.com/css2?family=Syne')) {
+  html = html.replace('</head>', `${fontsLink}\n</head>`);
+  htmlChanged = true;
+  ok('index.html — Google Fonts adicionado');
+} else {
+  ok('index.html — Google Fonts já presente');
+}
+
+if (!html.includes('theme-color')) {
+  html = html.replace('</head>', `${themeColor}\n</head>`);
+  htmlChanged = true;
+  ok('index.html — meta theme-color adicionado');
+}
+
+if (htmlChanged) {
+  fs.writeFileSync(htmlPath, html, 'utf8');
+}
+
+// ─────────────────────────────────────────────
+// 4. VERIFICAR main.tsx — cursor injection
+// ─────────────────────────────────────────────
+const mainPath = path.join(SRC, 'main.tsx');
+
+if (fs.existsSync(mainPath)) {
+  let main = fs.readFileSync(mainPath, 'utf8');
+
+  if (!main.includes('opwa-cursor') && !main.includes("id = 'cur'")) {
+    const cursorCode = `
+// OPWA Cursor — split pill branco/laranja diagonal
+const _cur = document.createElement('div');
+_cur.id = 'cur';
+document.body.appendChild(_cur);
+document.addEventListener('mousemove', (e) => {
+  _cur.style.left = e.clientX + 'px';
+  _cur.style.top  = e.clientY + 'px';
+});
+`;
+    // Adiciona ANTES do ReactDOM.createRoot
+    if (main.includes('ReactDOM') || main.includes('createRoot')) {
+      main = main.replace(
+        /const root|ReactDOM\.createRoot/,
+        `${cursorCode.trim()}\n\nconst root`
+      );
+    } else {
+      main = main + cursorCode;
+    }
+    fs.writeFileSync(mainPath, main, 'utf8');
+    ok('main.tsx — cursor #cur injection adicionado');
+  } else {
+    ok('main.tsx — cursor #cur já presente');
+  }
+} else {
+  warn('main.tsx não encontrado em src/');
+}
+
+// ─────────────────────────────────────────────
+// 5. VERIFICAR tailwind.config.js — fontFamily
+// ─────────────────────────────────────────────
+const twPath = path.join(ROOT, 'tailwind.config.js');
+
+if (fs.existsSync(twPath)) {
+  let tw = fs.readFileSync(twPath, 'utf8');
+
+  if (!tw.includes('Syne')) {
+    warn('tailwind.config.js — fontes OPWA não configuradas');
+    console.log('');
+    console.log('  Adicione em theme.extend.fontFamily:');
+    console.log(`
+  fontFamily: {
+    display: ['Syne', 'sans-serif'],
+    body:    ['DM Sans', 'sans-serif'],
+    mono:    ['DM Mono', 'monospace'],
+  },`);
+  } else {
+    ok('tailwind.config.js — fontes OPWA presentes');
+  }
+} else {
+  warn('tailwind.config.js não encontrado');
+}
+
+// ─────────────────────────────────────────────
+// RESULTADO FINAL
+// ─────────────────────────────────────────────
+console.log('');
+console.log('\x1b[32m═══════════════════════════════════════════');
+console.log('  OPWA Design System v4 aplicado com sucesso');
+console.log('═══════════════════════════════════════════\x1b[0m');
+console.log('');
+console.log('Arquivos modificados:');
+console.log('  src/index.css      — OPWA SKELETON v7 (backup em .bak)');
+console.log('  index.html         — Google Fonts + theme-color');
+console.log('  src/main.tsx       — cursor injection (se necessario)');
+console.log('');
+console.log('Proximo passo — verificar e commitar:');
+console.log('');
+console.log('  git diff src/index.css');
+console.log('  git add src/index.css index.html src/main.tsx');
+console.log('  git commit -m "feat: apply design system v4 (OPWA SKELETON v7)"');
+console.log('  git push');
+console.log('');
+console.log('Se CI falhar — restaurar:');
+console.log('  git checkout f6f6c72d -- src/index.css');
+console.log('');
