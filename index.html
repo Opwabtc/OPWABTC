@@ -2610,30 +2610,32 @@ async function confirmInvest(asset) {
   const btn   = panel ? panel.querySelector('.btn-confirm') : null;
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
   try {
-    // Native Signet P2TR address for treasury (tb1p = bech32m of 5efba299... pubkey)
-    // The OPNet RPC node runs on Signet and decodes tb1p... correctly.
-    // The opt1p... OPNet-encoded address was causing "Insufficient BTC payment"
-    // because the server couldn't build the P2TR scriptPubKey from it.
+    // Treasury pubkey as 64-char hex (32-byte x-only P2TR pubkey, no 0x prefix).
+    // Used in setTransactionDetails.to so the contract can match via treasury.toHex().
+    // The bech32m address is used only in extraOutputs for the real wallet transaction.
+    const TREASURY_HEX    = '5efba299a9b980c664a2fa82e675473fe471af7e745cea1bac4e8c909f994658';
     const TREASURY_SIGNET = 'tb1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevq3ksn4g';
-    const OPWACOIN_ADDR = 'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88';
+    const OPWACOIN_ADDR = 'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88'; // update after redeploy
     const count    = BigInt(tokenCount);
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
     const mod = await import('https://esm.sh/opnet?bundle');
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes } = mod;
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, TransactionOutputFlags, ABIDataTypes } = mod;
     const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     const _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     const OPWACOIN_ABI = [
       ...OP_20_ABI,
-      { name:'buy', type:BitcoinAbiTypes.Function, payable:false,
+      { name:'buy', type:BitcoinAbiTypes.Function, payable:true,
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
     const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, _net, senderAddr);
-    // No setTransactionDetails — let extraOutputs in sendTransaction carry the BTC payment.
-    // The contract checks Blockchain.tx.outputs in real tx, not in simulation.
+    // Simulation path: provide treasury as hex pubkey string via hasTo flag.
+    // The new OPWACoin contract checks output.to === treasury.toHex() as fallback
+    // (real P2TR tx still uses the scriptPublicKey path).
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_HEX, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo, scriptPubKey:undefined }] });
     const simulation = await contract.buy(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({

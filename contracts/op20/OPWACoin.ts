@@ -10,6 +10,7 @@ import {
     Revert,
     StoredU256,
     StoredAddress,
+    TransactionOutput,
 } from '@btc-vision/btc-runtime/runtime';
 
 const EMPTY_POINTER = new Uint8Array(30);
@@ -107,12 +108,22 @@ export class OPWACoin extends OP20 {
             DECIMALS,
         );
 
-        // Sum BTC outputs to treasury P2TR address
+        // Sum BTC outputs to treasury via dual-path check:
+        //
+        // Path 1 — Real Bitcoin P2TR transactions:
+        //   The OPNet node serializes the raw P2TR scriptPubKey (0x51 0x20 + 32-byte pubkey)
+        //   with the hasScriptPubKey flag. We compare the 32 pubkey bytes against treasury.
+        //
+        // Path 2 — SDK simulation (setTransactionDetails with hasTo flag):
+        //   The esm.sh SDK bundle only supports the hasTo flag (hasScriptPubKey causes errors).
+        //   We tell callers to pass `to: treasury.toHex()` (the 64-char hex of the pubkey bytes).
+        //   The node serializes this string; output.to === treasury.toHex() matches.
         let satsSent: u64 = 0;
-        const outputs = Blockchain.tx.outputs;
+        const outputs: TransactionOutput[] = Blockchain.tx.outputs;
+        const treasuryHex: string = treasury.toHex();
         for (let i = 0; i < outputs.length; i++) {
+            // Path 1: P2TR script bytes (real on-chain transactions)
             const script: Uint8Array | null = outputs[i].scriptPublicKey;
-            // P2TR = OP_1 (0x51) + PUSH32 (0x20) + 32-byte x-only tweaked pubkey
             if (
                 script !== null &&
                 script.length == 34 &&
@@ -120,7 +131,13 @@ export class OPWACoin extends OP20 {
                 script[1] == 0x20 &&
                 this.matchesTreasury(script, treasury)
             ) {
-                satsSent += outputs[i].value;
+                satsSent = SafeMath.add64(satsSent, outputs[i].value);
+                continue;
+            }
+            // Path 2: hex string comparison (simulation via setTransactionDetails hasTo)
+            const outputTo: string | null = outputs[i].to;
+            if (outputTo !== null && outputTo === treasuryHex) {
+                satsSent = SafeMath.add64(satsSent, outputs[i].value);
             }
         }
 
