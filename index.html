@@ -139,14 +139,14 @@ input,select,textarea{font-family:inherit}
 /* ── CURSOR (dot trail — pointer-events:none, never blocks clicks) ── */
 #cur{
   position:fixed;pointer-events:none;z-index:9999;
-  width:10px;height:10px;border-radius:50%;
+  width:40px;height:12px;border-radius:999px;
   background:#f97316;
   transform:translate(-50%,-50%);
   mix-blend-mode:difference;
   transition:transform .12s ease,width .12s ease,height .12s ease;
   will-change:left,top;
 }
-#cur.hovering{width:22px;height:22px;background:rgba(249,115,22,.35);border:1.5px solid #f97316}
+#cur.hovering{width:56px;height:16px;border-radius:999px;background:rgba(249,115,22,.45);border:1.5px solid #f97316}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
