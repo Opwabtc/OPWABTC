@@ -1008,6 +1008,12 @@ footer{
 .fu-3{animation:fadeUp .65s ease .36s both}
 .fu-4{animation:fadeUp .65s ease .48s both}
 
+/* ── WALLET DROPDOWN ── */
+.wallet-btn-wrap{position:relative}
+.wallet-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:260px;background:#1a1a1a;border:1px solid rgba(249,115,22,.25);border-radius:14px;padding:16px;z-index:9999;box-shadow:0 16px 48px rgba(0,0,0,.6);display:none}
+.wallet-dropdown.open{display:block}
+
+/* ── LEGAL PAGES ── */
 .legal-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 48px) 24px 100px;background:var(--bg-base)}
 .legal-page.active{display:block}
 .legal-wrap{max-width:760px;margin:0 auto}
@@ -1020,91 +1026,36 @@ footer{
 .legal-footer-box{margin-top:48px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-3)}
 .legal-footer-box a{color:var(--accent);margin-right:16px;font-weight:600}
 .legal-footer-box a.muted{color:var(--text-3)}
-#main-content{display:block}
 
-
-/* ── WALLET DROPDOWN ── */
-.wallet-btn-wrap{position:relative}
-.wallet-dropdown{
-  position:absolute;top:calc(100% + 10px);right:0;
-  width:260px;background:#1a1a1a;border:1px solid rgba(249,115,22,.25);
-  border-radius:14px;padding:16px;z-index:9999;
-  box-shadow:0 16px 48px rgba(0,0,0,.6);
-  display:none;
-}
-.wallet-dropdown.open{display:block}
-.wd-address{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-3);
-  word-break:break-all;margin-bottom:12px;padding-bottom:12px;
-  border-bottom:1px solid rgba(255,255,255,.06)}
-.wd-balance{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:2px}
-.wd-balance-usd{font-size:12px;color:var(--text-2);margin-bottom:14px}
-.wd-divider{height:1px;background:rgba(255,255,255,.06);margin:8px 0}
-.wd-actions{display:flex;flex-direction:column;gap:2px}
-.wd-action{display:flex;align-items:center;gap:9px;padding:9px 10px;border:none;
-  background:transparent;border-radius:8px;color:var(--text-2);font-size:13px;
-  cursor:pointer;width:100%;text-align:left;transition:background .15s,color .15s}
-.wd-action:hover{background:rgba(255,255,255,.06);color:var(--text-1)}
-.wd-action.danger{color:var(--danger)}
-.wd-action.danger:hover{background:var(--danger-dim);color:var(--danger)}
-.wd-action svg{flex-shrink:0}
-
-/* ── DASHBOARD PAGE ── */
+/* ── DASHBOARD ── */
 .dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 44px) 24px 80px;background:var(--bg-base)}
 .dash-page.active{display:block}
 .dash-wrap{max-width:960px;margin:0 auto}
 .dash-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;gap:16px;flex-wrap:wrap}
 .dash-h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text-1);margin:0 0 6px}
 .dash-addr{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.dash-addr span.net{color:var(--accent)}
-.dash-badge-connected{padding:5px 13px;border-radius:20px;background:var(--success-dim);border:1px solid var(--success-border);font-size:11px;font-weight:700;color:var(--success);display:flex;align-items:center;gap:6px}
-.dash-badge-connected::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block}
-.dash-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.dash-refresh{padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text-2);font-size:12px;cursor:pointer;transition:background .15s}
-.dash-refresh:hover{background:rgba(255,255,255,.09)}
-.dash-syncing{font-size:11px;color:var(--accent);display:flex;align-items:center;gap:6px}
-.dash-syncing::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:blink 1s infinite}
-
+.dash-addr .net{color:var(--accent)}
+.dash-badge{padding:5px 13px;border-radius:20px;background:var(--success-dim);border:1px solid var(--success-border);font-size:11px;font-weight:700;color:var(--success);display:inline-flex;align-items:center;gap:6px}
+.dash-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block}
+.dash-refresh{padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text-2);font-size:12px;cursor:pointer}
 .dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px}
 .dash-stat{background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:22px 20px}
 .dash-stat-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
 .dash-stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:4px}
 .dash-stat-sub{font-size:12px;color:var(--text-2)}
-
 .dash-supply{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;margin-bottom:20px}
-.dash-supply-head{display:flex;justify-content:space-between;margin-bottom:12px}
-.dash-supply-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-2)}
-.dash-supply-pct{color:var(--accent);font-weight:700;font-size:12px}
-.dash-bar-track{height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:8px}
-.dash-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:4px;transition:width .6s ease}
-.dash-bar-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)}
-
-.dash-holdings-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.dash-holdings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-bottom:28px}
-.dash-token-card{background:linear-gradient(135deg,rgba(249,115,22,.09),rgba(251,191,36,.04));border:1px solid rgba(249,115,22,.22);border-radius:14px;padding:22px}
-.dash-token-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.dash-token-symbol{font-weight:800;font-size:16px;color:var(--accent)}
-.dash-token-badge{font-size:10px;background:rgba(34,197,94,.18);color:#4ade80;border-radius:20px;padding:3px 9px;font-weight:700}
-.dash-token-bal{font-family:'Syne',sans-serif;font-size:24px;font-weight:900;color:var(--text-1);margin-bottom:4px}
-.dash-token-btc{font-size:12px;color:var(--text-2);margin-bottom:8px}
-.dash-token-apy{font-size:12px;color:#4ade80;font-weight:700;margin-bottom:12px}
-.dash-token-link{color:var(--accent);font-size:11px;font-weight:600;text-decoration:none}
-.dash-token-link:hover{text-decoration:underline}
-
-.dash-opscan-btn{display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:14px;font-weight:600;text-decoration:none;border:1px solid var(--accent-border);border-radius:9px;padding:11px 18px;background:var(--accent-dim);transition:background .15s}
-.dash-opscan-btn:hover{background:rgba(249,115,22,.2)}
-
-.dash-noconn{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.dash-noconn-box{text-align:center;max-width:380px;padding:52px 36px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px}
-.dash-noconn-icon{font-size:48px;margin-bottom:16px}
-.dash-noconn-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:12px}
-.dash-noconn-text{font-size:14px;color:var(--text-2);margin-bottom:28px;line-height:1.6}
-.dash-noconn-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:10px;color:#fff;font-weight:600;font-size:14px;text-decoration:none;border:none;cursor:pointer}
+.dash-bar-track{height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin:10px 0 6px}
+.dash-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:4px;transition:width .6s}
+.dash-token-card{background:linear-gradient(135deg,rgba(249,115,22,.09),rgba(251,191,36,.04));border:1px solid rgba(249,115,22,.22);border-radius:14px;padding:22px;margin-bottom:20px;max-width:240px}
+.dash-noconn{min-height:70vh;display:flex;align-items:center;justify-content:center}
+.dash-noconn-box{text-align:center;max-width:360px;padding:48px 32px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px}
 
 </style>
 </head>
 <body data-theme="dark">
 
 <!-- CURSOR -->
+<div id="cur"></div>
 
 <!-- ═══════════════════════════════════════
      NAVBAR
@@ -1137,23 +1088,20 @@ footer{
     <div class="wallet-btn-wrap" id="wallet-btn-wrap">
       <button class="btn-connect" onclick="handleConnectClick()" id="connect-btn">Connect Wallet</button>
       <div class="wallet-dropdown" id="wallet-dropdown">
-        <div class="wd-address" id="wd-address">—</div>
-        <div class="wd-balance" id="wd-balance">&#x20BF; 0.00000</div>
-        <div class="wd-balance-usd" id="wd-balance-usd">&#x2248; $0.00</div>
-        <div class="wd-divider"></div>
-        <div class="wd-actions">
-          <button class="wd-action" onclick="wdCopy()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            Copy Address
+        <div class="wd-address" id="wd-address" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);word-break:break-all;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">—</div>
+        <div class="wd-balance" id="wd-balance" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text-1);margin-bottom:2px">&#x20BF; 0.00000</div>
+        <div class="wd-balance-usd" id="wd-balance-usd" style="font-size:12px;color:var(--text-2);margin-bottom:14px">&#x2248; $0.00</div>
+        <div style="height:1px;background:var(--border);margin:8px 0"></div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <button onclick="wdCopy()" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border:none;background:transparent;border-radius:8px;color:var(--text-2);font-size:13px;cursor:pointer;width:100%;text-align:left" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy Address
           </button>
-          <button class="wd-action" onclick="wdExplorer()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            View on Explorer
+          <button onclick="wdExplorer()" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border:none;background:transparent;border-radius:8px;color:var(--text-2);font-size:13px;cursor:pointer;width:100%;text-align:left" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>View on Explorer
           </button>
-          <div class="wd-divider"></div>
-          <button class="wd-action danger" onclick="wdDisconnect()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Disconnect
+          <div style="height:1px;background:var(--border);margin:4px 0"></div>
+          <button onclick="wdDisconnect()" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border:none;background:transparent;border-radius:8px;color:var(--danger);font-size:13px;cursor:pointer;width:100%;text-align:left" onmouseover="this.style.background='rgba(239,68,68,.08)'" onmouseout="this.style.background='transparent'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Disconnect
           </button>
         </div>
       </div>
@@ -1764,31 +1712,30 @@ footer{
       OP_NET Testnet
     </div>
     <div class="ft-legal">
-      <a href="https://github.com/Opwabtc/OPWABTC/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Terms</a>
-      <a href="https://github.com/Opwabtc/OPWABTC/blob/main/SECURITY.md" target="_blank" rel="noopener">Privacy</a>
+      <a href="/terms" onclick="navigate('/terms');return false;">Terms</a>
+      <a href="/privacy" onclick="navigate('/privacy');return false;">Privacy</a>
     </div>
   </div>
 </footer>
 </div>
 
-<!-- TERMS PAGE -->
+
 <div id="page-terms" class="legal-page">
   <div class="legal-wrap">
     <div class="legal-eyebrow">Legal</div>
     <h1 class="legal-h1">Terms of Service</h1>
     <p class="legal-meta">Last updated: January 2025 &middot; OPWA Protocol</p>
-    <div class="legal-section"><h2>1. Acceptance of Terms</h2><p>By accessing or using the OPWA platform (&ldquo;Platform&rdquo;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Platform. OPWA is a decentralized real estate tokenization protocol built on the Bitcoin network via OP_NET smart contracts.</p></div>
-    <div class="legal-section"><h2>2. Nature of the Platform</h2><p>OPWA enables fractional ownership of real-world assets through blockchain tokenization. All transactions are executed on OP_NET Testnet for demonstration purposes. The Platform does not guarantee returns, liquidity, or the value of any tokens. OPWAP tokens represent a fractional interest in tokenized property assets and are subject to market risk.</p></div>
-    <div class="legal-section"><h2>3. Eligibility</h2><p>You must be at least 18 years old and legally permitted to participate in digital asset transactions in your jurisdiction. By using the Platform, you represent that you meet these requirements and that your use complies with all applicable laws and regulations.</p></div>
-    <div class="legal-section"><h2>4. Wallet &amp; Private Keys</h2><p>OPWA does not custody your funds or private keys. You are solely responsible for the security of your Bitcoin wallet. Lost private keys cannot be recovered. All investment transactions are irreversible once confirmed on-chain. Use of testnet faucet funds carries no financial risk.</p></div>
-    <div class="legal-section"><h2>5. Risks</h2><p>Digital assets involve significant risk including price volatility, regulatory uncertainty, and smart contract bugs. Past performance is not indicative of future results. The Platform is currently operating on OP_NET Testnet &mdash; mainnet features are under development. Do not invest more than you can afford to lose.</p></div>
-    <div class="legal-section"><h2>6. Prohibited Activities</h2><p>You may not use the Platform to launder money, evade sanctions, or engage in any fraudulent activity. Automated scraping, reverse engineering of smart contracts for malicious purposes, or any action that compromises the integrity of the OP_NET protocol is strictly prohibited.</p></div>
-    <div class="legal-section"><h2>7. Intellectual Property</h2><p>All content, branding, and code on the OPWA Platform is the property of OPWA Protocol. The smart contracts are open-source and available on GitHub. You may fork and build upon the contracts subject to the applicable open-source license.</p></div>
-    <div class="legal-section"><h2>8. Disclaimers</h2><p>THE PLATFORM IS PROVIDED &ldquo;AS IS&rdquo; WITHOUT WARRANTIES OF ANY KIND. OPWA PROTOCOL DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. WE ARE NOT RESPONSIBLE FOR ANY LOSSES RESULTING FROM USE OF THE PLATFORM.</p></div>
-    <div class="legal-section"><h2>9. Governing Law</h2><p>These Terms are governed by the laws of the applicable jurisdiction without regard to conflict of law principles. Any disputes shall be resolved through binding arbitration.</p></div>
-    <div class="legal-section"><h2>10. Contact</h2><p>For questions regarding these Terms, contact us via GitHub at github.com/Opwabtc or through the official OPWA community channels.</p></div>
-    <div class="legal-footer-box">
-      By using OPWA, you acknowledge that you have read, understood, and agree to these Terms of Service.
+    <div class="legal-section"><h2>1. Acceptance of Terms</h2><p>By accessing or using the OPWA platform, you agree to be bound by these Terms of Service. OPWA is a decentralized real estate tokenization protocol built on the Bitcoin network via OP_NET smart contracts.</p></div>
+    <div class="legal-section"><h2>2. Nature of the Platform</h2><p>OPWA enables fractional ownership of real-world assets through blockchain tokenization. All transactions are executed on OP_NET Testnet for demonstration purposes. The Platform does not guarantee returns, liquidity, or the value of any tokens.</p></div>
+    <div class="legal-section"><h2>3. Eligibility</h2><p>You must be at least 18 years old and legally permitted to participate in digital asset transactions in your jurisdiction.</p></div>
+    <div class="legal-section"><h2>4. Wallet &amp; Private Keys</h2><p>OPWA does not custody your funds or private keys. You are solely responsible for the security of your Bitcoin wallet. All investment transactions are irreversible once confirmed on-chain.</p></div>
+    <div class="legal-section"><h2>5. Risks</h2><p>Digital assets involve significant risk including price volatility, regulatory uncertainty, and smart contract bugs. The Platform is currently operating on OP_NET Testnet &mdash; mainnet features are under development.</p></div>
+    <div class="legal-section"><h2>6. Prohibited Activities</h2><p>You may not use the Platform to launder money, evade sanctions, or engage in any fraudulent activity. Automated scraping or reverse engineering of smart contracts for malicious purposes is strictly prohibited.</p></div>
+    <div class="legal-section"><h2>7. Intellectual Property</h2><p>All content, branding, and code on the OPWA Platform is the property of OPWA Protocol. The smart contracts are open-source and available on GitHub under the applicable open-source license.</p></div>
+    <div class="legal-section"><h2>8. Disclaimers</h2><p>THE PLATFORM IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. OPWA PROTOCOL DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED. WE ARE NOT RESPONSIBLE FOR ANY LOSSES RESULTING FROM USE OF THE PLATFORM.</p></div>
+    <div class="legal-section"><h2>9. Governing Law</h2><p>These Terms are governed by the laws of the applicable jurisdiction. Any disputes shall be resolved through binding arbitration.</p></div>
+    <div class="legal-section"><h2>10. Contact</h2><p>For questions regarding these Terms, contact us via GitHub at github.com/Opwabtc or through official OPWA community channels.</p></div>
+    <div class="legal-footer-box">By using OPWA, you acknowledge that you have read, understood, and agree to these Terms of Service.
       <div style="margin-top:12px">
         <a href="/" onclick="navigate('/');return false;">&#x2190; Back to Platform</a>
         <a href="/privacy" class="muted" onclick="navigate('/privacy');return false;">Privacy Policy &#x2192;</a>
@@ -1797,25 +1744,23 @@ footer{
   </div>
 </div>
 
-<!-- PRIVACY PAGE -->
 <div id="page-privacy" class="legal-page">
   <div class="legal-wrap">
     <div class="legal-eyebrow">Legal</div>
     <h1 class="legal-h1">Privacy Policy</h1>
     <p class="legal-meta">Last updated: January 2025 &middot; OPWA Protocol</p>
-    <div class="legal-section"><h2>1. Overview</h2><p>OPWA Protocol (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is committed to transparency. This Privacy Policy explains what data we collect, how we use it, and your rights. Because OPWA operates on a public blockchain, certain information is inherently public and cannot be made private.</p></div>
-    <div class="legal-section"><h2>2. Information We Collect</h2><p>We do not collect personally identifiable information directly. When you interact with the Platform, your Bitcoin wallet address and all transaction data are recorded on the OP_NET blockchain and are publicly visible. We do not store your private keys, seed phrases, or passwords at any point.</p></div>
-    <div class="legal-section"><h2>3. Blockchain Data</h2><p>All transactions executed through OPWA smart contracts are permanently recorded on the Bitcoin blockchain via OP_NET. This includes wallet addresses, token amounts, timestamps, and transaction hashes. This data is public, immutable, and cannot be deleted.</p></div>
-    <div class="legal-section"><h2>4. Analytics</h2><p>The Platform may use privacy-respecting analytics tools to understand aggregate usage patterns (e.g., page views, session duration). We do not use cookies for advertising or share usage data with third-party advertisers.</p></div>
-    <div class="legal-section"><h2>5. Third-Party Services</h2><p>The Platform integrates with third-party services including: CoinGecko (BTC price data), Mempool.opnet.org (gas price data), and OPScan (blockchain explorer). Each of these services has its own privacy policy. We encourage you to review them.</p></div>
-    <div class="legal-section"><h2>6. Wallet Extensions</h2><p>When you connect a wallet (OP_Wallet, Unisat, Xverse, or OKX), the wallet extension may request your public key and Bitcoin address. OPWA only reads the public key &mdash; we never request your private key or seed phrase. Wallet extension data handling is governed by each wallet&rsquo;s own privacy policy.</p></div>
-    <div class="legal-section"><h2>7. Data Retention</h2><p>We do not maintain a database of user information. Blockchain transaction data is retained indefinitely by the OP_NET network by its nature. Any off-chain analytics data is retained for a maximum of 90 days.</p></div>
-    <div class="legal-section"><h2>8. Your Rights</h2><p>Because we collect minimal off-chain data, most privacy rights (access, deletion, correction) do not apply to on-chain transaction data. For any off-chain data inquiries, contact us via GitHub. We will respond within 30 days.</p></div>
-    <div class="legal-section"><h2>9. Security</h2><p>We take reasonable measures to secure any off-chain systems. However, no system is 100% secure. The decentralized nature of OP_NET means that smart contract interactions are secured by the Bitcoin network&rsquo;s consensus mechanism.</p></div>
-    <div class="legal-section"><h2>10. Changes to This Policy</h2><p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date. Continued use of the Platform after changes constitutes acceptance of the new policy.</p></div>
-    <div class="legal-section"><h2>11. Contact</h2><p>For privacy inquiries, contact us via GitHub at github.com/Opwabtc or through official OPWA community channels.</p></div>
-    <div class="legal-footer-box">
-      We are committed to protecting your privacy and operating transparently on a public blockchain.
+    <div class="legal-section"><h2>1. Overview</h2><p>OPWA Protocol is committed to transparency. This Privacy Policy explains what data we collect, how we use it, and your rights. Because OPWA operates on a public blockchain, certain information is inherently public.</p></div>
+    <div class="legal-section"><h2>2. Information We Collect</h2><p>We do not collect personally identifiable information directly. Your Bitcoin wallet address and transaction data are recorded on the OP_NET blockchain and are publicly visible. We do not store private keys, seed phrases, or passwords.</p></div>
+    <div class="legal-section"><h2>3. Blockchain Data</h2><p>All transactions executed through OPWA smart contracts are permanently recorded on the Bitcoin blockchain via OP_NET. This includes wallet addresses, token amounts, timestamps, and transaction hashes. This data is public and immutable.</p></div>
+    <div class="legal-section"><h2>4. Analytics</h2><p>The Platform may use privacy-respecting analytics tools to understand aggregate usage patterns. We do not use cookies for advertising or share usage data with third-party advertisers.</p></div>
+    <div class="legal-section"><h2>5. Third-Party Services</h2><p>The Platform integrates with CoinGecko (BTC price), Mempool.opnet.org (gas price), and OPScan (blockchain explorer). Each has its own privacy policy.</p></div>
+    <div class="legal-section"><h2>6. Wallet Extensions</h2><p>When you connect a wallet, OPWA only reads the public key &mdash; we never request your private key or seed phrase.</p></div>
+    <div class="legal-section"><h2>7. Data Retention</h2><p>We do not maintain a database of user information. Any off-chain analytics data is retained for a maximum of 90 days.</p></div>
+    <div class="legal-section"><h2>8. Your Rights</h2><p>For any off-chain data inquiries, contact us via GitHub. We will respond within 30 days.</p></div>
+    <div class="legal-section"><h2>9. Security</h2><p>Smart contract interactions are secured by the Bitcoin network consensus mechanism.</p></div>
+    <div class="legal-section"><h2>10. Changes</h2><p>We may update this Privacy Policy from time to time. Continued use of the Platform after changes constitutes acceptance of the new policy.</p></div>
+    <div class="legal-section"><h2>11. Contact</h2><p>For privacy inquiries, contact us via GitHub at github.com/Opwabtc.</p></div>
+    <div class="legal-footer-box">We are committed to protecting your privacy and operating transparently on a public blockchain.
       <div style="margin-top:12px">
         <a href="/" onclick="navigate('/');return false;">&#x2190; Back to Platform</a>
         <a href="/terms" class="muted" onclick="navigate('/terms');return false;">Terms of Service &#x2192;</a>
@@ -1824,19 +1769,16 @@ footer{
   </div>
 </div>
 
-<!-- DASHBOARD PAGE -->
 <div id="page-dashboard" class="dash-page">
   <div class="dash-wrap">
-
     <div id="dash-noconn" class="dash-noconn">
       <div class="dash-noconn-box">
-        <div class="dash-noconn-icon">&#x1F512;</div>
-        <div class="dash-noconn-title">Connect Your Wallet</div>
-        <div class="dash-noconn-text">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</div>
-        <button class="dash-noconn-btn" onclick="navigate('/');setTimeout(()=>openWalletModal(),300)">&#x2192; Go Home to Connect</button>
+        <div style="font-size:42px;margin-bottom:14px">&#x1F512;</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:10px">Connect Your Wallet</div>
+        <div style="font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.6">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</div>
+        <button onclick="navigate('/');setTimeout(()=>openWalletModal(),200)" style="padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;color:#fff;font-weight:600;font-size:14px;cursor:pointer">&#x2192; Go Home to Connect</button>
       </div>
     </div>
-
     <div id="dash-content" style="display:none">
       <div class="dash-header">
         <div>
@@ -1845,16 +1787,14 @@ footer{
             <span id="dash-addr-short">—</span>
             <span>&#xB7;</span>
             <span class="net">OP_NET Testnet</span>
-            <span id="dash-updated" style="font-size:11px;color:var(--text-3)"></span>
+            <span id="dash-updated" style="font-size:11px"></span>
           </div>
         </div>
-        <div class="dash-actions">
-          <span id="dash-syncing" class="dash-syncing" style="display:none">Syncing...</span>
-          <span class="dash-badge-connected">CONNECTED</span>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="dash-badge">CONNECTED</span>
           <button class="dash-refresh" onclick="dashFetch()">&#x21BB; Refresh</button>
         </div>
       </div>
-
       <div class="dash-stats">
         <div class="dash-stat">
           <div class="dash-stat-label">BTC Balance</div>
@@ -1872,38 +1812,31 @@ footer{
           <div class="dash-stat-sub">Live price</div>
         </div>
       </div>
-
       <div class="dash-supply">
-        <div class="dash-supply-head">
-          <span class="dash-supply-label">OPWAP Supply Progress</span>
-          <span class="dash-supply-pct" id="dash-supply-pct">0.00%</span>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-2)">OPWAP Supply Progress</span>
+          <span style="color:var(--accent);font-weight:700;font-size:12px" id="dash-supply-pct">0.00%</span>
         </div>
         <div class="dash-bar-track"><div class="dash-bar-fill" id="dash-bar-fill" style="width:0%"></div></div>
-        <div class="dash-bar-foot">
-          <span id="dash-supply-minted">0 minted</span>
-          <span>18B max</span>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)">
+          <span id="dash-supply-minted">0 minted</span><span>18B max</span>
         </div>
       </div>
-
-      <div class="dash-holdings-title">Token Holdings</div>
-      <div class="dash-holdings-grid">
-        <div class="dash-token-card">
-          <div class="dash-token-head">
-            <span class="dash-token-symbol">OPWAP</span>
-            <span class="dash-token-badge">OP_20</span>
-          </div>
-          <div class="dash-token-bal" id="dash-opwap-bal">0</div>
-          <div class="dash-token-btc" id="dash-opwap-btc">&#x2248; 0.000000 BTC</div>
-          <div class="dash-token-apy">&#x25B2; 15% APY</div>
-          <a id="dash-opscan-token" href="https://opscan.org/token/opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp?network=op_testnet" target="_blank" class="dash-token-link">View on OPScan &#x2197;</a>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">Token Holdings</div>
+      <div class="dash-token-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-weight:800;font-size:16px;color:var(--accent)">OPWAP</span>
+          <span style="font-size:10px;background:rgba(34,197,94,.18);color:#4ade80;border-radius:20px;padding:3px 9px;font-weight:700">OP_20</span>
         </div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:900;color:var(--text-1);margin-bottom:4px" id="dash-opwap-bal">0</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:8px" id="dash-opwap-btc">&#x2248; 0.000000 BTC</div>
+        <div style="font-size:12px;color:#4ade80;font-weight:700;margin-bottom:12px">&#x25B2; 15% APY</div>
+        <a href="https://opscan.org/token/opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp?network=op_testnet" target="_blank" style="color:var(--accent);font-size:11px;font-weight:600;text-decoration:none">View on OPScan &#x2197;</a>
       </div>
-
-      <a id="dash-opscan-link" href="https://opscan.org/?network=op_testnet" target="_blank" class="dash-opscan-btn">&#x2197; View all transactions on OPScan</a>
+      <a id="dash-opscan-link" href="https://opscan.org/?network=op_testnet" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:14px;font-weight:600;text-decoration:none;border:1px solid var(--accent-border);border-radius:9px;padding:11px 18px;background:var(--accent-dim)">&#x2197; View all transactions on OPScan</a>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════
      LIVE TICKER BAR (bottom)
 ════════════════════════════════════════ -->
@@ -2059,10 +1992,8 @@ footer{
 /* ── CURSOR ── */
 const cur = document.getElementById('cur');
 document.addEventListener('mousemove', e => {
-  if (cur) {
-    cur.style.left = e.clientX + 'px';
-    cur.style.top  = e.clientY + 'px';
-  }
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
 }, {passive:true});
 
 /* ── THEME ── */
@@ -2097,11 +2028,535 @@ function closeWallet()     { document.getElementById('wallet-modal').classList.r
 document.getElementById('wallet-modal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeWallet();
 });
+let walletState = { connected: false, addr: '', sats: 0, type: '' };
+
+function walletConnected(addr, sats, type) {
+  walletState = { connected: true, addr, sats, type };
+  const short = addr.slice(0,8) + '…' + addr.slice(-6);
+  const btn = document.getElementById('connect-btn');
+  if (btn) { btn.textContent = short; btn.classList.add('connected'); }
+  // update dropdown
+  const wdAddr = document.getElementById('wd-address');
+  const wdBal  = document.getElementById('wd-balance');
+  const wdUsd  = document.getElementById('wd-balance-usd');
+  if (wdAddr) wdAddr.textContent = addr;
+  if (wdBal)  wdBal.textContent  = '₿ ' + (sats/1e8).toFixed(5);
+  if (wdUsd)  wdUsd.textContent  = '≈ 
+
+/* ── GAS WIDGET ── */
+let gasOpen = false;
+function toggleGas() {
+  gasOpen = !gasOpen;
+  document.getElementById('gas-popup').classList.toggle('open', gasOpen);
+  document.getElementById('gas-trigger-btn').classList.toggle('open', gasOpen);
+}
+document.addEventListener('click', function(e) {
+  if (gasOpen && !document.getElementById('gas-popup').contains(e.target) && !document.getElementById('gas-trigger-btn').contains(e.target)) {
+    gasOpen = false;
+    document.getElementById('gas-popup').classList.remove('open');
+    document.getElementById('gas-trigger-btn').classList.remove('open');
+  }
+});
+let btcPrice = 0;
+function calcGas(val) {
+  if (!btcPrice || !val) return;
+  const usd = parseFloat(val) * btcPrice;
+  document.getElementById('g-res-btn').textContent = '\u2192 $' + usd.toFixed(2);
+}
+
+/* ── TOAST ── */
+function showToast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + (type||'info');
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ── INVEST PANELS ── */
+const SATS_PER_TOKEN = 1000;            // 1 OPWAP = 1,000 sats
+const BTC_PER_TOKEN  = 0.00001;         // 1 OPWAP = 0.00001 BTC
+
+function syncInvest(asset, field, raw) {
+  const val = parseFloat(raw);
+  const btcEl    = document.getElementById(asset + '-btc');
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const receipt  = document.getElementById(asset + '-receipt');
+  const rTokens  = document.getElementById(asset + '-receipt-tokens');
+  const rBtc     = document.getElementById(asset + '-receipt-btc');
+
+  if (!val || val <= 0) {
+    receipt.style.display = 'none';
+    return;
+  }
+
+  let tokens, btcAmt;
+  if (field === 'btc') {
+    // BTC → tokens
+    tokens = Math.floor(val / BTC_PER_TOKEN);
+    btcAmt = val;
+    if (tokensEl) tokensEl.value = tokens;
+  } else {
+    // tokens → BTC
+    tokens = Math.floor(val);
+    btcAmt = tokens * BTC_PER_TOKEN;
+    if (btcEl) btcEl.value = btcAmt.toFixed(5);
+  }
+
+  if (tokens > 0) {
+    receipt.style.display = 'block';
+    rTokens.textContent = tokens.toLocaleString('en') + ' OPWAP';
+    // strikethrough-style showing exact BTC cost
+    const sats = tokens * SATS_PER_TOKEN;
+    rBtc.textContent = '\u2248 ' + btcAmt.toFixed(8) + ' BTC (' + sats.toLocaleString('en') + ' sats)';
+  } else {
+    receipt.style.display = 'none';
+  }
+}
+
+function confirmInvest(asset) {
+  const btcEl    = document.getElementById(asset + '-btc');
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const btcAmt   = parseFloat(btcEl ? btcEl.value : 0);
+  const tokens   = parseInt(tokensEl ? tokensEl.value : 0);
+  if (!btcAmt || !tokens) {
+    showToast('Enter BTC amount or number of tokens', 'warn');
+    return;
+  }
+  // require wallet
+  openWalletModal();
+  showToast('Confirm wallet to invest ' + btcAmt.toFixed(5) + ' BTC → ' + tokens + ' OPWAP', 'info');
+}
+
+function toggleInvest(id, btn) {
+  const panel = document.getElementById(id);
+  const open = panel.classList.toggle('open');
+  const isGamma = id === 'p-gamma';
+  // reset receipt on close
+  if (!open) {
+    const asset = id.replace('p-','');
+    const r = document.getElementById(asset + '-receipt');
+    if (r) r.style.display = 'none';
+    const btcEl = document.getElementById(asset + '-btc');
+    const tokEl = document.getElementById(asset + '-tokens');
+    if (btcEl) btcEl.value = '';
+    if (tokEl) tokEl.value = '';
+  }
+  if (open) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
+  } else {
+    if (isGamma) {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
+    } else {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
+    }
+  }
+}
+
+/* ── ASSET FILTERS / SEARCH ── */
+function filterAssets(cat, btn) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+  });
+}
+function searchAssets(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = card.dataset.name.includes(lq) ? '' : 'none';
+  });
+}
+function sortAssets(by) { /* placeholder */ }
+
+/* ── DISPLAY TOGGLE (BTC/USD on cards) ── */
+function toggleDisp(btn, mode, assetId) {
+  const wrap = btn.closest('.card-asset');
+  wrap.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const priceEl = document.getElementById(assetId + '-price');
+  if (!priceEl) return;
+  if (mode === 'btc') {
+    priceEl.textContent = '\u2014';
+  } else {
+    priceEl.textContent = btcPrice ? '$' + (btcPrice * 0.001).toFixed(2) : '\u2014';
+  }
+}
+
+/* ── LIVE PRICES ── */
+async function fetchPrices() {
+  try {
+    let price = 0;
+    try {
+      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const d = await r.json();
+      price = d.bitcoin.usd;
+    } catch(_) {
+      const r2 = await fetch('https://api.coinpaprika.com/v1/tickers/btc-bitcoin');
+      const d2 = await r2.json();
+      price = d2.quotes.USD.price;
+    }
+    btcPrice = price;
+    const fmt = '
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+
+/* ── DASHBOARD DATA ── */
+const OPWAP_ADDR2 = 'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp';
+const OPNET_RPC2  = 'https://testnet.opnet.org';
+let dashOpwapBal = '0', dashSupply = '0';
+
+function formatAmt(raw, dec) {
+  if (!raw || raw === '0') return '0';
+  try {
+    const n = BigInt(raw), d = BigInt(10**dec);
+    const w = n/d, f = n%d;
+    return f === 0n ? w.toLocaleString() : w.toLocaleString() + '.' + f.toString().padStart(dec,'0').replace(/0+$/,'').slice(0,4);
+  } catch { return '0'; }
+}
+async function dashRpcCall(data) {
+  try {
+    const r = await fetch(OPNET_RPC2, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to:OPWAP_ADDR2,data},'latest']}),
+      signal: AbortSignal.timeout(8000) });
+    const j = await r.json(); return j.result ?? null;
+  } catch { return null; }
+}
+async function dashFetch() {
+  if (!walletState.connected || !walletState.addr) return;
+  try {
+    const addr64 = walletState.addr.replace('0x','').padStart(64,'0');
+    const [balHex, supHex] = await Promise.all([dashRpcCall('0x70a08231'+addr64), dashRpcCall('0x18160ddd')]);
+    if (balHex) dashOpwapBal = BigInt(balHex).toString();
+    if (supHex) dashSupply   = BigInt(supHex).toString();
+    dashRenderData();
+    const el = document.getElementById('dash-updated');
+    if (el) el.textContent = '· Updated ' + new Date().toLocaleTimeString();
+  } catch(_) {}
+}
+function dashRenderData() {
+  const bp = btcPrice || 65000;
+  const btcBtc = walletState.sats/1e8, btcUsd = btcBtc*bp;
+  const opwapN = formatAmt(dashOpwapBal, 8);
+  const opwapBtc = Number(dashOpwapBal)/1e8*0.00001, opwapUsd = opwapBtc*bp;
+  const SUPPLY_MAX = 18_000_000_000;
+  const supplyNum = Number(BigInt(dashSupply||'0'))/1e8;
+  const pct = Math.min(100,(supplyNum/SUPPLY_MAX)*100);
+  const s = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+  s('dash-btc-val',   '₿ ' + btcBtc.toFixed(5));
+  s('dash-btc-usd',   '≈ 
+</body>
+</html>
+ + btcPrice.toLocaleString('en', {maximumFractionDigits:0});
+    document.getElementById('hero-btc-price').textContent = fmt;
+    document.getElementById('g-btc').textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
+}
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+</script>
+</body>
+</html>
+ + ((sats/1e8)*(btcPrice||65000)).toFixed(2);
+  // show dashboard link
+  const navDash = document.getElementById('nav-dashboard');
+  if (navDash) navDash.style.display = 'inline-flex';
+  // update ticker
+  const lbw = document.getElementById('lb-wallet');
+  if (lbw) lbw.textContent = short;
+  showToast('Connected: ' + short, 'success');
+  closeWallet();
+  dashRender();
+  dashFetch();
+}
+
+function wdDisconnect() {
+  walletState = { connected: false, addr: '', sats: 0, type: '' };
+  const btn = document.getElementById('connect-btn');
+  if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
+  document.getElementById('wallet-dropdown').classList.remove('open');
+  const navDash = document.getElementById('nav-dashboard');
+  if (navDash) navDash.style.display = 'none';
+  const lbw = document.getElementById('lb-wallet');
+  if (lbw) lbw.textContent = 'not connected';
+  showToast('Wallet disconnected', 'info');
+  if (window.location.pathname === '/dashboard') navigate('/');
+  dashRender();
+}
+function wdCopy() {
+  if (walletState.addr) navigator.clipboard.writeText(walletState.addr).then(() => showToast('Address copied!', 'success'));
+}
+function wdExplorer() {
+  if (walletState.addr) window.open('https://opscan.org/accounts/' + walletState.addr + '?network=op_testnet', '_blank');
+}
+function handleConnectClick() {
+  if (walletState.connected) {
+    document.getElementById('wallet-dropdown').classList.toggle('open');
+  } else {
+    openWalletModal();
+  }
+}
+
 async function connectWallet(type) {
   showToast('Connecting to ' + type + '…', 'info');
   try {
-    let accounts = [];
-    let sats = 0;
+    let accounts = [], sats = 0;
     if (type === 'OP_Wallet') {
       if (!window.opnet) { showToast('OP_Wallet not found. Install it first.', 'danger'); return; }
       accounts = await window.opnet.requestAccounts();
@@ -2109,10 +2564,10 @@ async function connectWallet(type) {
     } else if (type === 'Unisat') {
       if (!window.unisat) { showToast('Unisat not found. Install it first.', 'danger'); return; }
       accounts = await window.unisat.requestAccounts();
-      try { sats = await window.unisat.getBalance().then(b => b.total); } catch(_) {}
+      try { const b = await window.unisat.getBalance(); sats = b.total || 0; } catch(_) {}
     } else if (type === 'Xverse') {
       if (!window.BitcoinProvider) { showToast('Xverse not found. Install it first.', 'danger'); return; }
-      const res = await window.BitcoinProvider.request('getAccounts', { purposes: ['payment', 'ordinals'] });
+      const res = await window.BitcoinProvider.request('getAccounts', { purposes: ['payment','ordinals'] });
       accounts = res.result ? res.result.map(a => a.address) : [];
     } else if (type === 'OKX') {
       if (!window.okxwallet) { showToast('OKX Wallet not found. Install it first.', 'danger'); return; }
@@ -2271,27 +2726,154 @@ function toggleDisp(btn, mode, assetId) {
 /* ── LIVE PRICES ── */
 async function fetchPrices() {
   try {
-    const proxies = [
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
-      'https://api.coinpaprika.com/v1/tickers/btc-bitcoin',
-    ];
-    let fetched = false;
-    for (const url of proxies) {
-      try {
-        const r = await fetch(url);
-        const d = await r.json();
-        if (d.bitcoin) { btcPrice = d.bitcoin.usd; fetched = true; break; }
-        if (d.quotes)  { btcPrice = d.quotes.USD.price; fetched = true; break; }
-      } catch(_) {}
+    let price = 0;
+    try {
+      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const d = await r.json();
+      price = d.bitcoin.usd;
+    } catch(_) {
+      const r2 = await fetch('https://api.coinpaprika.com/v1/tickers/btc-bitcoin');
+      const d2 = await r2.json();
+      price = d2.quotes.USD.price;
     }
-    if (!fetched) return;
-    const fmt = '$' + btcPrice.toLocaleString();
+    btcPrice = price;
+    const fmt = '
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+</script>
+</body>
+</html>
+ + btcPrice.toLocaleString('en', {maximumFractionDigits:0});
     document.getElementById('hero-btc-price').textContent = fmt;
     document.getElementById('g-btc').textContent = fmt;
-    ['lb-btc','lb-btc2'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = fmt;
-    });
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
     calcSim();
   } catch(e) {}
 }
@@ -2363,12 +2945,7 @@ function sliderUpd(el) {
 
 function adjVal(id, baseDir) {
   const el = document.getElementById(id);
-  let step;
-  if (simCurrency === 'btc') {
-    step = 0.001;
-  } else {
-    step = (id === 'initial-val') ? 50 : 10;
-  }
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
   let v = (parseFloat(el.value)||0) + (baseDir * step);
   if (v < 0) v = 0;
   el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
@@ -2429,283 +3006,1331 @@ function calcSim() {
   }
 }
 calcSim();
-
-
-/* ── WALLET STATE ── */
-let walletState = { connected: false, addr: '', sats: 0, type: '' };
-
-function handleConnectClick() {
-  if (walletState.connected) {
-    const dd = document.getElementById('wallet-dropdown');
-    dd.classList.toggle('open');
-  } else {
-    openWalletModal();
-  }
-}
-
-document.addEventListener('click', function(e) {
-  const wrap = document.getElementById('wallet-btn-wrap');
-  if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('wallet-dropdown').classList.remove('open');
-  }
-});
-
-function wdCopy() {
-  if (walletState.addr) {
-    navigator.clipboard.writeText(walletState.addr).then(() => showToast('Address copied!', 'success'));
-  }
-}
-function wdExplorer() {
-  if (walletState.addr) {
-    window.open('https://opscan.org/accounts/' + walletState.addr + '?network=op_testnet', '_blank');
-  }
-}
-function wdDisconnect() {
-  walletState = { connected: false, addr: '', sats: 0, type: '' };
-  const btn = document.getElementById('connect-btn');
-  btn.textContent = 'Connect Wallet';
-  btn.classList.remove('connected');
-  document.getElementById('wallet-dropdown').classList.remove('open');
-  document.getElementById('lb-wallet').textContent = 'not connected';
-  showToast('Wallet disconnected', 'info');
-  if (window.location.pathname === '/dashboard') { navigate('/'); }
-  dashRender();
-}
-
-function walletConnected(addr, sats, type) {
-  walletState = { connected: true, addr, sats, type };
-  const short = addr.slice(0,8) + '\u2026' + addr.slice(-6);
-  const btn = document.getElementById('connect-btn');
-  btn.textContent = short;
-  btn.classList.add('connected');
-  document.getElementById('wd-address').textContent = addr;
-  const btcBal = (sats / 1e8).toFixed(5);
-  const usdBal = ((sats / 1e8) * (btcPrice || 65000)).toFixed(2);
-  document.getElementById('wd-balance').textContent = '\u20BF ' + btcBal;
-  document.getElementById('wd-balance-usd').textContent = '\u2248 
-
-function navigate(p) {
-  window.history.pushState({}, '', p);
-  renderRoute();
-}
-function renderRoute() {
-  const p = window.location.pathname;
-  const main    = document.getElementById('main-content');
-  const terms   = document.getElementById('page-terms');
-  const privacy = document.getElementById('page-privacy');
-  const dash    = document.getElementById('page-dashboard');
-  [terms, privacy, dash].forEach(el => el && el.classList.remove('active'));
-  main.style.display = 'none';
-  if (p === '/terms') {
-    terms.classList.add('active');
-  } else if (p === '/privacy') {
-    privacy.classList.add('active');
-  } else if (p === '/dashboard') {
-    dash.classList.add('active');
-    dashRender();
-  } else {
-    main.style.display = 'block';
-  }
-  window.scrollTo(0,0);
-}
-window.addEventListener('popstate', renderRoute);
-renderRoute();
-
 </script>
 </body>
 </html>
- + usdBal;
-  document.getElementById('lb-wallet').textContent = short;
+ + btcUsd.toFixed(2) + ' USD');
+  s('dash-opwap-val', opwapN);
+  s('dash-total-usd', '
+</body>
+</html>
+ + btcPrice.toLocaleString('en', {maximumFractionDigits:0});
+    document.getElementById('hero-btc-price').textContent = fmt;
+    document.getElementById('g-btc').textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
+}
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+</script>
+</body>
+</html>
+ + ((sats/1e8)*(btcPrice||65000)).toFixed(2);
+  // show dashboard link
   const navDash = document.getElementById('nav-dashboard');
   if (navDash) navDash.style.display = 'inline-flex';
+  // update ticker
+  const lbw = document.getElementById('lb-wallet');
+  if (lbw) lbw.textContent = short;
   showToast('Connected: ' + short, 'success');
   closeWallet();
   dashRender();
   dashFetch();
 }
 
-/* ── DASHBOARD LOGIC ── */
-const OPWAP_ADDR = 'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp';
-const OPNET_RPC  = 'https://testnet.opnet.org';
-let dashOpwapBal = '0';
-let dashSupply   = '0';
-
-async function dashRpcCall(data) {
-  try {
-    const r = await fetch(OPNET_RPC, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc:'2.0', id:1, method:'eth_call', params:[{ to: OPWAP_ADDR, data }, 'latest'] }),
-      signal: AbortSignal.timeout(8000)
-    });
-    if (!r.ok) return null;
-    const j = await r.json();
-    return j.result ?? null;
-  } catch { return null; }
+function wdDisconnect() {
+  walletState = { connected: false, addr: '', sats: 0, type: '' };
+  const btn = document.getElementById('connect-btn');
+  if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
+  document.getElementById('wallet-dropdown').classList.remove('open');
+  const navDash = document.getElementById('nav-dashboard');
+  if (navDash) navDash.style.display = 'none';
+  const lbw = document.getElementById('lb-wallet');
+  if (lbw) lbw.textContent = 'not connected';
+  showToast('Wallet disconnected', 'info');
+  if (window.location.pathname === '/dashboard') navigate('/');
+  dashRender();
 }
-
-function formatAmt(raw, dec) {
-  if (!raw || raw === '0') return '0';
-  try {
-    const n = BigInt(raw);
-    const d = BigInt(10 ** dec);
-    const whole = n / d;
-    const frac  = n % d;
-    if (frac === 0n) return whole.toLocaleString();
-    return whole.toLocaleString() + '.' + frac.toString().padStart(dec, '0').replace(/0+$/, '').slice(0, 4);
-  } catch { return '0'; }
+function wdCopy() {
+  if (walletState.addr) navigator.clipboard.writeText(walletState.addr).then(() => showToast('Address copied!', 'success'));
 }
-
-async function dashFetch() {
-  if (!walletState.connected || !walletState.addr) return;
-  document.getElementById('dash-syncing').style.display = 'flex';
-  try {
-    const addr64 = walletState.addr.replace('0x','').padStart(64,'0');
-    const [balHex, supHex] = await Promise.all([
-      dashRpcCall('0x70a08231' + addr64),
-      dashRpcCall('0x18160ddd'),
-    ]);
-    if (balHex) dashOpwapBal = BigInt(balHex).toString();
-    if (supHex) dashSupply   = BigInt(supHex).toString();
-    dashRenderData();
-    document.getElementById('dash-updated').textContent = '\u00B7 Updated ' + new Date().toLocaleTimeString();
-  } finally {
-    document.getElementById('dash-syncing').style.display = 'none';
-  }
+function wdExplorer() {
+  if (walletState.addr) window.open('https://opscan.org/accounts/' + walletState.addr + '?network=op_testnet', '_blank');
 }
-
-function dashRenderData() {
-  const bp = btcPrice || 65000;
-  const btcBtc  = walletState.sats / 1e8;
-  const btcUsd  = btcBtc * bp;
-  const opwapN  = formatAmt(dashOpwapBal, 8);
-  const opwapBtc = Number(dashOpwapBal) / 1e8 * 0.00001;
-  const opwapUsd = opwapBtc * bp;
-  const totalUsd = btcUsd + opwapUsd;
-  const SUPPLY_MAX = 18_000_000_000;
-  const supplyNum  = Number(BigInt(dashSupply || '0')) / 1e8;
-  const supplyPct  = Math.min(100, (supplyNum / SUPPLY_MAX) * 100);
-
-  document.getElementById('dash-btc-val').textContent  = '\u20BF ' + btcBtc.toFixed(5);
-  document.getElementById('dash-btc-usd').textContent  = '\u2248 
-
-function navigate(p) {
-  window.history.pushState({}, '', p);
-  renderRoute();
-}
-function renderRoute() {
-  const p = window.location.pathname;
-  const main    = document.getElementById('main-content');
-  const terms   = document.getElementById('page-terms');
-  const privacy = document.getElementById('page-privacy');
-  const dash    = document.getElementById('page-dashboard');
-  [terms, privacy, dash].forEach(el => el && el.classList.remove('active'));
-  main.style.display = 'none';
-  if (p === '/terms') {
-    terms.classList.add('active');
-  } else if (p === '/privacy') {
-    privacy.classList.add('active');
-  } else if (p === '/dashboard') {
-    dash.classList.add('active');
-    dashRender();
-  } else {
-    main.style.display = 'block';
-  }
-  window.scrollTo(0,0);
-}
-window.addEventListener('popstate', renderRoute);
-renderRoute();
-
-</script>
-</body>
-</html>
- + btcUsd.toFixed(2) + ' USD';
-  document.getElementById('dash-opwap-val').textContent = opwapN;
-  document.getElementById('dash-total-usd').textContent = '
-
-function navigate(p) {
-  window.history.pushState({}, '', p);
-  renderRoute();
-}
-function renderRoute() {
-  const p = window.location.pathname;
-  const main    = document.getElementById('main-content');
-  const terms   = document.getElementById('page-terms');
-  const privacy = document.getElementById('page-privacy');
-  const dash    = document.getElementById('page-dashboard');
-  [terms, privacy, dash].forEach(el => el && el.classList.remove('active'));
-  main.style.display = 'none';
-  if (p === '/terms') {
-    terms.classList.add('active');
-  } else if (p === '/privacy') {
-    privacy.classList.add('active');
-  } else if (p === '/dashboard') {
-    dash.classList.add('active');
-    dashRender();
-  } else {
-    main.style.display = 'block';
-  }
-  window.scrollTo(0,0);
-}
-window.addEventListener('popstate', renderRoute);
-renderRoute();
-
-</script>
-</body>
-</html>
- + totalUsd.toFixed(0);
-  document.getElementById('dash-opwap-bal').textContent = opwapN;
-  document.getElementById('dash-opwap-btc').textContent = '\u2248 ' + opwapBtc.toFixed(6) + ' BTC';
-  document.getElementById('dash-supply-pct').textContent = supplyPct.toFixed(2) + '%';
-  document.getElementById('dash-bar-fill').style.width  = supplyPct + '%';
-  document.getElementById('dash-supply-minted').textContent = formatAmt(dashSupply, 8) + ' minted';
-  const opscanUrl = 'https://opscan.org/accounts/' + walletState.addr + '?network=op_testnet';
-  document.getElementById('dash-opscan-link').href = opscanUrl;
-  document.getElementById('dash-addr-short').textContent = walletState.addr.slice(0,10) + '...' + walletState.addr.slice(-4);
-}
-
-function dashRender() {
-  const noconn = document.getElementById('dash-noconn');
-  const content = document.getElementById('dash-content');
+function handleConnectClick() {
   if (walletState.connected) {
-    noconn.style.display  = 'none';
-    content.style.display = 'block';
-    dashRenderData();
+    document.getElementById('wallet-dropdown').classList.toggle('open');
   } else {
-    noconn.style.display  = 'flex';
-    content.style.display = 'none';
+    openWalletModal();
   }
+}
+
+async function connectWallet(type) {
+  showToast('Connecting to ' + type + '…', 'info');
+  try {
+    let accounts = [], sats = 0;
+    if (type === 'OP_Wallet') {
+      if (!window.opnet) { showToast('OP_Wallet not found. Install it first.', 'danger'); return; }
+      accounts = await window.opnet.requestAccounts();
+      try { const b = await window.opnet.getBalance(); sats = b.total || 0; } catch(_) {}
+    } else if (type === 'Unisat') {
+      if (!window.unisat) { showToast('Unisat not found. Install it first.', 'danger'); return; }
+      accounts = await window.unisat.requestAccounts();
+      try { const b = await window.unisat.getBalance(); sats = b.total || 0; } catch(_) {}
+    } else if (type === 'Xverse') {
+      if (!window.BitcoinProvider) { showToast('Xverse not found. Install it first.', 'danger'); return; }
+      const res = await window.BitcoinProvider.request('getAccounts', { purposes: ['payment','ordinals'] });
+      accounts = res.result ? res.result.map(a => a.address) : [];
+    } else if (type === 'OKX') {
+      if (!window.okxwallet) { showToast('OKX Wallet not found. Install it first.', 'danger'); return; }
+      accounts = await window.okxwallet.bitcoin.requestAccounts();
+    }
+    if (accounts && accounts.length > 0) {
+      walletConnected(accounts[0], sats, type);
+    } else {
+      showToast('No accounts returned.', 'danger');
+    }
+  } catch(e) {
+    showToast('Connection failed: ' + (e.message || e), 'danger');
+  }
+}
+
+/* ── GAS WIDGET ── */
+let gasOpen = false;
+function toggleGas() {
+  gasOpen = !gasOpen;
+  document.getElementById('gas-popup').classList.toggle('open', gasOpen);
+  document.getElementById('gas-trigger-btn').classList.toggle('open', gasOpen);
+}
+document.addEventListener('click', function(e) {
+  if (gasOpen && !document.getElementById('gas-popup').contains(e.target) && !document.getElementById('gas-trigger-btn').contains(e.target)) {
+    gasOpen = false;
+    document.getElementById('gas-popup').classList.remove('open');
+    document.getElementById('gas-trigger-btn').classList.remove('open');
+  }
+});
+let btcPrice = 0;
+function calcGas(val) {
+  if (!btcPrice || !val) return;
+  const usd = parseFloat(val) * btcPrice;
+  document.getElementById('g-res-btn').textContent = '\u2192 $' + usd.toFixed(2);
+}
+
+/* ── TOAST ── */
+function showToast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + (type||'info');
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ── INVEST PANELS ── */
+const SATS_PER_TOKEN = 1000;            // 1 OPWAP = 1,000 sats
+const BTC_PER_TOKEN  = 0.00001;         // 1 OPWAP = 0.00001 BTC
+
+function syncInvest(asset, field, raw) {
+  const val = parseFloat(raw);
+  const btcEl    = document.getElementById(asset + '-btc');
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const receipt  = document.getElementById(asset + '-receipt');
+  const rTokens  = document.getElementById(asset + '-receipt-tokens');
+  const rBtc     = document.getElementById(asset + '-receipt-btc');
+
+  if (!val || val <= 0) {
+    receipt.style.display = 'none';
+    return;
+  }
+
+  let tokens, btcAmt;
+  if (field === 'btc') {
+    // BTC → tokens
+    tokens = Math.floor(val / BTC_PER_TOKEN);
+    btcAmt = val;
+    if (tokensEl) tokensEl.value = tokens;
+  } else {
+    // tokens → BTC
+    tokens = Math.floor(val);
+    btcAmt = tokens * BTC_PER_TOKEN;
+    if (btcEl) btcEl.value = btcAmt.toFixed(5);
+  }
+
+  if (tokens > 0) {
+    receipt.style.display = 'block';
+    rTokens.textContent = tokens.toLocaleString('en') + ' OPWAP';
+    // strikethrough-style showing exact BTC cost
+    const sats = tokens * SATS_PER_TOKEN;
+    rBtc.textContent = '\u2248 ' + btcAmt.toFixed(8) + ' BTC (' + sats.toLocaleString('en') + ' sats)';
+  } else {
+    receipt.style.display = 'none';
+  }
+}
+
+function confirmInvest(asset) {
+  const btcEl    = document.getElementById(asset + '-btc');
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const btcAmt   = parseFloat(btcEl ? btcEl.value : 0);
+  const tokens   = parseInt(tokensEl ? tokensEl.value : 0);
+  if (!btcAmt || !tokens) {
+    showToast('Enter BTC amount or number of tokens', 'warn');
+    return;
+  }
+  // require wallet
+  openWalletModal();
+  showToast('Confirm wallet to invest ' + btcAmt.toFixed(5) + ' BTC → ' + tokens + ' OPWAP', 'info');
+}
+
+function toggleInvest(id, btn) {
+  const panel = document.getElementById(id);
+  const open = panel.classList.toggle('open');
+  const isGamma = id === 'p-gamma';
+  // reset receipt on close
+  if (!open) {
+    const asset = id.replace('p-','');
+    const r = document.getElementById(asset + '-receipt');
+    if (r) r.style.display = 'none';
+    const btcEl = document.getElementById(asset + '-btc');
+    const tokEl = document.getElementById(asset + '-tokens');
+    if (btcEl) btcEl.value = '';
+    if (tokEl) tokEl.value = '';
+  }
+  if (open) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
+  } else {
+    if (isGamma) {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
+    } else {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
+    }
+  }
+}
+
+/* ── ASSET FILTERS / SEARCH ── */
+function filterAssets(cat, btn) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+  });
+}
+function searchAssets(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = card.dataset.name.includes(lq) ? '' : 'none';
+  });
+}
+function sortAssets(by) { /* placeholder */ }
+
+/* ── DISPLAY TOGGLE (BTC/USD on cards) ── */
+function toggleDisp(btn, mode, assetId) {
+  const wrap = btn.closest('.card-asset');
+  wrap.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const priceEl = document.getElementById(assetId + '-price');
+  if (!priceEl) return;
+  if (mode === 'btc') {
+    priceEl.textContent = '\u2014';
+  } else {
+    priceEl.textContent = btcPrice ? '$' + (btcPrice * 0.001).toFixed(2) : '\u2014';
+  }
+}
+
+/* ── LIVE PRICES ── */
+async function fetchPrices() {
+  try {
+    let price = 0;
+    try {
+      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const d = await r.json();
+      price = d.bitcoin.usd;
+    } catch(_) {
+      const r2 = await fetch('https://api.coinpaprika.com/v1/tickers/btc-bitcoin');
+      const d2 = await r2.json();
+      price = d2.quotes.USD.price;
+    }
+    btcPrice = price;
+    const fmt = '
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+</script>
+</body>
+</html>
+ + btcPrice.toLocaleString('en', {maximumFractionDigits:0});
+    document.getElementById('hero-btc-price').textContent = fmt;
+    document.getElementById('g-btc').textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
+}
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+</script>
+</body>
+</html>
+ + (btcUsd+opwapUsd).toFixed(0));
+  s('dash-opwap-bal', opwapN);
+  s('dash-opwap-btc', '≈ ' + opwapBtc.toFixed(6) + ' BTC');
+  s('dash-supply-pct', pct.toFixed(2)+'%');
+  s('dash-supply-minted', formatAmt(dashSupply,8)+' minted');
+  const fill = document.getElementById('dash-bar-fill'); if(fill) fill.style.width = pct+'%';
+  const lnk = document.getElementById('dash-opscan-link');
+  if(lnk) lnk.href = 'https://opscan.org/accounts/'+walletState.addr+'?network=op_testnet';
+  const as = document.getElementById('dash-addr-short');
+  if(as) as.textContent = walletState.addr.slice(0,10)+'...'+walletState.addr.slice(-4);
+}
+function dashRender() {
+  const nc = document.getElementById('dash-noconn');
+  const ct = document.getElementById('dash-content');
+  if (!nc || !ct) return;
+  if (walletState.connected) { nc.style.display='none'; ct.style.display='block'; dashRenderData(); }
+  else { nc.style.display='flex'; ct.style.display='none'; }
 }
 
 /* ── ROUTER ── */
-
-function navigate(p) {
-  window.history.pushState({}, '', p);
-  renderRoute();
-}
+function navigate(p) { window.history.pushState({}, '', p); renderRoute(); }
 function renderRoute() {
   const p = window.location.pathname;
   const main    = document.getElementById('main-content');
   const terms   = document.getElementById('page-terms');
   const privacy = document.getElementById('page-privacy');
   const dash    = document.getElementById('page-dashboard');
-  [terms, privacy, dash].forEach(el => el && el.classList.remove('active'));
-  main.style.display = 'none';
-  if (p === '/terms') {
-    terms.classList.add('active');
-  } else if (p === '/privacy') {
-    privacy.classList.add('active');
-  } else if (p === '/dashboard') {
-    dash.classList.add('active');
-    dashRender();
-  } else {
-    main.style.display = 'block';
-  }
+  if (main)    main.style.display    = 'none';
+  if (terms)   terms.classList.remove('active');
+  if (privacy) privacy.classList.remove('active');
+  if (dash)    dash.classList.remove('active');
+  if (p === '/terms')       { if(terms)   terms.classList.add('active'); }
+  else if (p === '/privacy'){ if(privacy) privacy.classList.add('active'); }
+  else if (p === '/dashboard') { if(dash) { dash.classList.add('active'); dashRender(); } }
+  else { if(main) main.style.display = 'block'; }
   window.scrollTo(0,0);
 }
 window.addEventListener('popstate', renderRoute);
 renderRoute();
 
+/* ── CLOSE DROPDOWN ON OUTSIDE CLICK ── */
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('wallet-btn-wrap');
+  const dd   = document.getElementById('wallet-dropdown');
+  if (wrap && dd && !wrap.contains(e.target)) dd.classList.remove('open');
+});
+
+</script>
+</body>
+</html>
+ + btcPrice.toLocaleString('en', {maximumFractionDigits:0});
+    document.getElementById('hero-btc-price').textContent = fmt;
+    document.getElementById('g-btc').textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
+}
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+</script>
+</body>
+</html>
+ + ((sats/1e8)*(btcPrice||65000)).toFixed(2);
+  // show dashboard link
+  const navDash = document.getElementById('nav-dashboard');
+  if (navDash) navDash.style.display = 'inline-flex';
+  // update ticker
+  const lbw = document.getElementById('lb-wallet');
+  if (lbw) lbw.textContent = short;
+  showToast('Connected: ' + short, 'success');
+  closeWallet();
+  dashRender();
+  dashFetch();
+}
+
+function wdDisconnect() {
+  walletState = { connected: false, addr: '', sats: 0, type: '' };
+  const btn = document.getElementById('connect-btn');
+  if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
+  document.getElementById('wallet-dropdown').classList.remove('open');
+  const navDash = document.getElementById('nav-dashboard');
+  if (navDash) navDash.style.display = 'none';
+  const lbw = document.getElementById('lb-wallet');
+  if (lbw) lbw.textContent = 'not connected';
+  showToast('Wallet disconnected', 'info');
+  if (window.location.pathname === '/dashboard') navigate('/');
+  dashRender();
+}
+function wdCopy() {
+  if (walletState.addr) navigator.clipboard.writeText(walletState.addr).then(() => showToast('Address copied!', 'success'));
+}
+function wdExplorer() {
+  if (walletState.addr) window.open('https://opscan.org/accounts/' + walletState.addr + '?network=op_testnet', '_blank');
+}
+function handleConnectClick() {
+  if (walletState.connected) {
+    document.getElementById('wallet-dropdown').classList.toggle('open');
+  } else {
+    openWalletModal();
+  }
+}
+
+async function connectWallet(type) {
+  showToast('Connecting to ' + type + '…', 'info');
+  try {
+    let accounts = [], sats = 0;
+    if (type === 'OP_Wallet') {
+      if (!window.opnet) { showToast('OP_Wallet not found. Install it first.', 'danger'); return; }
+      accounts = await window.opnet.requestAccounts();
+      try { const b = await window.opnet.getBalance(); sats = b.total || 0; } catch(_) {}
+    } else if (type === 'Unisat') {
+      if (!window.unisat) { showToast('Unisat not found. Install it first.', 'danger'); return; }
+      accounts = await window.unisat.requestAccounts();
+      try { const b = await window.unisat.getBalance(); sats = b.total || 0; } catch(_) {}
+    } else if (type === 'Xverse') {
+      if (!window.BitcoinProvider) { showToast('Xverse not found. Install it first.', 'danger'); return; }
+      const res = await window.BitcoinProvider.request('getAccounts', { purposes: ['payment','ordinals'] });
+      accounts = res.result ? res.result.map(a => a.address) : [];
+    } else if (type === 'OKX') {
+      if (!window.okxwallet) { showToast('OKX Wallet not found. Install it first.', 'danger'); return; }
+      accounts = await window.okxwallet.bitcoin.requestAccounts();
+    }
+    if (accounts && accounts.length > 0) {
+      walletConnected(accounts[0], sats, type);
+    } else {
+      showToast('No accounts returned.', 'danger');
+    }
+  } catch(e) {
+    showToast('Connection failed: ' + (e.message || e), 'danger');
+  }
+}
+
+/* ── GAS WIDGET ── */
+let gasOpen = false;
+function toggleGas() {
+  gasOpen = !gasOpen;
+  document.getElementById('gas-popup').classList.toggle('open', gasOpen);
+  document.getElementById('gas-trigger-btn').classList.toggle('open', gasOpen);
+}
+document.addEventListener('click', function(e) {
+  if (gasOpen && !document.getElementById('gas-popup').contains(e.target) && !document.getElementById('gas-trigger-btn').contains(e.target)) {
+    gasOpen = false;
+    document.getElementById('gas-popup').classList.remove('open');
+    document.getElementById('gas-trigger-btn').classList.remove('open');
+  }
+});
+let btcPrice = 0;
+function calcGas(val) {
+  if (!btcPrice || !val) return;
+  const usd = parseFloat(val) * btcPrice;
+  document.getElementById('g-res-btn').textContent = '\u2192 $' + usd.toFixed(2);
+}
+
+/* ── TOAST ── */
+function showToast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + (type||'info');
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ── INVEST PANELS ── */
+const SATS_PER_TOKEN = 1000;            // 1 OPWAP = 1,000 sats
+const BTC_PER_TOKEN  = 0.00001;         // 1 OPWAP = 0.00001 BTC
+
+function syncInvest(asset, field, raw) {
+  const val = parseFloat(raw);
+  const btcEl    = document.getElementById(asset + '-btc');
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const receipt  = document.getElementById(asset + '-receipt');
+  const rTokens  = document.getElementById(asset + '-receipt-tokens');
+  const rBtc     = document.getElementById(asset + '-receipt-btc');
+
+  if (!val || val <= 0) {
+    receipt.style.display = 'none';
+    return;
+  }
+
+  let tokens, btcAmt;
+  if (field === 'btc') {
+    // BTC → tokens
+    tokens = Math.floor(val / BTC_PER_TOKEN);
+    btcAmt = val;
+    if (tokensEl) tokensEl.value = tokens;
+  } else {
+    // tokens → BTC
+    tokens = Math.floor(val);
+    btcAmt = tokens * BTC_PER_TOKEN;
+    if (btcEl) btcEl.value = btcAmt.toFixed(5);
+  }
+
+  if (tokens > 0) {
+    receipt.style.display = 'block';
+    rTokens.textContent = tokens.toLocaleString('en') + ' OPWAP';
+    // strikethrough-style showing exact BTC cost
+    const sats = tokens * SATS_PER_TOKEN;
+    rBtc.textContent = '\u2248 ' + btcAmt.toFixed(8) + ' BTC (' + sats.toLocaleString('en') + ' sats)';
+  } else {
+    receipt.style.display = 'none';
+  }
+}
+
+function confirmInvest(asset) {
+  const btcEl    = document.getElementById(asset + '-btc');
+  const tokensEl = document.getElementById(asset + '-tokens');
+  const btcAmt   = parseFloat(btcEl ? btcEl.value : 0);
+  const tokens   = parseInt(tokensEl ? tokensEl.value : 0);
+  if (!btcAmt || !tokens) {
+    showToast('Enter BTC amount or number of tokens', 'warn');
+    return;
+  }
+  // require wallet
+  openWalletModal();
+  showToast('Confirm wallet to invest ' + btcAmt.toFixed(5) + ' BTC → ' + tokens + ' OPWAP', 'info');
+}
+
+function toggleInvest(id, btn) {
+  const panel = document.getElementById(id);
+  const open = panel.classList.toggle('open');
+  const isGamma = id === 'p-gamma';
+  // reset receipt on close
+  if (!open) {
+    const asset = id.replace('p-','');
+    const r = document.getElementById(asset + '-receipt');
+    if (r) r.style.display = 'none';
+    const btcEl = document.getElementById(asset + '-btc');
+    const tokEl = document.getElementById(asset + '-tokens');
+    if (btcEl) btcEl.value = '';
+    if (tokEl) tokEl.value = '';
+  }
+  if (open) {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
+  } else {
+    if (isGamma) {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
+    } else {
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
+    }
+  }
+}
+
+/* ── ASSET FILTERS / SEARCH ── */
+function filterAssets(cat, btn) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+  });
+}
+function searchAssets(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
+    card.style.display = card.dataset.name.includes(lq) ? '' : 'none';
+  });
+}
+function sortAssets(by) { /* placeholder */ }
+
+/* ── DISPLAY TOGGLE (BTC/USD on cards) ── */
+function toggleDisp(btn, mode, assetId) {
+  const wrap = btn.closest('.card-asset');
+  wrap.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const priceEl = document.getElementById(assetId + '-price');
+  if (!priceEl) return;
+  if (mode === 'btc') {
+    priceEl.textContent = '\u2014';
+  } else {
+    priceEl.textContent = btcPrice ? '$' + (btcPrice * 0.001).toFixed(2) : '\u2014';
+  }
+}
+
+/* ── LIVE PRICES ── */
+async function fetchPrices() {
+  try {
+    let price = 0;
+    try {
+      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const d = await r.json();
+      price = d.bitcoin.usd;
+    } catch(_) {
+      const r2 = await fetch('https://api.coinpaprika.com/v1/tickers/btc-bitcoin');
+      const d2 = await r2.json();
+      price = d2.quotes.USD.price;
+    }
+    btcPrice = price;
+    const fmt = '
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
+</script>
+</body>
+</html>
+ + btcPrice.toLocaleString('en', {maximumFractionDigits:0});
+    document.getElementById('hero-btc-price').textContent = fmt;
+    document.getElementById('g-btc').textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
+}
+async function fetchGas() {
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    document.getElementById('nav-gas').textContent = feeStr;
+    document.getElementById('g-rate').textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = feeStr;
+    });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      document.getElementById('g-tx').textContent = '~$' + txCost.toFixed(4);
+      document.getElementById('alpha-gas').textContent = '~$' + txCost.toFixed(4);
+    }
+  } catch(e) {}
+}
+fetchPrices(); fetchGas();
+setInterval(fetchPrices, 30000);
+setInterval(fetchGas,   30000);
+
+/* ── SIMULATOR ── */
+let simCurrency = 'btc';
+let simMonths = 12;
+// set initial button states
+document.getElementById('btn-btc').className = 'curr-btn active-btc';
+document.getElementById('btn-usd').className = 'curr-btn';
+
+function setCurrency(c) {
+  simCurrency = c;
+  document.getElementById('btn-btc').className = 'curr-btn' + (c==='btc' ? ' active-btc' : '');
+  document.getElementById('btn-usd').className = 'curr-btn' + (c==='usd' ? ' active-usd' : '');
+  document.getElementById('pfx1').textContent = c==='btc' ? '\u20BF' : '$';
+  document.getElementById('pfx2').textContent = c==='btc' ? '\u20BF' : '$';
+  if (c==='btc') {
+    document.getElementById('initial-val').value = '0.005';
+    document.getElementById('monthly-val').value = '0';
+  } else {
+    document.getElementById('initial-val').value = '325';
+    document.getElementById('monthly-val').value = '0';
+  }
+  calcSim();
+}
+
+function setMonths(m) {
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  const sl = document.getElementById('dur-slider');
+  sl.value = m;
+  const pct = ((m-1)/35*100).toFixed(1);
+  sl.style.setProperty('--fill', pct+'%');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function sliderUpd(el) {
+  const m = parseInt(el.value);
+  el.style.setProperty('--fill', ((m-1)/35*100).toFixed(1)+'%');
+  simMonths = m;
+  document.getElementById('dur-display').textContent = m + ' month' + (m===1?'':'s');
+  document.querySelectorAll('.mo-btn').forEach((b,i) => b.classList.toggle('active',[1,12,36][i]===m));
+  calcSim();
+}
+
+function adjVal(id, baseDir) {
+  const el = document.getElementById(id);
+  let step = simCurrency === 'btc' ? 0.001 : (id === 'initial-val' ? 50 : 10);
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
+  if (v < 0) v = 0;
+  el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
+  calcSim();
+}
+
+function calcSim() {
+  let iv = parseFloat(document.getElementById('initial-val').value)||0;
+  let mv = parseFloat(document.getElementById('monthly-val').value)||0;
+  const bp = btcPrice || 65000;
+
+  let initBtc = iv, monBtc = mv;
+  if (simCurrency==='usd') {
+    initBtc = iv/bp; monBtc = mv/bp;
+    document.getElementById('initial-conv').textContent  = '\u2248 \u20BF ' + initBtc.toFixed(6);
+    document.getElementById('monthly-conv').textContent = '\u2248 \u20BF ' + monBtc.toFixed(6);
+  } else {
+    document.getElementById('initial-conv').textContent  = '\u2248 $ ' + (iv*bp).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('monthly-conv').textContent = '\u2248 $ ' + (mv*bp).toLocaleString('en',{maximumFractionDigits:0});
+  }
+
+  const months = simMonths;
+  const label = months<12 ? months+'mo' : (months/12).toFixed(1).replace('.0','')+'y';
+  document.getElementById('res-period').textContent = label;
+
+  function calc(p,m,r,mo){const mr=r/12;let a=p;for(let i=0;i<mo;i++){a=a*(1+mr)+m;}return a;}
+
+  const opwa = calc(initBtc, monBtc, 0.15,  months);
+  const fi   = calc(initBtc, monBtc, 0.069, months);
+  const sa   = calc(initBtc, monBtc, 0.042, months);
+
+  const gain    = opwa - initBtc;
+  const gainUsd = (gain * bp);
+  const initStr = '\u20BF ' + initBtc.toFixed(4) + ' inicial';
+
+  /* main result */
+  document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('res-total').textContent  = 'Total accumulated: \u20BF ' + opwa.toFixed(6);
+
+  /* comparison cards */
+  document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStr;
+  document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStr;
+  document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStr;
+
+  document.getElementById('opwa-val').textContent = '\u20BF ' + (opwa-initBtc).toFixed(6);
+  document.getElementById('fi-val').textContent   = '\u20BF ' + (fi-initBtc).toFixed(6);
+  document.getElementById('sa-val').textContent   = '\u20BF ' + (sa-initBtc).toFixed(6);
+
+  /* diff card */
+  const diff = opwa - fi;
+  const dc   = document.getElementById('diff-card');
+  if (diff>0 && initBtc>0) {
+    dc.style.display = 'flex';
+    document.getElementById('diff-title').textContent = '+$'+(diff*bp).toFixed(2)+' more than Fixed Income';
+    document.getElementById('diff-sub').textContent   = 'after '+label+' with OPWA at 15% APY';
+  } else {
+    dc.style.display = 'none';
+  }
+}
+calcSim();
 </script>
 </body>
 </html>
