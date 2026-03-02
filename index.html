@@ -684,8 +684,8 @@ input,select,textarea{font-family:inherit}
 [data-theme="light"] .step-card.active::before{color:rgba(249,115,22,.10)}
 
 .step-card:hover{border-color:var(--accent-border);box-shadow:0 8px 30px rgba(249,115,22,.06);transform:translateY(-2px)}
-.step-card:hover::before{color:rgba(255,255,255,.07)}
-[data-theme="light"] .step-card:hover::before{color:rgba(0,0,0,.05)}
+.step-card:hover::before{color:rgba(249,115,22,.18)}
+[data-theme="light"] .step-card:hover::before{color:rgba(249,115,22,.14)}
 
 /* Icon box */
 .step-ico-box{
@@ -1336,10 +1336,10 @@ footer{
           <span class="sim-box-conv" id="initial-conv">&#x2248; B 0.000000</span>
         </div>
         <div class="sim-row">
-          <button class="sim-pm" onclick="adjVal('initial-val',-0.001)">&#x2212;</button>
+          <button class="sim-pm" onclick="adjVal('initial-val',-1)">&#x2212;</button>
           <span class="sim-pfx" id="pfx1">&#x20BF;</span>
           <input class="sim-input" type="number" id="initial-val" value="0.005" step="0.001" min="0" oninput="calcSim()"/>
-          <button class="sim-pm" onclick="adjVal('initial-val',0.001)">+</button>
+          <button class="sim-pm" onclick="adjVal('initial-val',1)">+</button>
         </div>
       </div>
 
@@ -1349,10 +1349,10 @@ footer{
           <span class="sim-box-conv" id="monthly-conv">&#x2248; B 0.000000</span>
         </div>
         <div class="sim-row">
-          <button class="sim-pm" onclick="adjVal('monthly-val',-0.001)">&#x2212;</button>
+          <button class="sim-pm" onclick="adjVal('monthly-val',-1)">&#x2212;</button>
           <span class="sim-pfx" id="pfx2">&#x20BF;</span>
           <input class="sim-input" type="number" id="monthly-val" value="0" step="0.001" min="0" oninput="calcSim()"/>
-          <button class="sim-pm" onclick="adjVal('monthly-val',0.001)">+</button>
+          <button class="sim-pm" onclick="adjVal('monthly-val',1)">+</button>
         </div>
       </div>
 
@@ -1648,8 +1648,8 @@ footer{
       OP_NET Testnet
     </div>
     <div class="ft-legal">
-      <a href="/terms">Terms</a>
-      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/Opwabtc/OPWABTC/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Terms</a>
+      <a href="https://github.com/Opwabtc/OPWABTC/blob/main/SECURITY.md" target="_blank" rel="noopener">Privacy</a>
     </div>
   </div>
 </footer>
@@ -1845,9 +1845,37 @@ function closeWallet()     { document.getElementById('wallet-modal').classList.r
 document.getElementById('wallet-modal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeWallet();
 });
-function connectWallet(type) {
-  closeWallet();
+async function connectWallet(type) {
   showToast('Connecting to ' + type + '…', 'info');
+  try {
+    let accounts = [];
+    if (type === 'OP_Wallet') {
+      if (!window.opnet) { showToast('OP_Wallet not found. Install it first.', 'danger'); return; }
+      accounts = await window.opnet.requestAccounts();
+    } else if (type === 'Unisat') {
+      if (!window.unisat) { showToast('Unisat not found. Install it first.', 'danger'); return; }
+      accounts = await window.unisat.requestAccounts();
+    } else if (type === 'Xverse') {
+      if (!window.BitcoinProvider) { showToast('Xverse not found. Install it first.', 'danger'); return; }
+      const res = await window.BitcoinProvider.request('getAccounts', { purposes: ['payment', 'ordinals'] });
+      accounts = res.result ? res.result.map(a => a.address) : [];
+    } else if (type === 'OKX') {
+      if (!window.okxwallet) { showToast('OKX Wallet not found. Install it first.', 'danger'); return; }
+      const res = await window.okxwallet.bitcoin.requestAccounts();
+      accounts = res;
+    }
+    if (accounts && accounts.length > 0) {
+      const addr = accounts[0];
+      const short = addr.slice(0,8) + '…' + addr.slice(-6);
+      document.getElementById('connect-btn-label').textContent = short;
+      showToast('Connected: ' + short, 'success');
+      closeWallet();
+    } else {
+      showToast('No accounts returned.', 'danger');
+    }
+  } catch(e) {
+    showToast('Connection failed: ' + (e.message || e), 'danger');
+  }
 }
 
 /* ── GAS WIDGET ── */
@@ -2072,9 +2100,15 @@ function sliderUpd(el) {
   calcSim();
 }
 
-function adjVal(id, delta) {
+function adjVal(id, baseDir) {
   const el = document.getElementById(id);
-  let v = (parseFloat(el.value)||0) + delta;
+  let step;
+  if (simCurrency === 'btc') {
+    step = 0.001;
+  } else {
+    step = (id === 'initial-val') ? 50 : 10;
+  }
+  let v = (parseFloat(el.value)||0) + (baseDir * step);
   if (v < 0) v = 0;
   el.value = parseFloat(v.toFixed(simCurrency==='btc' ? 4 : 0));
   calcSim();
