@@ -1105,7 +1105,6 @@ footer{
 <body data-theme="dark">
 
 <!-- CURSOR -->
-<div id="cur"></div>
 
 <!-- ═══════════════════════════════════════
      NAVBAR
@@ -2060,8 +2059,10 @@ footer{
 /* ── CURSOR ── */
 const cur = document.getElementById('cur');
 document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top  = e.clientY + 'px';
+  if (cur) {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  }
 }, {passive:true});
 
 /* ── THEME ── */
