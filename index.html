@@ -2586,6 +2586,22 @@ function syncInvest(asset, field, raw) {
   }
 }
 
+/* ── OPNet Address helpers ── */
+function _hexToBytes(hex) {
+  var clean = (hex || '').replace(/^0x/, '');
+  var out = new Uint8Array(clean.length / 2);
+  for (var i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i*2, i*2+2), 16);
+  return out;
+}
+async function buildSenderAddress(Address) {
+  var pubkeyBytes = walletState.publicKey ? _hexToBytes(walletState.publicKey) : new Uint8Array(33);
+  var mldsaKey = new Uint8Array(32);
+  if (window.opnet && typeof window.opnet.getMLDSAPublicKey === 'function') {
+    try { mldsaKey = _hexToBytes(await window.opnet.getMLDSAPublicKey()); } catch(_) {}
+  }
+  return new Address(mldsaKey, pubkeyBytes);
+}
+
 async function confirmInvest(asset) {
   if (!walletState.connected || !walletState.addr) { openWalletModal(); showToast('Connect your wallet first','info'); return; }
   const tokensEl = document.getElementById(asset + '-tokens');
@@ -2601,18 +2617,19 @@ async function confirmInvest(asset) {
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
     const mod = await import('https://esm.sh/opnet?bundle');
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, networks, TransactionOutputFlags } = mod;
-    const { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, networks, TransactionOutputFlags, ABIDataTypes } = mod;
+    const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     const OPWACOIN_ABI = [
       ...OP_20_ABI,
       { name:'buy', type:BitcoinAbiTypes.Function, payable:true,
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-    const provider = new JSONRpcProvider('https://testnet.opnet.org');
-    const contract = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, networks.opnetTestnet, walletState.addr);
+    const provider    = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: networks.opnetTestnet });
+    const senderAddr  = await buildSenderAddress(Address);
+    const contract    = getContract(OPWACOIN_ADDR, OPWACOIN_ABI, provider, networks.opnetTestnet, senderAddr);
     contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
-    const simulation = await contract.buy(walletState.addr, tokenAmt);
+    const simulation = await contract.buy(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
@@ -2745,7 +2762,7 @@ calcSim();
 
 
 /* ── WALLET STATE ── */
-var walletState = {connected:false, addr:'', sats:0, type:''};
+var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
 
 function handleConnectClick() {
   if (walletState.connected) {
@@ -2755,8 +2772,8 @@ function handleConnectClick() {
   }
 }
 
-function walletConnected(addr, sats, type) {
-  walletState = {connected:true, addr:addr, sats:sats, type:type};
+function walletConnected(addr, sats, type, publicKey) {
+  walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || ''};
   const short = addr.slice(0, 8) + '...' + addr.slice(-6);
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = short; btn.classList.add('connected'); }
@@ -2773,7 +2790,7 @@ function walletConnected(addr, sats, type) {
 }
 
 function wdDisconnect() {
-  walletState = {connected:false, addr:'', sats:0, type:''};
+  walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
   let e;
@@ -2796,15 +2813,17 @@ function wdExplorer() {
 window.connectWallet = async function(type) {
   showToast('Connecting to ' + type + '...', 'info');
   try {
-    var accounts = [], sats = 0;
+    var accounts = [], sats = 0, publicKey = '';
     if (type === 'OP_Wallet') {
       if (!window.opnet) { showToast('OP_Wallet not found. Please install it.', 'error'); return; }
       accounts = await window.opnet.requestAccounts();
       try { var b = await window.opnet.getBalance(); sats = b.total || 0; } catch(_) {}
+      try { publicKey = await window.opnet.getPublicKey(); } catch(_) {}
     } else if (type === 'Unisat') {
       if (!window.unisat) { showToast('Unisat not found.', 'error'); return; }
       accounts = await window.unisat.requestAccounts();
       try { var b2 = await window.unisat.getBalance(); sats = b2.total || 0; } catch(_) {}
+      try { publicKey = await window.unisat.getPublicKey(); } catch(_) {}
     } else if (type === 'Xverse') {
       if (!window.BitcoinProvider) { showToast('Xverse not found.', 'error'); return; }
       var res = await window.BitcoinProvider.request('getAccounts', {purposes:['payment','ordinals']});
@@ -2814,7 +2833,7 @@ window.connectWallet = async function(type) {
       accounts = await window.okxwallet.bitcoin.requestAccounts();
     }
     if (accounts && accounts.length > 0) {
-      walletConnected(accounts[0], sats, type);
+      walletConnected(accounts[0], sats, type, publicKey);
     } else {
       showToast('No accounts returned.', 'error');
     }
@@ -2856,15 +2875,16 @@ async function mintPropertyNFT() {
   status.style.color = 'var(--text-2)';
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks } = mod;
-    var { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks, ABIDataTypes } = mod;
+    var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
       { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-    var provider = new JSONRpcProvider('https://testnet.opnet.org');
-    var contract = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, networks.opnetTestnet, walletState.addr);
+    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: networks.opnetTestnet });
+    var senderAddr = await buildSenderAddress(Address);
+    var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, networks.opnetTestnet, senderAddr);
     var priceRes = await contract.mintPrice();
     var mintSats = priceRes && priceRes.properties ? BigInt(priceRes.properties.price) : 10000n;
     var simulation = await contract.mint();
@@ -2906,11 +2926,12 @@ async function loadVault() {
 
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks } = mod;
-    var { ABIDataTypes } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, networks, ABIDataTypes } = mod;
+    var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
-    var provider = new JSONRpcProvider('https://testnet.opnet.org');
-    var contract = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, networks.opnetTestnet, walletState.addr);
+    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: networks.opnetTestnet });
+    var senderAddr = await buildSenderAddress(Address);
+    var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, networks.opnetTestnet, senderAddr);
 
     // totalSupply para info da collection
     try {
@@ -2919,7 +2940,7 @@ async function loadVault() {
     } catch(e) { supplyEl.textContent = '?'; }
 
     // balanceOf(walletAddr) — quantos NFTs o usuário tem
-    var balRes = await contract.balanceOf(walletState.addr);
+    var balRes  = await contract.balanceOf(senderAddr);
     var balance = balRes && balRes.properties ? BigInt(balRes.properties.balance || 0) : 0n;
 
     if (balance === 0n) {
@@ -2934,7 +2955,7 @@ async function loadVault() {
     var tokenIds = [];
     for (var i = 0n; i < balance; i++) {
       try {
-        var tokRes = await contract.tokenOfOwnerByIndex(walletState.addr, i);
+        var tokRes = await contract.tokenOfOwnerByIndex(senderAddr, i);
         if (tokRes && tokRes.properties && tokRes.properties.tokenId !== undefined) {
           tokenIds.push(BigInt(tokRes.properties.tokenId));
         }
