@@ -1007,6 +1007,21 @@ footer{
 .fu-2{animation:fadeUp .65s ease .22s both}
 .fu-3{animation:fadeUp .65s ease .36s both}
 .fu-4{animation:fadeUp .65s ease .48s both}
+
+.legal-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 48px) 24px 100px;background:var(--bg-base)}
+.legal-page.active{display:block}
+.legal-wrap{max-width:760px;margin:0 auto}
+.legal-eyebrow{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px}
+.legal-h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px;line-height:1.1}
+.legal-meta{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:40px}
+.legal-section{margin-bottom:28px}
+.legal-section h2{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.legal-section p{font-size:14px;color:var(--text-2);line-height:1.72}
+.legal-footer-box{margin-top:48px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-3)}
+.legal-footer-box a{color:var(--accent);margin-right:16px;font-weight:600}
+.legal-footer-box a.muted{color:var(--text-3)}
+#main-content{display:block}
+
 </style>
 </head>
 <body data-theme="dark">
@@ -1653,6 +1668,60 @@ footer{
     </div>
   </div>
 </footer>
+</div>
+
+<!-- TERMS PAGE -->
+<div id="page-terms" class="legal-page">
+  <div class="legal-wrap">
+    <div class="legal-eyebrow">Legal</div>
+    <h1 class="legal-h1">Terms of Service</h1>
+    <p class="legal-meta">Last updated: January 2025 &middot; OPWA Protocol</p>
+    <div class="legal-section"><h2>1. Acceptance of Terms</h2><p>By accessing or using the OPWA platform (&ldquo;Platform&rdquo;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Platform. OPWA is a decentralized real estate tokenization protocol built on the Bitcoin network via OP_NET smart contracts.</p></div>
+    <div class="legal-section"><h2>2. Nature of the Platform</h2><p>OPWA enables fractional ownership of real-world assets through blockchain tokenization. All transactions are executed on OP_NET Testnet for demonstration purposes. The Platform does not guarantee returns, liquidity, or the value of any tokens. OPWAP tokens represent a fractional interest in tokenized property assets and are subject to market risk.</p></div>
+    <div class="legal-section"><h2>3. Eligibility</h2><p>You must be at least 18 years old and legally permitted to participate in digital asset transactions in your jurisdiction. By using the Platform, you represent that you meet these requirements and that your use complies with all applicable laws and regulations.</p></div>
+    <div class="legal-section"><h2>4. Wallet &amp; Private Keys</h2><p>OPWA does not custody your funds or private keys. You are solely responsible for the security of your Bitcoin wallet. Lost private keys cannot be recovered. All investment transactions are irreversible once confirmed on-chain. Use of testnet faucet funds carries no financial risk.</p></div>
+    <div class="legal-section"><h2>5. Risks</h2><p>Digital assets involve significant risk including price volatility, regulatory uncertainty, and smart contract bugs. Past performance is not indicative of future results. The Platform is currently operating on OP_NET Testnet &mdash; mainnet features are under development. Do not invest more than you can afford to lose.</p></div>
+    <div class="legal-section"><h2>6. Prohibited Activities</h2><p>You may not use the Platform to launder money, evade sanctions, or engage in any fraudulent activity. Automated scraping, reverse engineering of smart contracts for malicious purposes, or any action that compromises the integrity of the OP_NET protocol is strictly prohibited.</p></div>
+    <div class="legal-section"><h2>7. Intellectual Property</h2><p>All content, branding, and code on the OPWA Platform is the property of OPWA Protocol. The smart contracts are open-source and available on GitHub. You may fork and build upon the contracts subject to the applicable open-source license.</p></div>
+    <div class="legal-section"><h2>8. Disclaimers</h2><p>THE PLATFORM IS PROVIDED &ldquo;AS IS&rdquo; WITHOUT WARRANTIES OF ANY KIND. OPWA PROTOCOL DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. WE ARE NOT RESPONSIBLE FOR ANY LOSSES RESULTING FROM USE OF THE PLATFORM.</p></div>
+    <div class="legal-section"><h2>9. Governing Law</h2><p>These Terms are governed by the laws of the applicable jurisdiction without regard to conflict of law principles. Any disputes shall be resolved through binding arbitration.</p></div>
+    <div class="legal-section"><h2>10. Contact</h2><p>For questions regarding these Terms, contact us via GitHub at github.com/Opwabtc or through the official OPWA community channels.</p></div>
+    <div class="legal-footer-box">
+      By using OPWA, you acknowledge that you have read, understood, and agree to these Terms of Service.
+      <div style="margin-top:12px">
+        <a href="/" onclick="navigate('/');return false;">&#x2190; Back to Platform</a>
+        <a href="/privacy" class="muted" onclick="navigate('/privacy');return false;">Privacy Policy &#x2192;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY PAGE -->
+<div id="page-privacy" class="legal-page">
+  <div class="legal-wrap">
+    <div class="legal-eyebrow">Legal</div>
+    <h1 class="legal-h1">Privacy Policy</h1>
+    <p class="legal-meta">Last updated: January 2025 &middot; OPWA Protocol</p>
+    <div class="legal-section"><h2>1. Overview</h2><p>OPWA Protocol (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is committed to transparency. This Privacy Policy explains what data we collect, how we use it, and your rights. Because OPWA operates on a public blockchain, certain information is inherently public and cannot be made private.</p></div>
+    <div class="legal-section"><h2>2. Information We Collect</h2><p>We do not collect personally identifiable information directly. When you interact with the Platform, your Bitcoin wallet address and all transaction data are recorded on the OP_NET blockchain and are publicly visible. We do not store your private keys, seed phrases, or passwords at any point.</p></div>
+    <div class="legal-section"><h2>3. Blockchain Data</h2><p>All transactions executed through OPWA smart contracts are permanently recorded on the Bitcoin blockchain via OP_NET. This includes wallet addresses, token amounts, timestamps, and transaction hashes. This data is public, immutable, and cannot be deleted.</p></div>
+    <div class="legal-section"><h2>4. Analytics</h2><p>The Platform may use privacy-respecting analytics tools to understand aggregate usage patterns (e.g., page views, session duration). We do not use cookies for advertising or share usage data with third-party advertisers.</p></div>
+    <div class="legal-section"><h2>5. Third-Party Services</h2><p>The Platform integrates with third-party services including: CoinGecko (BTC price data), Mempool.opnet.org (gas price data), and OPScan (blockchain explorer). Each of these services has its own privacy policy. We encourage you to review them.</p></div>
+    <div class="legal-section"><h2>6. Wallet Extensions</h2><p>When you connect a wallet (OP_Wallet, Unisat, Xverse, or OKX), the wallet extension may request your public key and Bitcoin address. OPWA only reads the public key &mdash; we never request your private key or seed phrase. Wallet extension data handling is governed by each wallet&rsquo;s own privacy policy.</p></div>
+    <div class="legal-section"><h2>7. Data Retention</h2><p>We do not maintain a database of user information. Blockchain transaction data is retained indefinitely by the OP_NET network by its nature. Any off-chain analytics data is retained for a maximum of 90 days.</p></div>
+    <div class="legal-section"><h2>8. Your Rights</h2><p>Because we collect minimal off-chain data, most privacy rights (access, deletion, correction) do not apply to on-chain transaction data. For any off-chain data inquiries, contact us via GitHub. We will respond within 30 days.</p></div>
+    <div class="legal-section"><h2>9. Security</h2><p>We take reasonable measures to secure any off-chain systems. However, no system is 100% secure. The decentralized nature of OP_NET means that smart contract interactions are secured by the Bitcoin network&rsquo;s consensus mechanism.</p></div>
+    <div class="legal-section"><h2>10. Changes to This Policy</h2><p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date. Continued use of the Platform after changes constitutes acceptance of the new policy.</p></div>
+    <div class="legal-section"><h2>11. Contact</h2><p>For privacy inquiries, contact us via GitHub at github.com/Opwabtc or through official OPWA community channels.</p></div>
+    <div class="legal-footer-box">
+      We are committed to protecting your privacy and operating transparently on a public blockchain.
+      <div style="margin-top:12px">
+        <a href="/" onclick="navigate('/');return false;">&#x2190; Back to Platform</a>
+        <a href="/terms" class="muted" onclick="navigate('/terms');return false;">Terms of Service &#x2192;</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════
      LIVE TICKER BAR (bottom)
@@ -2168,6 +2237,37 @@ function calcSim() {
   }
 }
 calcSim();
+
+/* ── ROUTER ── */
+
+function navigate(p) {
+  window.history.pushState({}, '', p);
+  renderRoute();
+}
+function renderRoute() {
+  const p = window.location.pathname;
+  const main = document.getElementById('main-content');
+  const terms = document.getElementById('page-terms');
+  const privacy = document.getElementById('page-privacy');
+  if (p === '/terms') {
+    main.style.display = 'none';
+    terms.classList.add('active');
+    privacy.classList.remove('active');
+    window.scrollTo(0,0);
+  } else if (p === '/privacy') {
+    main.style.display = 'none';
+    privacy.classList.add('active');
+    terms.classList.remove('active');
+    window.scrollTo(0,0);
+  } else {
+    main.style.display = 'block';
+    terms.classList.remove('active');
+    privacy.classList.remove('active');
+  }
+}
+window.addEventListener('popstate', renderRoute);
+renderRoute();
+
 </script>
 </body>
 </html>
