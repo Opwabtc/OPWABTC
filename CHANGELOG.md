@@ -70,3 +70,16 @@ refactor(frontend): extract PropertyCard to shared component
 docs: update testnet deployment registry with TXID
 chore: upgrade opnet SDK to latest version
 ```
+
+## [0.2.0-testnet] — 2026-03-03
+
+### Added
+- OPWAYield v3 contract deployed (`opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv`)
+- Treasury configured on OPWAYield via StoredString bech32 dual-path payment verification
+- PropertyNFT #1 and #2 minted on-chain (testnet)
+- confirmInvest() flow wired to OPWAYield mint() with hasTo flag
+
+### Fixed
+- BigInt type error in confirmInvest() — maximumAllowedSatToSpend converted to Number
+- Treasury not configured error — setTreasury executed on correct contract
+- Browser SDK Uint8Array serialization bug — eliminated by storing treasury as bech32 string

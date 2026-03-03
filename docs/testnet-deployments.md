@@ -6,7 +6,7 @@ Explorer: `https://testnet.opscan.io`
 
 ---
 
-## OPWACoin (OP-20 + buy())
+## OPWACoin (OP-20)
 
 | Field | Value |
 |-------|-------|
@@ -18,20 +18,25 @@ Explorer: `https://testnet.opscan.io`
 | Decimals | 8 |
 | Max Supply | 1,000,000 OPWA |
 | Price | 1,000 sats / token |
-| Treasury (P2TR) | `opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t` |
+| Treasury (OPNet) | `opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t` |
 | Treasury pubkey | `5efba299a9b980c664a2fa82e675473fe471af7e745cea1bac4e8c909f994658` |
 | Source | `contracts/op20/OPWACoin.ts` |
 | ABI | `contracts/abis/OPWACoin.abi.json` |
 
-**Payment check (v2 — dual-path):**
-- Simulation: `output.to === treasury.toHex()` (hasTo flag + hex pubkey string)
-- Real tx: `output.scriptPublicKey` P2TR bytes match treasury pubkey
+---
 
-**Key methods:**
-- `buy(to: address, amount: uint256)` — payable; verifies BTC output to treasury, mints tokens
-- `getPrice() → uint256` — current price in sats per whole token
-- `setPrice(uint256)` — owner only
-- `setTreasury(address)` — owner only
+## OPWAYield (Yield Distributor — OP-20 mint)
+
+| Field | Value |
+|-------|-------|
+| Contract Address | `opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv` |
+| setTreasury TX | `e15f4ae9f3f7faf6075f0dc9d8fbe6f58e652f6300161e35218c8956acdfc0b9` |
+| Symbol | OPWAY |
+| Decimals | 8 |
+| Price | 1,000 sats / token |
+| Treasury (OPNet) | `opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t` |
+| Source | `C:/Users/peluc/AppData/Local/Temp/property-nft/src/yield/OPWAYield.ts` |
+| Design | StoredString bech32 treasury — dual-path payment check (simulation + real tx) |
 
 ---
 
@@ -48,12 +53,6 @@ Explorer: `https://testnet.opscan.io`
 | Minting | Open |
 | Source | `contracts/op721/PropertyNFT.ts` |
 | ABI | `contracts/abis/PropertyNFT.abi.json` |
-
-**Key methods:**
-- `mint()` — mints 1 NFT to sender (10,000 sats fee in the tx)
-- `mintPrice() → uint256`
-- `mintingOpen() → bool`
-- `setMintPrice(uint256)` / `setMintingOpen()` / `setMintingClosed()` — owner only
 
 ---
 
@@ -72,3 +71,4 @@ Explorer: `https://testnet.opscan.io`
 | Contract | Status |
 |----------|--------|
 | FractionalToken (OP-20 per property) | Not deployed |
+| Governance | Planned |

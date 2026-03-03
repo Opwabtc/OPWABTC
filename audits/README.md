@@ -1,1 +1,1 @@
-# Audits\n\nNo audits have been completed yet. A full security audit is scheduled prior to mainnet launch (post OP_NET mainnet March 17, 2026).
+# Security Audits\n\nNo audits conducted yet. A full audit will be performed prior to mainnet launch (post March 17, 2026).
