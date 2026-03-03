@@ -3188,16 +3188,16 @@ async function _getContractTweakedPubkey(contractAddr) {
   } catch(e) { return null; }
 }
 
-/* ── Helper: build Address object for a contract ── */
+/* ── Helper: build Address object for a contract ──
+   Pattern confirmed by opnet-hub/frogop-pub reference repos:
+   Address.fromString(tweakedHex, '02'+tweakedHex) — two args required in esm.sh bundle ── */
 async function _contractAddr(Address, contractAddrStr) {
   try {
     var tweaked = await _getContractTweakedPubkey(contractAddrStr);
     if (tweaked) {
-      var tb = _hexToBytes(tweaked);
-      return new Address(new Uint8Array(32), tb.length === 33 ? tb : new Uint8Array([0x02, ...tb]));
+      return Address.fromString(tweaked, '02' + tweaked);
     }
-    // Fallback: decode opt1... bech32 to bytes directly
-    return Address.fromString ? Address.fromString(contractAddrStr) : new Address(new Uint8Array(32), new Uint8Array(33));
+    return null;
   } catch(e) { return null; }
 }
 
