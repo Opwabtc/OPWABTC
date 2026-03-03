@@ -137,26 +137,31 @@ a{text-decoration:none;color:inherit}
 button{cursor:none!important;font-family:inherit}
 input,select,textarea{font-family:inherit}
 
-/* ── CURSOR (dot trail — pointer-events:none, never blocks clicks) ── */
+/* ── CURSOR pill ── */
 #cur{
-  position:fixed;pointer-events:none;z-index:99999;
-  width:20px;height:10px;border-radius:999px;overflow:hidden;
-  transform:translate(-50%,-50%) rotate(45deg);
-  box-shadow:0 2px 14px rgba(249,115,22,.55);
-  will-change:left,top;
-  left:-200px;top:-200px;
-  opacity:0;transition:opacity .2s;
-}
-#cur::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 50%,#f97316 50%)}
-/* orange glow behind pill */
-#cur-glow{
-  position:fixed;pointer-events:none;z-index:99997;
-  width:52px;height:52px;border-radius:50%;
-  background:radial-gradient(circle,rgba(249,115,22,.22) 0%,transparent 68%);
+  position:fixed;pointer-events:none;z-index:2147483647;
+  width:20px;height:10px;border-radius:999px;
+  background:linear-gradient(90deg,#ffffff 50%,#f97316 50%);
   transform:translate(-50%,-50%);
-  filter:blur(10px);
-  left:-200px;top:-200px;
-  opacity:0;transition:opacity .2s;
+  box-shadow:0 0 10px rgba(249,115,22,.6),0 0 0 1px rgba(249,115,22,.35);
+  will-change:left,top;
+  top:-50px;left:-50px;
+  visibility:hidden;
+}
+#cur.hovering{
+  width:28px;height:14px;
+  background:linear-gradient(90deg,#ffffff 40%,#f97316 60%);
+  box-shadow:0 0 20px rgba(249,115,22,.9),0 0 0 1px rgba(249,115,22,.6);
+}
+/* orange glow */
+#cur-glow{
+  position:fixed;pointer-events:none;z-index:2147483640;
+  width:48px;height:48px;border-radius:50%;
+  background:radial-gradient(circle,rgba(249,115,22,.18) 0%,transparent 70%);
+  transform:translate(-50%,-50%);
+  filter:blur(8px);
+  will-change:left,top;
+  top:-50px;left:-50px;
 }
 
 /* ── SCROLLBAR ── */
@@ -522,7 +527,15 @@ input,select,textarea{font-family:inherit}
 .card-id-small{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3)}
 .card-pair{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);margin-bottom:4px}
 .card-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text-1);margin-bottom:5px}
-.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:16px}
+.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:0}
+/* Collapsible description balloon */
+.card-desc-wrap{margin-bottom:14px}
+.card-desc-toggle{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-3);background:none;border:none;padding:0;cursor:pointer!important;margin-top:4px;transition:color .15s}
+.card-desc-toggle:hover{color:var(--text-2)}
+.card-desc-toggle svg{transition:transform .2s}
+.card-desc-toggle.open svg{transform:rotate(180deg)}
+.card-desc-balloon{max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .25s;opacity:0}
+.card-desc-balloon.open{max-height:120px;opacity:1}
 
 .disp-toggle{display:flex;gap:3px;margin-bottom:14px}
 .dt-btn{
@@ -1104,7 +1117,6 @@ footer{
 
 .dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
 .dash-page.active{display:flex!important;flex-direction:column}
-.dash-page.active{display:block}
 .chart-range-btn{padding:4px 12px;border-radius:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
 .chart-range-active{background:rgba(255,255,255,.25)!important;border-color:rgba(255,255,255,.5)!important;color:#fff!important}
 .dash-wrap{max-width:960px;margin:0 auto}
@@ -1598,14 +1610,14 @@ footer{
       <div class="hs-sub">Signet</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">Projected APY</div>
-      <div class="hs-value">15%</div>
-      <div class="hs-sub">Annual yield</div>
+      <div class="hs-label">BTC Price</div>
+      <div class="hs-value sm" id="hero-btc-price">&#x2014;</div>
+      <div class="hs-sub">Live USD</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">Availability</div>
-      <div class="hs-value">24/7</div>
-      <div class="hs-sub">Early access</div>
+      <div class="hs-label">Gas Rate</div>
+      <div class="hs-value sm" id="hero-gas-rate">&#x2014;</div>
+      <div class="hs-sub">sat/vB</div>
     </div>
     <div class="hero-stat">
       <div class="hs-label">Real Estate Market</div>
@@ -1663,7 +1675,15 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">VILLA AURORA</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Miami Beach, Florida, USA</p>
-        <p class="card-desc">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p>
+        <div class="card-desc-wrap">
+          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            About this property
+          </button>
+          <div class="card-desc-balloon">
+            <p class="card-desc" style="margin-top:8px">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p>
+          </div>
+        </div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','alpha')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','alpha')">$ USD</button>
@@ -1728,7 +1748,15 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">METRO TOWER</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Manhattan, New York, USA</p>
-        <p class="card-desc">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p>
+        <div class="card-desc-wrap">
+          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            About this property
+          </button>
+          <div class="card-desc-balloon">
+            <p class="card-desc" style="margin-top:8px">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p>
+          </div>
+        </div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','beta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','beta')">$ USD</button>
@@ -1793,7 +1821,15 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">LOGISTICA HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Guarulhos, São Paulo, Brazil</p>
-        <p class="card-desc">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p>
+        <div class="card-desc-wrap">
+          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            About this property
+          </button>
+          <div class="card-desc-balloon">
+            <p class="card-desc" style="margin-top:8px">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p>
+          </div>
+        </div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','gamma')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','gamma')">$ USD</button>
@@ -1858,7 +1894,15 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">CASA BELÉM</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Belém, Lisbon, Portugal</p>
-        <p class="card-desc">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p>
+        <div class="card-desc-wrap">
+          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            About this property
+          </button>
+          <div class="card-desc-balloon">
+            <p class="card-desc" style="margin-top:8px">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p>
+          </div>
+        </div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','delta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','delta')">$ USD</button>
@@ -1923,7 +1967,15 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">DOWNTOWN HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Downtown Dubai, UAE</p>
-        <p class="card-desc">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p>
+        <div class="card-desc-wrap">
+          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            About this property
+          </button>
+          <div class="card-desc-balloon">
+            <p class="card-desc" style="margin-top:8px">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p>
+          </div>
+        </div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','epsilon')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','epsilon')">$ USD</button>
@@ -1991,7 +2043,15 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">SAKURA RESIDENCE</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Shinjuku, Tokyo, Japan</p>
-        <p class="card-desc">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p>
+        <div class="card-desc-wrap">
+          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            About this property
+          </button>
+          <div class="card-desc-balloon">
+            <p class="card-desc" style="margin-top:8px">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p>
+          </div>
+        </div>
         <div class="card-stats">
           <div class="cs-item"><div class="cs-label">Price/Token</div><div class="cs-value" style="color:var(--text-3)">TBA</div></div>
           <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value" style="color:var(--gold)">~13%</div></div>
@@ -2944,22 +3004,20 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 'use strict';
 
 /* ── CURSOR ── */
-const cur = document.getElementById('cur');
-const curGlow = document.getElementById('cur-glow');
-let _curVisible = false;
-document.addEventListener('mousemove', e => {
-  const x = e.clientX + 'px', y = e.clientY + 'px';
-  cur.style.left = x; cur.style.top = y;
-  if (curGlow) { curGlow.style.left = x; curGlow.style.top = y; }
-  if (!_curVisible) {
-    _curVisible = true;
-    cur.style.opacity = '1';
-    if (curGlow) curGlow.style.opacity = '1';
-  }
-  const t = e.target;
-  const isInteractive = t.closest('a,button,input,select,textarea,[role="button"],[onclick]');
-  cur.classList.toggle('hovering', !!isInteractive);
-}, {passive:true});
+window.addEventListener('DOMContentLoaded', function() {
+  var cur = document.getElementById('cur');
+  var curGlow = document.getElementById('cur-glow');
+  if (!cur) return;
+  document.addEventListener('mousemove', function(e) {
+    cur.style.visibility = 'visible';
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+    if (curGlow) { curGlow.style.left = e.clientX + 'px'; curGlow.style.top = e.clientY + 'px'; }
+    var t = e.target;
+    var isInteractive = !!(t && t.closest && t.closest('a,button,input,select,textarea,[role="button"],[onclick]'));
+    cur.classList.toggle('hovering', isInteractive);
+  }, {passive:true});
+});
 
 /* ── THEME ── */
 let theme = 'dark';
@@ -3043,6 +3101,14 @@ function showToast(msg, type, isHtml) {
   if (isHtml) el.innerHTML = msg; else el.textContent = msg;
   document.getElementById('toasts').appendChild(el);
   setTimeout(() => el.remove(), isHtml ? 6000 : 3500);
+}
+
+/* ── CARD DESC BALLOON ── */
+function toggleCardDesc(btn) {
+  var balloon = btn.parentElement.querySelector('.card-desc-balloon');
+  if (!balloon) return;
+  var isOpen = balloon.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
 }
 
 /* ── INVEST PANELS ── */
@@ -3998,6 +4064,7 @@ function toggleDisp(btn, mode, assetId) {
 }
 
 var ASSET_TOKENS = { alpha:1000, beta:2000, gamma:3000, delta:1500, epsilon:5000 }; // recalculated below
+var ASSET_USD    = { alpha:180000, beta:350000, gamma:500000, delta:220000, epsilon:800000 };
 // Token count = property USD value / (btcPrice * 0.00001) — recalculated when btcPrice loads
 function recalcAssetTokens() {
   var bp = btcPrice || 65000;
@@ -4026,7 +4093,6 @@ function recalcAssetTokens() {
     });
   });
 }
-var ASSET_USD    = { alpha:180000, beta:350000, gamma:500000, delta:220000, epsilon:800000 };
 
 function updateAllAssetPrices() {
   Object.keys(ASSET_TOKENS).forEach(function(id) {
@@ -4049,84 +4115,69 @@ function updateAllAssetPrices() {
   });
 }
 
-/* ── FETCH BTC PRICE (CoinGecko → CoinPaprika fallback) ── */
+/* ── FETCH BTC PRICE — mempool.space → coinbase → binance → coingecko ── */
 async function fetchPrices() {
-  try {
-    let price = 0;
-    try {
-      const r0 = await fetch('https://mempool.space/api/v1/prices', {signal:AbortSignal.timeout(6000)});
-      const d0 = await r0.json(); price = d0.USD;
-    } catch(_) {
-      const r1 = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT', {signal:AbortSignal.timeout(6000)});
-      const d1 = await r1.json(); price = parseFloat(d1.price);
-    }
-    btcPrice = price;
-    const fmt = '$' + btcPrice.toLocaleString();
-    const heroPriceEl = document.getElementById('hero-btc-price');
-    if (heroPriceEl) heroPriceEl.textContent = fmt;
-    fetchOpNetBlock();
-    updateAllAssetPrices();
-    recalcAssetTokens();
-    const gBtcEl = document.getElementById('g-btc');
-    if (gBtcEl) gBtcEl.textContent = fmt;
-    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
-    calcSim();
-  } catch(e) {}
+  var price = 0;
+  var sources = [
+    async function() { var r = await fetch('https://mempool.space/api/v1/prices',{signal:AbortSignal.timeout(6000)}); var d = await r.json(); return d.USD; },
+    async function() { var r = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot',{signal:AbortSignal.timeout(6000)}); var d = await r.json(); return parseFloat(d.data.amount); },
+    async function() { var r = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',{signal:AbortSignal.timeout(6000)}); var d = await r.json(); return parseFloat(d.price); },
+    async function() { var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',{signal:AbortSignal.timeout(8000)}); var d = await r.json(); return d.bitcoin.usd; }
+  ];
+  for (var i = 0; i < sources.length; i++) {
+    try { price = await sources[i](); if (price > 0) break; } catch(_) {}
+  }
+  if (!price) return;
+  btcPrice = price;
+  var fmt = '$' + Math.round(btcPrice).toLocaleString();
+  var els = ['hero-btc-price','g-btc','lb-btc','lb-btc2'];
+  els.forEach(function(id){ var e = document.getElementById(id); if(e) e.textContent = fmt; });
+  fetchOpNetBlock();
+  updateAllAssetPrices();
+  recalcAssetTokens();
+  calcSim();
 }
 
 async function fetchOpNetBlock() {
-  try {
-    var h = 0;
-    // 1. mempool.opnet.org (OP_NET own mempool)
-    try {
-      var r1 = await fetch('https://mempool.opnet.org/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)});
-      if (r1.ok) { var v1 = await r1.json(); if (v1) h = Number(v1); }
-    } catch(_) {}
-    // 2. mempool.space signet fallback
-    if (!h) {
-      try {
-        var r2 = await fetch('https://mempool.space/signet/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)});
-        if (r2.ok) { var v2 = await r2.json(); if (v2) h = Number(v2); }
-      } catch(_) {}
+  var h = 0;
+  var blockSources = [
+    async function() { var r = await fetch('https://mempool.opnet.org/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(!r.ok) throw 0; return Number(await r.json()); },
+    async function() { var r = await fetch('https://mempool.space/signet/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(!r.ok) throw 0; return Number(await r.json()); },
+    async function() {
+      var r = await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_blockNumber',params:[]}),signal:AbortSignal.timeout(5000)});
+      var j = await r.json(); return j && j.result ? parseInt(j.result,16) : 0;
     }
-    // 3. OPNet RPC eth_blockNumber fallback
-    if (!h) {
-      try {
-        var r3 = await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_blockNumber',params:[]}),signal:AbortSignal.timeout(5000)});
-        var j3 = await r3.json();
-        if (j3 && j3.result) h = parseInt(j3.result, 16);
-      } catch(_) {}
-    }
-    var el = document.getElementById('hero-opnet-block');
-    if (el && h) el.textContent = '#' + h.toLocaleString();
-  } catch(e) {}
+  ];
+  for (var i = 0; i < blockSources.length; i++) {
+    try { h = await blockSources[i](); if (h > 0) break; } catch(_) {}
+  }
+  var el = document.getElementById('hero-opnet-block');
+  if (el) el.textContent = h ? '#' + h.toLocaleString() : '—';
 }
 
-/* ── FETCH GAS (mempool.opnet.org) ── */
+/* ── FETCH GAS — mempool.opnet.org → mempool.space/signet → mempool.space ── */
 async function fetchGas() {
-  try {
-    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended', {signal:AbortSignal.timeout(6000)});
-    const d = await r.json();
-    const fee = d.fastestFee || d.hourFee || 1;
-    const feeStr = fee + ' sat/vB';
-    const navGas = document.getElementById('nav-gas');
-    if (navGas) navGas.textContent = feeStr;
-    const gRate = document.getElementById('g-rate');
-    if (gRate) gRate.textContent = feeStr;
-    ['lb-gas','lb-gas2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = feeStr; });
-    if (btcPrice) {
-      const txCost = ((fee * 250) / 1e8) * btcPrice;
-      const txCostStr = '~$' + txCost.toFixed(4);
-      const gTx = document.getElementById('g-tx');
-      if (gTx) gTx.textContent = txCostStr;
-      // Update Est. Gas in all invest panels
-      ['alpha','beta','gamma','delta','epsilon'].forEach(function(id) {
-        var el = document.getElementById(id + '-gas');
-        if (el) el.textContent = txCostStr;
-      });
-    }
-  } catch(e) {}
+  var fee = 0;
+  var gasSources = [
+    async function() { var r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended',{signal:AbortSignal.timeout(5000)}); var d = await r.json(); return d.fastestFee || d.halfHourFee || d.hourFee; },
+    async function() { var r = await fetch('https://mempool.space/signet/api/v1/fees/recommended',{signal:AbortSignal.timeout(5000)}); var d = await r.json(); return d.fastestFee || d.halfHourFee || d.hourFee; },
+    async function() { var r = await fetch('https://mempool.space/api/v1/fees/recommended',{signal:AbortSignal.timeout(5000)}); var d = await r.json(); return d.halfHourFee || d.fastestFee; }
+  ];
+  for (var i = 0; i < gasSources.length; i++) {
+    try { fee = await gasSources[i](); if (fee > 0) break; } catch(_) {}
+  }
+  if (!fee) fee = 1;
+  var feeStr = fee + ' sat/vB';
+  ['nav-gas','hero-gas-rate','g-rate','lb-gas','lb-gas2'].forEach(function(id){ var e = document.getElementById(id); if(e) e.textContent = feeStr; });
+  if (btcPrice) {
+    var txCost = ((fee * 250) / 1e8) * btcPrice;
+    var txCostStr = '~$' + txCost.toFixed(4);
+    var gTx = document.getElementById('g-tx'); if (gTx) gTx.textContent = txCostStr;
+    ['alpha','beta','gamma','delta','epsilon'].forEach(function(id) {
+      var e = document.getElementById(id + '-gas'); if(e) e.textContent = txCostStr;
+    });
+  }
 }
 
 fetchPrices(); fetchGas(); fetchOpNetBlock();
