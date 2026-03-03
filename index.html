@@ -2614,7 +2614,7 @@ async function confirmInvest(asset) {
     // Treasury: same deployer P2TR key used in OPWACoin
     const TREASURY_HEX    = '5efba299a9b980c664a2fa82e675473fe471af7e745cea1bac4e8c909f994658';
     const TREASURY_SIGNET = 'tb1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevq3ksn4g';
-    const OPWAY_ADDR = 'opt1sqqta62tcfygsh0rdk9dyak6jfy3w7z60ayspwuzh';
+    const OPWAY_ADDR = 'opt1sqph5yz2k02wykmh04dt005cq4ex5gv03xqx6q8re';
     const count    = BigInt(tokenCount);
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
@@ -2631,12 +2631,9 @@ async function confirmInvest(asset) {
     const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWAY_ADDR, OPWAY_ABI, provider, _net, senderAddr);
-    // Build P2TR script: OP_1 (0x51) + PUSH32 (0x20) + 32-byte x-only tweaked pubkey.
-    // Using hasScriptPubKey so the contract's scriptPublicKey check passes in simulation.
-    var p2trScript = new Uint8Array(34);
-    p2trScript[0] = 0x51; p2trScript[1] = 0x20;
-    p2trScript.set(_hexToBytes(TREASURY_HEX), 2);
-    contract.setTransactionDetails({ inputs:[], outputs:[{ scriptPubKey:p2trScript, value:satsAmt, index:1, flags:TransactionOutputFlags.hasScriptPubKey }] });
+    // Simulation: hasTo + to:'0x<treasury>' matches treasury.toHex() in contract dual-path check.
+    // Real tx:     contract reads scriptPublicKey P2TR bytes path.
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:'0x' + TREASURY_HEX, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
     const simulation = await contract.mint(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
