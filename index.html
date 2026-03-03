@@ -436,7 +436,9 @@ input,select,textarea{font-family:inherit}
 .search-input::placeholder{color:var(--text-3)}
 .search-input:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px var(--accent-dim)}
 
-.assets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(336px,1fr));gap:18px}
+.assets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:1100px){.assets-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.assets-grid{grid-template-columns:1fr}}
 
 /* Asset Card */
 .card-asset{
@@ -1160,22 +1162,30 @@ footer{
 }
 
 [data-theme="light"] footer{
-  background:var(--bg-surface);
-  border-top:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(167,139,250,.04));
+  border-top:2px solid rgba(124,58,237,.18);
 }
-[data-theme="light"] .ft-col-title{color:var(--text-1)}
-[data-theme="light"] .ft-link{color:var(--text-2)}
+[data-theme="light"] .ft-col-title{color:var(--purple)}
+[data-theme="light"] .ft-link{color:rgba(109,40,217,.75)}
 [data-theme="light"] .ft-link:hover{color:var(--purple)}
 [data-theme="light"] .ft-link:hover svg{color:var(--purple)}
-[data-theme="light"] .soc-btn{background:var(--bg-elevated);border-color:var(--border)}
+[data-theme="light"] .soc-btn{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.2);color:var(--purple)}
 [data-theme="light"] .soc-btn:hover{border-color:var(--purple-border);background:var(--purple-dim);color:var(--purple)}
-[data-theme="light"] .ft-sep{border-top-color:var(--border)}
-[data-theme="light"] .ft-bottom{color:var(--text-3)}
+[data-theme="light"] .ft-sep{border-top-color:rgba(124,58,237,.14)}
+[data-theme="light"] .ft-bottom{color:rgba(109,40,217,.7)}
 [data-theme="light"] .ft-copy a{color:var(--purple)}
 [data-theme="light"] .ft-legal a:hover{color:var(--purple)}
 [data-theme="light"] .ft-net-badge{background:var(--success-dim);border-color:var(--success-border)}
 [data-theme="light"] .ft-faucet{color:var(--gold)!important}
 [data-theme="light"] .ft-faucet:hover{color:var(--purple)!important}
+[data-theme="light"] .navbar{background:rgba(248,245,255,.98)!important;border-color:rgba(124,58,237,.22)!important}
+[data-theme="light"] .hero-stat{background:rgba(124,58,237,.07);border-color:rgba(124,58,237,.18)}
+[data-theme="light"] .hs-label{color:rgba(109,40,217,.7)}
+[data-theme="light"] .hs-value{color:var(--gold)}
+[data-theme="light"] .hs-sub{color:rgba(109,40,217,.5)}
+[data-theme="light"] .lb-item{color:rgba(109,40,217,.8)}
+[data-theme="light"] .lb-label{color:rgba(109,40,217,.55)}
+[data-theme="light"] .lb-acc{color:var(--purple)}
 
 /* ── STATUS BAND light ── */
 [data-theme="light"] .status-band{
@@ -1409,7 +1419,7 @@ footer{
       <div class="logo-mark">OP</div>
       <div>
         <div class="logo-text">OPWA</div>
-        <div class="logo-sub">Platform</div>
+        <div class="logo-sub">Protocol</div>
       </div>
     </a>
     <div class="nav-links">
@@ -1535,7 +1545,7 @@ footer{
     <div class="hero-stat">
       <div class="hs-label">OP_NET Block</div>
       <div class="hs-value" id="hero-opnet-block">&#x2014;</div>
-      <div class="hs-sub">USD</div>
+      <div class="hs-sub">Signet</div>
     </div>
     <div class="hero-stat">
       <div class="hs-label">Projected APY</div>
@@ -1584,42 +1594,44 @@ footer{
       <input class="search-input" type="text" placeholder="Search asset..." oninput="searchAssets(this.value)"/>
     </div>
   </div>
-  <div class="assets-grid" id="assets-grid">
+  <div class="assets-grid" id="assets-grid" style="grid-template-columns:repeat(3,1fr);gap:20px">
 
-    <!-- ASSET ALPHA -->
-    <div class="card-asset" data-category="residential" data-name="asset alpha">
-      <div class="card-head">
-        <div class="badges">
+    <!-- ASSET ALPHA — Residential Miami -->
+    <div class="card-asset" data-category="residential" data-name="villa aurora miami">
+      <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:14px;position:relative">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80" style="width:100%;height:100%;object-fit:cover" alt="Villa Aurora" onerror="this.style.display='none'"/>
+        <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px">
           <span class="bdg bdg-res">Residential</span>
           <span class="bdg bdg-act">Active</span>
         </div>
-        <span class="card-id-small">ID-001</span>
+        <span class="card-id-small" style="position:absolute;top:10px;right:10px">ID-001</span>
       </div>
       <div class="card-pair">OP_NET/OPWA</div>
-      <h3 class="card-name">Asset Alpha</h3>
-      <p class="card-desc">Tokenized residential property. Fractional ownership settled on Bitcoin via OP_NET smart contract.</p>
+      <h3 class="card-name" style="text-transform:uppercase;font-size:15px">VILLA AURORA</h3>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">📍 Miami Beach, Florida, USA</div>
+      <p class="card-desc" style="font-size:12px;color:var(--text-2);margin-bottom:12px">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p>
       <div class="disp-toggle">
         <button class="dt-btn active" onclick="toggleDisp(this,'btc','alpha')">&#x20BF; BTC</button>
         <button class="dt-btn" onclick="toggleDisp(this,'usd','alpha')">$ USD</button>
       </div>
       <div class="card-stats">
-        <div class="cs-item"><div class="cs-label">Price</div><div class="cs-value" id="alpha-price">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">Price/token</div><div class="cs-value" id="alpha-price">&#x2014;</div></div>
         <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value apy">15%</div></div>
         <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value pos">+1.2%</div></div>
       </div>
-      <div class="prog-bar"><div class="prog-fill" style="width:55%"></div></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:45%"></div></div>
       <div class="avail-row">450 / 1000 tokens <span>55% available</span></div>
-      <div class="meta-grid">
-        <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc" id="alpha-gas">&#x2014;</div></div>
-        <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
-        <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
-        <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
-      </div>
       <button class="btn-invest" onclick="toggleInvest('p-alpha',this)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Invest Now
       </button>
       <div class="invest-panel" id="p-alpha">
+        <div class="meta-grid" style="margin-bottom:14px">
+          <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc" id="alpha-gas">&#x2014;</div></div>
+          <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
+          <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
+          <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
+        </div>
         <div class="invest-panel-title">Investment Details</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
           <div>
@@ -1644,40 +1656,42 @@ footer{
       </div>
     </div>
 
-    <!-- ASSET BETA -->
-    <div class="card-asset" data-category="commercial" data-name="asset beta">
-      <div class="card-head">
-        <div class="badges">
+    <!-- ASSET BETA — Commercial NYC -->
+    <div class="card-asset" data-category="commercial" data-name="metro tower nyc">
+      <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:14px;position:relative">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" style="width:100%;height:100%;object-fit:cover" alt="Metro Tower" onerror="this.style.display='none'"/>
+        <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px">
           <span class="bdg bdg-com">Commercial</span>
           <span class="bdg bdg-act">Active</span>
         </div>
-        <span class="card-id-small">ID-002</span>
+        <span class="card-id-small" style="position:absolute;top:10px;right:10px">ID-002</span>
       </div>
       <div class="card-pair">OP_NET/OPWA</div>
-      <h3 class="card-name">Asset Beta</h3>
-      <p class="card-desc">Commercial office space tokenized on OP_NET. Dividends distributed in satoshis monthly.</p>
+      <h3 class="card-name" style="text-transform:uppercase;font-size:15px">METRO TOWER</h3>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">📍 Manhattan, New York, USA</div>
+      <p class="card-desc" style="font-size:12px;color:var(--text-2);margin-bottom:12px">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p>
       <div class="disp-toggle">
         <button class="dt-btn active" onclick="toggleDisp(this,'btc','beta')">&#x20BF; BTC</button>
         <button class="dt-btn" onclick="toggleDisp(this,'usd','beta')">$ USD</button>
       </div>
       <div class="card-stats">
-        <div class="cs-item"><div class="cs-label">Price</div><div class="cs-value" id="beta-price">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">Price/token</div><div class="cs-value" id="beta-price">&#x2014;</div></div>
         <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value apy">12%</div></div>
         <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value pos">+0.8%</div></div>
       </div>
-      <div class="prog-bar"><div class="prog-fill" style="width:30%"></div></div>
-      <div class="avail-row">700 / 1000 tokens <span>30% available</span></div>
-      <div class="meta-grid">
-        <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc">&#x2014;</div></div>
-        <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
-        <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
-        <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
-      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:65%"></div></div>
+      <div class="avail-row">1300 / 2000 tokens <span>35% available</span></div>
       <button class="btn-invest" onclick="toggleInvest('p-beta',this)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Invest Now
       </button>
       <div class="invest-panel" id="p-beta">
+        <div class="meta-grid" style="margin-bottom:14px">
+          <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc" id="beta-gas">&#x2014;</div></div>
+          <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
+          <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
+          <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
+        </div>
         <div class="invest-panel-title">Investment Details</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
           <div>
@@ -1702,42 +1716,214 @@ footer{
       </div>
     </div>
 
-    <!-- ASSET GAMMA -->
-    <div class="card-asset" data-category="industrial" data-name="asset gamma">
-      <div class="card-head">
-        <div class="badges">
+    <!-- ASSET GAMMA — Industrial São Paulo -->
+    <div class="card-asset" data-category="industrial" data-name="logistica brasil sp">
+      <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:14px;position:relative">
+        <img src="https://images.unsplash.com/photo-1553246969-7dcb4259b87b?w=600&q=80" style="width:100%;height:100%;object-fit:cover" alt="Logistica Brasil" onerror="this.style.display='none'"/>
+        <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px">
           <span class="bdg bdg-ind">Industrial</span>
-          <span class="bdg bdg-soon">Coming Soon</span>
+          <span class="bdg bdg-act">Active</span>
         </div>
-        <span class="card-id-small">ID-003</span>
+        <span class="card-id-small" style="position:absolute;top:10px;right:10px">ID-003</span>
       </div>
       <div class="card-pair">OP_NET/OPWA</div>
-      <h3 class="card-name">Asset Gamma</h3>
-      <p class="card-desc">Industrial logistics hub. Tokenization pending final regulatory clearance. Join the waitlist.</p>
+      <h3 class="card-name" style="text-transform:uppercase;font-size:15px">LOGISTICA BRASIL</h3>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">📍 Guarulhos, São Paulo, Brasil</div>
+      <p class="card-desc" style="font-size:12px;color:var(--text-2);margin-bottom:12px">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p>
       <div class="disp-toggle">
-        <button class="dt-btn active">&#x20BF; BTC</button>
-        <button class="dt-btn">$ USD</button>
+        <button class="dt-btn active" onclick="toggleDisp(this,'btc','gamma')">&#x20BF; BTC</button>
+        <button class="dt-btn" onclick="toggleDisp(this,'usd','gamma')">$ USD</button>
       </div>
       <div class="card-stats">
-        <div class="cs-item"><div class="cs-label">Price</div><div class="cs-value" style="color:var(--text-3)">TBA</div></div>
-        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value" style="color:var(--gold)">~18%</div></div>
-        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value" style="color:var(--text-3)">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">Price/token</div><div class="cs-value" id="gamma-price">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value apy" style="color:var(--gold)">18%</div></div>
+        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value pos">+2.1%</div></div>
       </div>
-      <div class="prog-bar"><div class="prog-fill" style="width:30%;background:linear-gradient(90deg,var(--gold),#f59e0b)"></div></div>
-      <div class="avail-row">300 / 1000 signups <span>Waitlist open</span></div>
-      <div class="meta-grid">
-        <div class="meta-item"><div class="meta-lbl">Status</div><div class="meta-val" style="color:var(--gold)">Upcoming</div></div>
-        <div class="meta-item"><div class="meta-lbl">Type</div><div class="meta-val">Industrial</div></div>
-      </div>
-      <button class="btn-waitlist" onclick="toggleInvest('p-gamma',this)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Join Waitlist
+      <div class="prog-bar"><div class="prog-fill" style="width:20%;background:linear-gradient(90deg,var(--gold),#f59e0b)"></div></div>
+      <div class="avail-row">600 / 3000 tokens <span>80% available</span></div>
+      <button class="btn-invest" onclick="toggleInvest('p-gamma',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Invest Now
       </button>
       <div class="invest-panel" id="p-gamma">
-        <span class="invest-label">Your Bitcoin Address</span>
-        <input class="invest-input" type="text" placeholder="bc1q..."/>
-        <button class="btn-confirm" style="background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)">Register Interest</button>
+        <div class="meta-grid" style="margin-bottom:14px">
+          <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc" id="gamma-gas">&#x2014;</div></div>
+          <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
+          <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
+          <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
+        </div>
+        <div class="invest-panel-title">Investment Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
+          <div>
+            <span class="invest-label">Amount (BTC)</span>
+            <input class="invest-input" type="number" id="gamma-btc" step="0.00001" placeholder="0.00001" min="0.00001" oninput="syncInvest('gamma','btc',this.value)" style="margin-bottom:0"/>
+          </div>
+          <div>
+            <span class="invest-label">Number of Tokens</span>
+            <input class="invest-input" type="number" id="gamma-tokens" step="1" placeholder="1" min="1" oninput="syncInvest('gamma','tokens',this.value)" style="margin-bottom:0"/>
+          </div>
+        </div>
+        <div class="invest-hint" style="margin-top:6px;margin-bottom:12px">1 token = 0.00001 BTC (1,000 sats)</div>
+        <div class="invest-receipt" id="gamma-receipt" style="display:none">
+          <div class="invest-receipt-lbl">You will receive</div>
+          <div class="invest-receipt-val" id="gamma-receipt-tokens">&#x2014; OPWAY</div>
+          <div class="invest-receipt-btc" id="gamma-receipt-btc">&#x2248; &#x2014; BTC</div>
+        </div>
+        <button class="btn-confirm" onclick="confirmInvest('gamma')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirm Investment
+        </button>
       </div>
+    </div>
+
+    <!-- ASSET DELTA — Residential Lisbon -->
+    <div class="card-asset" data-category="residential" data-name="casa belem lisbon">
+      <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:14px;position:relative">
+        <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&q=80" style="width:100%;height:100%;object-fit:cover" alt="Casa Belém" onerror="this.style.display='none'"/>
+        <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px">
+          <span class="bdg bdg-res">Residential</span>
+          <span class="bdg bdg-act">Active</span>
+        </div>
+        <span class="card-id-small" style="position:absolute;top:10px;right:10px">ID-004</span>
+      </div>
+      <div class="card-pair">OP_NET/OPWA</div>
+      <h3 class="card-name" style="text-transform:uppercase;font-size:15px">CASA BELÉM</h3>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">📍 Belém, Lisboa, Portugal</div>
+      <p class="card-desc" style="font-size:12px;color:var(--text-2);margin-bottom:12px">Historic riverside townhouse steps from Torre de Belém. 220,000 USD tokenized across 1,500 OPWAY tokens. Fully renovated.</p>
+      <div class="disp-toggle">
+        <button class="dt-btn active" onclick="toggleDisp(this,'btc','delta')">&#x20BF; BTC</button>
+        <button class="dt-btn" onclick="toggleDisp(this,'usd','delta')">$ USD</button>
+      </div>
+      <div class="card-stats">
+        <div class="cs-item"><div class="cs-label">Price/token</div><div class="cs-value" id="delta-price">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value apy">14%</div></div>
+        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value pos">+0.5%</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:80%"></div></div>
+      <div class="avail-row">1200 / 1500 tokens <span>20% available</span></div>
+      <button class="btn-invest" onclick="toggleInvest('p-delta',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Invest Now
+      </button>
+      <div class="invest-panel" id="p-delta">
+        <div class="meta-grid" style="margin-bottom:14px">
+          <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc" id="delta-gas">&#x2014;</div></div>
+          <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
+          <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
+          <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
+        </div>
+        <div class="invest-panel-title">Investment Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
+          <div>
+            <span class="invest-label">Amount (BTC)</span>
+            <input class="invest-input" type="number" id="delta-btc" step="0.00001" placeholder="0.00001" min="0.00001" oninput="syncInvest('delta','btc',this.value)" style="margin-bottom:0"/>
+          </div>
+          <div>
+            <span class="invest-label">Number of Tokens</span>
+            <input class="invest-input" type="number" id="delta-tokens" step="1" placeholder="1" min="1" oninput="syncInvest('delta','tokens',this.value)" style="margin-bottom:0"/>
+          </div>
+        </div>
+        <div class="invest-hint" style="margin-top:6px;margin-bottom:12px">1 token = 0.00001 BTC (1,000 sats)</div>
+        <div class="invest-receipt" id="delta-receipt" style="display:none">
+          <div class="invest-receipt-lbl">You will receive</div>
+          <div class="invest-receipt-val" id="delta-receipt-tokens">&#x2014; OPWAY</div>
+          <div class="invest-receipt-btc" id="delta-receipt-btc">&#x2248; &#x2014; BTC</div>
+        </div>
+        <button class="btn-confirm" onclick="confirmInvest('delta')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirm Investment
+        </button>
+      </div>
+    </div>
+
+    <!-- ASSET EPSILON — Commercial Dubai -->
+    <div class="card-asset" data-category="commercial" data-name="downtown hub dubai">
+      <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:14px;position:relative">
+        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80" style="width:100%;height:100%;object-fit:cover" alt="Downtown Hub" onerror="this.style.display='none'"/>
+        <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px">
+          <span class="bdg bdg-com">Commercial</span>
+          <span class="bdg bdg-act">Active</span>
+        </div>
+        <span class="card-id-small" style="position:absolute;top:10px;right:10px">ID-005</span>
+      </div>
+      <div class="card-pair">OP_NET/OPWA</div>
+      <h3 class="card-name" style="text-transform:uppercase;font-size:15px">DOWNTOWN HUB</h3>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">📍 Downtown Dubai, UAE</div>
+      <p class="card-desc" style="font-size:12px;color:var(--text-2);margin-bottom:12px">Premium retail and office space in the heart of Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Tax-free jurisdiction.</p>
+      <div class="disp-toggle">
+        <button class="dt-btn active" onclick="toggleDisp(this,'btc','epsilon')">&#x20BF; BTC</button>
+        <button class="dt-btn" onclick="toggleDisp(this,'usd','epsilon')">$ USD</button>
+      </div>
+      <div class="card-stats">
+        <div class="cs-item"><div class="cs-label">Price/token</div><div class="cs-value" id="epsilon-price">&#x2014;</div></div>
+        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value apy">11%</div></div>
+        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value pos">+1.5%</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:40%"></div></div>
+      <div class="avail-row">2000 / 5000 tokens <span>60% available</span></div>
+      <button class="btn-invest" onclick="toggleInvest('p-epsilon',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Invest Now
+      </button>
+      <div class="invest-panel" id="p-epsilon">
+        <div class="meta-grid" style="margin-bottom:14px">
+          <div class="meta-item"><div class="meta-lbl">Est. Gas</div><div class="meta-val acc" id="epsilon-gas">&#x2014;</div></div>
+          <div class="meta-item"><div class="meta-lbl">Slippage</div><div class="meta-val">0.5%</div></div>
+          <div class="meta-item"><div class="meta-lbl">Contract</div><div class="meta-val">OP_NET</div></div>
+          <div class="meta-item"><div class="meta-lbl">Network</div><div class="meta-val acc">Testnet</div></div>
+        </div>
+        <div class="invest-panel-title">Investment Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
+          <div>
+            <span class="invest-label">Amount (BTC)</span>
+            <input class="invest-input" type="number" id="epsilon-btc" step="0.00001" placeholder="0.00001" min="0.00001" oninput="syncInvest('epsilon','btc',this.value)" style="margin-bottom:0"/>
+          </div>
+          <div>
+            <span class="invest-label">Number of Tokens</span>
+            <input class="invest-input" type="number" id="epsilon-tokens" step="1" placeholder="1" min="1" oninput="syncInvest('epsilon','tokens',this.value)" style="margin-bottom:0"/>
+          </div>
+        </div>
+        <div class="invest-hint" style="margin-top:6px;margin-bottom:12px">1 token = 0.00001 BTC (1,000 sats)</div>
+        <div class="invest-receipt" id="epsilon-receipt" style="display:none">
+          <div class="invest-receipt-lbl">You will receive</div>
+          <div class="invest-receipt-val" id="epsilon-receipt-tokens">&#x2014; OPWAY</div>
+          <div class="invest-receipt-btc" id="epsilon-receipt-btc">&#x2248; &#x2014; BTC</div>
+        </div>
+        <button class="btn-confirm" onclick="confirmInvest('epsilon')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirm Investment
+        </button>
+      </div>
+    </div>
+
+    <!-- ASSET ZETA — Residential Tokyo (Coming Soon) -->
+    <div class="card-asset" data-category="residential" data-name="sakura residence tokyo">
+      <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:14px;position:relative">
+        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&q=80" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.7)" alt="Sakura Residence" onerror="this.style.display='none'"/>
+        <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px">
+          <span class="bdg bdg-res">Residential</span>
+          <span class="bdg bdg-soon">Coming Soon</span>
+        </div>
+        <span class="card-id-small" style="position:absolute;top:10px;right:10px">ID-006</span>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+          <span style="font-size:11px;font-weight:700;background:rgba(0,0,0,.6);color:#fff;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.2)">Opening Q2 2026</span>
+        </div>
+      </div>
+      <div class="card-pair">OP_NET/OPWA</div>
+      <h3 class="card-name" style="text-transform:uppercase;font-size:15px">SAKURA RESIDENCE</h3>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">📍 Shinjuku, Tokyo, Japan</div>
+      <p class="card-desc" style="font-size:12px;color:var(--text-2);margin-bottom:12px">Premium serviced apartment complex in central Shinjuku. 450,000 USD to be tokenized. Join the whitelist for early access.</p>
+      <div class="card-stats">
+        <div class="cs-item"><div class="cs-label">Price/token</div><div class="cs-value" style="color:var(--text-3)">TBA</div></div>
+        <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value" style="color:var(--gold)">~16%</div></div>
+        <div class="cs-item"><div class="cs-label">24h</div><div class="cs-value" style="color:var(--text-3)">&#x2014;</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:5%;background:linear-gradient(90deg,var(--gold),#f59e0b)"></div></div>
+      <div class="avail-row">120 / 2500 signups <span>Whitelist open</span></div>
+      <button class="btn-waitlist" onclick="showToast('Whitelist coming soon — follow @OPWABTC','info')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Join Whitelist
+      </button>
     </div>
 
   </div>
@@ -1829,7 +2015,7 @@ footer{
         <div class="cmp-left">
           <span class="cmp-dot orange"></span>
           <div>
-            <div class="cmp-name">OPWA Platform <span class="apy-tag orange">15% APY</span></div>
+            <div class="cmp-name">OPWA Protocol <span class="apy-tag orange">15% APY</span></div>
             <div class="cmp-sub" id="opwa-sub">&#x2014;</div>
           </div>
         </div>
@@ -1876,14 +2062,14 @@ footer{
     <div class="ticker-track">
       <span class="t-item"><span class="t-dot"></span>OP_NET Protocol</span>
       <span class="t-item"><span class="t-dot"></span>Bitcoin Layer</span>
-      <span class="t-item"><span class="t-dot"></span>OPWA Platform</span>
+      <span class="t-item"><span class="t-dot"></span>OPWA Protocol</span>
       <span class="t-item"><span class="t-dot"></span>Testnet4</span>
       <span class="t-item"><span class="t-dot"></span>OPScan Explorer</span>
       <span class="t-item"><span class="t-dot"></span>Vibecode Ecosystem</span>
       <span class="t-item"><span class="t-dot"></span>DeFi Bible</span>
       <span class="t-item"><span class="t-dot"></span>OP_NET Protocol</span>
       <span class="t-item"><span class="t-dot"></span>Bitcoin Layer</span>
-      <span class="t-item"><span class="t-dot"></span>OPWA Platform</span>
+      <span class="t-item"><span class="t-dot"></span>OPWA Protocol</span>
       <span class="t-item"><span class="t-dot"></span>Testnet4</span>
       <span class="t-item"><span class="t-dot"></span>OPScan Explorer</span>
       <span class="t-item"><span class="t-dot"></span>Vibecode Ecosystem</span>
@@ -2091,7 +2277,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div class="logo-mark">OP</div>
         <div>
           <div class="logo-text">OPWA</div>
-          <div class="logo-sub">Platform</div>
+          <div class="logo-sub">Protocol</div>
         </div>
       </div>
       <p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>
@@ -2319,6 +2505,11 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 
     </div>
   </div>
+  <div style="border-top:1px solid var(--border);margin-top:48px;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:900px;margin-left:auto;margin-right:auto">
+    <div style="display:flex;align-items:center;gap:8px"><div class="logo-mark" style="width:26px;height:26px;font-size:10px">OP</div><div><div class="logo-text" style="font-size:13px">OPWA</div><div class="logo-sub" style="font-size:9px">Protocol</div></div></div>
+    <div style="font-size:11px;color:var(--text-3)">&copy; 2025 OPWA Protocol · <span style="color:var(--success)">&#x25CF;</span> OP_NET Testnet</div>
+    <div style="display:flex;gap:16px"><a href="/terms" onclick="navigate('/terms');return false;" style="font-size:11px;color:var(--text-3);text-decoration:none">Terms</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="font-size:11px;color:var(--text-3);text-decoration:none">Privacy</a></div>
+  </div>
 </div>
 
 
@@ -2371,27 +2562,27 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </div>
       <div style="background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;margin-bottom:20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-2)">OPWAP Supply Progress</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-2)">Property Supply Progress</span>
           <span style="color:var(--accent);font-weight:700;font-size:12px" id="dash-supply-pct">0.00%</span>
         </div>
         <div style="height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:6px">
           <div id="dash-bar-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:4px;transition:width .6s"></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)">
-          <span id="dash-supply-minted">0 minted</span><span>18B max</span>
+          <span id="dash-supply-minted">0 minted</span><span>1,000,000 max</span>
         </div>
       </div>
       <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">Token Holdings</div>
       <div class="dash-token-card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <span style="font-weight:800;font-size:16px;color:var(--accent)">OPWAP</span>
+          <span style="font-weight:800;font-size:16px;color:var(--accent)">OPWAY</span>
           <span style="font-size:10px;background:rgba(34,197,94,.18);color:#4ade80;border-radius:20px;padding:3px 9px;font-weight:700">OP_20</span>
         </div>
         <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:900;color:var(--text-1);margin-bottom:4px" id="dash-opwap-bal">0</div>
         <div style="font-size:12px;color:var(--text-2);margin-bottom:8px" id="dash-opwap-btc">&#x2248; 0.000000 BTC</div>
         <div style="font-size:12px;color:#4ade80;font-weight:700;margin-bottom:12px">&#x25B2; 15% APY</div>
         <!-- Endereço correto: CONTRACTS.opwaCoin -->
-        <a href="https://opscan.org/token/opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp?network=op_testnet" target="_blank" style="color:var(--accent);font-size:11px;font-weight:600;text-decoration:none">View on OPScan &#x2197;</a>
+        <a href="https://opscan.org/accounts/opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv?network=op_testnet" target="_blank" style="color:var(--accent);font-size:11px;font-weight:600;text-decoration:none">View on OPScan &#x2197;</a>
       </div>
 
       <!-- ── MY REAL ASSETS (Vault) ── -->
@@ -2430,7 +2621,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
             <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px">Portfolio Growth</div>
             <div style="display:flex;align-items:center;gap:14px;font-size:11px;font-family:'DM Mono',monospace">
               <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:2px;background:#f97316;display:inline-block;border-radius:2px"></span><span style="color:var(--text-3)">BTC Value</span></span>
-              <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:2px;background:#7c3aed;display:inline-block;border-radius:2px"></span><span style="color:var(--text-3)">OPWAP Value</span></span>
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:2px;background:#7c3aed;display:inline-block;border-radius:2px"></span><span style="color:var(--text-3)">OPWAY Value</span></span>
             </div>
           </div>
           <div style="display:flex;gap:6px">
@@ -2449,7 +2640,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
             <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--text-3);text-align:right">$0</span>
           </div>
           <div style="flex:1;position:relative;min-height:200px">
-            <canvas id="portfolio-chart" height="200" style="width:100%;display:block"></canvas>
+            <canvas id="portfolio-chart" height="200" style="width:100%;display:block;border-radius:8px"></canvas>
           </div>
         </div>
         <div style="font-size:10px;color:var(--text-3);text-align:center;margin-top:8px;font-family:'DM Mono',monospace" id="chart-status">Loading on-chain data…</div>
@@ -2460,16 +2651,22 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
           <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">Transaction History</div>
           <div style="font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace" id="tx-count-label"></div>
         </div>
-        <div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.04)">
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)">Hash</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)">Action</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Value</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Time</span>
+        <div style="display:grid;grid-template-columns:130px 90px 1fr 100px 80px 72px;padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)">
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)">Tx ID</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)">Method</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)">From → To</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Amount</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Age</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);text-align:right">Status</span>
         </div>
         <div id="tx-list"><div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div></div>
       </div>
     </div>
+  </div>
+  <div style="border-top:1px solid var(--border);margin-top:48px;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:900px;margin-left:auto;margin-right:auto">
+    <div style="display:flex;align-items:center;gap:8px"><div class="logo-mark" style="width:26px;height:26px;font-size:10px">OP</div><div><div class="logo-text" style="font-size:13px">OPWA</div><div class="logo-sub" style="font-size:9px">Protocol</div></div></div>
+    <div style="font-size:11px;color:var(--text-3)">&copy; 2025 OPWA Protocol · <span style="color:var(--success)">&#x25CF;</span> OP_NET Testnet</div>
+    <div style="display:flex;gap:16px"><a href="/terms" onclick="navigate('/terms');return false;" style="font-size:11px;color:var(--text-3);text-decoration:none">Terms</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="font-size:11px;color:var(--text-3);text-decoration:none">Privacy</a></div>
   </div>
 </div>
 
@@ -2733,12 +2930,13 @@ function calcGas(val) {
 }
 
 /* ── TOAST ── */
-function showToast(msg, type) {
+function showToast(msg, type, isHtml) {
   const el = document.createElement('div');
   el.className = 'toast toast-' + (type || 'info');
-  el.textContent = msg;
+  if (isHtml) el.innerHTML = msg; else el.textContent = msg;
+  el.style.pointerEvents = 'auto';
   document.getElementById('toasts').appendChild(el);
-  setTimeout(() => el.remove(), 3500);
+  setTimeout(() => el.remove(), 5000);
 }
 
 /* ── INVEST PANELS ── */
@@ -2829,7 +3027,7 @@ async function confirmInvest(asset) {
       extraOutputs:[{ address:TREASURY_OPT, value:Number(satsAmt) }],
     });
     const txid = receipt.transactionId;
-    showToast('✅ ' + tokenCount + ' OPWAY minted! TX: ' + txid.slice(0,12) + '…', 'success');
+    showToast('✅ ' + tokenCount + ' OPWAY minted! <a href="https://opscan.org/transactions/' + txid + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + txid.slice(0,10) + '…↗</a>', 'success', true);
     const rcpt = document.getElementById(asset + '-receipt');
     if (rcpt) { rcpt.style.display = 'block'; const link = rcpt.querySelector('.rcpt-scan'); if (link) link.href = 'https://opscan.org/transactions/' + txid + '?network=op_testnet'; }
     _txCache = {};
@@ -3159,7 +3357,7 @@ async function loadVault() {
 
     // Renderizar cards
     cardsEl.innerHTML = tokenIds.map(function(id) {
-      var opscanUrl = 'https://opscan.org/token/' + CONTRACTS.propertyNft + '/' + id + '?network=op_testnet';
+      var opscanUrl = 'https://opscan.org/token/' + CONTRACTS.propertyNft + '?network=op_testnet&tokenId=' + id;
       return '<div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .18s" onmouseover="this.style.borderColor=\'var(--purple-border)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
         '<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple-soft);margin-bottom:6px">Real Asset</div>' +
         '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:16px;color:var(--text-1);margin-bottom:4px">#' + id + '</div>' +
@@ -3229,7 +3427,7 @@ function dashRenderData() {
   var ob = Number(BigInt(dashOpwapBal || '0')) / 1e8 * 0.00001;
   var ou = ob * bp;
   var sn = Number(BigInt(dashSupply || '0')) / 1e8;
-  var pct = Math.min(100, (sn / 18000000000) * 100);
+  var pct = Math.min(100, (sn / 1000000) * 100);
   function s(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
   s('dash-btc-val', '\u20BF ' + bb.toFixed(5));
   s('dash-btc-usd', '\u2248 $' + bu.toFixed(2) + ' USD');
@@ -3382,7 +3580,9 @@ function drawPortfolioChart() {
   var w = canvas.parentElement.offsetWidth||600;
   canvas.width=w; canvas.height=200;
   var ctx=canvas.getContext('2d');
-  ctx.clearRect(0,0,w,200);
+  // Background
+  ctx.fillStyle = isLight ? 'rgba(237,233,254,0.55)' : 'rgba(0,0,0,0)';
+  ctx.fillRect(0,0,w,200);
   if (!chartBtcPts.length) return;
   var pL=0,pR=8,pT=10,pB=24,cw=w-pL-pR,ch=200-pT-pB,pts=chartBtcPts.length;
   var allV=chartBtcPts.map(function(p){return p.usd;}).concat(chartOpwapPts.map(function(p){return p.usd;}));
@@ -3481,18 +3681,24 @@ function renderTxList(txs){
   if(!listEl)return;
   if(!filtered.length){listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">No transactions found for this wallet.</div>';return;}
   listEl.innerHTML=filtered.map(function(tx){
-    var sh=tx.hash?tx.hash.slice(0,8)+'…'+tx.hash.slice(-6):'—';
-    var ts=tx.time?tx.time.toLocaleDateString()+' '+tx.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'Pending';
+    var sh=tx.hash?tx.hash.slice(0,10)+'…'+tx.hash.slice(-4):'—';
     var href=tx.hash?'https://opscan.org/transactions/'+tx.hash+'?network=op_testnet':'#';
-    var ac=tx.action==='Buy OPWAY'?'#f97316':tx.action==='Mint NFT'?'#a78bfa':tx.action==='Receive BTC'?'#4ade80':'var(--text-2)';
+    var methodLabel=tx.action==='Buy OPWAY'?'Mint':tx.action==='Mint NFT'?'Mint':tx.action==='Send BTC'?'Transfer':'Function';
+    var methodColor=tx.isOpwa?'rgba(167,139,250,.18)':'rgba(249,115,22,.12)';
+    var methodTextColor=tx.isOpwa?'#a78bfa':'#f97316';
+    var addr=walletState.addr?walletState.addr.slice(0,8)+'…'+walletState.addr.slice(-4):'—';
+    var toAddr=tx.isOpwa?'Contract':'—';
     var sc=tx.status==='Confirmed'?'#4ade80':'#fbbf24';
-    var dot=tx.isOpwa?'#7c3aed':'#f97316';
-    return '<div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s" onmouseover="this.style.background=\'rgba(255,255,255,.025)\'" onmouseout="this.style.background=\'transparent\'">'
-      +'<a href="'+href+'" target="_blank" style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+sh+'</a>'
-      +'<span style="font-size:12px;font-weight:600;color:'+ac+';display:flex;align-items:center">'+tx.action+'</span>'
-      +'<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-2);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.value+'</span>'
-      +'<span style="font-size:10px;color:var(--text-3);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+ts+'</span>'
-      +'<span style="font-size:10px;font-weight:700;color:'+sc+';text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.status+'</span>'
+    var scBg=tx.status==='Confirmed'?'rgba(74,222,128,.12)':'rgba(251,191,36,.12)';
+    var now=Date.now();
+    var age=tx.time?function(){var s=Math.floor((now-tx.time.getTime())/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}():'Pending';
+    return '<div style="display:grid;grid-template-columns:130px 90px 1fr 100px 80px 72px;padding:11px 22px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s;align-items:center" onmouseover="this.style.background=\'rgba(255,255,255,.03)\'" onmouseout="this.style.background=\'transparent\'">'
+      +'<a href="'+href+'" target="_blank" style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:'+(tx.status==='Confirmed'?'#4ade80':'#fbbf24')+';flex-shrink:0;display:inline-block"></span>'+sh+'</a>'
+      +'<span style="font-size:10px;font-weight:700;color:'+methodTextColor+';background:'+methodColor+';border-radius:6px;padding:3px 8px;display:inline-block;font-family:\'DM Mono\',monospace">'+methodLabel+'</span>'
+      +'<span style="font-size:11px;color:var(--text-3);font-family:\'DM Mono\',monospace">'+addr+' <span style="color:var(--text-3);opacity:.4">→</span> '+toAddr+'</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-2);text-align:right">'+tx.value+'</span>'
+      +'<span style="font-size:10px;color:var(--text-3);text-align:right">'+age+'</span>'
+      +'<span style="font-size:10px;font-weight:700;color:'+sc+';background:'+scBg+';border-radius:5px;padding:2px 7px;text-align:right;display:inline-block">'+tx.status+'</span>'
       +'</div>';
   }).join('');
 }
@@ -3542,6 +3748,10 @@ function searchAssets(q) {
 /* ── SORT ASSETS ── */
 function sortAssets(by) { /* placeholder */ }
 
+/* Asset token counts for price calculation */
+var ASSET_TOKENS = { alpha:1000, beta:2000, gamma:3000, delta:1500, epsilon:5000 };
+var ASSET_USD    = { alpha:180000, beta:350000, gamma:500000, delta:220000, epsilon:800000 };
+
 /* ── TOGGLE DISPLAY MODE (BTC/USD per card) ── */
 function toggleDisp(btn, mode, assetId) {
   const wrap = btn.closest('.card-asset');
@@ -3549,11 +3759,25 @@ function toggleDisp(btn, mode, assetId) {
   btn.classList.add('active');
   const priceEl = document.getElementById(assetId + '-price');
   if (!priceEl) return;
+  const tokens = ASSET_TOKENS[assetId] || 1000;
+  const usdVal = ASSET_USD[assetId] || 180000;
+  const satsPerToken = Math.round((usdVal / (btcPrice || 65000)) * 1e8 / tokens);
   if (mode === 'btc') {
-    priceEl.textContent = '—';
+    priceEl.textContent = satsPerToken.toLocaleString() + ' sats';
   } else {
-    priceEl.textContent = btcPrice ? '$' + (btcPrice * 0.001).toFixed(2) : '—';
+    priceEl.textContent = btcPrice ? '$' + (usdVal / tokens).toFixed(0) : '—';
   }
+}
+
+function updateAllAssetPrices() {
+  ['alpha','beta','gamma','delta','epsilon'].forEach(function(id) {
+    var el = document.getElementById(id+'-price');
+    if (!el) return;
+    var tokens = ASSET_TOKENS[id] || 1000;
+    var usdVal = ASSET_USD[id] || 180000;
+    var sats = Math.round((usdVal / (btcPrice || 65000)) * 1e8 / tokens);
+    el.textContent = sats.toLocaleString() + ' sats';
+  });
 }
 
 /* ── FETCH BTC PRICE (CoinGecko → CoinPaprika fallback) ── */
@@ -3572,6 +3796,7 @@ async function fetchPrices() {
     const heroPriceEl = document.getElementById('hero-btc-price');
     if (heroPriceEl) heroPriceEl.textContent = fmt;
     fetchOpNetBlock();
+    updateAllAssetPrices();
     const gBtcEl = document.getElementById('g-btc');
     if (gBtcEl) gBtcEl.textContent = fmt;
     ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
