@@ -2631,8 +2631,12 @@ async function confirmInvest(asset) {
     const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWAY_ADDR, OPWAY_ABI, provider, _net, senderAddr);
-    // Simulation: treasury as hex via hasTo flag; real tx uses scriptPublicKey path.
-    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_HEX, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo, scriptPubKey:undefined }] });
+    // Build P2TR script: OP_1 (0x51) + PUSH32 (0x20) + 32-byte x-only tweaked pubkey.
+    // Using hasScriptPubKey so the contract's scriptPublicKey check passes in simulation.
+    var p2trScript = new Uint8Array(34);
+    p2trScript[0] = 0x51; p2trScript[1] = 0x20;
+    p2trScript.set(_hexToBytes(TREASURY_HEX), 2);
+    contract.setTransactionDetails({ inputs:[], outputs:[{ scriptPubKey:p2trScript, value:satsAmt, index:1, flags:TransactionOutputFlags.hasScriptPubKey }] });
     const simulation = await contract.mint(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
