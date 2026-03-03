@@ -29,7 +29,7 @@
   --accent-hover:#fb923c;
   --accent-dim:rgba(249,115,22,.12);
   --accent-border:rgba(249,115,22,.30);
-  --accent-glow:rgba(249,115,22,0.22);
+  --accent-glow:rgba(249,115,22,.25);
 
   --gold:#fbbf24;
   --gold-dim:rgba(251,191,36,.12);
@@ -131,61 +131,33 @@
 
 /* ── BASE ── */
 html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px}
-body{cursor:none;background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden}
-a,button,input,textarea,select,[role="button"]{cursor:none}
+*{cursor:none!important}
+body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
-button{font-family:inherit}
-button:active{transform:scale(0.97);transition:transform .05s}
+button{cursor:none!important;font-family:inherit}
 input,select,textarea{font-family:inherit}
 
-/* ── CURSOR (split pill) ── */
+/* ── CURSOR (dot trail — pointer-events:none, never blocks clicks) ── */
 #cur{
-  position:fixed;pointer-events:none;z-index:2147483647;
+  position:fixed;pointer-events:none;z-index:99999;
   width:20px;height:10px;border-radius:999px;overflow:hidden;
-  transform:translate(-50%,-50%);
-  box-shadow:0 2px 12px rgba(249,115,22,0.39);
+  transform:translate(-50%,-50%) rotate(45deg);
+  box-shadow:0 2px 14px rgba(249,115,22,.55);
   will-change:left,top;
-  transition:width .12s ease,height .12s ease,opacity .1s ease;
+  left:-200px;top:-200px;
+  opacity:0;transition:opacity .2s;
 }
 #cur::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 50%,#f97316 50%)}
-#cur.state-hover{width:26px;height:13px;box-shadow:0 0 18px rgba(249,115,22,0.61)}
-#cur.state-cta{width:30px;height:15px;box-shadow:0 0 24px rgba(249,115,22,0.78)}
-#cur.state-input{width:18px;height:9px;box-shadow:0 1px 8px rgba(249,115,22,0.26)}
-#cur.state-click{opacity:0}
-
-
-/* ── HERO CTA shimmer ── */
-@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
-.btn-hero{position:relative;overflow:hidden;transition:all .18s cubic-bezier(.4,0,.2,1),.08s opacity}
-.btn-hero::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.13) 50%,transparent 100%);
-  background-size:200% 100%;
+/* orange glow behind pill */
+#cur-glow{
+  position:fixed;pointer-events:none;z-index:99997;
+  width:52px;height:52px;border-radius:50%;
+  background:radial-gradient(circle,rgba(249,115,22,.22) 0%,transparent 68%);
+  transform:translate(-50%,-50%);
+  filter:blur(10px);
+  left:-200px;top:-200px;
   opacity:0;transition:opacity .2s;
-  animation:shimmer 2.5s linear infinite;
 }
-.btn-hero:hover::after{opacity:1}
-.btn-hero:hover{transform:translateY(-1px) scale(1.015);box-shadow:0 6px 28px rgba(249,115,22,0.39)}
-.btn-hero .hero-arrow{display:inline-block;transition:transform .18s .08s ease}
-.btn-hero:hover .hero-arrow{transform:translateX(4px)}
-
-
-/* ── LOADING STATES ── */
-.btn-loading{position:relative;pointer-events:none;opacity:.75}
-.btn-loading::before{
-  content:'';display:inline-block;
-  width:12px;height:12px;border-radius:50%;
-  border:2px solid rgba(255,255,255,.3);
-  border-top-color:#fff;
-  animation:spin .6s linear infinite;
-  margin-right:7px;vertical-align:middle;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-
-/* ── FOCUS VISIBLE ── */
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -225,7 +197,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   background:linear-gradient(135deg,#f97316,#ea580c);
   display:flex;align-items:center;justify-content:center;
   font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;
-  box-shadow:0 0 18px rgba(249,115,22,0.3);flex-shrink:0;
+  box-shadow:0 0 18px rgba(249,115,22,.35);flex-shrink:0;
 }
 .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--text-1);letter-spacing:.01em;line-height:1.15}
 .logo-sub{font-size:8.5px;color:var(--text-3);letter-spacing:.38em;text-transform:uppercase;margin-top:0px;line-height:1;text-align:center;width:100%}
@@ -291,7 +263,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 .btn-connect{
   padding:8px 16px;background:var(--accent);color:#fff;border:none;
   border-radius:10px;font-size:13px;font-weight:600;
-  box-shadow:0 3px 12px rgba(249,115,22,0.3);
+  box-shadow:0 3px 12px rgba(249,115,22,.35);
   transition:opacity .2s,transform .12s;
 }
 .btn-connect:hover{opacity:.88;transform:translateY(-1px)}
@@ -302,7 +274,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 
 /* wallet dropdown */
 .wallet-btn-wrap{position:relative}
-.wallet-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:248px;background:var(--bg-elevated);border:1px solid rgba(249,115,22,0.24);border-radius:14px;padding:14px;z-index:9999;box-shadow:0 16px 40px rgba(0,0,0,.35);display:none}
+.wallet-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:248px;background:var(--bg-elevated);border:1px solid rgba(249,115,22,.28);border-radius:14px;padding:14px;z-index:9999;box-shadow:0 16px 40px rgba(0,0,0,.35);display:none}
 .wallet-dropdown.open{display:block}
 [data-theme="light"] .wallet-dropdown{background:#fff;border-color:rgba(124,58,237,.3);box-shadow:0 16px 40px rgba(124,58,237,.18);color:var(--text-1);}
 .wd-btn{display:block;width:100%;text-align:left;padding:8px 8px;background:transparent;border:none;border-radius:7px;color:var(--text-2);font-size:13px;margin-bottom:2px;font-family:inherit;transition:all .15s}
@@ -403,11 +375,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   background:linear-gradient(135deg,#f97316,#ea580c);
   color:#fff;font-size:14px;font-weight:600;border:none;
   position:relative;overflow:hidden;
-  box-shadow:0 4px 20px rgba(249,115,22,0.35);
+  box-shadow:0 4px 20px rgba(249,115,22,.40);
   transition:transform .15s,box-shadow .15s;
 }
 .btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.14),transparent);pointer-events:none}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(249,115,22,0.43)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(249,115,22,.50)}
 
 .btn-ghost{
   display:inline-flex;align-items:center;gap:7px;
@@ -519,10 +491,10 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   background:linear-gradient(90deg,transparent,rgba(249,115,22,.45),transparent);
   opacity:0;transition:opacity .2s;
 }
-.card-asset:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px var(--accent-border)}
+.card-asset:hover{transform:translateY(-5px);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px var(--accent-border)}
 .card-asset:hover::after{opacity:1}
 [data-theme="light"] .card-asset{background:#ffffff;border-color:rgba(0,0,0,.10);box-shadow:0 2px 12px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05)}
-[data-theme="light"] .card-asset:hover{border-color:rgba(249,115,22,0.35);box-shadow:0 12px 40px rgba(249,115,22,0.12),0 4px 12px rgba(0,0,0,.08)}
+[data-theme="light"] .card-asset:hover{border-color:rgba(249,115,22,.40);box-shadow:0 12px 40px rgba(249,115,22,.12),0 4px 12px rgba(0,0,0,.08)}
 
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
 /* Badges abaixo do nome, não na foto */
@@ -550,15 +522,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 .card-id-small{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3)}
 .card-pair{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);margin-bottom:4px}
 .card-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text-1);margin-bottom:5px}
-.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:0}
-/* Collapsible description balloon */
-.card-desc-wrap{margin-bottom:14px}
-.card-desc-toggle{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-3);background:none;border:none;padding:0;cursor:pointer!important;margin-top:4px;transition:color .15s}
-.card-desc-toggle:hover{color:var(--text-2)}
-.card-desc-toggle svg{transition:transform .2s}
-.card-desc-toggle.open svg{transform:rotate(180deg)}
-.card-desc-balloon{max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .25s;opacity:0}
-.card-desc-balloon.open{max-height:120px;opacity:1}
+.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:16px}
 
 .disp-toggle{display:flex;gap:3px;margin-bottom:14px}
 .dt-btn{
@@ -595,11 +559,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   width:100%;padding:11px;border-radius:9px;
   background:linear-gradient(135deg,#f97316,#ea580c);
   color:#fff;font-size:14px;font-weight:600;border:none;
-  box-shadow:0 4px 16px rgba(249,115,22,0.22);
+  box-shadow:0 4px 16px rgba(249,115,22,.25);
   transition:transform .15s,box-shadow .15s;
   display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.btn-invest:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,0.35)}
+.btn-invest:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.40)}
 .btn-waitlist{
   width:100%;padding:11px;border-radius:9px;
   background:var(--gold-dim);border:1px solid var(--gold-border);
@@ -608,16 +572,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 }
 .btn-waitlist:hover{background:rgba(251,191,36,.2)}
 
-.invest-panel{
-  max-height:0;overflow:hidden;
-  margin-top:0;padding-top:0;border-top:0 solid var(--border);
-  transition:max-height .35s cubic-bezier(.4,0,.2,1),margin-top .25s ease,padding-top .25s ease,border-top-width .25s ease;
-}
-.invest-panel.open{
-  max-height:600px;
-  margin-top:14px;padding-top:14px;
-  border-top:1px solid var(--border);
-}
+.invest-panel{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.invest-panel.open{display:block}
 .invest-panel-title{
   font-family:'DM Mono',monospace;font-size:9px;font-weight:700;
   text-transform:uppercase;letter-spacing:.16em;
@@ -678,7 +634,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   background:var(--bg-elevated);color:var(--text-2);
   font-size:13px;font-weight:600;font-family:'DM Mono',monospace;transition:all .15s;
 }
-.curr-btn.active-btc{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(249,115,22,0.3)}
+.curr-btn.active-btc{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(249,115,22,.35)}
 .curr-btn.active-usd{background:var(--success);color:#fff;border-color:var(--success);box-shadow:0 4px 14px rgba(16,185,129,.35)}
 .curr-btn .ico{font-size:12px}
 
@@ -717,7 +673,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   transition:all .15s;text-align:center;
 }
 .mo-btn:hover{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
-.mo-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 10px rgba(249,115,22,0.26)}
+.mo-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 10px rgba(249,115,22,.30)}
 .slider-wrap{padding:0 3px}
 .dur-slider{
   width:100%;-webkit-appearance:none;appearance:none;
@@ -725,7 +681,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   background:linear-gradient(to right,var(--accent) var(--fill,31%),rgba(255,255,255,.10) var(--fill,31%));
 }
 [data-theme="light"] .dur-slider{background:linear-gradient(to right,var(--accent) var(--fill,31%),rgba(0,0,0,.12) var(--fill,31%))}
-.dur-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:3px solid var(--bg-base);box-shadow:0 0 0 2px var(--accent),0 4px 10px rgba(249,115,22,0.35)}
+.dur-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:3px solid var(--bg-base);box-shadow:0 0 0 2px var(--accent),0 4px 10px rgba(249,115,22,.4)}
 .dur-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);border:3px solid var(--bg-base)}
 .slider-ticks{display:grid;grid-template-columns:1fr 1fr 1fr;padding:0 3px;margin-top:9px}
 .slider-ticks span{font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace}
@@ -764,7 +720,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 [data-theme="light"] .cmp-card.hi{background:rgba(249,115,22,.07)}
 .cmp-left{display:flex;align-items:center;gap:9px}
 .cmp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.cmp-dot.orange{background:var(--accent);box-shadow:0 0 6px rgba(249,115,22,0.43)}
+.cmp-dot.orange{background:var(--accent);box-shadow:0 0 6px rgba(249,115,22,.5)}
 .cmp-dot.gray{background:var(--text-3)}
 .cmp-dot.dim{background:var(--text-3);opacity:.4}
 .cmp-name{font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:1px;font-family:'Syne',sans-serif}
@@ -833,9 +789,9 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.05));
   border-color:rgba(249,115,22,.28);
   transform:translateY(-3px);
-  box-shadow:0 8px 30px rgba(249,115,22,0.12);
+  box-shadow:0 8px 30px rgba(249,115,22,.12);
 }
-.step-card:hover{border-color:var(--accent-border);box-shadow:0 8px 30px rgba(249,115,22,0.06);transform:translateY(-2px)}
+.step-card:hover{border-color:var(--accent-border);box-shadow:0 8px 30px rgba(249,115,22,.06);transform:translateY(-2px)}
 .step-card:hover::before{color:rgba(249,115,22,.18)}
 
 .step-ico-box{
@@ -847,7 +803,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 .step-ico-box svg{stroke:var(--text-3);transition:stroke .2s}
 .step-card:hover .step-ico-box{background:var(--accent-dim);border-color:var(--accent-border)}
 .step-card:hover .step-ico-box svg{stroke:var(--accent)}
-.step-card.active .step-ico-box{background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px rgba(249,115,22,0.26)}
+.step-card.active .step-ico-box{background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px rgba(249,115,22,.3)}
 .step-card.active .step-ico-box svg{stroke:#fff}
 
 .step-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-3);font-family:'DM Mono',monospace;margin-bottom:6px}
@@ -1078,7 +1034,7 @@ footer{
 .wallet-opt:hover{border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.06)}
 .wallet-opt.featured{border-color:rgba(249,115,22,.32);background:rgba(249,115,22,.08)}
 .w-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;font-weight:800;font-family:'Syne',sans-serif}
-.w-ico.op{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;box-shadow:0 3px 12px rgba(249,115,22,0.3);font-size:13px}
+.w-ico.op{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;box-shadow:0 3px 12px rgba(249,115,22,.35);font-size:13px}
 .w-ico.uni{background:linear-gradient(135deg,#ff007a,#7b0035);color:#fff}
 .w-ico.xv{background:linear-gradient(135deg,#5546ff,#2a1a9a);color:#fff}
 .w-ico.okx{background:#111;color:#fff;border:1px solid rgba(255,255,255,.12)}
@@ -1117,8 +1073,8 @@ footer{
 .vault-select:focus{border-color:var(--accent-border)}
 .vault-textarea{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;outline:none;resize:vertical;min-height:72px;transition:border-color .15s;font-family:'DM Sans',sans-serif}
 .vault-textarea:focus{border-color:var(--accent-border)}
-.vault-btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.02em;box-shadow:0 4px 16px rgba(249,115,22,0.26);transition:all .2s;margin-top:4px}
-.vault-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(249,115,22,0.35)}
+.vault-btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.02em;box-shadow:0 4px 16px rgba(249,115,22,.3);transition:all .2s;margin-top:4px}
+.vault-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(249,115,22,.4)}
 .vault-btn-secondary{width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:11px;color:var(--text-2);font-size:13px;font-weight:600;transition:all .2s;margin-top:8px}
 .vault-btn-secondary:hover{border-color:var(--border-hover);color:var(--text-1)}
 .vault-divider{height:1px;background:var(--border);margin:20px 0}
@@ -1138,7 +1094,7 @@ footer{
 .vault-position-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
 .vault-position-val{font-family:'DM Mono',monospace;font-weight:600;color:var(--accent)}
 /* Vault badge on dashboard */
-.vault-badge{position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;font-size:9px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:20px;font-family:'Syne',sans-serif;box-shadow:0 2px 8px rgba(249,115,22,0.35)}
+.vault-badge{position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;font-size:9px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:20px;font-family:'Syne',sans-serif;box-shadow:0 2px 8px rgba(249,115,22,.4)}
 /* Lock icon on asset cards */
 .asset-vault-lock{position:absolute;top:10px;right:10px;width:22px;height:22px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:6px;display:flex;align-items:center;justify-content:center}
 .vault-earn-rate{font-size:22px;font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:8px 0 2px}
@@ -1148,6 +1104,7 @@ footer{
 
 .dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
 .dash-page.active{display:flex!important;flex-direction:column}
+.dash-page.active{display:block}
 .chart-range-btn{padding:4px 12px;border-radius:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
 .chart-range-active{background:rgba(255,255,255,.25)!important;border-color:rgba(255,255,255,.5)!important;color:#fff!important}
 .dash-wrap{max-width:960px;margin:0 auto}
@@ -1182,7 +1139,7 @@ footer{
 [data-theme="light"] .sim-result{
   background:linear-gradient(145deg,#fff 0%,#fef9f5 100%);
   border-color:rgba(249,115,22,.22);
-  box-shadow:0 4px 20px rgba(249,115,22,0.08),0 2px 6px rgba(0,0,0,.05);
+  box-shadow:0 4px 20px rgba(249,115,22,.08),0 2px 6px rgba(0,0,0,.05);
 }
 [data-theme="light"] .cmp-card{
   background:#ffffff;
@@ -1192,7 +1149,7 @@ footer{
 [data-theme="light"] .cmp-card.hi{
   background:linear-gradient(135deg,rgba(249,115,22,.06),rgba(249,115,22,.02));
   border-color:rgba(249,115,22,.28);
-  box-shadow:0 2px 10px rgba(249,115,22,0.08);
+  box-shadow:0 2px 10px rgba(249,115,22,.08);
 }
 [data-theme="light"] .step-card{
   background:#ffffff;
@@ -1200,7 +1157,7 @@ footer{
   box-shadow:0 2px 12px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
 }
 [data-theme="light"] .step-card:hover{
-  box-shadow:0 8px 28px rgba(249,115,22,0.1),0 4px 10px rgba(0,0,0,.06);
+  box-shadow:0 8px 28px rgba(249,115,22,.10),0 4px 10px rgba(0,0,0,.06);
 }
 [data-theme="light"] .hero-stat{
   background:#ffffff;
@@ -1219,28 +1176,28 @@ footer{
 [data-theme="light"] .invest-input:focus,
 [data-theme="light"] .sim-input:focus{
   border-color:var(--accent-border);
-  box-shadow:0 0 0 3px rgba(249,115,22,0.1);
+  box-shadow:0 0 0 3px rgba(249,115,22,.10);
 }
 [data-theme="light"] .meta-grid{border-top-color:rgba(0,0,0,.08)}
 
 /* ── BOTÕES 3D — alto padrão ── */
 [data-theme="light"] .btn-primary{
-  box-shadow:0 4px 0 #c2460a,0 6px 20px rgba(249,115,22,0.26);
+  box-shadow:0 4px 0 #c2460a,0 6px 20px rgba(249,115,22,.30);
 }
 [data-theme="light"] .btn-primary:hover{
   transform:translateY(-2px);
-  box-shadow:0 6px 0 #c2460a,0 10px 28px rgba(249,115,22,0.33);
+  box-shadow:0 6px 0 #c2460a,0 10px 28px rgba(249,115,22,.38);
 }
 [data-theme="light"] .btn-primary:active{
   transform:translateY(2px);
-  box-shadow:0 2px 0 #c2460a,0 2px 10px rgba(249,115,22,0.17);
+  box-shadow:0 2px 0 #c2460a,0 2px 10px rgba(249,115,22,.20);
 }
 [data-theme="light"] .btn-invest{
-  box-shadow:0 3px 0 #c2460a,0 5px 14px rgba(249,115,22,0.22);
+  box-shadow:0 3px 0 #c2460a,0 5px 14px rgba(249,115,22,.25);
 }
 [data-theme="light"] .btn-invest:hover{
   transform:translateY(-2px);
-  box-shadow:0 5px 0 #c2460a,0 8px 20px rgba(249,115,22,0.28);
+  box-shadow:0 5px 0 #c2460a,0 8px 20px rgba(249,115,22,.32);
 }
 [data-theme="light"] .f-btn{
   background:#ffffff;
@@ -1248,7 +1205,7 @@ footer{
   box-shadow:0 1px 3px rgba(0,0,0,.07);
 }
 [data-theme="light"] .f-btn:hover,[data-theme="light"] .f-btn.active{
-  box-shadow:0 2px 8px rgba(249,115,22,0.14);
+  box-shadow:0 2px 8px rgba(249,115,22,.14);
 }
 
 /* ── GAS PILL light — visível ── */
@@ -1344,7 +1301,7 @@ footer{
 }
 [data-theme="light"] .diff-card{
   background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(249,115,22,.03));
-  box-shadow:0 2px 10px rgba(249,115,22,0.1);
+  box-shadow:0 2px 10px rgba(249,115,22,.10);
 }
 .diff-ico{font-size:22px;flex-shrink:0;margin-top:1px}
 .diff-amount{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent);line-height:1}
@@ -1495,19 +1452,13 @@ footer{
   .footer-grid{grid-template-columns:1fr}
   .hero-title{font-size:44px}
 }
-
-/* ── SIMULATOR POLISH ── */
-.sim-result-wrap{animation:fadeUp .2s ease}
-.diff-card{animation:fadeUp .32s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-@media(max-width:640px){.hero-inner{padding-left:24px;padding-right:24px}.assets-grid{gap:14px}.card-body{padding:14px 14px 16px}}
 </style>
 </head>
 <body data-theme="dark">
 
 <!-- CURSOR -->
 <div id="cur"></div>
+<div id="cur-glow"></div>
 
 <!-- ═══════════════════════════════════════
      NAVBAR — floating pill
@@ -1647,14 +1598,14 @@ footer{
       <div class="hs-sub">Signet</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">BTC Price</div>
-      <div class="hs-value sm" id="hero-btc-price">&#x2014;</div>
-      <div class="hs-sub">Live USD</div>
+      <div class="hs-label">Projected APY</div>
+      <div class="hs-value">15%</div>
+      <div class="hs-sub">Annual yield</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">Gas Rate</div>
-      <div class="hs-value sm" id="hero-gas-rate">&#x2014;</div>
-      <div class="hs-sub">sat/vB</div>
+      <div class="hs-label">Availability</div>
+      <div class="hs-value">24/7</div>
+      <div class="hs-sub">Early access</div>
     </div>
     <div class="hero-stat">
       <div class="hs-label">Real Estate Market</div>
@@ -1712,15 +1663,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">VILLA AURORA</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Miami Beach, Florida, USA</p>
-        <div class="card-desc-wrap">
-          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            About this property
-          </button>
-          <div class="card-desc-balloon">
-            <p class="card-desc" style="margin-top:8px">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p>
-          </div>
-        </div>
+        <p class="card-desc">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','alpha')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','alpha')">$ USD</button>
@@ -1785,15 +1728,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">METRO TOWER</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Manhattan, New York, USA</p>
-        <div class="card-desc-wrap">
-          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            About this property
-          </button>
-          <div class="card-desc-balloon">
-            <p class="card-desc" style="margin-top:8px">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p>
-          </div>
-        </div>
+        <p class="card-desc">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','beta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','beta')">$ USD</button>
@@ -1858,15 +1793,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">LOGISTICA HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Guarulhos, São Paulo, Brazil</p>
-        <div class="card-desc-wrap">
-          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            About this property
-          </button>
-          <div class="card-desc-balloon">
-            <p class="card-desc" style="margin-top:8px">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p>
-          </div>
-        </div>
+        <p class="card-desc">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','gamma')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','gamma')">$ USD</button>
@@ -1931,15 +1858,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">CASA BELÉM</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Belém, Lisbon, Portugal</p>
-        <div class="card-desc-wrap">
-          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            About this property
-          </button>
-          <div class="card-desc-balloon">
-            <p class="card-desc" style="margin-top:8px">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p>
-          </div>
-        </div>
+        <p class="card-desc">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','delta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','delta')">$ USD</button>
@@ -2004,15 +1923,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">DOWNTOWN HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Downtown Dubai, UAE</p>
-        <div class="card-desc-wrap">
-          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            About this property
-          </button>
-          <div class="card-desc-balloon">
-            <p class="card-desc" style="margin-top:8px">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p>
-          </div>
-        </div>
+        <p class="card-desc">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','epsilon')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','epsilon')">$ USD</button>
@@ -2080,15 +1991,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">SAKURA RESIDENCE</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Shinjuku, Tokyo, Japan</p>
-        <div class="card-desc-wrap">
-          <button class="card-desc-toggle" onclick="toggleCardDesc(this)" aria-label="Toggle description">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            About this property
-          </button>
-          <div class="card-desc-balloon">
-            <p class="card-desc" style="margin-top:8px">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p>
-          </div>
-        </div>
+        <p class="card-desc">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p>
         <div class="card-stats">
           <div class="cs-item"><div class="cs-label">Price/Token</div><div class="cs-value" style="color:var(--text-3)">TBA</div></div>
           <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value" style="color:var(--gold)">~13%</div></div>
@@ -3042,21 +2945,21 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 
 /* ── CURSOR ── */
 const cur = document.getElementById('cur');
-if (cur) {
-  document.addEventListener('mousemove', e => {
-    cur.style.left = e.clientX + 'px';
-    cur.style.top  = e.clientY + 'px';
-    const t = e.target && e.target.closest ? e.target : null;
-    cur.classList.remove('state-hover','state-cta','state-input','state-click');
-    if (t) {
-      if (t.closest('input,textarea,select')) cur.classList.add('state-input');
-      else if (t.closest('.btn-invest,.btn-confirm,.btn-connect')) cur.classList.add('state-cta');
-      else if (t.closest('a,button,[role="button"],[onclick]')) cur.classList.add('state-hover');
-    }
-  }, {passive:true});
-  document.addEventListener('mousedown', () => cur.classList.add('state-click'), {passive:true});
-  document.addEventListener('mouseup',   () => cur.classList.remove('state-click'), {passive:true});
-}
+const curGlow = document.getElementById('cur-glow');
+let _curVisible = false;
+document.addEventListener('mousemove', e => {
+  const x = e.clientX + 'px', y = e.clientY + 'px';
+  cur.style.left = x; cur.style.top = y;
+  if (curGlow) { curGlow.style.left = x; curGlow.style.top = y; }
+  if (!_curVisible) {
+    _curVisible = true;
+    cur.style.opacity = '1';
+    if (curGlow) curGlow.style.opacity = '1';
+  }
+  const t = e.target;
+  const isInteractive = t.closest('a,button,input,select,textarea,[role="button"],[onclick]');
+  cur.classList.toggle('hovering', !!isInteractive);
+}, {passive:true});
 
 /* ── THEME ── */
 let theme = 'dark';
@@ -3140,14 +3043,6 @@ function showToast(msg, type, isHtml) {
   if (isHtml) el.innerHTML = msg; else el.textContent = msg;
   document.getElementById('toasts').appendChild(el);
   setTimeout(() => el.remove(), isHtml ? 6000 : 3500);
-}
-
-/* ── CARD DESC BALLOON ── */
-function toggleCardDesc(btn) {
-  var balloon = btn.parentElement.querySelector('.card-desc-balloon');
-  if (!balloon) return;
-  var isOpen = balloon.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
 }
 
 /* ── INVEST PANELS ── */
@@ -3438,8 +3333,6 @@ function wdExplorer() {
 
 /* ── REAL WALLET CONNECT ── */
 window.connectWallet = async function(type) {
-  // loading state on wallet buttons
-  document.querySelectorAll('.wallet-option-btn').forEach(function(b){ b.classList.add('btn-loading'); b.disabled = true; });
   showToast('Connecting to ' + type + '...', 'info');
   try {
     var accounts = [], sats = 0, publicKey = '';
@@ -3469,8 +3362,6 @@ window.connectWallet = async function(type) {
     }
   } catch(e) {
     showToast('Connection failed: ' + (e.message || e), 'error');
-  } finally {
-    document.querySelectorAll('.wallet-option-btn').forEach(function(b){ b.classList.remove('btn-loading'); b.disabled = false; });
   }
 };
 
@@ -4057,8 +3948,6 @@ function toggleInvest(id, btn) {
   }
   if (open) {
     btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
-    // auto-focus first input
-    setTimeout(function(){ var inp = panel.querySelector('input'); if(inp) inp.focus(); }, 350);
   } else {
     if (isGamma) {
       btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
@@ -4109,7 +3998,6 @@ function toggleDisp(btn, mode, assetId) {
 }
 
 var ASSET_TOKENS = { alpha:1000, beta:2000, gamma:3000, delta:1500, epsilon:5000 }; // recalculated below
-var ASSET_USD    = { alpha:180000, beta:350000, gamma:500000, delta:220000, epsilon:800000 };
 // Token count = property USD value / (btcPrice * 0.00001) — recalculated when btcPrice loads
 function recalcAssetTokens() {
   var bp = btcPrice || 65000;
@@ -4138,6 +4026,7 @@ function recalcAssetTokens() {
     });
   });
 }
+var ASSET_USD    = { alpha:180000, beta:350000, gamma:500000, delta:220000, epsilon:800000 };
 
 function updateAllAssetPrices() {
   Object.keys(ASSET_TOKENS).forEach(function(id) {
@@ -4160,69 +4049,84 @@ function updateAllAssetPrices() {
   });
 }
 
-/* ── FETCH BTC PRICE — mempool.space → coinbase → binance → coingecko ── */
+/* ── FETCH BTC PRICE (CoinGecko → CoinPaprika fallback) ── */
 async function fetchPrices() {
-  var price = 0;
-  var sources = [
-    async function() { var r = await fetch('https://mempool.space/api/v1/prices',{signal:AbortSignal.timeout(6000)}); var d = await r.json(); return d.USD; },
-    async function() { var r = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot',{signal:AbortSignal.timeout(6000)}); var d = await r.json(); return parseFloat(d.data.amount); },
-    async function() { var r = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',{signal:AbortSignal.timeout(6000)}); var d = await r.json(); return parseFloat(d.price); },
-    async function() { var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',{signal:AbortSignal.timeout(8000)}); var d = await r.json(); return d.bitcoin.usd; }
-  ];
-  for (var i = 0; i < sources.length; i++) {
-    try { price = await sources[i](); if (price > 0) break; } catch(_) {}
-  }
-  if (!price) return;
-  btcPrice = price;
-  var fmt = '$' + Math.round(btcPrice).toLocaleString();
-  var els = ['hero-btc-price','g-btc','lb-btc','lb-btc2'];
-  els.forEach(function(id){ var e = document.getElementById(id); if(e) e.textContent = fmt; });
-  fetchOpNetBlock();
-  updateAllAssetPrices();
-  recalcAssetTokens();
-  calcSim();
+  try {
+    let price = 0;
+    try {
+      const r0 = await fetch('https://mempool.space/api/v1/prices', {signal:AbortSignal.timeout(6000)});
+      const d0 = await r0.json(); price = d0.USD;
+    } catch(_) {
+      const r1 = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT', {signal:AbortSignal.timeout(6000)});
+      const d1 = await r1.json(); price = parseFloat(d1.price);
+    }
+    btcPrice = price;
+    const fmt = '$' + btcPrice.toLocaleString();
+    const heroPriceEl = document.getElementById('hero-btc-price');
+    if (heroPriceEl) heroPriceEl.textContent = fmt;
+    fetchOpNetBlock();
+    updateAllAssetPrices();
+    recalcAssetTokens();
+    const gBtcEl = document.getElementById('g-btc');
+    if (gBtcEl) gBtcEl.textContent = fmt;
+    ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
+    calcSim();
+  } catch(e) {}
 }
 
 async function fetchOpNetBlock() {
-  var h = 0;
-  var blockSources = [
-    async function() { var r = await fetch('https://mempool.opnet.org/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(!r.ok) throw 0; return Number(await r.json()); },
-    async function() { var r = await fetch('https://mempool.space/signet/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(!r.ok) throw 0; return Number(await r.json()); },
-    async function() {
-      var r = await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_blockNumber',params:[]}),signal:AbortSignal.timeout(5000)});
-      var j = await r.json(); return j && j.result ? parseInt(j.result,16) : 0;
+  try {
+    var h = 0;
+    // 1. mempool.opnet.org (OP_NET own mempool)
+    try {
+      var r1 = await fetch('https://mempool.opnet.org/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)});
+      if (r1.ok) { var v1 = await r1.json(); if (v1) h = Number(v1); }
+    } catch(_) {}
+    // 2. mempool.space signet fallback
+    if (!h) {
+      try {
+        var r2 = await fetch('https://mempool.space/signet/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)});
+        if (r2.ok) { var v2 = await r2.json(); if (v2) h = Number(v2); }
+      } catch(_) {}
     }
-  ];
-  for (var i = 0; i < blockSources.length; i++) {
-    try { h = await blockSources[i](); if (h > 0) break; } catch(_) {}
-  }
-  var el = document.getElementById('hero-opnet-block');
-  if (el) el.textContent = h ? '#' + h.toLocaleString() : '—';
+    // 3. OPNet RPC eth_blockNumber fallback
+    if (!h) {
+      try {
+        var r3 = await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_blockNumber',params:[]}),signal:AbortSignal.timeout(5000)});
+        var j3 = await r3.json();
+        if (j3 && j3.result) h = parseInt(j3.result, 16);
+      } catch(_) {}
+    }
+    var el = document.getElementById('hero-opnet-block');
+    if (el && h) el.textContent = '#' + h.toLocaleString();
+  } catch(e) {}
 }
 
-/* ── FETCH GAS — mempool.opnet.org → mempool.space/signet → mempool.space ── */
+/* ── FETCH GAS (mempool.opnet.org) ── */
 async function fetchGas() {
-  var fee = 0;
-  var gasSources = [
-    async function() { var r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended',{signal:AbortSignal.timeout(5000)}); var d = await r.json(); return d.fastestFee || d.halfHourFee || d.hourFee; },
-    async function() { var r = await fetch('https://mempool.space/signet/api/v1/fees/recommended',{signal:AbortSignal.timeout(5000)}); var d = await r.json(); return d.fastestFee || d.halfHourFee || d.hourFee; },
-    async function() { var r = await fetch('https://mempool.space/api/v1/fees/recommended',{signal:AbortSignal.timeout(5000)}); var d = await r.json(); return d.halfHourFee || d.fastestFee; }
-  ];
-  for (var i = 0; i < gasSources.length; i++) {
-    try { fee = await gasSources[i](); if (fee > 0) break; } catch(_) {}
-  }
-  if (!fee) fee = 1;
-  var feeStr = fee + ' sat/vB';
-  ['nav-gas','hero-gas-rate','g-rate','lb-gas','lb-gas2'].forEach(function(id){ var e = document.getElementById(id); if(e) e.textContent = feeStr; });
-  if (btcPrice) {
-    var txCost = ((fee * 250) / 1e8) * btcPrice;
-    var txCostStr = '~$' + txCost.toFixed(4);
-    var gTx = document.getElementById('g-tx'); if (gTx) gTx.textContent = txCostStr;
-    ['alpha','beta','gamma','delta','epsilon'].forEach(function(id) {
-      var e = document.getElementById(id + '-gas'); if(e) e.textContent = txCostStr;
-    });
-  }
+  try {
+    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended', {signal:AbortSignal.timeout(6000)});
+    const d = await r.json();
+    const fee = d.fastestFee || d.hourFee || 1;
+    const feeStr = fee + ' sat/vB';
+    const navGas = document.getElementById('nav-gas');
+    if (navGas) navGas.textContent = feeStr;
+    const gRate = document.getElementById('g-rate');
+    if (gRate) gRate.textContent = feeStr;
+    ['lb-gas','lb-gas2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = feeStr; });
+    if (btcPrice) {
+      const txCost = ((fee * 250) / 1e8) * btcPrice;
+      const txCostStr = '~$' + txCost.toFixed(4);
+      const gTx = document.getElementById('g-tx');
+      if (gTx) gTx.textContent = txCostStr;
+      // Update Est. Gas in all invest panels
+      ['alpha','beta','gamma','delta','epsilon'].forEach(function(id) {
+        var el = document.getElementById(id + '-gas');
+        if (el) el.textContent = txCostStr;
+      });
+    }
+  } catch(e) {}
 }
 
 fetchPrices(); fetchGas(); fetchOpNetBlock();
