@@ -2611,10 +2611,9 @@ async function confirmInvest(asset) {
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
   try {
     // OPWAYield contract — public mint(), 1000 sats per token (0.00001 BTC)
-    // Treasury: same deployer P2TR key used in OPWACoin
-    const TREASURY_HEX    = '5efba299a9b980c664a2fa82e675473fe471af7e745cea1bac4e8c909f994658';
-    const TREASURY_SIGNET = 'tb1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevq3ksn4g';
-    const OPWAY_ADDR = 'opt1sqph5yz2k02wykmh04dt005cq4ex5gv03xqx6q8re';
+    // Contract stores treasury bech32; simulation uses hasTo so out.to matches stored value.
+    const TREASURY_OPT = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
+    const OPWAY_ADDR   = 'opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv';
     const count    = BigInt(tokenCount);
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
@@ -2631,20 +2630,15 @@ async function confirmInvest(asset) {
     const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWAY_ADDR, OPWAY_ABI, provider, _net, senderAddr);
-    // Simulation fix: server requires 'to' always (line 415 Call.ts), but contract needs
-    // scriptPublicKey. Use hasScriptPubKey + provide both 'to' (for server validation)
-    // and p2trScript bytes (for contract's matchesTreasury check).
-    const TREASURY_OPT = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
-    var p2trScript = new Uint8Array(34);
-    p2trScript[0] = 0x51; p2trScript[1] = 0x20;
-    p2trScript.set(_hexToBytes(TREASURY_HEX), 2);
-    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_OPT, scriptPubKey:p2trScript, value:satsAmt, index:1, flags:TransactionOutputFlags.hasScriptPubKey }] });
+    // hasTo: server passes to string as-is to contract's out.to
+    // Contract compares out.to == _treasuryTo (stored bech32) — no Uint8Array involved.
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_OPT, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
     const simulation = await contract.mint(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:satsAmt + 100_000n,
-      extraOutputs:[{ address:TREASURY_SIGNET, value:satsAmt }],
+      extraOutputs:[{ address:TREASURY_OPT, value:satsAmt }],
     });
     const txid = receipt.transactionId;
     showToast('✅ ' + tokenCount + ' OPWAY minted! TX: ' + txid.slice(0,12) + '…', 'success');
