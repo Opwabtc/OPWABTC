@@ -9,11 +9,6 @@ import {
     StoredAddress,
     StoredMapU256,
     TransferHelper,
-    encodeSelector,
-} from '@btc-vision/btc-runtime/runtime';
-import {
-    SELECTOR_BYTE_LENGTH,
-    U256_BYTE_LENGTH,
 } from '@btc-vision/btc-runtime/runtime';
 
 @final
@@ -58,12 +53,6 @@ export class PropertyVault extends OP_NET {
         const tokenId  = calldata.readU256();
         const maxOpway = calldata.readU256();
         const sender   = Blockchain.tx.sender;
-
-        // Verify caller owns the NFT via cross-contract ownerOf
-        const currentOwner = this._ownerOf(nft, tokenId);
-        if (!currentOwner.equals(sender)) {
-            throw new Revert('PropertyVault: caller is not token owner');
-        }
 
         // Ensure not already listed
         const existingOwner = this._owners.get(tokenId);
@@ -144,14 +133,4 @@ export class PropertyVault extends OP_NET {
         return result;
     }
 
-    // ── Internal helpers ──────────────────────────────────────────────────────
-
-    private _ownerOf(nft: Address, tokenId: u256): Address {
-        const selector = encodeSelector('ownerOf(uint256)');
-        const cd       = new BytesWriter(SELECTOR_BYTE_LENGTH + U256_BYTE_LENGTH);
-        cd.writeSelector(selector);
-        cd.writeU256(tokenId);
-        const response = Blockchain.call(nft, cd);
-        return response.data.readAddress();
-    }
 }

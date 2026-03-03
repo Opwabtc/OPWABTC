@@ -4741,19 +4741,47 @@ async function pvaultListProperty() {
 
     /* Step 1: approve PropertyVault to transfer the NFT */
     const pvaultAddrObj = await _contractAddr(Address, PROPERTY_VAULT_ADDR);
+    if (!pvaultAddrObj) throw new Error('Could not resolve vault address — please retry');
     const NFT_ABI = [
       { name:'approve', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'tokenId',type:ABIDataTypes.UINT256}],
-        outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
+        outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
+      { name:'getApproved', type:BitcoinAbiTypes.Function, payable:false,
+        inputs:[{name:'tokenId',type:ABIDataTypes.UINT256}],
+        outputs:[{name:'approved',type:ABIDataTypes.ADDRESS}] }
     ];
     const nftContract = getContract(CONTRACTS.propertyNft, NFT_ABI, provider, _OPNET_NET, senderAddr);
     const approveSim = await nftContract.approve(pvaultAddrObj, tokenIdBig);
     if (approveSim.revert) throw new Error(approveSim.revert);
-    const approveReceipt = await approveSim.sendTransaction({
+    await approveSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
-    showToast('NFT approved. Listing property…', 'info');
+
+    /* Wait for approval TX to be mined (block-number poll, up to 3 blocks × 11 min) */
+    showToast('Waiting for NFT approval to be mined…', 'info');
+    var pvBlkBefore = -1;
+    try { pvBlkBefore = await provider.getBlockNumber(); } catch(_) {}
+    var pvApproved = false;
+    for (var pvAttempt = 0; pvAttempt < 3 && !pvApproved; pvAttempt++) {
+      for (var pvWaited = 0; pvWaited < 660_000 && !pvApproved; pvWaited += 8000) {
+        await new Promise(function(r) { setTimeout(r, 8000); });
+        showToast('Waiting for block confirmation… (' + Math.round((pvWaited + 8000) / 1000) + 's, attempt ' + (pvAttempt + 1) + '/3)', 'info');
+        try {
+          var pvBlkNow = await provider.getBlockNumber();
+          if (pvBlkNow > pvBlkBefore) {
+            var nft2 = getContract(CONTRACTS.propertyNft, NFT_ABI, provider, _OPNET_NET, senderAddr);
+            var gaChk = await nft2.getApproved(tokenIdBig);
+            if (!gaChk.revert && gaChk.properties && gaChk.properties.approved != null) {
+              pvApproved = true; break;
+            }
+            pvBlkBefore = pvBlkNow; break;
+          }
+        } catch(_) {}
+      }
+    }
+    if (!pvApproved) showToast('Approval unconfirmed — attempting list anyway…', 'info');
+    else showToast('NFT approved. Listing property…', 'info');
 
     /* Step 2: listProperty(tokenId, maxOpway) on PropertyVault */
     const PVAULT_ABI = [
