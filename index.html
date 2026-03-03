@@ -997,8 +997,55 @@ footer{
 .net-sub .net-led{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success)}
 
 /* =====================================================================
-   DASHBOARD PAGE
+   VAULT PAGE
    ===================================================================== */
+.vault-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 80px;background:var(--bg-base)}
+.vault-page.active{display:block}
+.vault-wrap{max-width:960px;margin:0 auto}
+.vault-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+@media(max-width:700px){.vault-grid{grid-template-columns:1fr}}
+.vault-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;overflow:hidden}
+.vault-card::before{content:'';position:absolute;inset:0;opacity:.04;background:linear-gradient(135deg,var(--accent),transparent);pointer-events:none}
+.vault-card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text-1);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.vault-card-sub{font-size:12px;color:var(--text-3);margin-bottom:20px}
+.vault-input-wrap{margin-bottom:14px}
+.vault-input-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
+.vault-input{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:14px;font-family:'DM Mono',monospace;outline:none;transition:border-color .15s}
+.vault-input:focus{border-color:var(--accent-border)}
+.vault-input select,.vault-input textarea{background:transparent;border:none;outline:none;color:var(--text-1);font-family:inherit;font-size:14px;width:100%}
+.vault-select{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:14px;outline:none;transition:border-color .15s;appearance:none}
+.vault-select:focus{border-color:var(--accent-border)}
+.vault-textarea{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;outline:none;resize:vertical;min-height:72px;transition:border-color .15s;font-family:'DM Sans',sans-serif}
+.vault-textarea:focus{border-color:var(--accent-border)}
+.vault-btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.02em;box-shadow:0 4px 16px rgba(249,115,22,.3);transition:all .2s;margin-top:4px}
+.vault-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(249,115,22,.4)}
+.vault-btn-secondary{width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:11px;color:var(--text-2);font-size:13px;font-weight:600;transition:all .2s;margin-top:8px}
+.vault-btn-secondary:hover{border-color:var(--border-hover);color:var(--text-1)}
+.vault-divider{height:1px;background:var(--border);margin:20px 0}
+.vault-preview{padding:12px 14px;background:var(--bg-elevated);border-radius:10px;font-size:12px;color:var(--text-2);margin-bottom:14px;font-family:'DM Mono',monospace;border:1px solid var(--border)}
+.vault-preview span{color:var(--accent);font-weight:600}
+/* Timelock countdown */
+.vault-timelock{padding:16px;background:var(--bg-elevated);border-radius:12px;border:1px solid var(--border);margin-top:16px}
+.vault-timelock-num{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;line-height:1;transition:color .5s}
+.vault-timelock-label{font-size:11px;color:var(--text-3);letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+.vault-timelock-bar{height:4px;border-radius:2px;background:rgba(255,255,255,.06);margin-top:12px;overflow:hidden}
+.vault-timelock-bar-fill{height:100%;border-radius:2px;background:linear-gradient(to right,#ef4444,#eab308,#22c55e);transition:width .5s}
+.vault-btn-withdraw{width:100%;padding:11px;border:none;border-radius:11px;font-size:13px;font-weight:700;font-family:'Syne',sans-serif;transition:all .2s;margin-top:12px}
+.vault-btn-withdraw.locked{background:var(--danger-dim);border:1px solid var(--danger-border);color:var(--danger);opacity:.7}
+.vault-btn-withdraw.unlocked{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 4px 14px rgba(34,197,94,.3)}
+/* Position active card */
+.vault-position{background:linear-gradient(135deg,rgba(249,115,22,.07),rgba(251,191,36,.03));border:1px solid rgba(249,115,22,.18);border-radius:12px;padding:16px;margin-bottom:16px}
+.vault-position-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
+.vault-position-val{font-family:'DM Mono',monospace;font-weight:600;color:var(--accent)}
+/* Vault badge on dashboard */
+.vault-badge{position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;font-size:9px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:20px;font-family:'Syne',sans-serif;box-shadow:0 2px 8px rgba(249,115,22,.4)}
+/* Lock icon on asset cards */
+.asset-vault-lock{position:absolute;top:10px;right:10px;width:22px;height:22px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.vault-earn-rate{font-size:22px;font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:8px 0 2px}
+.vault-earn-label{font-size:11px;color:var(--text-3)}
+.vault-acc-usdop{font-size:28px;font-family:'Syne',sans-serif;font-weight:800;color:#22c55e;margin:6px 0 2px}
+
+
 .dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 80px;background:var(--bg-base)}
 .dash-page.active{display:block}
 .chart-range-btn{padding:4px 12px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--text-3);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
@@ -1386,6 +1433,11 @@ footer{
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
         How It Works
       </a>
+      <!-- Vault -->
+      <a class="nav-link" href="/vault" onclick="navigate('/vault');return false;" id="nav-vault">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+        Vault
+      </a>
       <div style="width:1px;height:14px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
       <!-- Terms -->
       <a class="nav-link nav-link-legal" href="/terms" onclick="navigate('/terms');return false;">
@@ -1437,6 +1489,7 @@ footer{
   <a class="mobile-nav-link" href="#assets" onclick="closeMobileMenu()">Assets</a>
   <a class="mobile-nav-link" href="#simulator" onclick="closeMobileMenu()">Simulator</a>
   <a class="mobile-nav-link" href="#how-it-works" onclick="closeMobileMenu()">How It Works</a>
+  <a class="mobile-nav-link" href="/vault" onclick="navigate('/vault');closeMobileMenu();return false;">🔒 Vault</a>
   <button class="mobile-nav-link" onclick="openWalletModal();closeMobileMenu()">Connect Wallet</button>
 </div>
 
@@ -1701,6 +1754,9 @@ footer{
   </div>
   </div>
 </section>
+
+<!-- vault-injected assets appear here dynamically -->
+<div id="assets-vault-inject" style="max-width:1200px;margin:-8px auto 0;padding:0 24px 32px;display:grid;grid-template-columns:repeat(auto-fill,minmax(336px,1fr));gap:18px"></div>
 
 <!-- ═══════════════════════════════════════
      SIMULATOR
@@ -2135,6 +2191,144 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 </footer>
 
 </div><!-- end #main-content -->
+
+<!-- ═══════════════════════════════════════
+     VAULT PAGE
+════════════════════════════════════════ -->
+<div id="page-vault" class="vault-page">
+  <div class="vault-wrap">
+    <div style="margin-bottom:32px">
+      <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text-1);margin:0 0 8px">
+        🔒 Vault
+      </h1>
+      <div style="font-size:14px;color:var(--text-3);max-width:520px;line-height:1.6">
+        Deposit OPWAY tokens to earn USDOP yield, or list your PropertyNFT to enable fractional investment.
+        <span style="color:var(--accent);font-weight:600"> Contracts deploying soon.</span>
+      </div>
+    </div>
+
+    <div class="vault-grid">
+
+      <!-- ── SECTION A: YIELD VAULT ── -->
+      <div class="vault-card">
+        <div class="vault-card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Yield Vault
+        </div>
+        <div class="vault-card-sub">Earn USDOP stablecoin · 1 USDOP per 100 OPWAY per block · 420 block timelock</div>
+
+        <!-- Deposit form -->
+        <div class="vault-input-wrap">
+          <div class="vault-input-label">OPWAY Amount to Deposit</div>
+          <input type="number" id="vault-deposit-amount" class="vault-input" min="1" placeholder="e.g. 1000" oninput="vaultUpdateEarn()"/>
+        </div>
+        <div class="vault-preview" id="vault-earn-preview">
+          You will earn <span id="vault-earn-rate">0.0000</span> USDOP/block
+        </div>
+        <button class="vault-btn-primary" onclick="vaultDepositOPWAY()">
+          ⚡ Deposit OPWAY
+        </button>
+
+        <!-- Active position (shown if localStorage has deposit) -->
+        <div id="vault-position-wrap" style="display:none">
+          <div class="vault-divider"></div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Active Position</div>
+          <div class="vault-position">
+            <div class="vault-position-row">
+              <span style="color:var(--text-2)">OPWAY Deposited</span>
+              <span class="vault-position-val" id="vpos-deposited">—</span>
+            </div>
+            <div class="vault-position-row">
+              <span style="color:var(--text-2)">Deposit Block</span>
+              <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--text-2)" id="vpos-block">—</span>
+            </div>
+            <div class="vault-divider" style="margin:8px 0"></div>
+            <div style="text-align:center;margin-bottom:4px">
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">USDOP Accrued (est.)</div>
+              <div class="vault-acc-usdop" id="vpos-usdop">0.0000</div>
+            </div>
+          </div>
+          <button class="vault-btn-secondary" style="background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.25);color:#22c55e" onclick="vaultClaimUSDOP()">
+            💰 Claim USDOP
+          </button>
+
+          <!-- Timelock countdown -->
+          <div class="vault-timelock">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+              <div>
+                <div class="vault-timelock-num" id="vault-blocks-remaining">420</div>
+                <div class="vault-timelock-label">blocks remaining to unlock</div>
+              </div>
+              <div style="text-align:right;font-size:11px;color:var(--text-3)">
+                Current block<br><span id="vault-current-block" style="font-family:'DM Mono',monospace;color:var(--text-2)">—</span>
+              </div>
+            </div>
+            <div class="vault-timelock-bar">
+              <div class="vault-timelock-bar-fill" id="vault-timelock-fill" style="width:0%"></div>
+            </div>
+          </div>
+          <button class="vault-btn-withdraw locked" id="vault-withdraw-btn" onclick="vaultWithdrawOPWAY()" disabled>
+            🔒 Withdraw OPWAY — Locked
+          </button>
+        </div>
+      </div>
+
+      <!-- ── SECTION B: PROPERTY VAULT ── -->
+      <div class="vault-card">
+        <div class="vault-card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Property Vault
+        </div>
+        <div class="vault-card-sub">List your PropertyNFT to enable fractional OPWAY investment from the community</div>
+
+        <div class="vault-input-wrap">
+          <div class="vault-input-label">Asset Type</div>
+          <select id="pvault-type" class="vault-select">
+            <option value="Residential">🏠 Residential</option>
+            <option value="Commercial">🏢 Commercial</option>
+            <option value="Industrial">🏭 Industrial</option>
+            <option value="Land">🌎 Land</option>
+            <option value="Other">📦 Other</option>
+          </select>
+        </div>
+        <div class="vault-input-wrap">
+          <div class="vault-input-label">Property Name</div>
+          <input type="text" id="pvault-name" class="vault-input" placeholder="e.g. Ocean View Tower" maxlength="60"/>
+        </div>
+        <div class="vault-input-wrap">
+          <div class="vault-input-label">Short Description <span style="color:var(--text-3);font-weight:400">(max 120 chars)</span></div>
+          <textarea id="pvault-desc" class="vault-textarea" maxlength="120" placeholder="Brief description of the property..."></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="vault-input-wrap">
+            <div class="vault-input-label">Property Value (BTC)</div>
+            <input type="number" id="pvault-btc" class="vault-input" min="0.0001" step="0.01" placeholder="e.g. 2.5" oninput="pvaultUpdateMax()"/>
+          </div>
+          <div class="vault-input-wrap">
+            <div class="vault-input-label">NFT Token ID</div>
+            <input type="number" id="pvault-tokenid" class="vault-input" min="1" placeholder="e.g. 1"/>
+          </div>
+        </div>
+        <div class="vault-preview" id="pvault-max-preview">
+          Max OPWAY mintable: <span id="pvault-max-opway">—</span>
+        </div>
+        <button class="vault-btn-primary" onclick="pvaultListProperty()">
+          🏛 List Property in Vault
+        </button>
+
+        <!-- Listed properties -->
+        <div id="pvault-listed-wrap" style="display:none">
+          <div class="vault-divider"></div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Your Listed Properties</div>
+          <div id="pvault-listed-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 
 <!-- ═══════════════════════════════════════
      DASHBOARD PAGE
@@ -3064,6 +3258,7 @@ function dashRender() {
     nc.style.display = 'none'; ct.style.display = 'block';
     dashRenderData();
     loadVault();  // carrega NFTs do usuário
+    setTimeout(vaultMarkDashboardAssets, 800); // badge VAULT nos ativos em vault
   } else {
     nc.style.display = 'flex'; ct.style.display = 'none';
   }
@@ -3095,16 +3290,20 @@ function renderRoute() {
   var terms = document.getElementById('page-terms');
   var privacy = document.getElementById('page-privacy');
   var dash = document.getElementById('page-dashboard');
+  var vault = document.getElementById('page-vault');
   if (main) main.style.display = 'none';
   if (terms) terms.classList.remove('active');
   if (privacy) privacy.classList.remove('active');
   if (dash) dash.classList.remove('active');
+  if (vault) vault.classList.remove('active');
   if (p === '/terms') {
     if (terms) terms.classList.add('active');
   } else if (p === '/privacy') {
     if (privacy) privacy.classList.add('active');
   } else if (p === '/dashboard') {
     if (dash) { dash.classList.add('active'); dashRender(); }
+  } else if (p === '/vault') {
+    if (vault) { vault.classList.add('active'); vaultInit(); }
   } else {
     if (main) main.style.display = 'block';
   }
@@ -3255,10 +3454,22 @@ async function loadTxHistory(){
 }
 function renderTxList(txs){
   var listEl=document.getElementById('tx-list'),countEl=document.getElementById('tx-count-label');
-  if(countEl)countEl.textContent=txs.length+' transactions';
+  /* Filter by connected wallet */
+  var filtered = walletState.addr ? txs.filter(function(tx){
+    var addr = walletState.addr.toLowerCase();
+    var fromMatch = tx.from && tx.from.toLowerCase() === addr;
+    var toMatch = tx.to && tx.to.toLowerCase() === addr;
+    var senderMatch = tx.sender && tx.sender.toLowerCase() === addr;
+    var receiverMatch = tx.receiver && tx.receiver.toLowerCase() === addr;
+    /* also check raw tx vout/vin if present */
+    var vinMatch = tx.vin && tx.vin.some(function(v){return v.prevout&&v.prevout.scriptpubkey_address&&v.prevout.scriptpubkey_address.toLowerCase()===addr;});
+    var voutMatch = tx.vout && tx.vout.some(function(o){return o.scriptpubkey_address&&o.scriptpubkey_address.toLowerCase()===addr;});
+    return fromMatch||toMatch||senderMatch||receiverMatch||vinMatch||voutMatch||tx.isOpwa;
+  }) : txs;
+  if(countEl)countEl.textContent=filtered.length+' transactions';
   if(!listEl)return;
-  if(!txs.length){listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">No transactions found.</div>';return;}
-  listEl.innerHTML=txs.map(function(tx){
+  if(!filtered.length){listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">No transactions found for this wallet.</div>';return;}
+  listEl.innerHTML=filtered.map(function(tx){
     var sh=tx.hash?tx.hash.slice(0,8)+'…'+tx.hash.slice(-6):'—';
     var ts=tx.time?tx.time.toLocaleDateString()+' '+tx.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'Pending';
     var href=tx.hash?'https://opscan.org/transactions/'+tx.hash+'?network=op_testnet':'#';
@@ -3381,6 +3592,255 @@ async function fetchGas() {
 fetchPrices(); fetchGas();
 setInterval(fetchPrices, 30000);
 setInterval(fetchGas,   30000);
+vaultLoadVaultedAssets();
+
+/* ═══════════════════════════════════════════════════════
+   VAULT — JS Logic
+═══════════════════════════════════════════════════════ */
+
+var vaultBlockInterval = null;
+var vaultCurrentBlock = 0;
+
+async function vaultFetchBlock() {
+  try {
+    var b = await fetch('https://mempool.space/signet/api/blocks/tip/height').then(function(r){return r.json();});
+    vaultCurrentBlock = b;
+    var el = document.getElementById('vault-current-block');
+    if (el) el.textContent = b.toLocaleString();
+    vaultUpdateCountdown();
+    vaultUpdateAccrued();
+  } catch(e) { /* silent */ }
+}
+
+function vaultInit() {
+  vaultFetchBlock();
+  if (vaultBlockInterval) clearInterval(vaultBlockInterval);
+  vaultBlockInterval = setInterval(vaultFetchBlock, 30000);
+  vaultRenderPosition();
+  pvaultRenderListed();
+  vaultLoadVaultedAssets();
+}
+
+function vaultUpdateEarn() {
+  var amt = parseFloat(document.getElementById('vault-deposit-amount').value) || 0;
+  var rate = (amt / 100).toFixed(4);
+  var el = document.getElementById('vault-earn-rate');
+  if (el) el.textContent = rate;
+}
+
+function vaultUpdateCountdown() {
+  var dep = vaultGetDeposit();
+  if (!dep) return;
+  var remaining = Math.max(0, dep.depositBlock + 420 - vaultCurrentBlock);
+  var hue = Math.round((1 - remaining / 420) * 120);
+  var color = 'hsl(' + hue + ',100%,' + (hue < 60 ? '50%' : '55%') + ')';
+  var numEl = document.getElementById('vault-blocks-remaining');
+  var fillEl = document.getElementById('vault-timelock-fill');
+  var wBtn = document.getElementById('vault-withdraw-btn');
+  if (numEl) { numEl.textContent = remaining.toLocaleString(); numEl.style.color = color; }
+  var pct = Math.round(((420 - remaining) / 420) * 100);
+  if (fillEl) fillEl.style.width = pct + '%';
+  if (wBtn) {
+    if (remaining === 0) {
+      wBtn.classList.remove('locked'); wBtn.classList.add('unlocked');
+      wBtn.disabled = false; wBtn.textContent = '✅ Withdraw OPWAY — Unlocked';
+    } else {
+      wBtn.classList.add('locked'); wBtn.classList.remove('unlocked');
+      wBtn.disabled = true; wBtn.textContent = '🔒 Withdraw OPWAY — ' + remaining + ' blocks remaining';
+    }
+  }
+}
+
+function vaultUpdateAccrued() {
+  var dep = vaultGetDeposit();
+  if (!dep || !vaultCurrentBlock) return;
+  var blocks = Math.max(0, vaultCurrentBlock - dep.depositBlock);
+  var usdop = (blocks * (dep.amount / 100)).toFixed(4);
+  var el = document.getElementById('vpos-usdop');
+  if (el) el.textContent = usdop;
+}
+
+function vaultGetDeposit() {
+  try { return JSON.parse(localStorage.getItem('vaultDeposit') || 'null'); } catch(e) { return null; }
+}
+
+function vaultRenderPosition() {
+  var dep = vaultGetDeposit();
+  var wrap = document.getElementById('vault-position-wrap');
+  if (!wrap) return;
+  if (!dep) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  var d = document.getElementById('vpos-deposited');
+  var b = document.getElementById('vpos-block');
+  if (d) d.textContent = dep.amount.toLocaleString() + ' OPWAY';
+  if (b) b.textContent = dep.depositBlock.toLocaleString();
+  vaultUpdateCountdown();
+  vaultUpdateAccrued();
+}
+
+function vaultDepositOPWAY() {
+  showToast('Vault contracts deploying soon — stay tuned!', 'info');
+  /* STUB — when contract ready: call YieldVault.deposit(amount) */
+  /* Demo: save to localStorage so UI shows position */
+  var amt = parseFloat(document.getElementById('vault-deposit-amount').value);
+  if (!amt || amt < 1) { showToast('Enter a valid OPWAY amount', 'info'); return; }
+  if (!walletState.connected) { openWalletModal(); return; }
+  var dep = { amount: amt, depositBlock: vaultCurrentBlock || 0, owner: walletState.addr };
+  localStorage.setItem('vaultDeposit', JSON.stringify(dep));
+  vaultRenderPosition();
+}
+
+function vaultClaimUSDOP() {
+  showToast('Vault contracts deploying soon — stay tuned!', 'info');
+}
+
+function vaultWithdrawOPWAY() {
+  showToast('Vault contracts deploying soon — stay tuned!', 'info');
+  /* STUB — when unlocked: call YieldVault.withdraw() */
+  localStorage.removeItem('vaultDeposit');
+  vaultRenderPosition();
+}
+
+/* ── PROPERTY VAULT ── */
+
+function pvaultUpdateMax() {
+  var btc = parseFloat(document.getElementById('pvault-btc').value) || 0;
+  var max = Math.floor(btc / 0.00001);
+  var el = document.getElementById('pvault-max-opway');
+  if (el) el.textContent = max > 0 ? max.toLocaleString() + ' OPWAY' : '—';
+}
+
+function pvaultListProperty() {
+  showToast('Vault contracts deploying soon — stay tuned!', 'info');
+  var type = document.getElementById('pvault-type').value;
+  var name = document.getElementById('pvault-name').value.trim();
+  var desc = document.getElementById('pvault-desc').value.trim();
+  var btc  = parseFloat(document.getElementById('pvault-btc').value);
+  var tid  = parseInt(document.getElementById('pvault-tokenid').value);
+  if (!name) { showToast('Enter a property name', 'info'); return; }
+  if (!btc || btc <= 0) { showToast('Enter a valid BTC value', 'info'); return; }
+  if (!tid || tid < 1) { showToast('Enter a valid NFT Token ID', 'info'); return; }
+  if (!walletState.connected) { openWalletModal(); return; }
+  var props = pvaultGetProperties();
+  var maxOpway = Math.floor(btc / 0.00001);
+  props.push({
+    tokenId: tid, type: type, name: name, description: desc,
+    valueBTC: btc, maxOpway: maxOpway,
+    listedBlock: vaultCurrentBlock || 0, owner: walletState.addr
+  });
+  localStorage.setItem('vaultedProperties', JSON.stringify(props));
+  /* reset form */
+  document.getElementById('pvault-name').value = '';
+  document.getElementById('pvault-desc').value = '';
+  document.getElementById('pvault-btc').value = '';
+  document.getElementById('pvault-tokenid').value = '';
+  pvaultRenderListed();
+  vaultLoadVaultedAssets();
+  showToast('Property listed in vault (demo mode)! Will appear in Available Assets.', 'success');
+}
+
+function pvaultGetProperties() {
+  try { return JSON.parse(localStorage.getItem('vaultedProperties') || '[]'); } catch(e) { return []; }
+}
+
+function pvaultRenderListed() {
+  var props = pvaultGetProperties().filter(function(p){ return p.owner === walletState.addr; });
+  var wrap = document.getElementById('pvault-listed-wrap');
+  var list = document.getElementById('pvault-listed-list');
+  if (!wrap || !list) return;
+  if (props.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = props.map(function(p){
+    return '<div style="background:var(--bg-elevated);border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">' +
+      '<div><div style="font-weight:600;font-size:13px;color:var(--text-1)">' + p.name + '</div>' +
+      '<div style="font-size:11px;color:var(--text-3);margin-top:2px">' + p.type + ' · NFT #' + p.tokenId + ' · ' + p.maxOpway.toLocaleString() + ' OPWAY max</div></div>' +
+      '<button onclick="pvaultRemove(' + p.tokenId + ')" style="padding:5px 10px;background:var(--danger-dim);border:1px solid var(--danger-border);border-radius:8px;color:var(--danger);font-size:11px;font-weight:600">Remove</button>' +
+      '</div>';
+  }).join('');
+}
+
+function pvaultRemove(tokenId) {
+  var props = pvaultGetProperties().filter(function(p){ return p.tokenId !== tokenId; });
+  localStorage.setItem('vaultedProperties', JSON.stringify(props));
+  pvaultRenderListed();
+  vaultLoadVaultedAssets();
+  showToast('Property removed from vault', 'info');
+}
+
+/* ── AVAILABLE ASSETS: inject vaulted properties ── */
+
+async function vaultLoadVaultedAssets() {
+  var props = pvaultGetProperties();
+  var container = document.getElementById('assets-vault-inject');
+  if (!container) return;
+  if (props.length === 0) { container.innerHTML = ''; return; }
+  var cards = '';
+  for (var i = 0; i < props.length; i++) {
+    var p = props[i];
+    var minted = 0;
+    try {
+      var res = await fetch('https://api.opscan.org/v1/token/opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv/supply');
+      if (res.ok) { var d = await res.json(); minted = d.totalSupply ? Number(d.totalSupply) : 0; }
+    } catch(e) { minted = 0; }
+    var pct = p.maxOpway > 0 ? Math.min(100, Math.round((minted / p.maxOpway) * 100)) : 0;
+    var fullyFunded = minted >= p.maxOpway;
+    var typeEmoji = {Residential:'🏠',Commercial:'🏢',Industrial:'🏭',Land:'🌎',Other:'📦'}[p.type] || '🏠';
+    cards += '<div class="asset-card" style="position:relative" id="vault-asset-' + p.tokenId + '">' +
+      '<div class="asset-vault-lock"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+        '<span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em">' + p.type + '</span>' +
+        '<span style="font-size:10px;color:var(--success);background:var(--success-dim);border:1px solid var(--success-border);padding:2px 8px;border-radius:20px;font-weight:700">ACTIVE</span>' +
+      '</div>' +
+      '<div style="font-family:\'Syne\',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text-1);margin-bottom:4px">' + typeEmoji + ' ' + p.name + '</div>' +
+      '<div style="font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.5">' + (p.description || 'Vaulted property asset available for fractional investment.') + '</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">' +
+        '<span style="color:var(--text-3)">Max OPWAY</span>' +
+        '<span style="font-family:\'DM Mono\',monospace;color:var(--text-1);font-weight:600">' + p.maxOpway.toLocaleString() + '</span>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--text-3);margin-bottom:4px">' + minted.toLocaleString() + ' / ' + p.maxOpway.toLocaleString() + ' minted · ' + pct + '% funded</div>' +
+      '<div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:16px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;transition:width .5s"></div></div>' +
+      '<button class="btn-invest" ' + (fullyFunded ? 'disabled style="opacity:.5;cursor:not-allowed"' : 'onclick="toggleInvest(\'vault-' + p.tokenId + '\')"') + '>' +
+        (fullyFunded ? '✅ Fully Funded' : '+ Invest Now') +
+      '</button>' +
+      '<div id="invest-panel-vault-' + p.tokenId + '" class="invest-panel" style="display:none;margin-top:14px">' +
+        '<div style="font-size:11px;color:var(--text-3);margin-bottom:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Investment Details</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">' +
+          '<div><div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Amount (BTC)</div>' +
+          '<input type="number" class="invest-input" id="btc-input-vault-' + p.tokenId + '" value="0.00001" step="0.00001" min="0.00001" oninput="syncInvestInputs(\'vault-' + p.tokenId + '\',\'btc\')"/></div>' +
+          '<div><div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Number of Tokens</div>' +
+          '<input type="number" class="invest-input" id="tok-input-vault-' + p.tokenId + '" value="1" min="1" oninput="syncInvestInputs(\'vault-' + p.tokenId + '\',\'tok\')"/></div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text-3);margin-bottom:10px">1 token = 0.00001 BTC (1,000 sats)</div>' +
+        '<div style="text-align:center;padding:12px;background:var(--accent-dim);border-radius:10px;margin-bottom:12px">' +
+          '<div style="font-size:11px;color:var(--text-3);margin-bottom:4px">YOU WILL RECEIVE</div>' +
+          '<div style="font-family:\'Syne\',sans-serif;font-size:1.4rem;font-weight:800;color:var(--accent)" id="rcv-vault-' + p.tokenId + '">1 OPWAY</div>' +
+          '<div style="font-size:11px;color:var(--text-2)" id="rcv-sats-vault-' + p.tokenId + '">≈ 0.00001000 BTC (1,000 sats)</div>' +
+        '</div>' +
+        '<button class="btn-confirm" onclick="confirmInvest(\'vault-' + p.tokenId + '\')" id="confirm-vault-' + p.tokenId + '">✓ Confirm Investment</button>' +
+      '</div>' +
+    '</div>';
+  }
+  container.innerHTML = cards;
+}
+
+/* ── DASHBOARD: add VAULT badge to vaulted assets ── */
+function vaultMarkDashboardAssets() {
+  var props = pvaultGetProperties().filter(function(p){ return p.owner === walletState.addr; });
+  if (!props.length) return;
+  var tokenIds = props.map(function(p){ return p.tokenId; });
+  document.querySelectorAll('.dash-token-card,[data-nft-id]').forEach(function(card){
+    var nftId = card.getAttribute('data-nft-id');
+    if (nftId && tokenIds.indexOf(parseInt(nftId)) > -1) {
+      if (!card.querySelector('.vault-badge')) {
+        var badge = document.createElement('div');
+        badge.className = 'vault-badge';
+        badge.textContent = 'VAULT';
+        card.style.position = 'relative';
+        card.appendChild(badge);
+      }
+    }
+  });
+}
 
 </script>
 </body>
