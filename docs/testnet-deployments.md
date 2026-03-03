@@ -13,7 +13,7 @@ Explorer: `https://testnet.opscan.io`
 | Contract Address | `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp` |
 | Funding TX | `bc18a99eecf59292a89e3341413d6a979c4755121d486402d92b4205f79ac124` |
 | Reveal TX | `8f755248524e6b035b96e9c03aed54d1d6506bf8527b419fb7de1f7c07b1e45f` |
-| setTreasury TX | `(pending — run set-treasury.ts)` |
+| setTreasury TX | `a3d3a951b8e0612248a534d4dbbc56b1e6d7c9d5506a113fd878b45e4985a212` |
 | Symbol | OPWA |
 | Decimals | 8 |
 | Max Supply | 1,000,000 OPWA |

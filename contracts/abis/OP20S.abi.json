@@ -1,0 +1,196 @@
+{
+    "functions": [
+        {
+            "name": "pegRate",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "rate",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "pegAuthority",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "authority",
+                    "type": "ADDRESS"
+                }
+            ]
+        },
+        {
+            "name": "pegUpdatedAt",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "updatedAt",
+                    "type": "UINT64"
+                }
+            ]
+        },
+        {
+            "name": "maxStaleness",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "staleness",
+                    "type": "UINT64"
+                }
+            ]
+        },
+        {
+            "name": "isStale",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "stale",
+                    "type": "BOOL"
+                }
+            ]
+        },
+        {
+            "name": "updatePegRate",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [
+                {
+                    "name": "newRate",
+                    "type": "UINT256"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "updateMaxStaleness",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [
+                {
+                    "name": "newStaleness",
+                    "type": "UINT64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "transferPegAuthority",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [
+                {
+                    "name": "newAuthority",
+                    "type": "ADDRESS"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "acceptPegAuthority",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "renouncePegAuthority",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": []
+        }
+    ],
+    "events": [
+        {
+            "name": "PegRateUpdated",
+            "values": [
+                {
+                    "name": "oldRate",
+                    "type": "UINT256"
+                },
+                {
+                    "name": "newRate",
+                    "type": "UINT256"
+                },
+                {
+                    "name": "updatedAt",
+                    "type": "UINT64"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "MaxStalenessUpdated",
+            "values": [
+                {
+                    "name": "oldStaleness",
+                    "type": "UINT64"
+                },
+                {
+                    "name": "newStaleness",
+                    "type": "UINT64"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "PegAuthorityTransferStarted",
+            "values": [
+                {
+                    "name": "currentAuthority",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "pendingAuthority",
+                    "type": "ADDRESS"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "PegAuthorityTransferred",
+            "values": [
+                {
+                    "name": "previousAuthority",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "newAuthority",
+                    "type": "ADDRESS"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "PegAuthorityRenounced",
+            "values": [
+                {
+                    "name": "previousAuthority",
+                    "type": "ADDRESS"
+                }
+            ],
+            "type": "Event"
+        }
+    ]
+}
