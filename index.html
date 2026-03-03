@@ -3066,8 +3066,11 @@ async function buildSenderAddress(Address) {
 async function _getContractTweakedPubkey(contractAddr) {
   try {
     var res = await dashRpcCallRaw('getPublicKeyInfo', [contractAddr]);
-    if (res && res.tweakedPubkey) return res.tweakedPubkey;
-    if (res && res.result && res.result.tweakedPubkey) return res.result.tweakedPubkey;
+    if (!res) return null;
+    // Response keyed by address: { "opt1s...": { tweakedPubkey: "..." } }
+    if (res[contractAddr] && res[contractAddr].tweakedPubkey) return res[contractAddr].tweakedPubkey;
+    // Flat response fallback
+    if (res.tweakedPubkey) return res.tweakedPubkey;
     return null;
   } catch(e) { return null; }
 }
@@ -4102,38 +4105,36 @@ async function vaultDepositOPWAY() {
   if (!amt || amt < 1) { showToast('Enter a valid OPWAY amount', 'info'); return; }
   showToast('Preparing stake transaction…', 'info');
   try {
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, TransactionOutputFlags, ABIDataTypes, Address } = await _opnetImport();
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
     const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
 
     /* Step 1: approve YieldVault to spend OPWAY */
-    const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET);
-    opwayContract.signer = null; opwayContract.mldsaSigner = null;
-    const approveResult = await opwayContract.approve(senderAddr, YIELD_VAULT_ADDR, amountBig);
-    if (!approveResult || !approveResult.transaction) throw new Error('Approve simulation failed');
-    const approveTx = approveResult.transaction;
-    approveTx.refundTo = walletState.addr; approveTx.maximumAllowedSatToSpend = 100000;
-    const approveSigned = await window.opnet.signAndBroadcast(approveTx);
-    if (!approveSigned || !approveSigned.txid) throw new Error('Approve rejected');
+    const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
+    const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
+    const approveSim = await opwayContract.approve(vaultAddrObj, amountBig);
+    if (approveSim.revert) throw new Error(approveSim.revert);
+    const approveReceipt = await approveSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
     showToast('Approve confirmed. Staking OPWAY…', 'info');
 
     /* Step 2: stake in YieldVault */
     const YIELD_ABI = [
-      ...OP_20_ABI,
       { name:'stake', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
-    const vaultContract = getContract(YIELD_VAULT_ADDR, YIELD_ABI, provider, _OPNET_NET);
-    vaultContract.signer = null; vaultContract.mldsaSigner = null;
-    const stakeResult = await vaultContract.stake(senderAddr, amountBig);
-    if (!stakeResult || !stakeResult.transaction) throw new Error('Stake simulation failed');
-    const stakeTx = stakeResult.transaction;
-    stakeTx.refundTo = walletState.addr; stakeTx.maximumAllowedSatToSpend = 100000;
-    const stakeSigned = await window.opnet.signAndBroadcast(stakeTx);
-    if (!stakeSigned || !stakeSigned.txid) throw new Error('Stake rejected');
-    showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeSigned.txid + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeSigned.txid.slice(0,10) + '…↗</a>', 'success', true);
+    const vaultContract = getContract(YIELD_VAULT_ADDR, YIELD_ABI, provider, _OPNET_NET, senderAddr);
+    const stakeSim = await vaultContract.stake(amountBig);
+    if (stakeSim.revert) throw new Error(stakeSim.revert);
+    const stakeReceipt = await stakeSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
+    showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
@@ -4147,23 +4148,21 @@ async function vaultClaimUSDOP() {
   if (!YIELD_VAULT_ADDR) { showToast('Vault contracts deploying soon — stay tuned!', 'info'); return; }
   showToast('Claiming USDOP rewards…', 'info');
   try {
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
     const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const CLAIM_ABI = [
-      ...OP_20_ABI,
       { name:'claimRewards', type:BitcoinAbiTypes.Function, payable:false,
-        inputs:[], outputs:[{name:'claimed',type:ABIDataTypes.UINT256}] }
+        inputs:[], outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
-    const vaultContract = getContract(YIELD_VAULT_ADDR, CLAIM_ABI, provider, _OPNET_NET);
-    vaultContract.signer = null; vaultContract.mldsaSigner = null;
-    const claimResult = await vaultContract.claimRewards(senderAddr);
-    if (!claimResult || !claimResult.transaction) throw new Error('Claim simulation failed');
-    const claimTx = claimResult.transaction;
-    claimTx.refundTo = walletState.addr; claimTx.maximumAllowedSatToSpend = 100000;
-    const claimSigned = await window.opnet.signAndBroadcast(claimTx);
-    if (!claimSigned || !claimSigned.txid) throw new Error('Claim rejected');
-    showToast('✅ USDOP claimed! TX: <a href="https://opscan.org/transactions/' + claimSigned.txid + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + claimSigned.txid.slice(0,10) + '…↗</a>', 'success', true);
+    const vaultContract = getContract(YIELD_VAULT_ADDR, CLAIM_ABI, provider, _OPNET_NET, senderAddr);
+    const claimSim = await vaultContract.claimRewards();
+    if (claimSim.revert) throw new Error(claimSim.revert);
+    const claimReceipt = await claimSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
+    showToast('✅ USDOP claimed! TX: <a href="https://opscan.org/transactions/' + claimReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + claimReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
@@ -4176,23 +4175,21 @@ async function vaultWithdrawOPWAY() {
   if (!YIELD_VAULT_ADDR) { showToast('Vault contracts deploying soon — stay tuned!', 'info'); return; }
   showToast('Requesting unstake…', 'info');
   try {
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
     const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const UNSTAKE_ABI = [
-      ...OP_20_ABI,
       { name:'unstake', type:BitcoinAbiTypes.Function, payable:false,
-        inputs:[], outputs:[{name:'amount',type:ABIDataTypes.UINT256}] }
+        inputs:[], outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
-    const vaultContract = getContract(YIELD_VAULT_ADDR, UNSTAKE_ABI, provider, _OPNET_NET);
-    vaultContract.signer = null; vaultContract.mldsaSigner = null;
-    const unstakeResult = await vaultContract.unstake(senderAddr);
-    if (!unstakeResult || !unstakeResult.transaction) throw new Error('Unstake simulation failed');
-    const unstakeTx = unstakeResult.transaction;
-    unstakeTx.refundTo = walletState.addr; unstakeTx.maximumAllowedSatToSpend = 100000;
-    const unstakeSigned = await window.opnet.signAndBroadcast(unstakeTx);
-    if (!unstakeSigned || !unstakeSigned.txid) throw new Error('Unstake rejected');
-    showToast('✅ OPWAY unstaked! TX: <a href="https://opscan.org/transactions/' + unstakeSigned.txid + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + unstakeSigned.txid.slice(0,10) + '…↗</a>', 'success', true);
+    const vaultContract = getContract(YIELD_VAULT_ADDR, UNSTAKE_ABI, provider, _OPNET_NET, senderAddr);
+    const unstakeSim = await vaultContract.unstake();
+    if (unstakeSim.revert) throw new Error(unstakeSim.revert);
+    const unstakeReceipt = await unstakeSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
+    showToast('✅ OPWAY unstaked! TX: <a href="https://opscan.org/transactions/' + unstakeReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + unstakeReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
@@ -4226,28 +4223,25 @@ async function pvaultListProperty() {
   var maxOpway = BigInt(Math.floor(btc / 0.00001));
   showToast('Preparing NFT approval…', 'info');
   try {
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
     const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const tokenIdBig = BigInt(tid);
 
     /* Step 1: approve PropertyVault to transfer the NFT */
+    const pvaultAddrObj = await _contractAddr(Address, PROPERTY_VAULT_ADDR);
     const NFT_ABI = [
       { name:'approve', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'tokenId',type:ABIDataTypes.UINT256}],
-        outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
-      { name:'transferFrom', type:BitcoinAbiTypes.Function, payable:false,
-        inputs:[{name:'from',type:ABIDataTypes.ADDRESS},{name:'to',type:ABIDataTypes.ADDRESS},{name:'tokenId',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
-    const nftContract = getContract(CONTRACTS.propertyNft, NFT_ABI, provider, _OPNET_NET);
-    nftContract.signer = null; nftContract.mldsaSigner = null;
-    const approveResult = await nftContract.approve(senderAddr, PROPERTY_VAULT_ADDR, tokenIdBig);
-    if (!approveResult || !approveResult.transaction) throw new Error('NFT approve simulation failed');
-    const approveTx = approveResult.transaction;
-    approveTx.refundTo = walletState.addr; approveTx.maximumAllowedSatToSpend = 100000;
-    const approveSigned = await window.opnet.signAndBroadcast(approveTx);
-    if (!approveSigned || !approveSigned.txid) throw new Error('NFT approve rejected');
+    const nftContract = getContract(CONTRACTS.propertyNft, NFT_ABI, provider, _OPNET_NET, senderAddr);
+    const approveSim = await nftContract.approve(pvaultAddrObj, tokenIdBig);
+    if (approveSim.revert) throw new Error(approveSim.revert);
+    const approveReceipt = await approveSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
     showToast('NFT approved. Listing property…', 'info');
 
     /* Step 2: listProperty(tokenId, maxOpway) on PropertyVault */
@@ -4256,21 +4250,20 @@ async function pvaultListProperty() {
         inputs:[{name:'tokenId',type:ABIDataTypes.UINT256},{name:'maxOpway',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
-    const pvaultContract = getContract(PROPERTY_VAULT_ADDR, PVAULT_ABI, provider, _OPNET_NET);
-    pvaultContract.signer = null; pvaultContract.mldsaSigner = null;
-    const listResult = await pvaultContract.listProperty(senderAddr, tokenIdBig, maxOpway);
-    if (!listResult || !listResult.transaction) throw new Error('listProperty simulation failed');
-    const listTx = listResult.transaction;
-    listTx.refundTo = walletState.addr; listTx.maximumAllowedSatToSpend = 100000;
-    const listSigned = await window.opnet.signAndBroadcast(listTx);
-    if (!listSigned || !listSigned.txid) throw new Error('listProperty rejected');
+    const pvaultContract = getContract(PROPERTY_VAULT_ADDR, PVAULT_ABI, provider, _OPNET_NET, senderAddr);
+    const listSim = await pvaultContract.listProperty(tokenIdBig, maxOpway);
+    if (listSim.revert) throw new Error(listSim.revert);
+    const listReceipt = await listSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
     /* reset form */
     ['pvault-name','pvault-desc','pvault-btc','pvault-tokenid'].forEach(function(id){
       var el = document.getElementById(id); if (el) el.value = '';
     });
     pvaultRenderListed();
     vaultLoadVaultedAssets();
-    showToast('✅ Property #' + tid + ' listed! TX: <a href="https://opscan.org/transactions/' + listSigned.txid + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + listSigned.txid.slice(0,10) + '…↗</a>', 'success', true);
+    showToast('✅ Property #' + tid + ' listed! TX: <a href="https://opscan.org/transactions/' + listReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + listReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
@@ -4317,18 +4310,17 @@ async function pvaultRemove(tokenId) {
         inputs:[{name:'tokenId',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
-    const pvaultContract = getContract(PROPERTY_VAULT_ADDR, DELIST_ABI, provider, _OPNET_NET);
-    pvaultContract.signer = null; pvaultContract.mldsaSigner = null;
-    const delistResult = await pvaultContract.delistProperty(senderAddr, BigInt(tokenId));
-    if (!delistResult || !delistResult.transaction) throw new Error('delistProperty simulation failed');
-    const delistTx = delistResult.transaction;
-    delistTx.refundTo = walletState.addr; delistTx.maximumAllowedSatToSpend = 100000;
-    const delistSigned = await window.opnet.signAndBroadcast(delistTx);
-    if (!delistSigned || !delistSigned.txid) throw new Error('Delist rejected');
+    const pvaultContract = getContract(PROPERTY_VAULT_ADDR, DELIST_ABI, provider, _OPNET_NET, senderAddr);
+    const delistSim = await pvaultContract.delistProperty(BigInt(tokenId));
+    if (delistSim.revert) throw new Error(delistSim.revert);
+    const delistReceipt = await delistSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
     var props = pvaultGetProperties().filter(function(p){ return p.tokenId !== tokenId; });
     localStorage.setItem('vaultedProperties', JSON.stringify(props));
     pvaultRenderListed(); vaultLoadVaultedAssets();
-    showToast('✅ Property #' + tokenId + ' delisted! TX: <a href="https://opscan.org/transactions/' + delistSigned.txid + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + delistSigned.txid.slice(0,10) + '…↗</a>', 'success', true);
+    showToast('✅ Property #' + tokenId + ' delisted! TX: <a href="https://opscan.org/transactions/' + delistReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + delistReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
