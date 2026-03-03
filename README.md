@@ -122,9 +122,9 @@ interface IOP721 {
 
 | Contract | Standard | Address | Explorer |
 |----------|----------|---------|----------|
-| `OPWACoin` | OP-20 | _opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp](https://testnet.opscan.io) |
-| `PropertyNFT` | OP-721 | _opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp](https://testnet.opscan.io) |
-| `YieldDistributor` | Custom | _opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp](https://testnet.opscan.io) |
+| `OPWACoin` | OP-20 | `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp` | [OPScan](https://testnet.opscan.io) |
+| `PropertyNFT` | OP-721 | `opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6` | [OPScan](https://testnet.opscan.io) |
+| `OPWAYield v3` | Custom | `opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv` | [OPScan](https://testnet.opscan.io) |
 
 Full deployment records: [docs/testnet-deployments.md](./docs/testnet-deployments.md)
 
