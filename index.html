@@ -252,14 +252,14 @@ button:focus-visible,a:focus-visible{
 
 /* Nav links — centralizados, generosos, com ícone */
 .nav-links{
-  display:flex;align-items:center;gap:2px;
+  display:flex;align-items:center;gap:1px;
   position:absolute;left:50%;transform:translateX(-50%);
   padding:0 4px;
   white-space:nowrap;
 }
 .nav-link{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:7px 13px;border-radius:9px;font-size:13px;font-weight:500;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:7px 10px;border-radius:9px;font-size:12.5px;font-weight:500;
   color:var(--text-2);transition:color .15s,background .15s;
   white-space:nowrap;letter-spacing:.01em;
 }
@@ -403,7 +403,9 @@ button:focus-visible,a:focus-visible{
   margin-bottom:22px;
   text-align:center;
   position:relative;z-index:1;
+  transition:text-shadow .4s ease;
 }
+.hero-title:hover{text-shadow:0 0 60px rgba(255,255,255,.45),0 0 120px rgba(255,255,255,.2)}
 @media(max-width:700px){.hero-title{font-size:clamp(36px,10vw,60px)}}
 .hero-title .line-white{color:var(--text-1)}
 .hero-title .line-orange{color:var(--accent)}
@@ -477,8 +479,9 @@ button:focus-visible,a:focus-visible{
   margin-bottom:14px;
 }
 .s-label::before{content:'';display:block;width:16px;height:1px;background:var(--accent)}
-.s-title{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,38px);font-weight:800;line-height:1.08;margin-bottom:12px}
+.s-title{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,38px);font-weight:800;line-height:1.08;margin-bottom:12px;transition:text-shadow .4s ease}
 .s-title .acc{color:var(--accent)}
+.s-title:hover{text-shadow:0 0 40px rgba(255,255,255,.55),0 0 80px rgba(255,255,255,.25),0 0 120px rgba(255,255,255,.1)}
 .s-sub{font-size:15px;color:var(--text-2);max-width:520px;line-height:1.72;margin-bottom:48px}
 
 /* =====================================================================
@@ -1112,7 +1115,7 @@ footer{
 .modal-overlay.open{display:flex}
 .modal{
   background:#1a1a1a;border:1px solid rgba(255,255,255,.07);
-  border-radius:18px;padding:24px;width:100%;max-width:340px;
+  border-radius:18px;padding:24px;width:100%;max-width:400px;
   box-shadow:0 32px 80px rgba(0,0,0,.7);
   animation:modalIn .22s ease;
 }
@@ -1151,7 +1154,7 @@ footer{
 .w-name{font-size:14px;font-weight:600;color:#f5f5f5;margin-bottom:2px;line-height:1}
 .w-desc{font-size:11.5px;color:#6b6b6b}
 .w-badge{margin-left:auto;padding:3px 8px;border-radius:5px;flex-shrink:0;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.28);color:var(--accent)}
-.wallet-install{font-size:11px;color:#525252;text-align:center;padding:6px 4px;margin-bottom:4px}
+.wallet-install{font-size:11px;color:#525252;text-align:center;padding:2px 4px 6px;margin-bottom:2px;margin-top:-2px}
 .wallet-install a{color:var(--accent);text-decoration:none}
 .wallet-install a:hover{text-decoration:underline}
 
@@ -1352,6 +1355,9 @@ footer{
   background:rgba(15,10,5,.92);
   border-top-color:rgba(249,115,22,.25);
 }
+[data-theme="light"] .lb-item{color:#fff!important}
+[data-theme="light"] .lb-item .lb-label{color:rgba(255,255,255,.7)!important}
+[data-theme="light"] .lb-item .lb-acc{color:#fff!important}
 
 /* ── HERO LIGHT ── */
 [data-theme="light"] .hero-stats{
@@ -1605,7 +1611,7 @@ body{overflow-x:hidden}
 .toast a{pointer-events:all!important}
 
 /* ── SUB-PAGE FOOTER FIX ── */
-.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface,var(--bg-card))!important;border-top:1px solid var(--border)!important;padding:20px 24px!important;margin-top:auto!important;display:block!important;text-align:center!important;font-family:'DM Mono',monospace!important;font-size:11px!important;color:var(--text-3)!important}
+.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface,var(--bg-card))!important;border-top:1px solid var(--border)!important;margin-top:auto!important;display:block!important;}
 </style>
 </head>
 <body data-theme="dark">
@@ -1654,7 +1660,7 @@ body{overflow-x:hidden}
         Vault
       </a>
       <div class="nav-dash-sep"></div>
-      <a class="nav-link nav-link-dashboard" href="/dashboard" onclick="navigate('/dashboard');return false;" id="nav-dashboard" style="display:none">
+      <a class="nav-link nav-link-dashboard" href="/dashboard" onclick="navigate('/dashboard');return false;" id="nav-dashboard">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Dashboard
       </a>
@@ -2779,7 +2785,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div style="font-size:42px;margin-bottom:14px">&#x1F512;</div>
         <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:10px">Connect Your Wallet</div>
         <div style="font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.6">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</div>
-        <button onclick="navigate('/');setTimeout(function(){openWalletModal();},200)" style="padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;color:#fff;font-weight:600;font-size:14px">Go Home to Connect</button>
+        <button onclick="openWalletModal()" style="padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;color:#fff;font-weight:600;font-size:14px">Connect Wallet</button>
       </div>
     </div>
     <div id="dash-content" style="display:none">
@@ -3493,7 +3499,7 @@ function walletConnected(addr, sats, type, publicKey) {
   e = document.getElementById('wd-address'); if (e) e.textContent = addr;
   e = document.getElementById('wd-balance'); if (e) e.textContent = '\u20BF ' + (sats / 1e8).toFixed(5);
   e = document.getElementById('wd-balance-usd'); if (e) e.textContent = '\u2248 $' + ((sats / 1e8) * (btcPrice || 65000)).toFixed(2);
-  e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'inline-flex';
+  
   e = document.getElementById('lb-wallet'); if (e) e.textContent = short;
   showToast('Connected: ' + short, 'success');
   closeWallet();
@@ -3507,7 +3513,7 @@ function wdDisconnect() {
   if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
   let e;
   e = document.getElementById('wallet-dropdown'); if (e) e.classList.remove('open');
-  e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'none';
+  
   e = document.getElementById('lb-wallet'); if (e) e.textContent = 'not connected';
   showToast('Wallet disconnected', 'info');
   if (window.location.pathname === '/dashboard') navigate('/');
@@ -4150,10 +4156,37 @@ function renderTxList(txs){
 
 /* ── TOGGLE INVEST PANEL ── */
 (function(){
-  var fc='<div style="text-align:center;font-size:11px;color:var(--text-3);font-family:DM Mono,monospace;padding:4px 0">'+
-    '&copy; 2025 OPWA Protocol. All rights reserved. &nbsp;|&nbsp; '+
-    '<a href="/terms" onclick="navigate(\'/terms\');return false;" style="color:var(--accent);text-decoration:none">Terms</a> &nbsp;|&nbsp; '+
-    '<a href="/privacy" onclick="navigate(\'/privacy\');return false;" style="color:var(--accent);text-decoration:none">Privacy</a>'+
+  var fc='<div class="footer-grid">'+
+    '<div><div class="ft-logo-row"><div class="logo-mark">OP</div><div><div class="logo-text">OPWA</div><div class="logo-sub">Protocol</div></div></div>'+
+    '<p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>'+
+    '<div class="ft-social">'+
+    '<a href="https://x.com/" class="soc-btn" title="X / Twitter"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>'+
+    '<a href="https://github.com/Opwabtc/OPWABTC" class="soc-btn soc-btn-github" target="_blank" title="GitHub"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></a>'+
+    '</div></div>'+
+    '<div><div class="ft-col-title">Platform</div>'+
+    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link">Assets</a>'+
+    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link">Simulator</a>'+
+    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link">How It Works</a>'+
+    '<a href="/dashboard" onclick="navigate(\'/dashboard\');return false;" class="ft-link">Dashboard</a></div>'+
+    '<div><div class="ft-col-title">Build &amp; Tools</div>'+
+    '<a href="https://dev.opnet.org/" class="ft-link" target="_blank">Build on OP_NET \u2197</a>'+
+    '<a href="https://faucet.opnet.org/" class="ft-link" target="_blank">Testnet Faucet \u2197</a>'+
+    '<a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" class="ft-link" target="_blank">Get OP_Wallet \u2197</a>'+
+    '<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank">OPScan Explorer \u2197</a>'+
+    '<a href="https://mempool.opnet.org/pt/testnet4" class="ft-link" target="_blank">Mempool Testnet \u2197</a></div>'+
+    '<div><div class="ft-col-title">Resources</div>'+
+    '<a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link ft-whitepaper" target="_blank">Whitepaper \u2197</a>'+
+    '<a href="https://defibible.org/" class="ft-link" target="_blank">DeFi Bible \u2197</a>'+
+    '<a href="https://vibecode.finance/ecosystem" class="ft-link" target="_blank">Vibecode Ecosystem \u2197</a>'+
+    '<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank">My OPScan Profile \u2197</a>'+
+    '<hr style="border:none;border-top:1px solid var(--border);margin:11px 0"/>'+
+    '<a href="https://faucet.opnet.org/" class="ft-link ft-faucet" target="_blank">Get Testnet BTC \u2192</a></div>'+
+    '</div>'+
+    '<hr class="ft-sep"/>'+
+    '<div class="ft-bottom">'+
+    '<div class="ft-copy">&copy; 2025 OPWA Protocol. All rights reserved.<span style="margin-left:18px;font-size:10px;opacity:.7">Site made by <a href="https://x.com/HashBalls23" target="_blank" rel="noopener" style="color:#d4af37;font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.04em;text-shadow:0 0 12px rgba(212,175,55,.4)">Hash</a></span></div>'+
+    '<div class="ft-net-badge"><span style="width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);display:inline-block;animation:blink 2s infinite"></span> OP_NET Testnet</div>'+
+    '<div class="ft-legal"><a href="/terms" onclick="navigate(\'/terms\');return false;">Terms</a><a href="/privacy" onclick="navigate(\'/privacy\');return false;">Privacy</a></div>'+
     '</div>';
   ['vault-footer','dash-footer','terms-footer','privacy-footer'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=fc;});
 })();
@@ -4168,9 +4201,30 @@ function toggleDesc(btn) {
 
 function toggleInvest(id, btn) {
   const panel = document.getElementById(id);
-  const open = panel.classList.toggle('open');
-  const isGamma = id === 'p-gamma';
-  if (!open) {
+  const wasOpen = panel.classList.contains('open');
+
+  // Close all open panels first
+  document.querySelectorAll('.invest-panel.open').forEach(p => {
+    p.classList.remove('open');
+    const sibBtn = p.closest('.card-asset')?.querySelector('.btn-invest, .btn-waitlist');
+    if (sibBtn && p.id !== id) {
+      const isWaitlist = p.id === 'p-gamma' || p.id === 'p-sakura';
+      sibBtn.innerHTML = isWaitlist
+        ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`
+        : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
+    }
+  });
+
+  if (!wasOpen) {
+    panel.classList.add('open');
+    if (btn) btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
+    setTimeout(function() {
+      var asset = id.replace('p-','');
+      var btcEl = document.getElementById(asset + '-btc');
+      if (btcEl) btcEl.focus();
+    }, 230);
+  } else {
+    // Was open, now closed - reset its receipt
     const asset = id.replace('p-','');
     const r = document.getElementById(asset + '-receipt');
     if (r) r.style.display = 'none';
@@ -4178,21 +4232,6 @@ function toggleInvest(id, btn) {
     const tokEl = document.getElementById(asset + '-tokens');
     if (btcEl) btcEl.value = '';
     if (tokEl) tokEl.value = '';
-  }
-  if (open) {
-    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
-    // auto-focus no campo BTC após animação
-    setTimeout(function() {
-      var asset = id.replace('p-','');
-      var btcEl = document.getElementById(asset + '-btc');
-      if (btcEl) btcEl.focus();
-    }, 230);
-  } else {
-    if (isGamma) {
-      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
-    } else {
-      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
-    }
   }
 }
 
@@ -4390,9 +4429,19 @@ var vaultCurrentBlock = 0;
 
 async function vaultFetchBlock() {
   try {
+    // Use OPNet RPC btc_blockNumber — same scale as contract's Blockchain.block.number
     var b = 0;
-    try { var _r1=await fetch('https://mempool.opnet.org/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(_r1.ok) b=await _r1.json(); } catch(_e1){}
-    if (!b) { try { var _r2=await fetch('https://mempool.space/signet/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(_r2.ok) b=await _r2.json(); } catch(_e2){} }
+    try {
+      var bnRaw = await dashRpcCallRaw('btc_blockNumber', []);
+      if (bnRaw) b = parseInt(bnRaw, 16);
+    } catch(_e1) {}
+    // fallback: eth_blockNumber
+    if (!b) {
+      try {
+        var bnRaw2 = await dashRpcCallRaw('eth_blockNumber', []);
+        if (bnRaw2) b = parseInt(bnRaw2, 16);
+      } catch(_e2) {}
+    }
     if (!b) return;
     vaultCurrentBlock = b;
     var el = document.getElementById('vault-current-block');
@@ -4454,12 +4503,30 @@ function vaultUpdateCountdown() {
   }
 }
 
-function vaultUpdateAccrued() {
+async function vaultUpdateAccrued() {
   var dep = vaultGetDeposit();
-  if (!dep || !vaultCurrentBlock) return;
+  var el = document.getElementById('vpos-usdop');
+  if (!dep) return;
+  // Try on-chain getAccruedRewards first (uses _lastClaims, not _depositBlocks)
+  try {
+    var senderAddr = walletState.addr;
+    if (senderAddr && typeof getContract === 'function') {
+      const { JSONRpcProvider, getContract: _gc, networks } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+      const provider = new JSONRpcProvider('https://regtest.opnet.org', networks.opnetTestnet);
+      const GET_ACCRUED_ABI = [{"name":"getAccruedRewards","type":"function","stateMutability":"view","inputs":[{"name":"user","type":"address"}],"outputs":[{"name":"","type":"uint256"}]}];
+      const vc = _gc(YIELD_VAULT_ADDR, GET_ACCRUED_ABI, provider, networks.opnetTestnet, senderAddr);
+      const res = await vc.getAccruedRewards(senderAddr);
+      if (res && res.result !== undefined) {
+        var onChainVal = (Number(res.result) / 1e8).toFixed(4);
+        if (el) el.textContent = onChainVal;
+        return;
+      }
+    }
+  } catch(_e) { /* fallback to estimate */ }
+  // Fallback: block-based estimate using OPNet block scale
+  if (!vaultCurrentBlock) return;
   var blocks = Math.max(0, vaultCurrentBlock - dep.depositBlock);
   var usdop = (blocks * (dep.amount / 100)).toFixed(4);
-  var el = document.getElementById('vpos-usdop');
   if (el) el.textContent = usdop;
 }
 
