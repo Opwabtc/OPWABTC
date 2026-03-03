@@ -3227,7 +3227,7 @@ async function confirmInvest(asset) {
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-    const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
+    const provider    = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _net);
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(OPWAY_ADDR, OPWAY_ABI, provider, _net, senderAddr);
     // hasTo: server passes to string as-is to contract's out.to
@@ -3493,7 +3493,7 @@ async function mintPropertyNFT() {
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
       { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-    var provider   = new JSONRpcProvider('https://testnet.opnet.org', _net);
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _net);
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, _net, senderAddr);
     var priceRes = await contract.mintPrice();
@@ -3541,7 +3541,7 @@ async function loadVault() {
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
-    var provider   = new JSONRpcProvider('https://testnet.opnet.org', _net);
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _net);
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, _net, senderAddr);
 
@@ -3600,7 +3600,7 @@ async function loadVault() {
 
 /* helper RPC raw para totalSupply no vault */
 async function dashRpcCallRaw(method, params) {
-  var res = await fetch('https://testnet.opnet.org', {
+  var res = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
     method: 'POST', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ jsonrpc:'2.0', id:1, method, params })
   });
@@ -3618,7 +3618,7 @@ function fmtAmt(raw, dec) {
 
 async function dashRpcCall(data) {
   try {
-    var r = await fetch('https://testnet.opnet.org', {
+    var r = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to: CONTRACTS.opwayYield, data:data},'latest']}),
@@ -3635,7 +3635,7 @@ async function dashFetch() {
     // ── OPWAY balance + PropertyNFT totalSupply via getContract ──
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, Address } = await _opnetImport();
-      const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+      const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
       const senderAddr = await buildSenderAddress(Address);
       const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
       const balSim = await opwayContract.balanceOf(senderAddr);
@@ -3922,7 +3922,7 @@ async function loadTxHistory() {
   try {
     var imp = await _opnetImport();
     var JSONRpcProvider = imp.JSONRpcProvider;
-    var provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+    var provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
 
     // 1. Get user internal OPNet address (32-byte hex)
     var internalAddr = await provider.getPublicKeyInfo(addr, false);
@@ -4200,7 +4200,7 @@ async function fetchOpNetBlock() {
     // 3. OPNet RPC eth_blockNumber fallback
     if (!h) {
       try {
-        var r3 = await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
+        var r3 = await fetch('https://testnet.opnet.org/api/v1/json-rpc',{method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_blockNumber',params:[]}),signal:AbortSignal.timeout(5000)});
         var j3 = await r3.json();
         if (j3 && j3.result) h = parseInt(j3.result, 16);
@@ -4374,7 +4374,7 @@ async function vaultDepositOPWAY() {
   showToast('Preparing stake transaction…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
 
@@ -4417,7 +4417,7 @@ async function vaultClaimUSDOP() {
   showToast('Claiming USDOP rewards…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const CLAIM_ABI = [
       { name:'claimRewards', type:BitcoinAbiTypes.Function, payable:false,
@@ -4444,7 +4444,7 @@ async function vaultWithdrawOPWAY() {
   showToast('Requesting unstake…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const UNSTAKE_ABI = [
       { name:'unstake', type:BitcoinAbiTypes.Function, payable:false,
@@ -4492,7 +4492,7 @@ async function pvaultListProperty() {
   showToast('Preparing NFT approval…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const tokenIdBig = BigInt(tid);
 
@@ -4571,7 +4571,7 @@ async function pvaultRemove(tokenId) {
   showToast('Delisting property #' + tokenId + '…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const DELIST_ABI = [
       { name:'delistProperty', type:BitcoinAbiTypes.Function, payable:false,
