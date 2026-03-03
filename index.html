@@ -1005,13 +1005,12 @@ footer{
    ===================================================================== */
 .gas-popup{
   position:fixed;
-  bottom:calc(var(--livebar-h,28px) + 56px + 8px);
+  bottom:calc(28px + 52px + 8px);
   right:22px;
   background:#141414;border:1px solid rgba(255,255,255,.07);
   border-radius:14px;padding:18px;width:244px;
   z-index:150;
   display:none;
-  max-height:calc(100vh - 120px);overflow-y:auto;
   box-shadow:0 16px 50px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.03);
   animation:gasIn .18s ease;
 }
@@ -1021,7 +1020,7 @@ footer{
 
 .gas-trigger{
   position:fixed;
-  bottom:calc(var(--livebar-h,28px) + 10px);
+  bottom:calc(28px + 8px);
   right:22px;
   width:42px;height:42px;border-radius:50%;
   background:var(--gas-toggle);
@@ -1558,54 +1557,6 @@ footer{
   .footer-grid{grid-template-columns:1fr}
   .hero-title{font-size:44px}
 }
-
-/* ── PARTNERS CARD SLIDER ── */
-.pcard-track-wrap{overflow:hidden;position:relative;width:100vw;margin-left:calc(-50vw + 50%);padding:8px 0}
-.pcard-track-wrap::before,.pcard-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
-.pcard-track-wrap::before{left:0;background:linear-gradient(to right,var(--bg-base),transparent)}
-.pcard-track-wrap::after{right:0;background:linear-gradient(to left,var(--bg-base),transparent)}
-.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 40s linear infinite;will-change:transform;padding:8px 16px}
-.pcard-track:hover{animation-play-state:paused}
-@keyframes pcardScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:default}
-.pcard:hover{border-color:var(--accent-border);transform:translateY(-3px);box-shadow:0 8px 24px rgba(249,115,22,.15)}
-[data-theme="light"] .pcard{background:#fff;border-color:rgba(124,58,237,.12)}
-.pcard-ico{font-size:22px;line-height:1}
-.pcard-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);letter-spacing:.02em;text-align:center}
-.pcard-sub{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;text-align:center}
-
-/* ── MOBILE OPTIMIZATION ── */
-@media(hover:none),(pointer:coarse){*{cursor:auto!important}#cur,.custom-cursor,.cursor-dot,.cursor-ring{display:none!important}}
-@media(max-width:768px){
-  .btn-connect,.btn-icon,.nav-link,.gas-trigger,.ft-link,.curr-btn,.chart-range-btn,.tx-ppbtn{min-height:44px;min-width:44px}
-  .section{padding:44px 16px!important}
-  .sim-grid{display:flex!important;flex-direction:column!important;gap:20px!important}
-  .sim-left,.sim-right{width:100%!important;max-width:100%!important}
-  .gas-popup{right:12px!important;width:calc(100vw - 24px)!important;max-width:320px!important}
-  .gas-trigger{right:12px!important}
-  .footer-grid{grid-template-columns:1fr!important}
-  .tech-grid{grid-template-columns:1fr!important}
-  .steps-grid{grid-template-columns:1fr 1fr!important}
-  .pcard{width:110px!important;padding:14px 12px!important}
-  .live-bar-inner{font-size:10px!important}
-  .hero-title{font-size:clamp(28px,8vw,48px)!important}
-  .navbar{width:calc(100% - 24px)!important;top:8px!important}
-  .nb-right{gap:4px!important}
-  .assets-grid{grid-template-columns:1fr!important}
-}
-@media(max-width:480px){
-  .steps-grid{grid-template-columns:1fr!important}
-  .hero-title{font-size:clamp(24px,9vw,38px)!important}
-  .section{padding:36px 14px!important}
-  .vault-grid,.dash-wrap .dash-stats-row{grid-template-columns:1fr!important}
-}
-html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
-body{overflow-x:hidden}
-@media(hover:none){.btn-connect:active,.pcard:active,.tech-card:active,.card-asset:active{opacity:.8;transform:scale(.98)}}
-.toast a{pointer-events:all!important}
-
-/* ── SUB-PAGE FOOTER FIX ── */
-.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface,var(--bg-card))!important;border-top:1px solid var(--border)!important;padding:20px 24px!important;margin-top:auto!important;display:block!important;text-align:center!important;font-family:'DM Mono',monospace!important;font-size:11px!important;color:var(--text-3)!important}
 </style>
 </head>
 <body data-theme="dark">
@@ -1818,7 +1769,7 @@ body{overflow-x:hidden}
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">VILLA AURORA</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Miami Beach, Florida, USA</p>
-        <div class="card-desc-wrap"><p class="card-desc-short">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Read full description"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Read more</button></div>
+        <div class="card-desc-wrap"><p class="card-desc-short">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','alpha')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','alpha')">$ USD</button>
@@ -1883,7 +1834,7 @@ body{overflow-x:hidden}
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">METRO TOWER</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Manhattan, New York, USA</p>
-        <div class="card-desc-wrap"><p class="card-desc-short">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Read full description"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Read more</button></div>
+        <div class="card-desc-wrap"><p class="card-desc-short">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','beta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','beta')">$ USD</button>
@@ -1948,7 +1899,7 @@ body{overflow-x:hidden}
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">LOGISTICA HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Guarulhos, São Paulo, Brazil</p>
-        <div class="card-desc-wrap"><p class="card-desc-short">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Read full description"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Read more</button></div>
+        <div class="card-desc-wrap"><p class="card-desc-short">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','gamma')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','gamma')">$ USD</button>
@@ -2013,7 +1964,7 @@ body{overflow-x:hidden}
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">CASA BELÉM</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Belém, Lisbon, Portugal</p>
-        <div class="card-desc-wrap"><p class="card-desc-short">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Read full description"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Read more</button></div>
+        <div class="card-desc-wrap"><p class="card-desc-short">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','delta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','delta')">$ USD</button>
@@ -2078,7 +2029,7 @@ body{overflow-x:hidden}
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">DOWNTOWN HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Downtown Dubai, UAE</p>
-        <div class="card-desc-wrap"><p class="card-desc-short">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Read full description"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Read more</button></div>
+        <div class="card-desc-wrap"><p class="card-desc-short">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','epsilon')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','epsilon')">$ USD</button>
@@ -2146,7 +2097,7 @@ body{overflow-x:hidden}
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">SAKURA RESIDENCE</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Shinjuku, Tokyo, Japan</p>
-        <div class="card-desc-wrap"><p class="card-desc-short">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Read full description"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Read more</button></div>
+        <div class="card-desc-wrap"><p class="card-desc-short">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="card-stats">
           <div class="cs-item"><div class="cs-label">Price/Token</div><div class="cs-value" style="color:var(--text-3)">TBA</div></div>
           <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value" style="color:var(--gold)">~13%</div></div>
@@ -2301,29 +2252,30 @@ body{overflow-x:hidden}
     </div>
   </div>
 
-</section>
-
-<section class="section partners-section" id="partners" style="padding:52px 0;overflow:hidden">
-  <div class="s-label" style="text-align:center;margin-bottom:6px">Ecosystem &amp; Partners</div>
-  <h2 class="s-title" style="text-align:center;margin-bottom:32px">Built on Leading <span class="acc">Bitcoin Infrastructure</span></h2>
-  <div class="pcard-track-wrap">
-    <div class="pcard-track">
-      <div class="pcard"><div class="pcard-ico">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></div>
-      <div class="pcard"><div class="pcard-ico">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></div>
-      <div class="pcard"><div class="pcard-ico">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></div>
-      <div class="pcard"><div class="pcard-ico">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></div>
-      <div class="pcard"><div class="pcard-ico">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></div>
-      <div class="pcard"><div class="pcard-ico">🔄</div><div class="pcard-name">MotoSwap</div><div class="pcard-sub">DEX Protocol</div></div>
-      <div class="pcard"><div class="pcard-ico">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></div>
-      <div class="pcard"><div class="pcard-ico">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></div>
-      <div class="pcard"><div class="pcard-ico">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></div>
-      <div class="pcard"><div class="pcard-ico">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></div>
-      <div class="pcard"><div class="pcard-ico">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></div>
-      <div class="pcard"><div class="pcard-ico">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></div>
-      <div class="pcard"><div class="pcard-ico">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></div>
-      <div class="pcard"><div class="pcard-ico">🔄</div><div class="pcard-name">MotoSwap</div><div class="pcard-sub">DEX Protocol</div></div>
-      <div class="pcard"><div class="pcard-ico">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></div>
-      <div class="pcard"><div class="pcard-ico">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></div>
+  <!-- Partners ticker — single scrolling row -->
+  <div class="ticker-wrap">
+    <span class="ticker-label">Ecosystem &amp; Partners</span>
+    <div class="ticker-track">
+      <span class="t-item"><span class="t-dot"></span>OP_NET Protocol</span>
+      <span class="t-item"><span class="t-dot"></span>Bitcoin Layer</span>
+      <span class="t-item"><span class="t-dot"></span>OPWA Protocol</span>
+      <span class="t-item"><span class="t-dot"></span>Testnet4</span>
+      <span class="t-item"><span class="t-dot"></span>OPScan Explorer</span>
+      <span class="t-item"><span class="t-dot"></span>Vibecode Ecosystem</span>
+      <span class="t-item"><span class="t-dot"></span>DeFi Bible</span>
+      <span class="t-item"><span class="t-dot"></span>MotoSwap</span>
+      <span class="t-item"><span class="t-dot"></span>$PILL</span>
+      <span class="t-item"><span class="t-dot"></span>Mempool</span>
+      <span class="t-item"><span class="t-dot"></span>OP_NET Protocol</span>
+      <span class="t-item"><span class="t-dot"></span>Bitcoin Layer</span>
+      <span class="t-item"><span class="t-dot"></span>OPWA Protocol</span>
+      <span class="t-item"><span class="t-dot"></span>Testnet4</span>
+      <span class="t-item"><span class="t-dot"></span>OPScan Explorer</span>
+      <span class="t-item"><span class="t-dot"></span>Vibecode Ecosystem</span>
+      <span class="t-item"><span class="t-dot"></span>DeFi Bible</span>
+      <span class="t-item"><span class="t-dot"></span>MotoSwap</span>
+      <span class="t-item"><span class="t-dot"></span>$PILL</span>
+      <span class="t-item"><span class="t-dot"></span>Mempool</span>
     </div>
   </div>
 </section>
@@ -2453,15 +2405,15 @@ sendTransaction({ extraOutputs })
         <div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">OPWACoin OP-20</span>
-            <a href="https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqzr…lqylyrcp ↗</a>
+            <a href="https://opscan.org/accounts/opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqzr…lqylyrcp ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">OPWAYield v3</span>
-            <a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqry…6cdtv ↗</a>
+            <a href="https://opscan.org/accounts/opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqry…6cdtv ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">PropertyNFT OP-721</span>
-            <a href="https://opscan.org/tokens/0x5be08132f3efd4d59a4adb27a8f53c1dc8e788db79e5aa086017f82359dfecfc?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr9…hc0uyqa6 ↗</a>
+            <a href="https://opscan.org/accounts/opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr9…hc0uyqa6 ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">Treasury P2TR</span>
@@ -2615,7 +2567,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         &copy; 2025 OPWA Protocol. All rights reserved.
         <span style="margin-left:18px;font-size:10px;opacity:.7">
           Site made by <a href="https://x.com/HashBalls23" target="_blank" rel="noopener"
-            style="color:#d4af37;font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.04em;text-shadow:0 0 12px rgba(212,175,55,.4)">Hash</a>
+            style="color:#d4af37;font-weight:700;text-decoration:none;font-size:9px;letter-spacing:.04em">Hash</a>
         </span>
       </div>
     <div class="ft-net-badge">
@@ -2972,16 +2924,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">BTC&nbsp;</span><span class="lb-acc" id="lb-btc">$&#x2014;</span></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqzr…lqylyrcp ↗</a></span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0x5be08132f3efd4d59a4adb27a8f53c1dc8e788db79e5aa086017f82359dfecfc?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr9…uyqa6 ↗</a></span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:var(--text-1);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
-    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">Wallet&nbsp;</span><span class="lb-addr" id="lb-wallet">opt1sqq047...g6xnp</span></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
     <span class="lb-sep">&bull;</span>
@@ -2994,16 +2937,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">BTC&nbsp;</span><span class="lb-acc" id="lb-btc2">$&#x2014;</span></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqzr…lqylyrcp ↗</a></span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0x5be08132f3efd4d59a4adb27a8f53c1dc8e788db79e5aa086017f82359dfecfc?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr9…uyqa6 ↗</a></span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:var(--text-1);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
-    <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
-    <span class="lb-sep">&bull;</span>
+    <span class="lb-item"><span class="lb-label">Wallet&nbsp;</span><span class="lb-addr">opt1sqq047...g6xnp</span></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
   </div>
@@ -3170,7 +3104,16 @@ function cloneFooterToPages() {
   if (!mainFooter) return;
   ['vault-footer','dash-footer','terms-footer','privacy-footer'].forEach(function(id){
     var el = document.getElementById(id);
-    if (el) { el.innerHTML = mainFooter.innerHTML; el.className = mainFooter.className; }
+    if (el) {
+      el.innerHTML = mainFooter.innerHTML;
+      el.className = mainFooter.className;
+      /* The sub-pages have 24px side padding on their wrapper,
+         so we need to cancel it out so the footer is full-width */
+      el.style.marginLeft  = '-24px';
+      el.style.marginRight = '-24px';
+      el.style.marginBottom = '0';
+      el.style.width = 'calc(100% + 48px)';
+    }
   });
 }
 setTimeout(cloneFooterToPages, 300);
@@ -3349,7 +3292,7 @@ async function confirmInvest(asset) {
       extraOutputs:[{ address:TREASURY_OPT, value:Number(satsAmt) }],
     });
     const txid = receipt.transactionId;
-    showToast('✅ ' + tokenCount + ' OPWAY minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:#f97316;font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>', 'success', true);
+    showToast('✅ ' + tokenCount + ' OPWAY minted! TX: ' + txid.slice(0,12) + '…', 'success');
     const rcpt = document.getElementById(asset + '-receipt');
     if (rcpt) { rcpt.style.display = 'block'; const link = rcpt.querySelector('.rcpt-scan'); if (link) link.href = 'https://opscan.org/transactions/' + txid + '?network=op_testnet'; }
     _txCache = {};
@@ -3568,7 +3511,7 @@ var CONTRACTS = {
 };
 /* ── Vault contract addresses — fill after deploy ── */
 var USDOP_ADDR          = 'opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu';
-var YIELD_VAULT_ADDR    = 'opt1sqzmjhs0w0gfdyu09wyltyrzru7ls09hm7spzmp8x';
+var YIELD_VAULT_ADDR    = 'opt1sqzjaxfszmf6dltnjhx2txz08ezzqxvakzcuz7msw';
 var PROPERTY_VAULT_ADDR = 'opt1sqqqfp093kclh5a0rmqngxakrkeu3l9a2av7lhthd';
 var TREASURY_P2TR    = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
 var OPWA_SATS_PER_TOKEN = 1000n;
@@ -3848,6 +3791,7 @@ function renderRoute() {
   } else {
     if (main) main.style.display = 'block';
   }
+  cloneFooterToPages();
   window.scrollTo(0, 0);
 }
 
@@ -3994,14 +3938,6 @@ dashFetch=async function(){await _origDashFetch();await loadChartData();await lo
 
 /* ━━━ TRANSACTION LIST ━━━ */
 var _txCache={}, _txAllData=[], _txPage=0, _txPerPage=10;
-(function(){
-  var ce=document.getElementById('tx-count-label');
-  if(ce) ce.innerHTML='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+
-    '<span style="color:rgba(255,255,255,.65);font-size:11px">— txs</span>'+
-    '<span style="color:rgba(255,255,255,.25)">|</span>'+
-    [10,50,100].map(function(n){return '<button class="tx-ppbtn" data-n="'+n+'" onclick="_txSetPer('+n+')" style="padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.15);background:'+(n===10?'rgba(255,255,255,.25)':'transparent')+';color:rgba(255,255,255,.7);font-size:10px;cursor:pointer;font-family:DM Mono,monospace">'+n+'</button>';}).join('')+
-    '</div>';
-})();
 function _txGoPage(d){var max=Math.ceil(_txAllData.length/_txPerPage)-1;_txPage=Math.max(0,Math.min(max,_txPage+d));renderTxList(_txAllData);}
 function _txSetPer(n){_txPerPage=n;_txPage=0;renderTxList(_txAllData);document.querySelectorAll('.tx-ppbtn').forEach(function(b){b.style.background=parseInt(b.dataset.n)===n?'rgba(255,255,255,.25)':'transparent';});}
 /* ── BECH32M CONVERTER: opt1p... → tb1p... (mesma chave P2TR, HRP diferente) ── */
@@ -4031,43 +3967,55 @@ async function loadTxHistory() {
   if (!walletState.addr) return;
   var addr = walletState.addr;
   var listEl = document.getElementById('tx-list');
+  var countEl = document.getElementById('tx-count-label');
   if (!listEl) return;
   if (_txCache[addr]) { renderTxList(_txCache[addr]); return; }
   listEl.innerHTML = '<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
   try {
-    // 1. User's OPNet tweaked pubkey (sender identity in contracts)
-    var pkInfo = await dashRpcCallRaw('btc_publicKeyInfo', [[addr]]);
-    if (!pkInfo || !pkInfo[addr] || !pkInfo[addr].tweakedPubkey) throw new Error('no pubkey');
-    var userKey = pkInfo[addr].tweakedPubkey.replace(/^0x/i, '').toLowerCase();
+    var imp = await _opnetImport();
+    var JSONRpcProvider = imp.JSONRpcProvider;
+    var provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
 
-    // 2. Current block number
-    var bnRaw = await dashRpcCallRaw('btc_blockNumber', []);
-    var blockNum = 0;
-    if (bnRaw != null) {
-      blockNum = typeof bnRaw === 'string' && bnRaw.startsWith('0x') ? parseInt(bnRaw, 16) : parseInt(String(bnRaw));
-    }
-    if (!blockNum) throw new Error('no block');
+    // 1. Get user internal OPNet address (32-byte hex)
+    var internalAddr = await provider.getPublicKeyInfo(addr, false);
+    if (!internalAddr) throw new Error('Could not resolve wallet address');
+    var addrHex = internalAddr.replace('0x', '').toLowerCase();
 
-    // 3. Scan last 30 blocks
+    // 2. Scan last 15 blocks for user transactions
+    var blockNum = await provider.getBlockNumber();
     var userTxs = [];
-    for (var i = 0; i < 30 && userTxs.length < 50; i++) {
-      var bn = blockNum - i;
-      if (bn < 1) break;
+    var SCAN_BLOCKS = 15;
+    for (var i = 0; i < SCAN_BLOCKS; i++) {
       try {
-        var block = await dashRpcCallRaw('btc_getBlockByNumber', [bn, true]);
-        if (!block || !block.transactions) continue;
-        for (var j = 0; j < block.transactions.length; j++) {
-          var tx = block.transactions[j];
+        var block = await provider.getBlock(BigInt(blockNum) - BigInt(i), true);
+        if (!block) continue;
+        var txs = block.transactions || [];
+        for (var j = 0; j < txs.length; j++) {
+          var tx = txs[j];
           if (!tx.from) continue;
-          var fromHex = _txFieldHex(tx.from);
-          if (!fromHex || fromHex !== userKey) continue;
-          var toStr = _txFieldStr(tx.to) || _txFieldStr(tx.contractAddress) || '';
+          var fromHex = Array.from(tx.from).map(function(b) {
+            return b.toString(16).padStart(2, '0');
+          }).join('');
+          if (fromHex !== addrHex) continue;
+          var contractStr = tx.contractAddress
+            ? String.fromCharCode.apply(null, Array.from(tx.contractAddress))
+            : '';
+          var label = 'Transaction';
+          if (contractStr.includes(CONTRACTS.opwayYield.slice(0, 12))) label = 'OPWAY';
+          else if (contractStr.includes(CONTRACTS.propertyNft.slice(0, 12))) label = 'PropertyNFT';
+          else if (contractStr.includes(CONTRACTS.opwaCoin.slice(0, 12))) label = 'OPWACoin';
+          else if (YIELD_VAULT_ADDR && contractStr.includes(YIELD_VAULT_ADDR.slice(0, 12))) label = 'YieldVault';
+          else if (PROPERTY_VAULT_ADDR && contractStr.includes(PROPERTY_VAULT_ADDR.slice(0, 12))) label = 'PropertyVault';
+          var txHash = typeof tx.id === 'string' ? tx.id
+            : (tx.hash ? Array.from(tx.hash).map(function(b){return b.toString(16).padStart(2,'0');}).join('') : '');
           userTxs.push({
-            hash: _txHashStr(tx),
-            action: _txLabel(toStr),
-            value: '—', time: null,
-            blockNumber: String(bn),
-            status: 'Confirmed', isOpwa: true
+            hash: txHash,
+            action: label,
+            value: '—',
+            time: null,
+            blockNumber: String(tx.blockNumber || (blockNum - i)),
+            status: 'Confirmed',
+            isOpwa: true
           });
         }
       } catch(_) {}
@@ -4079,35 +4027,6 @@ async function loadTxHistory() {
   } catch(e) {
     if (listEl) listEl.innerHTML = '<div style="padding:24px;text-align:center;font-size:12px;color:var(--text-3)">Could not load transactions. <a href="https://opscan.org/accounts/' + addr + '?network=op_testnet" target="_blank" style="color:var(--accent)">View on OPScan ↗</a></div>';
   }
-}
-function _txFieldHex(v) {
-  if (!v) return '';
-  if (typeof v === 'string') return v.replace(/^0x/i,'').toLowerCase();
-  try { return Array.from(v).map(function(b){return(b&0xff).toString(16).padStart(2,'0');}).join(''); } catch(_){return '';}
-}
-function _txFieldStr(v) {
-  if (!v) return '';
-  if (typeof v === 'string') return v.toLowerCase();
-  try {
-    var s = ''; for (var k=0;k<v.length;k++) s+=String.fromCharCode(v[k]&0xff);
-    if (s.startsWith('opt')||s.startsWith('tb1')||s.startsWith('bc1')) return s.toLowerCase();
-  } catch(_){}
-  return _txFieldHex(v);
-}
-function _txLabel(t) {
-  t = (t||'').toLowerCase();
-  if (YIELD_VAULT_ADDR && t.includes(YIELD_VAULT_ADDR.toLowerCase().slice(4))) return 'YieldVault';
-  if (t.includes(CONTRACTS.opwayYield.toLowerCase().slice(4))) return 'OPWAY';
-  if (t.includes(CONTRACTS.propertyNft.toLowerCase().slice(4))) return 'PropertyNFT';
-  if (t.includes(CONTRACTS.opwaCoin.toLowerCase().slice(4))) return 'OPWACoin';
-  if (PROPERTY_VAULT_ADDR && t.includes(PROPERTY_VAULT_ADDR.toLowerCase().slice(4))) return 'PropertyVault';
-  if (USDOP_ADDR && t.includes(USDOP_ADDR.toLowerCase().slice(4))) return 'USDOP';
-  return 'Contract Call';
-}
-function _txHashStr(tx) {
-  var h = tx.hash||tx.id||tx.txHash||'';
-  if (typeof h==='string') return h.replace(/^0x/i,'');
-  try { return Array.from(h).map(function(b){return(b&0xff).toString(16).padStart(2,'0');}).join(''); } catch(_){return '';}
 }
 function renderTxList(txs){
   _txAllData = txs;
@@ -4157,21 +4076,12 @@ function renderTxList(txs){
 }
 
 /* ── TOGGLE INVEST PANEL ── */
-(function(){
-  var fc='<div style="text-align:center;font-size:11px;color:var(--text-3);font-family:DM Mono,monospace;padding:4px 0">'+
-    '&copy; 2025 OPWA Protocol. All rights reserved. &nbsp;|&nbsp; '+
-    '<a href="/terms" onclick="navigate(\'/terms\');return false;" style="color:var(--accent);text-decoration:none">Terms</a> &nbsp;|&nbsp; '+
-    '<a href="/privacy" onclick="navigate(\'/privacy\');return false;" style="color:var(--accent);text-decoration:none">Privacy</a>'+
-    '</div>';
-  ['vault-footer','dash-footer','terms-footer','privacy-footer'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=fc;});
-})();
-
 function toggleDesc(btn) {
   var wrap = btn.closest('.card-desc-wrap');
   var desc = wrap.querySelector('.card-desc-short');
   var isOpen = desc.classList.toggle('expanded');
   btn.classList.toggle('open', isOpen);
-  btn.childNodes[btn.childNodes.length-1].textContent = isOpen ? ' Show less' : ' Read more';
+  btn.childNodes[btn.childNodes.length-1].textContent = isOpen ? ' Ver menos' : ' Ver mais';
 }
 
 function toggleInvest(id, btn) {
@@ -4415,7 +4325,6 @@ function vaultInit() {
   if (vaultBlockInterval) clearInterval(vaultBlockInterval);
   vaultBlockInterval = setInterval(vaultFetchBlock, 30000);
   vaultRenderPosition();
-  if (walletState.connected) vaultFetchPosition();
   pvaultRenderListed();
   vaultLoadVaultedAssets();
 }
@@ -4476,40 +4385,6 @@ function vaultGetDeposit() {
   try { return JSON.parse(localStorage.getItem('vaultDeposit') || 'null'); } catch(e) { return null; }
 }
 
-async function vaultFetchPosition() {
-  if (!YIELD_VAULT_ADDR || !walletState.connected) return;
-  try {
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    var provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
-    var senderAddr = await buildSenderAddress(Address);
-    var POS_ABI = [
-      { name:'getStake', type:BitcoinAbiTypes.Function, payable:false,
-        inputs:[{name:'user',type:ABIDataTypes.ADDRESS}], outputs:[{name:'amount',type:ABIDataTypes.UINT256}] },
-      { name:'getDepositBlock', type:BitcoinAbiTypes.Function, payable:false,
-        inputs:[{name:'user',type:ABIDataTypes.ADDRESS}], outputs:[{name:'block',type:ABIDataTypes.UINT256}] }
-    ];
-    var vault = getContract(YIELD_VAULT_ADDR, POS_ABI, provider, _OPNET_NET, senderAddr);
-    var stakeRes = await vault.getStake(senderAddr);
-    var staked = 0n;
-    if (!stakeRes.revert && stakeRes.properties && stakeRes.properties.amount != null) {
-      staked = BigInt(String(stakeRes.properties.amount));
-    }
-    if (staked > 0n) {
-      var blockRes = await vault.getDepositBlock(senderAddr);
-      var depositBlock = 0;
-      if (!blockRes.revert && blockRes.properties && blockRes.properties.block != null) {
-        depositBlock = Number(String(blockRes.properties.block));
-      }
-      var whole = Number(staked / 100_000_000n);
-      var frac  = Number(staked % 100_000_000n) / 100_000_000;
-      localStorage.setItem('vaultDeposit', JSON.stringify({ amount: whole + frac, depositBlock: depositBlock }));
-    } else {
-      localStorage.removeItem('vaultDeposit');
-    }
-  } catch(_) {}
-  vaultRenderPosition();
-}
-
 function vaultRenderPosition() {
   var dep = vaultGetDeposit();
   var wrap = document.getElementById('vault-position-wrap');
@@ -4548,103 +4423,38 @@ async function vaultDepositOPWAY() {
   if (!YIELD_VAULT_ADDR) { showToast('Vault contracts deploying soon — stay tuned!', 'info'); return; }
   var amt = parseFloat(document.getElementById('vault-deposit-amount').value);
   if (!amt || amt < 1) { showToast('Enter a valid OPWAY amount', 'info'); return; }
-  showToast('Preparing stake…', 'info');
+  showToast('Preparing stake transaction…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
     const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
-    const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
-    if (!vaultAddrObj) throw new Error('Could not resolve vault address — please retry');
 
+    /* Step 1: increase allowance for YieldVault to spend OPWAY */
+    const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
+    const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
+    const approveSim = await opwayContract.increaseAllowance(vaultAddrObj, amountBig);
+    if (approveSim.revert) throw new Error(approveSim.revert);
+    const approveReceipt = await approveSim.sendTransaction({
+      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+    });
+    showToast('Allowance set. Staking OPWAY…', 'info');
+
+    /* Step 2: stake in YieldVault */
     const YIELD_ABI = [
       { name:'stake', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
-    var _fresh = function() {
-      return {
-        opway: getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr),
-        vault: getContract(YIELD_VAULT_ADDR, YIELD_ABI, provider, _OPNET_NET, senderAddr)
-      };
-    };
-
-    /* Step 1 — Optimistic stake: skip approve if allowance already sufficient */
-    var c = _fresh();
-    var sim0 = await c.vault.stake(amountBig);
-    var isAlErr = sim0.revert && sim0.revert.toLowerCase().includes('allowance');
-    if (!sim0.revert) {
-      showToast('Staking OPWAY… (sign in wallet)', 'info');
-      var rx0 = await sim0.sendTransaction({
-        signer: null, mldsaSigner: null, refundTo: walletState.addr,
-        network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
-      });
-      showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + rx0.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + rx0.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-      var _p0 = vaultGetDeposit(); localStorage.setItem('vaultDeposit', JSON.stringify({ amount: (_p0 ? _p0.amount : 0) + amt, depositBlock: vaultCurrentBlock }));
-      vaultRenderPosition();
-      return;
-    }
-    if (!isAlErr) throw new Error(sim0.revert);
-
-    /* Step 2 — Compute deficit and increaseAllowance */
-    showToast('Checking current allowance…', 'info');
-    var curAllow = 0n;
-    try {
-      var alRes = await c.opway.allowance(senderAddr, vaultAddrObj);
-      if (!alRes.revert && alRes.properties && alRes.properties.remaining != null) {
-        curAllow = BigInt(String(alRes.properties.remaining));
-      }
-    } catch(_) {}
-    var deficit = amountBig > curAllow ? amountBig - curAllow : 0n;
-    if (deficit > 0n) {
-      showToast('Approving OPWAY spend… (sign in wallet)', 'info');
-      var appSim = await c.opway.increaseAllowance(vaultAddrObj, deficit);
-      if (appSim.revert) throw new Error(appSim.revert);
-      await appSim.sendTransaction({
-        signer: null, mldsaSigner: null, refundTo: walletState.addr,
-        network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
-      });
-    }
-
-    /* Step 3 — Block-number poll: wait until next block, then verify allowance.
-       Up to 3 block-waits × 11 min each (matches OPNet Signet block times). */
-    showToast('Waiting for approval to be mined…', 'info');
-    var blkBefore = -1;
-    try { blkBefore = await provider.getBlockNumber(); } catch(_) {}
-    var allowConfirmed = curAllow >= amountBig; // already sufficient if deficit was 0
-
-    for (var attempt = 0; attempt < 3 && !allowConfirmed; attempt++) {
-      for (var waited = 0; waited < 660_000 && !allowConfirmed; waited += 8000) {
-        await new Promise(function(r) { setTimeout(r, 8000); });
-        showToast('Waiting for block confirmation… (' + Math.round((waited + 8000) / 1000) + 's, attempt ' + (attempt + 1) + '/3)', 'info');
-        try {
-          var blkNow = await provider.getBlockNumber();
-          if (blkNow > blkBefore) {
-            var cChk = _fresh();
-            var chk = await cChk.opway.allowance(senderAddr, vaultAddrObj);
-            if (!chk.revert && chk.properties && chk.properties.remaining != null) {
-              if (BigInt(String(chk.properties.remaining)) >= amountBig) { allowConfirmed = true; break; }
-            }
-            blkBefore = blkNow; // move baseline forward for next outer attempt
-            break;              // block advanced but not confirmed yet — next attempt
-          }
-        } catch(_) {}
-      }
-    }
-
-    if (!allowConfirmed) showToast('Approval unconfirmed — attempting stake anyway…', 'info');
-
-    /* Step 4 — Stake with fresh chain read */
-    showToast('Staking OPWAY… (sign in wallet)', 'info');
-    var cStake = _fresh();
-    var stakeSim = await cStake.vault.stake(amountBig);
+    const vaultContract = getContract(YIELD_VAULT_ADDR, YIELD_ABI, provider, _OPNET_NET, senderAddr);
+    const stakeSim = await vaultContract.stake(amountBig);
     if (stakeSim.revert) throw new Error(stakeSim.revert);
-    var stakeRx = await stakeSim.sendTransaction({
+    const stakeReceipt = await stakeSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
-    showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-    var _p1 = vaultGetDeposit(); localStorage.setItem('vaultDeposit', JSON.stringify({ amount: (_p1 ? _p1.amount : 0) + amt, depositBlock: vaultCurrentBlock }));
+    showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
@@ -4700,7 +4510,6 @@ async function vaultWithdrawOPWAY() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ OPWAY unstaked! TX: <a href="https://opscan.org/transactions/' + unstakeReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + unstakeReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-    localStorage.removeItem('vaultDeposit');
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
@@ -4741,47 +4550,19 @@ async function pvaultListProperty() {
 
     /* Step 1: approve PropertyVault to transfer the NFT */
     const pvaultAddrObj = await _contractAddr(Address, PROPERTY_VAULT_ADDR);
-    if (!pvaultAddrObj) throw new Error('Could not resolve vault address — please retry');
     const NFT_ABI = [
       { name:'approve', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'tokenId',type:ABIDataTypes.UINT256}],
-        outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
-      { name:'getApproved', type:BitcoinAbiTypes.Function, payable:false,
-        inputs:[{name:'tokenId',type:ABIDataTypes.UINT256}],
-        outputs:[{name:'approved',type:ABIDataTypes.ADDRESS}] }
+        outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
     ];
     const nftContract = getContract(CONTRACTS.propertyNft, NFT_ABI, provider, _OPNET_NET, senderAddr);
     const approveSim = await nftContract.approve(pvaultAddrObj, tokenIdBig);
     if (approveSim.revert) throw new Error(approveSim.revert);
-    await approveSim.sendTransaction({
+    const approveReceipt = await approveSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
-
-    /* Wait for approval TX to be mined (block-number poll, up to 3 blocks × 11 min) */
-    showToast('Waiting for NFT approval to be mined…', 'info');
-    var pvBlkBefore = -1;
-    try { pvBlkBefore = await provider.getBlockNumber(); } catch(_) {}
-    var pvApproved = false;
-    for (var pvAttempt = 0; pvAttempt < 3 && !pvApproved; pvAttempt++) {
-      for (var pvWaited = 0; pvWaited < 660_000 && !pvApproved; pvWaited += 8000) {
-        await new Promise(function(r) { setTimeout(r, 8000); });
-        showToast('Waiting for block confirmation… (' + Math.round((pvWaited + 8000) / 1000) + 's, attempt ' + (pvAttempt + 1) + '/3)', 'info');
-        try {
-          var pvBlkNow = await provider.getBlockNumber();
-          if (pvBlkNow > pvBlkBefore) {
-            var nft2 = getContract(CONTRACTS.propertyNft, NFT_ABI, provider, _OPNET_NET, senderAddr);
-            var gaChk = await nft2.getApproved(tokenIdBig);
-            if (!gaChk.revert && gaChk.properties && gaChk.properties.approved != null) {
-              pvApproved = true; break;
-            }
-            pvBlkBefore = pvBlkNow; break;
-          }
-        } catch(_) {}
-      }
-    }
-    if (!pvApproved) showToast('Approval unconfirmed — attempting list anyway…', 'info');
-    else showToast('NFT approved. Listing property…', 'info');
+    showToast('NFT approved. Listing property…', 'info');
 
     /* Step 2: listProperty(tokenId, maxOpway) on PropertyVault */
     const PVAULT_ABI = [
