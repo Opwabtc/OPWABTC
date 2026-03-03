@@ -3178,7 +3178,7 @@ async function buildSenderAddress(Address) {
 /* ── Helper: get contract tweaked pubkey via OPNet RPC ── */
 async function _getContractTweakedPubkey(contractAddr) {
   try {
-    var res = await dashRpcCallRaw('getPublicKeyInfo', [contractAddr]);
+    var res = await dashRpcCallRaw('btc_publicKeyInfo', [[contractAddr]]);
     if (!res) return null;
     // Response keyed by address: { "opt1s...": { tweakedPubkey: "..." } }
     if (res[contractAddr] && res[contractAddr].tweakedPubkey) return res[contractAddr].tweakedPubkey;
