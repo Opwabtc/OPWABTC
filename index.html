@@ -3545,11 +3545,15 @@ async function loadVault() {
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, _net, senderAddr);
 
-    // totalSupply para info da collection
+    // totalSupply para info da collection via getContract
     try {
-      var supRes = await dashRpcCallRaw('eth_call', { to: CONTRACTS.propertyNft, data: '0x18160ddd' });
-      if (supRes) supplyEl.textContent = parseInt(supRes, 16);
-    } catch(e) { supplyEl.textContent = '?'; }
+      var supSimV = await contract.totalSupply();
+      if (supSimV && supSimV.properties && supSimV.properties.totalSupply != null) {
+        var supNum = Number(supSimV.properties.totalSupply);
+        if (supplyEl) supplyEl.textContent = supNum;
+        dashSupply = String(supNum);
+      }
+    } catch(e) { if (supplyEl) supplyEl.textContent = '?'; }
 
     // balanceOf(walletAddr) — quantos NFTs o usuário tem
     var balRes  = await contract.balanceOf(senderAddr);
@@ -3628,7 +3632,7 @@ async function dashRpcCall(data) {
 async function dashFetch() {
   if (!walletState.connected || !walletState.addr) return;
   try {
-    // ── OPWAY balance via getContract (padrão OPNet correto) ──
+    // ── OPWAY balance + PropertyNFT totalSupply via getContract ──
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, Address } = await _opnetImport();
       const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
@@ -3639,18 +3643,14 @@ async function dashFetch() {
         ? balSim.properties.balance.toString()
         : '0';
       dashOpwapBal = rawBal;
-    } catch(balErr) {
-      // silent — deixa dashOpwapBal com valor anterior
-    }
-
-    // ── PropertyNFT totalSupply via getContract (same pattern as OPWAY balance) ──
-    try {
       const nftContract = getContract(CONTRACTS.propertyNft, OP_20_ABI, provider, _OPNET_NET, senderAddr);
       const supSim = await nftContract.totalSupply();
       if (supSim && supSim.properties && supSim.properties.totalSupply != null) {
         dashSupply = supSim.properties.totalSupply.toString();
       }
-    } catch(_) {}
+    } catch(balErr) {
+      // silent — deixa dashOpwapBal/dashSupply com valor anterior
+    }
 
     dashRenderData();
     var el = document.getElementById('dash-updated');
@@ -4378,16 +4378,16 @@ async function vaultDepositOPWAY() {
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
 
-    /* Step 1: approve YieldVault to spend OPWAY */
+    /* Step 1: increase allowance for YieldVault to spend OPWAY */
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
     const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
-    const approveSim = await opwayContract.approve(vaultAddrObj, amountBig);
+    const approveSim = await opwayContract.increaseAllowance(vaultAddrObj, amountBig);
     if (approveSim.revert) throw new Error(approveSim.revert);
     const approveReceipt = await approveSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
-    showToast('Approve confirmed. Staking OPWAY…', 'info');
+    showToast('Allowance set. Staking OPWAY…', 'info');
 
     /* Step 2: stake in YieldVault */
     const YIELD_ABI = [
