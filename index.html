@@ -4419,19 +4419,54 @@ async function vaultDepositOPWAY() {
     const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
-
-    /* Step 1: increase allowance for YieldVault to spend OPWAY */
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
     const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
-    const approveSim = await opwayContract.increaseAllowance(vaultAddrObj, amountBig);
-    if (approveSim.revert) throw new Error(approveSim.revert);
-    const approveReceipt = await approveSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
-      network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
-    });
-    showToast('Allowance set. Staking OPWAY…', 'info');
 
-    /* Step 2: stake in YieldVault */
+    /* Step 1: check existing allowance — skip approve if already sufficient */
+    showToast('Checking allowance…', 'info');
+    var needsApproval = true;
+    try {
+      var alRes = await opwayContract.allowance(senderAddr, vaultAddrObj);
+      if (!alRes.revert && alRes.properties && alRes.properties.remaining != null) {
+        if (BigInt(String(alRes.properties.remaining)) >= amountBig) needsApproval = false;
+      }
+    } catch(_) {}
+
+    if (needsApproval) {
+      /* Step 2: approve max uint256 (once forever — no repeated approves) */
+      showToast('Approving OPWAY spend… (sign in wallet)', 'info');
+      var maxU256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+      var approveSim = await opwayContract.increaseAllowance(vaultAddrObj, maxU256);
+      if (approveSim.revert) throw new Error(approveSim.revert);
+      await approveSim.sendTransaction({
+        signer: null, mldsaSigner: null, refundTo: walletState.addr,
+        network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+      });
+
+      /* Step 3: poll until allowance confirmed on-chain (max 90s, check every 5s)
+         CRITICAL: must NOT simulate stake before approve is mined — causes "Invalid spender" */
+      showToast('Waiting for approval to confirm on-chain…', 'info');
+      var pollStart = Date.now();
+      var confirmed = false;
+      while (Date.now() - pollStart < 90_000) {
+        await new Promise(function(r) { setTimeout(r, 5000); });
+        try {
+          var opway2 = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
+          var chk = await opway2.allowance(senderAddr, vaultAddrObj);
+          if (!chk.revert && chk.properties && chk.properties.remaining != null) {
+            if (BigInt(String(chk.properties.remaining)) >= amountBig) { confirmed = true; break; }
+          }
+        } catch(_) {}
+        var elapsed = Math.round((Date.now() - pollStart) / 1000);
+        showToast('Waiting for approval to confirm… (' + elapsed + 's)', 'info');
+      }
+      if (!confirmed) {
+        throw new Error('Approval timeout — TX may still be pending. Please wait ~1 min and try staking again.');
+      }
+    }
+
+    /* Step 4: stake in YieldVault (re-create contract to refresh UTXO context) */
+    showToast('Staking OPWAY… (sign in wallet)', 'info');
     const YIELD_ABI = [
       { name:'stake', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[{name:'amount',type:ABIDataTypes.UINT256}],
@@ -4449,7 +4484,7 @@ async function vaultDepositOPWAY() {
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
-    else { showToast('Stake failed: ' + msg.slice(0,60), 'error'); }
+    else { showToast('Stake failed: ' + msg.slice(0,80), 'error'); }
   }
 }
 
