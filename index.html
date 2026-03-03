@@ -3941,7 +3941,7 @@ function renderTxList(txs){
     '<span style="color:rgba(255,255,255,.65);font-size:11px">' + total + ' txs</span>' +
     '<span style="color:rgba(255,255,255,.25)">|</span>' +
     [10,50,100].map(function(n){
-      return '<button class="tx-ppbtn" data-n="'+n+'" onclick="_txSetPer('+n+')" style="padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.2);font-size:10px;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;font-family:'DM Mono',monospace;background:'+(n===_txPerPage?'rgba(255,255,255,.25)':'transparent')+'">'+n+'</button>';
+      return '<button class="tx-ppbtn" data-n="'+n+'" onclick="_txSetPer('+n+')" style="padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.2);font-size:10px;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;font-family:monospace;background:'+(n===_txPerPage?'rgba(255,255,255,.25)':'transparent')+'">'+n+'</button>';
     }).join('') + '</div>';
 
   if(!listEl) return;
@@ -3956,10 +3956,10 @@ function renderTxList(txs){
     var ac = tx.action==='Buy OPWAY'?'#f97316':tx.action==='Mint NFT'?'#a78bfa':tx.action==='Receive BTC'?'#4ade80':'rgba(255,255,255,.8)';
     var sc = tx.status==='Confirmed'?'#4ade80':'#fbbf24';
     var dot = tx.isOpwa?'#7c3aed':'#f97316';
-    return '<div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.1);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='transparent'">'
-      +'<a href="'+href+'" target="_blank" style="font-family:'DM Mono',monospace;font-size:11px;color:#f97316;text-decoration:none;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+sh+'</a>'
+    return '<div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.1);transition:background .15s">'
+      +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11px;color:#f97316;text-decoration:none;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+sh+'</a>'
       +'<span style="font-size:12px;font-weight:600;color:'+ac+';display:flex;align-items:center">'+tx.action+'</span>'
-      +'<span style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.85);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.value+'</span>'
+      +'<span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.85);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.value+'</span>'
       +'<span style="font-size:10px;color:rgba(255,255,255,.65);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+ts+'</span>'
       +'<span style="font-size:10px;font-weight:700;color:'+sc+';text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.status+'</span>'
       +'</div>';
@@ -3968,7 +3968,7 @@ function renderTxList(txs){
   if(total > _txPerPage){
     listEl.innerHTML += '<div style="display:flex;justify-content:center;align-items:center;gap:12px;padding:12px 22px;border-top:1px solid rgba(255,255,255,.1)">'
       +'<button onclick="_txGoPage(-1)" style="padding:5px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font-size:12px;font-weight:700;cursor:pointer;opacity:'+(start===0?'.35':'1')+'" '+(start===0?'disabled':'')+'>← Prev</button>'
-      +'<span style="font-size:11px;color:rgba(255,255,255,.6);font-family:'DM Mono',monospace">'+(start+1)+'-'+end+' / '+total+'</span>'
+      +'<span style="font-size:11px;color:rgba(255,255,255,.6);font-family:monospace">'+(start+1)+'-'+end+' / '+total+'</span>'
       +'<button onclick="_txGoPage(1)" style="padding:5px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font-size:12px;font-weight:700;cursor:pointer;opacity:'+(_txPage>=maxPage?'.35':'1')+'" '+(_txPage>=maxPage?'disabled':'')+'>Next →</button>'
       +'</div>';
   }
