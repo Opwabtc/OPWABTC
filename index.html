@@ -2637,7 +2637,7 @@ async function confirmInvest(asset) {
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
-      network:_net, maximumAllowedSatToSpend:Number(satsAmt) + 100000,
+      network:_net, maximumAllowedSatToSpend:satsAmt + 100_000n,
       extraOutputs:[{ address:TREASURY_OPT, value:satsAmt }],
     });
     const txid = receipt.transactionId;
