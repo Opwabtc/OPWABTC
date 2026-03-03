@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💊</text></svg>">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <meta name="theme-color" content="#f97316"/>
@@ -1439,17 +1438,6 @@ footer{
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
         Vault
       </a>
-      <div style="width:1px;height:14px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
-      <!-- Terms -->
-      <a class="nav-link nav-link-legal" href="/terms" onclick="navigate('/terms');return false;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Terms
-      </a>
-      <!-- Privacy -->
-      <a class="nav-link nav-link-legal" href="/privacy" onclick="navigate('/privacy');return false;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Privacy
-      </a>
       <div class="nav-dash-sep"></div>
       <a class="nav-link nav-link-dashboard" href="/dashboard" onclick="navigate('/dashboard');return false;" id="nav-dashboard" style="display:none">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -1545,8 +1533,8 @@ footer{
       <div class="hs-sub">Smart Contracts</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">BTC Price (Live)</div>
-      <div class="hs-value" id="hero-btc-price">&#x2014;</div>
+      <div class="hs-label">OP_NET Block</div>
+      <div class="hs-value" id="hero-opnet-block">&#x2014;</div>
       <div class="hs-sub">USD</div>
     </div>
     <div class="hero-stat">
@@ -1555,13 +1543,13 @@ footer{
       <div class="hs-sub">Annual yield</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">Early Investors</div>
-      <div class="hs-value">500+</div>
+      <div class="hs-label">Availability</div>
+      <div class="hs-value">24/7</div>
       <div class="hs-sub">Early access</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">Volume Target</div>
-      <div class="hs-value">$2M+</div>
+      <div class="hs-label">Real Estate Market</div>
+      <div class="hs-value sm" title="$326T+ in global real estate assets — all tokenizable on OPWA">$326T+</div>
       <div class="hs-sub">Total</div>
     </div>
   </div>
@@ -2025,7 +2013,11 @@ sendTransaction({ extraOutputs })
         <div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">OPWACoin OP-20</span>
-            <a href="https://opscan.org/accounts/opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqq…eksycrz88 ↗</a>
+            <a href="https://opscan.org/accounts/opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqzr…lqylyrcp ↗</a>
+          </div>
+          <div class="tech-contract-row">
+            <span class="tech-contract-label">OPWAYield v3</span>
+            <a href="https://opscan.org/accounts/opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqry…6cdtv ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">PropertyNFT OP-721</span>
@@ -2037,7 +2029,7 @@ sendTransaction({ extraOutputs })
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">Rate</span>
-            <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent)">1 OPWAP = 1,000 sats = 0.00001 BTC</span>
+            <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent)">1 OPWAY = 1,000 sats = 0.00001 BTC</span>
           </div>
         </div>
       </div>
@@ -2367,7 +2359,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
           <div style="font-size:12px;color:var(--text-2)" id="dash-btc-usd">&#x2248; $0.00 USD</div>
         </div>
         <div class="dash-stat">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">OPWAP Tokens</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">OPWAY Tokens</div>
           <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--accent);margin-bottom:4px" id="dash-opwap-val">0</div>
           <div style="font-size:12px;color:var(--text-2)">&#x25B2; +12.4% this month</div>
         </div>
@@ -2399,7 +2391,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div style="font-size:12px;color:var(--text-2);margin-bottom:8px" id="dash-opwap-btc">&#x2248; 0.000000 BTC</div>
         <div style="font-size:12px;color:#4ade80;font-weight:700;margin-bottom:12px">&#x25B2; 15% APY</div>
         <!-- Endereço correto: CONTRACTS.opwaCoin -->
-        <a href="https://opscan.org/token/opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88?network=op_testnet" target="_blank" style="color:var(--accent);font-size:11px;font-weight:600;text-decoration:none">View on OPScan &#x2197;</a>
+        <a href="https://opscan.org/token/opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp?network=op_testnet" target="_blank" style="color:var(--accent);font-size:11px;font-weight:600;text-decoration:none">View on OPScan &#x2197;</a>
       </div>
 
       <!-- ── MY REAL ASSETS (Vault) ── -->
@@ -2686,6 +2678,7 @@ function toggleTheme() {
   themeBtn.innerHTML = theme === 'dark'
     ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
     : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+  if(chartBtcPts.length) drawPortfolioChart();
 }
 
 /* ── NAVBAR SCROLL ── */
@@ -3048,8 +3041,9 @@ var dashOpwapBal = '0', dashSupply = '0';
    CONTRACTS (mirrors src/contracts/config.ts)
    ────────────────────────────────────────── */
 var CONTRACTS = {
-  opwaCoin:    'opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88',
-  propertyNft: 'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6'
+  opwaCoin:    'opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp',
+  propertyNft: 'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6',
+  opwayYield:  'opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv'
 };
 var TREASURY_P2TR    = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
 var OPWA_SATS_PER_TOKEN = 1000n;
@@ -3206,7 +3200,7 @@ async function dashRpcCall(data) {
     var r = await fetch('https://testnet.opnet.org', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to: CONTRACTS.opwaCoin, data:data},'latest']}),
+      body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to: CONTRACTS.opwayYield, data:data},'latest']}),
       signal:AbortSignal.timeout(8000)
     });
     var j = await r.json();
@@ -3342,7 +3336,9 @@ async function loadChartData() {
       if (cgR.ok) priceHist = (await cgR.json()).prices || [];
     } catch(_) {}
     var txHist = [];
-    var sources = ['https://mempool.space/testnet4/api/address/'+walletState.addr+'/txs','https://mempool.opnet.org/api/address/'+walletState.addr+'/txs'];
+    // OP_NET testnet runs on Signet — use signet mempool. tb1p address needed for mempool.space
+    var mempoolAddr = walletState.addr; // opt1p... works on opnet mempool
+    var sources = ['https://mempool.opnet.org/api/address/'+mempoolAddr+'/txs','https://mempool.space/signet/api/address/'+mempoolAddr+'/txs'];
     for (var si=0; si<sources.length && !txHist.length; si++) {
       try { var mR = await fetch(sources[si],{signal:AbortSignal.timeout(7000)}); if (mR.ok) txHist = await mR.json(); } catch(_) {}
     }
@@ -3382,6 +3378,7 @@ async function loadChartData() {
 function drawPortfolioChart() {
   var canvas = document.getElementById('portfolio-chart');
   if (!canvas) return;
+  var isLight = document.documentElement.getAttribute('data-theme') === 'light';
   var w = canvas.parentElement.offsetWidth||600;
   canvas.width=w; canvas.height=200;
   var ctx=canvas.getContext('2d');
@@ -3389,29 +3386,42 @@ function drawPortfolioChart() {
   if (!chartBtcPts.length) return;
   var pL=0,pR=8,pT=10,pB=24,cw=w-pL-pR,ch=200-pT-pB,pts=chartBtcPts.length;
   var allV=chartBtcPts.map(function(p){return p.usd;}).concat(chartOpwapPts.map(function(p){return p.usd;}));
-  var maxV=Math.max.apply(null,allV);
-  var tops=[500,1000,2000,5000,10000,20000,30000,40000,50000,75000,100000];
-  var topV=tops.find(function(m){return m>=maxV*1.2;})||Math.ceil(maxV*1.25/10000)*10000||500;
-  function xp(i){return pL+(i/(pts-1))*cw;}
+  var maxV=Math.max.apply(null,allV)||1;
+  // Dynamic scale: top = 2x current portfolio value, bottom = 0
+  var topV = maxV * 2;
+  function xp(i){return pL+(i/(pts-1||1))*cw;}
   function yp(v){return pT+ch-(v/topV)*ch;}
   // Grid
-  ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=1;
+  var gridColor = isLight ? 'rgba(124,58,237,.10)' : 'rgba(255,255,255,.05)';
+  ctx.strokeStyle=gridColor; ctx.lineWidth=1;
   for(var g=0;g<=5;g++){var gy=pT+(g/5)*ch;ctx.beginPath();ctx.moveTo(pL,gy);ctx.lineTo(pL+cw,gy);ctx.stroke();}
-  function drawLine(data,color,alpha){
+  // Y-axis labels
+  var labelColor = isLight ? 'rgba(0,0,0,.45)' : 'rgba(255,255,255,.3)';
+  ctx.fillStyle=labelColor; ctx.font='9px DM Mono,monospace'; ctx.textAlign='left';
+  for(var g=0;g<=5;g++){
+    var val=(topV*(1-g/5));
+    var lbl=val>=1000?'$'+(val/1000).toFixed(0)+'k':'$'+val.toFixed(0);
+    ctx.fillText(lbl,2,pT+(g/5)*ch+3);
+  }
+  function drawLine(data,color,fillColor){
     ctx.beginPath(); ctx.moveTo(xp(0),yp(data[0].usd));
     for(var i=1;i<data.length;i++) ctx.lineTo(xp(i),yp(data[i].usd));
     ctx.lineTo(xp(data.length-1),pT+ch); ctx.lineTo(xp(0),pT+ch); ctx.closePath();
-    var grad=ctx.createLinearGradient(0,pT,0,pT+ch);
-    grad.addColorStop(0,color.replace('1)',alpha+')')); grad.addColorStop(1,color.replace('1)','0)'));
-    ctx.fillStyle=grad; ctx.fill();
+    ctx.fillStyle=fillColor; ctx.fill();
     ctx.beginPath(); ctx.moveTo(xp(0),yp(data[0].usd));
     for(var i=1;i<data.length;i++) ctx.lineTo(xp(i),yp(data[i].usd));
     ctx.strokeStyle=color; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
   }
-  drawLine(chartOpwapPts,'rgba(124,58,237,1)','0.18');
-  drawLine(chartBtcPts,'rgba(249,115,22,1)','0.22');
+  if(isLight){
+    drawLine(chartOpwapPts,'rgba(167,139,250,1)','rgba(167,139,250,0.18)');
+    drawLine(chartBtcPts,'rgba(249,115,22,1)','rgba(249,115,22,0.12)');
+  } else {
+    drawLine(chartOpwapPts,'rgba(124,58,237,1)','rgba(124,58,237,0.18)');
+    drawLine(chartBtcPts,'rgba(249,115,22,1)','rgba(249,115,22,0.22)');
+  }
   // X labels
-  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.font='9px DM Mono,monospace'; ctx.textAlign='center';
+  var xLabelColor = isLight ? 'rgba(0,0,0,.40)' : 'rgba(255,255,255,.3)';
+  ctx.fillStyle=xLabelColor; ctx.font='9px DM Mono,monospace'; ctx.textAlign='center';
   var step=Math.max(1,Math.floor(pts/7));
   for(var i=0;i<pts;i+=step) ctx.fillText(chartBtcPts[i].label,xp(i),200-4);
   // Dot + label on last BTC point
@@ -3435,17 +3445,17 @@ async function loadTxHistory(){
   if(!walletState.addr)return;
   var addr=walletState.addr, listEl=document.getElementById('tx-list'), countEl=document.getElementById('tx-count-label');
   if(!listEl)return;
-  var OPWA_CONTRACTS=['opt1sqqthcct66va3sv9f3tmp9sgwprpvteheksycrz88','opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6'];
+  var OPWA_CONTRACTS=['opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp','opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6','opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv'];
   if(_txCache[addr]){renderTxList(_txCache[addr]);return;}
   listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
   try{
     var txs=[];
-    var srcs=['https://mempool.space/testnet4/api/address/'+addr+'/txs','https://mempool.opnet.org/api/address/'+addr+'/txs'];
+    var srcs=['https://mempool.opnet.org/api/address/'+addr+'/txs','https://mempool.space/signet/api/address/'+addr+'/txs'];
     for(var i=0;i<srcs.length&&!txs.length;i++){try{var r=await fetch(srcs[i],{signal:AbortSignal.timeout(7000)});if(r.ok){txs=await r.json();if(!Array.isArray(txs))txs=[];}}catch(_){}}
     var all=txs.slice(0,30).map(function(tx){
       var sent=tx.vin&&tx.vin.some(function(v){return v.prevout&&v.prevout.scriptpubkey_address===addr;});
       var toC=false,cName='';
-      if(tx.vout)tx.vout.forEach(function(o){var a=(o.scriptpubkey_address||'').toLowerCase();if(a.includes(OPWA_CONTRACTS[0].slice(0,12))){toC=true;cName='Buy OPWAP';}if(a.includes(OPWA_CONTRACTS[1].slice(0,12))){toC=true;cName='Mint NFT';}});
+      if(tx.vout)tx.vout.forEach(function(o){var a=(o.scriptpubkey_address||'').toLowerCase();if(a.includes(OPWA_CONTRACTS[0].slice(0,12))){toC=true;cName='Buy OPWAY';}if(a.includes(OPWA_CONTRACTS[1].slice(0,12))){toC=true;cName='Mint NFT';}});
       var vOut=0; if(tx.vout)tx.vout.forEach(function(o){vOut+=(o.value||0);});
       return{hash:tx.txid||'',action:toC?cName:(sent?'Send BTC':'Receive BTC'),value:(vOut/1e8).toFixed(6)+' BTC',time:tx.status&&tx.status.block_time?new Date(tx.status.block_time*1000):null,status:tx.status&&tx.status.confirmed?'Confirmed':'Pending',isOpwa:toC};
     });
@@ -3474,7 +3484,7 @@ function renderTxList(txs){
     var sh=tx.hash?tx.hash.slice(0,8)+'…'+tx.hash.slice(-6):'—';
     var ts=tx.time?tx.time.toLocaleDateString()+' '+tx.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'Pending';
     var href=tx.hash?'https://opscan.org/transactions/'+tx.hash+'?network=op_testnet':'#';
-    var ac=tx.action==='Buy OPWAP'?'#f97316':tx.action==='Mint NFT'?'#a78bfa':tx.action==='Receive BTC'?'#4ade80':'var(--text-2)';
+    var ac=tx.action==='Buy OPWAY'?'#f97316':tx.action==='Mint NFT'?'#a78bfa':tx.action==='Receive BTC'?'#4ade80':'var(--text-2)';
     var sc=tx.status==='Confirmed'?'#4ade80':'#fbbf24';
     var dot=tx.isOpwa?'#7c3aed':'#f97316';
     return '<div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s" onmouseover="this.style.background=\'rgba(255,255,255,.025)\'" onmouseout="this.style.background=\'transparent\'">'
@@ -3561,10 +3571,20 @@ async function fetchPrices() {
     const fmt = '$' + btcPrice.toLocaleString();
     const heroPriceEl = document.getElementById('hero-btc-price');
     if (heroPriceEl) heroPriceEl.textContent = fmt;
+    fetchOpNetBlock();
     const gBtcEl = document.getElementById('g-btc');
     if (gBtcEl) gBtcEl.textContent = fmt;
     ['lb-btc','lb-btc2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fmt; });
     calcSim();
+  } catch(e) {}
+}
+
+async function fetchOpNetBlock() {
+  try {
+    const r = await fetch('https://mempool.space/signet/api/blocks/tip/height', {signal:AbortSignal.timeout(6000)});
+    const h = await r.json();
+    const el = document.getElementById('hero-opnet-block');
+    if (el && h) el.textContent = '#' + Number(h).toLocaleString();
   } catch(e) {}
 }
 
@@ -3590,7 +3610,8 @@ async function fetchGas() {
   } catch(e) {}
 }
 
-fetchPrices(); fetchGas();
+fetchPrices(); fetchGas(); fetchOpNetBlock();
+setInterval(fetchOpNetBlock, 60000);
 setInterval(fetchPrices, 30000);
 setInterval(fetchGas,   30000);
 vaultLoadVaultedAssets();
