@@ -4453,24 +4453,31 @@ async function vaultDepositOPWAY() {
       });
 
       /* Step 3: poll until allowance confirmed on-chain (max 90s, check every 5s)
-         CRITICAL: must NOT simulate stake before approve is mined — causes "Invalid spender" */
-      showToast('Waiting for approval to confirm on-chain…', 'info');
+         Each RPC call is wrapped in a 6s Promise.race to avoid hanging indefinitely.
+         If poll times out, we fall through and try the stake anyway — if the TX was
+         mined but the poll just couldn't read it, the stake simulation will succeed. */
+      showToast('Waiting for approval to confirm on-chain… (0s/90s)', 'info');
       var pollStart = Date.now();
       var confirmed = false;
       while (Date.now() - pollStart < 90_000) {
         await new Promise(function(r) { setTimeout(r, 5000); });
+        var elapsed = Math.round((Date.now() - pollStart) / 1000);
+        showToast('Waiting for approval to confirm… (' + elapsed + 's/90s)', 'info');
         try {
           var opway2 = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
-          var chk = await opway2.allowance(senderAddr, vaultAddrObj);
+          var chk = await Promise.race([
+            opway2.allowance(senderAddr, vaultAddrObj),
+            new Promise(function(_, rej) { setTimeout(function() { rej(new Error('rpc-timeout')); }, 6000); })
+          ]);
           if (!chk.revert && chk.properties && chk.properties.remaining != null) {
             if (BigInt(String(chk.properties.remaining)) >= amountBig) { confirmed = true; break; }
           }
         } catch(_) {}
-        var elapsed = Math.round((Date.now() - pollStart) / 1000);
-        showToast('Waiting for approval to confirm… (' + elapsed + 's)', 'info');
       }
       if (!confirmed) {
-        throw new Error('Approval timeout — TX may still be pending. Please wait ~1 min and try staking again.');
+        /* Poll timed out — TX may still be confirmed on-chain. Proceeding to stake;
+           if allowance wasn't actually set, the stake simulation will report it clearly. */
+        showToast('Approval poll timed out — attempting stake now…', 'info');
       }
     }
 
