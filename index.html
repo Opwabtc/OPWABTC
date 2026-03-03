@@ -763,15 +763,19 @@ input,select,textarea{font-family:inherit}
   position:relative;overflow:hidden;transition:all .22s;
 }
 .step-num-badge{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:28px;height:28px;border-radius:8px;
-  background:var(--bg-elevated2);border:1px solid var(--border);
-  font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
-  color:var(--text-3);margin-bottom:12px;
-  transition:background .2s,border-color .2s,color .2s;
+  position:absolute;
+  bottom:-10px;right:0px;
+  font-family:'Syne',sans-serif;
+  font-size:90px;font-weight:900;
+  line-height:1;
+  color:rgba(255,255,255,.045);
+  pointer-events:none;
+  user-select:none;
+  transition:color .22s;
+  margin-bottom:0;
 }
-.step-card:hover .step-num-badge{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
-.step-card.active .step-num-badge{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 10px rgba(249,115,22,.35)}
+.step-card:hover .step-num-badge{color:rgba(249,115,22,.14)}
+.step-card.active .step-num-badge{color:rgba(249,115,22,.22)}
 .step-card::before{display:none}
 .step-card.active{
   background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.05));
@@ -1040,8 +1044,9 @@ footer{
 /* =====================================================================
    VAULT PAGE
    ===================================================================== */
-.vault-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 80px;background:var(--bg-base)}
-.vault-page.active{display:block}
+.vault-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
+.vault-page.page-active,.vault-page[style*="block"],.vault-page[style*="flex"]{display:flex!important;flex-direction:column}
+.vault-page.active{display:flex!important;flex-direction:column}
 .vault-wrap{max-width:960px;margin:0 auto}
 .vault-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
 @media(max-width:700px){.vault-grid{grid-template-columns:1fr}}
@@ -1087,8 +1092,9 @@ footer{
 .vault-acc-usdop{font-size:28px;font-family:'Syne',sans-serif;font-weight:800;color:#22c55e;margin:6px 0 2px}
 
 
-.dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 80px;background:var(--bg-base)}
-.dash-page.active{display:block}
+.dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
+.dash-page.page-active,.dash-page[style*="block"],.dash-page[style*="flex"]{display:flex!important;flex-direction:column}
+.dash-page.active{display:flex!important;flex-direction:column}
 .chart-range-btn{padding:4px 12px;border-radius:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
 .chart-range-active{background:rgba(255,255,255,.25)!important;border-color:rgba(255,255,255,.5)!important;color:#fff!important}
 .dash-wrap{max-width:960px;margin:0 auto}
@@ -1760,7 +1766,7 @@ footer{
     <!-- ASSET 3: LOGISTICA HUB -->
     <div class="card-asset" data-category="industrial" data-name="logistica hub">
       <div style="position:relative">
-        <img class="card-photo" src="https://images.unsplash.com/photo-1553246969-7dcb4259b87b?w=600&q=80&auto=format&fit=crop" alt="Logistica Hub" loading="lazy" onerror="this.style.background='#1a1a2e';this.style.height='160px'"/>
+        <img class="card-photo" src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80&auto=format&fit=crop" alt="Logistica Hub" loading="lazy" onerror="this.style.background='#1a1a2e';this.style.height='160px'"/>
         <div class="card-photo-overlay"></div>
         <div class="card-head-photo">
           <span class="card-id-small" style="color:rgba(255,255,255,.7);font-size:9px">ID-003</span>
@@ -2449,6 +2455,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
      VAULT PAGE
 ════════════════════════════════════════ -->
 <div id="page-vault" class="vault-page">
+  <div style="flex:1 0 auto">
   <div class="vault-wrap">
     <div style="margin-bottom:32px">
       <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text-1);margin:0 0 8px">
@@ -2579,7 +2586,8 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 
     </div>
   </div>
-  <footer id="vault-footer" style="margin-top:0"></footer>
+  </div><!-- /flex-grow -->
+  <footer id="vault-footer" style="margin-top:auto"></footer>
 </div>
 
 
@@ -2588,6 +2596,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
      DASHBOARD PAGE
 ════════════════════════════════════════ -->
 <div id="page-dashboard" class="dash-page">
+  <div style="flex:1 0 auto">
   <div class="dash-wrap">
     <div id="dash-noconn" class="dash-noconn">
       <div style="text-align:center;max-width:360px;padding:48px 32px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px">
@@ -2730,7 +2739,8 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </div>
     </div>
   </div>
-  <footer id="dash-footer" style="margin-top:0"></footer>
+  </div><!-- /flex-grow -->
+  <footer id="dash-footer" style="margin-top:auto"></footer>
 </div>
 
 <!-- TERMS PAGE -->
@@ -3391,7 +3401,7 @@ async function mintPropertyNFT() {
       network:_net, maximumAllowedSatToSpend:mintSats + 50000n,
     });
     var txid = receipt.transactionId;
-    status.textContent = '✅ Minted! TX: ' + txid.slice(0,14) + '…';
+    status.innerHTML = '✅ Minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:underline">' + txid.slice(0,14) + '…↗</a>';
     status.style.color = 'var(--success)';
     showToast('🏠 Real Asset minted!', 'success');
     setTimeout(function(){ loadVault(); }, 3000);
@@ -3462,7 +3472,7 @@ async function loadVault() {
 
     // Renderizar cards
     cardsEl.innerHTML = tokenIds.map(function(id) {
-      var opscanUrl = 'https://opscan.org/token/' + CONTRACTS.propertyNft + '/' + id + '?network=op_testnet';
+      var opscanUrl = 'https://opscan.org/accounts/' + (walletState.addr||CONTRACTS.propertyNft) + '?network=op_testnet';
       return '<div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .18s" onmouseover="this.style.borderColor=\'var(--purple-border)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
         '<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple-soft);margin-bottom:6px">Real Asset</div>' +
         '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:16px;color:var(--text-1);margin-bottom:4px">#' + id + '</div>' +
@@ -3515,9 +3525,45 @@ async function dashFetch() {
   if (!walletState.connected || !walletState.addr) return;
   try {
     var a64 = walletState.addr.replace('0x','').padStart(64,'0');
-    var res = await Promise.all([dashRpcCall('0x70a08231' + a64), dashRpcCall('0x18160ddd')]);
-    if (res[0]) dashOpwapBal = BigInt(res[0]).toString();
-    if (res[1]) dashSupply = BigInt(res[1]).toString();
+    // Query OPWAY balance (opwaCoin contract) + PropertyNFT totalSupply
+    var [balRes, supRes] = await Promise.all([
+      // balanceOf on OPWACoin
+      (async()=>{
+        try{
+          var r=await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to:CONTRACTS.opwaCoin,data:'0x70a08231'+a64},'latest']}),
+            signal:AbortSignal.timeout(8000)});
+          var j=await r.json(); return j.result||null;
+        }catch(e){return null;}
+      })(),
+      // totalSupply on PropertyNFT
+      (async()=>{
+        try{
+          var r=await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to:CONTRACTS.propertyNft,data:'0x18160ddd'},'latest']}),
+            signal:AbortSignal.timeout(8000)});
+          var j=await r.json(); return j.result||null;
+        }catch(e){return null;}
+      })()
+    ]);
+    if (balRes) dashOpwapBal = BigInt(balRes).toString();
+    if (supRes) dashSupply = BigInt(supRes).toString();
+    
+    // OPScan fallback for balance if RPC returns 0
+    if (!dashOpwapBal || dashOpwapBal === '0') {
+      try {
+        var scanR = await fetch('https://opscan.org/api/v1/tokens/'+CONTRACTS.opwaCoin+'/balances/'+walletState.addr+'?network=op_testnet',{signal:AbortSignal.timeout(6000)});
+        if(scanR.ok){var sd=await scanR.json();var rb=sd.balance||sd.data?.balance||sd.result||null;if(rb&&rb!=='0')dashOpwapBal=String(BigInt(rb));}
+      }catch(_){}
+    }
+    // OPScan fallback for supply
+    if (!dashSupply || dashSupply === '0') {
+      try {
+        var scanS = await fetch('https://opscan.org/api/v1/tokens/'+CONTRACTS.propertyNft+'/supply?network=op_testnet',{signal:AbortSignal.timeout(6000)});
+        if(scanS.ok){var ss=await scanS.json();var rs=ss.totalSupply||ss.supply||ss.minted||null;if(rs)dashSupply=String(BigInt(rs));}
+      }catch(_){}
+    }
+    
     dashRenderData();
     var el = document.getElementById('dash-updated');
     if (el) el.textContent = 'Updated ' + new Date().toLocaleTimeString();
@@ -3751,7 +3797,9 @@ var _origDashFetch=dashFetch;
 dashFetch=async function(){await _origDashFetch();await loadChartData();await loadTxHistory();};
 
 /* ━━━ TRANSACTION LIST ━━━ */
-var _txCache={};
+var _txCache={}, _txPage=0, _txPerPage=10, _txAllData=[];
+function _txGoPage(dir){ var max=Math.ceil(_txAllData.length/_txPerPage)-1; _txPage=Math.max(0,Math.min(max,_txPage+dir)); renderTxList(_txAllData); }
+function _txSetPer(n){ _txPerPage=n; _txPage=0; renderTxList(_txAllData); document.querySelectorAll('.tx-ppbtn').forEach(function(b){b.style.background=parseInt(b.dataset.n)===n?'rgba(255,255,255,.25)':'transparent';}); }
 async function loadTxHistory(){
   if(!walletState.addr)return;
   var addr=walletState.addr, listEl=document.getElementById('tx-list'), countEl=document.getElementById('tx-count-label');
@@ -3804,7 +3852,7 @@ async function loadTxHistory(){
       return{hash:hash,action:toC?cName:(isSent?'Send BTC':'Receive BTC'),value:btcVal,time:ts,status:confirmed?'Confirmed':'Pending',isOpwa:toC,method:method};
     });
     all.sort(function(a,b){if(!a.time)return -1;if(!b.time)return 1;return b.time-a.time;});
-    _txCache[addr]=all; renderTxList(all);
+    _txCache[addr]=all; _txAllData=all; _txPage=0; renderTxList(all);
   }catch(e){if(listEl)listEl.innerHTML='<div style="padding:24px;text-align:center;font-size:12px;color:var(--text-3)">Could not load transactions. <a href="https://opscan.org/accounts/'+addr+'?network=op_testnet" target="_blank" style="color:var(--accent)">View on OPScan ↗</a></div>';}
 }
 function renderTxList(txs){
@@ -3906,7 +3954,7 @@ function toggleDisp(btn, mode, assetId) {
   }
 }
 
-var ASSET_TOKENS = { alpha:1000, beta:2000, gamma:3000, delta:1500, epsilon:5000 };
+var ASSET_TOKENS = { alpha:18000, beta:35000, gamma:50000, delta:22000, epsilon:80000 }; // ≈ property USD / $10 per token
 var ASSET_USD    = { alpha:180000, beta:350000, gamma:500000, delta:220000, epsilon:800000 };
 
 function updateAllAssetPrices() {
