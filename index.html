@@ -4031,53 +4031,62 @@ async function loadTxHistory() {
   if (!walletState.addr) return;
   var addr = walletState.addr;
   var listEl = document.getElementById('tx-list');
-  var countEl = document.getElementById('tx-count-label');
   if (!listEl) return;
   if (_txCache[addr]) { renderTxList(_txCache[addr]); return; }
   listEl.innerHTML = '<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
   try {
-    var imp = await _opnetImport();
-    var JSONRpcProvider = imp.JSONRpcProvider;
-    var provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    // 1. Current block number (returns hex string e.g. "0x0eb4")
+    var bnRaw = await dashRpcCallRaw('btc_blockNumber', []);
+    var blockNum = 0;
+    if (bnRaw != null) {
+      blockNum = typeof bnRaw === 'string' && bnRaw.startsWith('0x')
+        ? parseInt(bnRaw, 16) : parseInt(String(bnRaw));
+    }
+    if (!blockNum) throw new Error('no block');
 
-    // 1. Get user internal OPNet address (32-byte hex)
-    var internalAddr = await provider.getPublicKeyInfo(addr, false);
-    if (!internalAddr) throw new Error('Could not resolve wallet address');
-    var addrHex = internalAddr.replace('0x', '').toLowerCase();
-
-    // 2. Scan last 15 blocks for user transactions
-    var blockNum = await provider.getBlockNumber();
+    // 2. Scan last 50 blocks — identify user txs by output address (no "from" field in OPNet)
     var userTxs = [];
-    var SCAN_BLOCKS = 15;
-    for (var i = 0; i < SCAN_BLOCKS; i++) {
+    var SCAN_BLOCKS = 50;
+    for (var i = 0; i < SCAN_BLOCKS && userTxs.length < 100; i++) {
+      var bn = blockNum - i;
+      if (bn < 1) break;
       try {
-        var block = await provider.getBlock(BigInt(blockNum) - BigInt(i), true);
-        if (!block) continue;
-        var txs = block.transactions || [];
+        var hexBn = '0x' + bn.toString(16);
+        var block = await dashRpcCallRaw('btc_getBlockByNumber', [hexBn, true]);
+        if (!block || !block.transactions) continue;
+        var txs = block.transactions;
         for (var j = 0; j < txs.length; j++) {
           var tx = txs[j];
-          if (!tx.from) continue;
-          var fromHex = Array.from(tx.from).map(function(b) {
-            return b.toString(16).padStart(2, '0');
-          }).join('');
-          if (fromHex !== addrHex) continue;
-          var contractStr = tx.contractAddress
-            ? String.fromCharCode.apply(null, Array.from(tx.contractAddress))
-            : '';
-          var label = 'Transaction';
-          if (contractStr.includes(CONTRACTS.opwayYield.slice(0, 12))) label = 'OPWAY';
-          else if (contractStr.includes(CONTRACTS.propertyNft.slice(0, 12))) label = 'PropertyNFT';
-          else if (contractStr.includes(CONTRACTS.opwaCoin.slice(0, 12))) label = 'OPWACoin';
-          else if (YIELD_VAULT_ADDR && contractStr.includes(YIELD_VAULT_ADDR.slice(0, 12))) label = 'YieldVault';
-          else if (PROPERTY_VAULT_ADDR && contractStr.includes(PROPERTY_VAULT_ADDR.slice(0, 12))) label = 'PropertyVault';
-          var txHash = typeof tx.id === 'string' ? tx.id
-            : (tx.hash ? Array.from(tx.hash).map(function(b){return b.toString(16).padStart(2,'0');}).join('') : '');
+          // Only Interaction and Deployment txs are OPNet contract txs
+          if (tx.OPNetType !== 'Interaction' && tx.OPNetType !== 'Deployment') continue;
+          // Sender has no "from" field — identify by change output going back to user's address
+          var outputs = tx.outputs || [];
+          var isUser = outputs.some(function(o) {
+            return o.scriptPubKey && o.scriptPubKey.address === addr;
+          });
+          if (!isUser) continue;
+          // Label by contract address
+          var cAddr = (tx.contractAddress || '').toLowerCase();
+          var label = 'Contract Call';
+          if (tx.OPNetType === 'Deployment') {
+            label = 'Deploy';
+          } else if (cAddr) {
+            if (cAddr === CONTRACTS.opwayYield.toLowerCase())          label = 'OPWAY';
+            else if (cAddr === CONTRACTS.propertyNft.toLowerCase())    label = 'PropertyNFT';
+            else if (cAddr === CONTRACTS.opwaCoin.toLowerCase())       label = 'OPWACoin';
+            else if (YIELD_VAULT_ADDR && cAddr === YIELD_VAULT_ADDR.toLowerCase())       label = 'YieldVault';
+            else if (PROPERTY_VAULT_ADDR && cAddr === PROPERTY_VAULT_ADDR.toLowerCase()) label = 'PropertyVault';
+            else if (USDOP_ADDR && cAddr === USDOP_ADDR.toLowerCase())                   label = 'USDOP';
+          }
+          // Hash: tx.hash is already a hex string in OPNet block data
+          var txHash = typeof tx.hash === 'string' ? tx.hash
+            : (typeof tx.id === 'string' ? tx.id : '');
           userTxs.push({
             hash: txHash,
             action: label,
             value: '—',
             time: null,
-            blockNumber: String(tx.blockNumber || (blockNum - i)),
+            blockNumber: String(tx.blockNumber || bn),
             status: 'Confirmed',
             isOpwa: true
           });
