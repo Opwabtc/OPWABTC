@@ -4422,6 +4422,10 @@ async function vaultDepositOPWAY() {
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
     const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
 
+    /* Guard: vaultAddrObj must resolve — if RPC fails, address would be null
+       and approve would target the zero address instead of the vault */
+    if (!vaultAddrObj) throw new Error('Could not resolve vault address — please retry');
+
     /* Step 1: check existing allowance — skip approve if already sufficient */
     showToast('Checking allowance…', 'info');
     var needsApproval = true;
@@ -4433,10 +4437,11 @@ async function vaultDepositOPWAY() {
     } catch(_) {}
 
     if (needsApproval) {
-      /* Step 2: approve max uint256 (once forever — no repeated approves) */
+      /* Step 2: approve(vault, maxUint256) — use approve (absolute setter) NOT increaseAllowance
+         (incremental) to avoid SafeMath overflow when user has any existing allowance */
       showToast('Approving OPWAY spend… (sign in wallet)', 'info');
       var maxU256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-      var approveSim = await opwayContract.increaseAllowance(vaultAddrObj, maxU256);
+      var approveSim = await opwayContract.approve(vaultAddrObj, maxU256);
       if (approveSim.revert) throw new Error(approveSim.revert);
       await approveSim.sendTransaction({
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
