@@ -135,9 +135,11 @@ html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px}
 body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 button{cursor:none!important;font-family:inherit}
+/* tactile press feedback */
+button:active,.btn-invest:active,.btn-confirm:active,.btn-primary:active{transform:scale(0.97)!important;transition:transform .05s!important}
 input,select,textarea{font-family:inherit}
 
-/* ── CURSOR (dot trail — pointer-events:none, never blocks clicks) ── */
+/* ── CURSOR (split pill — identical to working legacy version) ── */
 #cur{
   position:fixed;pointer-events:none;z-index:99999;
   width:20px;height:10px;border-radius:999px;overflow:hidden;
@@ -145,20 +147,33 @@ input,select,textarea{font-family:inherit}
   box-shadow:0 2px 14px rgba(249,115,22,.55);
   will-change:left,top;
   left:-200px;top:-200px;
-  opacity:0;transition:opacity .2s;
 }
 #cur::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 50%,#f97316 50%)}
 /* orange glow behind pill */
 #cur-glow{
   position:fixed;pointer-events:none;z-index:99997;
-  width:52px;height:52px;border-radius:50%;
-  background:radial-gradient(circle,rgba(249,115,22,.22) 0%,transparent 68%);
+  width:56px;height:56px;border-radius:50%;
+  background:radial-gradient(circle,rgba(249,115,22,.15) 0%,transparent 70%);
   transform:translate(-50%,-50%);
-  filter:blur(10px);
+  filter:blur(14px);
   left:-200px;top:-200px;
-  opacity:0;transition:opacity .2s;
 }
+/* cursor hover states */
+#cur.cur-hover{transform:translate(-50%,-50%) rotate(45deg) scale(1.25);box-shadow:0 2px 20px rgba(249,115,22,.75)}
+#cur.cur-cta{transform:translate(-50%,-50%) rotate(45deg) scale(1.4);box-shadow:0 0 24px rgba(249,115,22,.8)}
+#cur.cur-input{transform:translate(-50%,-50%) rotate(0deg) scaleX(0.5) scaleY(1.8)}
 
+
+/* ── ACCESSIBILITY — focus-visible ── */
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:4px;
+}
+button:focus-visible,a:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg-base)}
@@ -379,6 +394,12 @@ input,select,textarea{font-family:inherit}
   transition:transform .15s,box-shadow .15s;
 }
 .btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.14),transparent);pointer-events:none}
+.btn-primary::after{
+  content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+  transform:skewX(-20deg);transition:left .5s var(--ease,ease);pointer-events:none;
+}
+.btn-primary:hover::after{left:140%}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(249,115,22,.50)}
 
 .btn-ghost{
@@ -491,7 +512,7 @@ input,select,textarea{font-family:inherit}
   background:linear-gradient(90deg,transparent,rgba(249,115,22,.45),transparent);
   opacity:0;transition:opacity .2s;
 }
-.card-asset:hover{transform:translateY(-5px);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px var(--accent-border)}
+.card-asset:hover{transform:translateY(-4px) scale(1.012);box-shadow:0 22px 55px rgba(0,0,0,.38),0 0 0 1px var(--accent-border);will-change:transform}
 .card-asset:hover::after{opacity:1}
 [data-theme="light"] .card-asset{background:#ffffff;border-color:rgba(0,0,0,.10);box-shadow:0 2px 12px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05)}
 [data-theme="light"] .card-asset:hover{border-color:rgba(249,115,22,.40);box-shadow:0 12px 40px rgba(249,115,22,.12),0 4px 12px rgba(0,0,0,.08)}
@@ -522,7 +543,24 @@ input,select,textarea{font-family:inherit}
 .card-id-small{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3)}
 .card-pair{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);margin-bottom:4px}
 .card-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text-1);margin-bottom:5px}
-.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:16px}
+.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:4px}
+.card-desc-wrap{margin-bottom:14px}
+.card-desc-short{
+  font-size:13px;color:var(--text-2);line-height:1.65;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  transition:all .22s ease;
+}
+.card-desc-short.expanded{display:block;-webkit-line-clamp:unset}
+.card-desc-toggle{
+  font-size:11px;font-weight:600;color:var(--accent);
+  background:none;border:none;padding:3px 0;cursor:pointer;
+  display:flex;align-items:center;gap:3px;margin-top:2px;
+  font-family:'DM Mono',monospace;letter-spacing:.04em;
+  transition:color .15s;
+}
+.card-desc-toggle:hover{color:var(--accent-hover)}
+.card-desc-toggle svg{transition:transform .22s}
+.card-desc-toggle.open svg{transform:rotate(180deg)}
 
 .disp-toggle{display:flex;gap:3px;margin-bottom:14px}
 .dt-btn{
@@ -572,8 +610,12 @@ input,select,textarea{font-family:inherit}
 }
 .btn-waitlist:hover{background:rgba(251,191,36,.2)}
 
-.invest-panel{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
-.invest-panel.open{display:block}
+.invest-panel{
+  display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
+  overflow:hidden;
+}
+.invest-panel.open{display:block;animation:slideDown .22s cubic-bezier(.4,0,.2,1)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 .invest-panel-title{
   font-family:'DM Mono',monospace;font-size:9px;font-weight:700;
   text-transform:uppercase;letter-spacing:.16em;
@@ -773,7 +815,7 @@ input,select,textarea{font-family:inherit}
 .step-card{
   background:var(--bg-card);border:1px solid var(--border);
   border-radius:13px;padding:22px 22px 22px;
-  position:relative;overflow:hidden;transition:all .22s;
+  position:relative;overflow:hidden;transition:all .22s;will-change:transform;
 }
 .step-num-badge{
   position:absolute;
@@ -1663,7 +1705,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">VILLA AURORA</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Miami Beach, Florida, USA</p>
-        <p class="card-desc">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p>
+        <div class="card-desc-wrap"><p class="card-desc-short">Luxury oceanfront villa with 4 bedrooms, private pool and panoramic sea views. 180,000 USD tokenized at 1,000 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','alpha')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','alpha')">$ USD</button>
@@ -1728,7 +1770,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">METRO TOWER</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Manhattan, New York, USA</p>
-        <p class="card-desc">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p>
+        <div class="card-desc-wrap"><p class="card-desc-short">Grade-A commercial office tower in Midtown Manhattan. 350,000 USD tokenized across 2,000 OPWAY tokens. Monthly dividends in BTC.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','beta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','beta')">$ USD</button>
@@ -1793,7 +1835,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">LOGISTICA HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Guarulhos, São Paulo, Brazil</p>
-        <p class="card-desc">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p>
+        <div class="card-desc-wrap"><p class="card-desc-short">Modern logistics hub near GRU airport with 12,000m² warehouse space. 500,000 USD tokenized across 3,000 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','gamma')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','gamma')">$ USD</button>
@@ -1858,7 +1900,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">CASA BELÉM</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Belém, Lisbon, Portugal</p>
-        <p class="card-desc">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p>
+        <div class="card-desc-wrap"><p class="card-desc-short">Historic riverside residence overlooking the Tagus, fully renovated. 220,000 USD tokenized across 1,500 OPWAY tokens.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','delta')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','delta')">$ USD</button>
@@ -1923,7 +1965,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">DOWNTOWN HUB</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Downtown Dubai, UAE</p>
-        <p class="card-desc">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p>
+        <div class="card-desc-wrap"><p class="card-desc-short">Premium commercial tower in Downtown Dubai. 800,000 USD tokenized across 5,000 OPWAY tokens. Prime location next to Burj Khalifa.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="disp-toggle">
           <button class="dt-btn active" onclick="toggleDisp(this,'btc','epsilon')">&#x20BF; BTC</button>
           <button class="dt-btn" onclick="toggleDisp(this,'usd','epsilon')">$ USD</button>
@@ -1991,7 +2033,7 @@ footer{
         <div class="card-pair">OP_NET/OPWA</div>
         <h3 class="card-name">SAKURA RESIDENCE</h3>
         <p style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">📍 Shinjuku, Tokyo, Japan</p>
-        <p class="card-desc">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p>
+        <div class="card-desc-wrap"><p class="card-desc-short">Luxury residential tower in the heart of Shinjuku. Premium Japanese real estate on Bitcoin. Whitelist opening Q2 2026.</p><button class="card-desc-toggle" onclick="toggleDesc(this)" aria-label="Ver descrição completa"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>Ver mais</button></div>
         <div class="card-stats">
           <div class="cs-item"><div class="cs-label">Price/Token</div><div class="cs-value" style="color:var(--text-3)">TBA</div></div>
           <div class="cs-item"><div class="cs-label">APY</div><div class="cs-value" style="color:var(--gold)">~13%</div></div>
@@ -2946,20 +2988,20 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 /* ── CURSOR ── */
 const cur = document.getElementById('cur');
 const curGlow = document.getElementById('cur-glow');
-let _curVisible = false;
 document.addEventListener('mousemove', e => {
-  const x = e.clientX + 'px', y = e.clientY + 'px';
-  cur.style.left = x; cur.style.top = y;
-  if (curGlow) { curGlow.style.left = x; curGlow.style.top = y; }
-  if (!_curVisible) {
-    _curVisible = true;
-    cur.style.opacity = '1';
-    if (curGlow) curGlow.style.opacity = '1';
-  }
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+  if (curGlow) { curGlow.style.left = e.clientX + 'px'; curGlow.style.top = e.clientY + 'px'; }
   const t = e.target;
-  const isInteractive = t.closest('a,button,input,select,textarea,[role="button"],[onclick]');
-  cur.classList.toggle('hovering', !!isInteractive);
+  const isCta = t.closest('.btn-primary,.btn-invest,.btn-confirm');
+  const isInput = t.closest('input,textarea,select');
+  const isBtn = t.closest('a,button,[role="button"],[onclick]');
+  cur.classList.toggle('cur-cta', !!isCta);
+  cur.classList.toggle('cur-hover', !isCta && !!isBtn);
+  cur.classList.toggle('cur-input', !!isInput);
 }, {passive:true});
+document.addEventListener('mousedown', () => { cur.style.opacity = '0.4'; cur.style.transform = 'translate(-50%,-50%) rotate(45deg) scale(0.8)'; });
+document.addEventListener('mouseup',   () => { cur.style.opacity = ''; cur.style.transform = ''; });
 
 /* ── THEME ── */
 let theme = 'dark';
@@ -3933,6 +3975,14 @@ function renderTxList(txs){
 }
 
 /* ── TOGGLE INVEST PANEL ── */
+function toggleDesc(btn) {
+  var wrap = btn.closest('.card-desc-wrap');
+  var desc = wrap.querySelector('.card-desc-short');
+  var isOpen = desc.classList.toggle('expanded');
+  btn.classList.toggle('open', isOpen);
+  btn.childNodes[btn.childNodes.length-1].textContent = isOpen ? ' Ver menos' : ' Ver mais';
+}
+
 function toggleInvest(id, btn) {
   const panel = document.getElementById(id);
   const open = panel.classList.toggle('open');
@@ -3948,6 +3998,12 @@ function toggleInvest(id, btn) {
   }
   if (open) {
     btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
+    // auto-focus no campo BTC após animação
+    setTimeout(function() {
+      var asset = id.replace('p-','');
+      var btcEl = document.getElementById(asset + '-btc');
+      if (btcEl) btcEl.focus();
+    }, 230);
   } else {
     if (isGamma) {
       btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`;
@@ -4053,15 +4109,18 @@ function updateAllAssetPrices() {
 async function fetchPrices() {
   try {
     let price = 0;
-    try {
-      const r0 = await fetch('https://mempool.space/api/v1/prices', {signal:AbortSignal.timeout(6000)});
-      const d0 = await r0.json(); price = d0.USD;
-    } catch(_) {
-      const r1 = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT', {signal:AbortSignal.timeout(6000)});
-      const d1 = await r1.json(); price = parseFloat(d1.price);
+    const priceSrcs = [
+      () => fetch('https://mempool.space/api/v1/prices',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(d=>d.USD),
+      () => fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(d=>parseFloat(d.price)),
+      () => fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(d=>parseFloat(d.data.amount)),
+      () => fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',{signal:AbortSignal.timeout(6000)}).then(r=>r.json()).then(d=>d.bitcoin.usd),
+    ];
+    for (var pi=0; pi<priceSrcs.length && !price; pi++) {
+      try { var v = await priceSrcs[pi](); if (v && v > 1000) price = v; } catch(_) {}
     }
+    if (!price) price = 65000; // último recurso: valor estático
     btcPrice = price;
-    const fmt = '$' + btcPrice.toLocaleString();
+    const fmt = '$' + btcPrice.toLocaleString('en',{maximumFractionDigits:0});
     const heroPriceEl = document.getElementById('hero-btc-price');
     if (heroPriceEl) heroPriceEl.textContent = fmt;
     fetchOpNetBlock();
@@ -4106,9 +4165,11 @@ async function fetchOpNetBlock() {
 /* ── FETCH GAS (mempool.opnet.org) ── */
 async function fetchGas() {
   try {
-    const r = await fetch('https://mempool.opnet.org/api/v1/fees/recommended', {signal:AbortSignal.timeout(6000)});
-    const d = await r.json();
-    const fee = d.fastestFee || d.hourFee || 1;
+    var fee = 0;
+    for (var _gs of ['https://mempool.opnet.org/api/v1/fees/recommended','https://mempool.space/api/v1/fees/recommended']) {
+      try { var _gr=await fetch(_gs,{signal:AbortSignal.timeout(5000)}); if(_gr.ok){var _gd=await _gr.json();fee=_gd.fastestFee||_gd.hourFee||0;} } catch(_){}
+      if (fee) break;
+    }
     const feeStr = fee + ' sat/vB';
     const navGas = document.getElementById('nav-gas');
     if (navGas) navGas.textContent = feeStr;
@@ -4130,6 +4191,8 @@ async function fetchGas() {
 }
 
 fetchPrices(); fetchGas(); fetchOpNetBlock();
+// Inicializa preços imediatamente com fallback $65k (substitui os "—")
+if (!btcPrice) { btcPrice = 65000; updateAllAssetPrices(); recalcAssetTokens(); }
 setInterval(fetchOpNetBlock, 60000);
 setInterval(fetchPrices, 30000);
 setInterval(fetchGas,   30000);
