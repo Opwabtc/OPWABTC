@@ -2632,7 +2632,7 @@ async function confirmInvest(asset) {
     const contract    = getContract(OPWAY_ADDR, OPWAY_ABI, provider, _net, senderAddr);
     // hasTo: server passes to string as-is to contract's out.to
     // Contract compares out.to == _treasuryTo (stored bech32) — no Uint8Array involved.
-    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_OPT, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_OPT, value:satsAmt, index:1n, flags:TransactionOutputFlags.hasTo }] });
     const simulation = await contract.mint(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
