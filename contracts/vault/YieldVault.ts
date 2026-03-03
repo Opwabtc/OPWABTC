@@ -71,15 +71,28 @@ export class YieldVault extends ReentrancyGuard {
         const sender = Blockchain.tx.sender;
         const key    = u256.fromUint8ArrayBE(sender);
 
-        // Must not already have an active stake
         const existing = this._stakes.get(key);
-        if (!existing.isZero()) throw new Revert('YieldVault: already staked — unstake first');
+        const currentBlock = u256.fromU64(Blockchain.block.number);
 
-        // Pull OPWAY tokens from user (requires prior approve)
+        // Checkpoint: settle pending rewards for existing stake BEFORE changing the stake size.
+        // This prevents reward dilution when topping up (pattern from scramble-protocol/MotoSwap).
+        if (!existing.isZero()) {
+            const usdop = this._usdop.value;
+            if (!usdop.equals(Address.zero())) {
+                const lastClaim     = this._lastClaims.get(key);
+                const blocksElapsed = SafeMath.sub(currentBlock, lastClaim);
+                const rewards       = SafeMath.div(SafeMath.mul(existing, blocksElapsed), REWARD_DIVISOR);
+                if (!rewards.isZero()) {
+                    this._mintUSDOP(usdop, sender, rewards);
+                }
+            }
+        }
+
+        // Pull OPWAY tokens from user (requires prior increaseAllowance of `amount`)
         TransferHelper.transferFrom(opway, sender, this.address, amount);
 
-        const currentBlock = u256.fromU64(Blockchain.block.number);
-        this._stakes.set(key, amount);
+        // Accumulate stake; reset timelock and reward checkpoint to this block
+        this._stakes.set(key, SafeMath.add(existing, amount));
         this._depositBlocks.set(key, currentBlock);
         this._lastClaims.set(key, currentBlock);
 

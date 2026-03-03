@@ -7,6 +7,18 @@
         "nft": {
             "outFile": "build/PropertyNFT.wasm",
             "use": ["abort=op721/index/abort"]
+        },
+        "yieldVault": {
+            "outFile": "build/YieldVault.wasm",
+            "use": ["abort=vault/index_yield/abort"]
+        },
+        "usdop": {
+            "outFile": "build/USDOP.wasm",
+            "use": ["abort=vault/index_usdop/abort"]
+        },
+        "propertyVault": {
+            "outFile": "build/PropertyVault.wasm",
+            "use": ["abort=vault/index_property/abort"]
         }
     },
     "options": {

@@ -5,9 +5,12 @@
     "type": "module",
     "description": "OPWACoin (OP-20) and PropertyNFT (OP-721) smart contracts for OPWABTC",
     "scripts": {
-        "build:token": "asc op20/index.ts  --target token --measure --uncheckedBehavior never",
-        "build:nft":   "asc op721/index.ts --target nft   --measure --uncheckedBehavior never",
-        "build":       "npm run build:token && npm run build:nft"
+        "build:token":        "asc op20/index.ts        --target token        --measure --uncheckedBehavior never",
+        "build:nft":          "asc op721/index.ts       --target nft          --measure --uncheckedBehavior never",
+        "build:yieldVault":   "asc vault/index_yield.ts --target yieldVault   --measure --uncheckedBehavior never",
+        "build:usdop":        "asc vault/index_usdop.ts --target usdop        --measure --uncheckedBehavior never",
+        "build:propertyVault":"asc vault/index_property.ts --target propertyVault --measure --uncheckedBehavior never",
+        "build":              "npm run build:token && npm run build:nft && npm run build:yieldVault && npm run build:usdop && npm run build:propertyVault"
     },
     "dependencies": {
         "@btc-vision/as-bignum": "latest",
