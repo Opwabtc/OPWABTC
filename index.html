@@ -942,13 +942,13 @@ button:focus-visible,a:focus-visible{
 }
 .live-bar-inner{display:flex;align-items:center;gap:24px;white-space:nowrap;animation:livebarScroll 40s linear infinite;padding:0 16px}
 @keyframes livebarScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.55);flex-shrink:0}
+.lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text-3);flex-shrink:0}
 .lb-item .lb-led{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);flex-shrink:0}
-.lb-label{color:rgba(255,255,255,.45)}
-.lb-val{color:rgba(255,255,255,.7)}
-.lb-acc{color:#fb923c;font-weight:500}
-.lb-addr{color:#fb923c}
-.lb-sep{color:rgba(255,255,255,.18)}
+.lb-label{color:var(--text-3)}
+.lb-val{color:var(--text-2)}
+.lb-acc{color:var(--accent);font-weight:500}
+.lb-addr{color:var(--accent-hover)}
+.lb-sep{color:var(--text-4)}
 
 /* =====================================================================
    FOOTER
@@ -1011,9 +1011,9 @@ footer{
   border-radius:14px;padding:18px;width:244px;
   z-index:150;
   display:none;
+  max-height:calc(100vh - 120px);overflow-y:auto;
   box-shadow:0 16px 50px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.03);
   animation:gasIn .18s ease;
-  max-height:calc(100vh - 120px);overflow-y:auto;
 }
 @keyframes gasIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .gas-popup.open{display:block}
@@ -1368,54 +1368,6 @@ footer{
 /* ── TICKER LIGHT ── */
 /* ticker light mode handled in base css */
 
-/* ── PARTNERS CARD SLIDER ── */
-.pcard-track-wrap{overflow:hidden;position:relative;width:100vw;margin-left:calc(-50vw + 50%);padding:8px 0}
-.pcard-track-wrap::before,.pcard-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
-.pcard-track-wrap::before{left:0;background:linear-gradient(to right,var(--bg-base),transparent)}
-.pcard-track-wrap::after{right:0;background:linear-gradient(to left,var(--bg-base),transparent)}
-.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 40s linear infinite;will-change:transform;padding:8px 16px}
-.pcard-track:hover{animation-play-state:paused}
-@keyframes pcardScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:default}
-.pcard:hover{border-color:var(--accent-border);transform:translateY(-3px);box-shadow:0 8px 24px rgba(249,115,22,.15)}
-[data-theme="light"] .pcard{background:#fff;border-color:rgba(124,58,237,.12)}
-.pcard-ico{font-size:22px;line-height:1}
-.pcard-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);letter-spacing:.02em;text-align:center}
-.pcard-sub{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;text-align:center}
-
-/* ── MOBILE OPTIMIZATION ── */
-@media(hover:none),(pointer:coarse){*{cursor:auto!important}#cur,.custom-cursor,.cursor-dot,.cursor-ring{display:none!important}}
-@media(max-width:768px){
-  .btn-connect,.btn-icon,.nav-link,.gas-trigger,.ft-link,.curr-btn,.chart-range-btn,.tx-ppbtn{min-height:44px;min-width:44px}
-  .section{padding:44px 16px!important}
-  .sim-grid{display:flex!important;flex-direction:column!important;gap:20px!important}
-  .sim-left,.sim-right{width:100%!important;max-width:100%!important}
-  .gas-popup{right:12px!important;width:calc(100vw - 24px)!important;max-width:320px!important}
-  .gas-trigger{right:12px!important}
-  .footer-grid{grid-template-columns:1fr!important}
-  .tech-grid{grid-template-columns:1fr!important}
-  .steps-grid{grid-template-columns:1fr 1fr!important}
-  .pcard{width:110px!important;padding:14px 12px!important}
-  .live-bar-inner{font-size:10px!important}
-  .hero-title{font-size:clamp(28px,8vw,48px)!important}
-  .navbar{width:calc(100% - 24px)!important;top:8px!important}
-  .nb-right{gap:4px!important}
-  .assets-grid{grid-template-columns:1fr!important}
-}
-@media(max-width:480px){
-  .steps-grid{grid-template-columns:1fr!important}
-  .hero-title{font-size:clamp(24px,9vw,38px)!important}
-  .section{padding:36px 14px!important}
-  .vault-grid,.dash-wrap .dash-stats-row{grid-template-columns:1fr!important}
-}
-html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
-body{overflow-x:hidden}
-@media(hover:none){.btn-connect:active,.pcard:active,.tech-card:active,.card-asset:active{opacity:.8;transform:scale(.98)}}
-.toast a{pointer-events:all!important}
-
-/* ── SUB-PAGE FOOTER FIX ── */
-.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface,var(--bg-card))!important;border-top:1px solid var(--border)!important;padding:20px 24px!important;margin-top:auto!important;display:block!important;text-align:center!important;font-family:'DM Mono',monospace!important;font-size:11px!important;color:var(--text-3)!important}
-
 /* =====================================================================
    GAS WIDGET — bug fix: input/row sempre visível em ambos os temas
    ===================================================================== */
@@ -1606,6 +1558,54 @@ body{overflow-x:hidden}
   .footer-grid{grid-template-columns:1fr}
   .hero-title{font-size:44px}
 }
+
+/* ── PARTNERS CARD SLIDER ── */
+.pcard-track-wrap{overflow:hidden;position:relative;width:100vw;margin-left:calc(-50vw + 50%);padding:8px 0}
+.pcard-track-wrap::before,.pcard-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
+.pcard-track-wrap::before{left:0;background:linear-gradient(to right,var(--bg-base),transparent)}
+.pcard-track-wrap::after{right:0;background:linear-gradient(to left,var(--bg-base),transparent)}
+.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 40s linear infinite;will-change:transform;padding:8px 16px}
+.pcard-track:hover{animation-play-state:paused}
+@keyframes pcardScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:default}
+.pcard:hover{border-color:var(--accent-border);transform:translateY(-3px);box-shadow:0 8px 24px rgba(249,115,22,.15)}
+[data-theme="light"] .pcard{background:#fff;border-color:rgba(124,58,237,.12)}
+.pcard-ico{font-size:22px;line-height:1}
+.pcard-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);letter-spacing:.02em;text-align:center}
+.pcard-sub{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;text-align:center}
+
+/* ── MOBILE OPTIMIZATION ── */
+@media(hover:none),(pointer:coarse){*{cursor:auto!important}#cur,.custom-cursor,.cursor-dot,.cursor-ring{display:none!important}}
+@media(max-width:768px){
+  .btn-connect,.btn-icon,.nav-link,.gas-trigger,.ft-link,.curr-btn,.chart-range-btn,.tx-ppbtn{min-height:44px;min-width:44px}
+  .section{padding:44px 16px!important}
+  .sim-grid{display:flex!important;flex-direction:column!important;gap:20px!important}
+  .sim-left,.sim-right{width:100%!important;max-width:100%!important}
+  .gas-popup{right:12px!important;width:calc(100vw - 24px)!important;max-width:320px!important}
+  .gas-trigger{right:12px!important}
+  .footer-grid{grid-template-columns:1fr!important}
+  .tech-grid{grid-template-columns:1fr!important}
+  .steps-grid{grid-template-columns:1fr 1fr!important}
+  .pcard{width:110px!important;padding:14px 12px!important}
+  .live-bar-inner{font-size:10px!important}
+  .hero-title{font-size:clamp(28px,8vw,48px)!important}
+  .navbar{width:calc(100% - 24px)!important;top:8px!important}
+  .nb-right{gap:4px!important}
+  .assets-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:480px){
+  .steps-grid{grid-template-columns:1fr!important}
+  .hero-title{font-size:clamp(24px,9vw,38px)!important}
+  .section{padding:36px 14px!important}
+  .vault-grid,.dash-wrap .dash-stats-row{grid-template-columns:1fr!important}
+}
+html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+body{overflow-x:hidden}
+@media(hover:none){.btn-connect:active,.pcard:active,.tech-card:active,.card-asset:active{opacity:.8;transform:scale(.98)}}
+.toast a{pointer-events:all!important}
+
+/* ── SUB-PAGE FOOTER FIX ── */
+.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface,var(--bg-card))!important;border-top:1px solid var(--border)!important;padding:20px 24px!important;margin-top:auto!important;display:block!important;text-align:center!important;font-family:'DM Mono',monospace!important;font-size:11px!important;color:var(--text-3)!important}
 </style>
 </head>
 <body data-theme="dark">
@@ -2301,7 +2301,6 @@ body{overflow-x:hidden}
     </div>
   </div>
 
-  <!-- Partners card slider — visual cards -->
 </section>
 
 <section class="section partners-section" id="partners" style="padding:52px 0;overflow:hidden">
@@ -2317,7 +2316,6 @@ body{overflow-x:hidden}
       <div class="pcard"><div class="pcard-ico">🔄</div><div class="pcard-name">MotoSwap</div><div class="pcard-sub">DEX Protocol</div></div>
       <div class="pcard"><div class="pcard-ico">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></div>
       <div class="pcard"><div class="pcard-ico">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></div>
-      <!-- duplicate for seamless loop -->
       <div class="pcard"><div class="pcard-ico">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></div>
       <div class="pcard"><div class="pcard-ico">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></div>
       <div class="pcard"><div class="pcard-ico">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></div>
@@ -2328,6 +2326,7 @@ body{overflow-x:hidden}
       <div class="pcard"><div class="pcard-ico">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></div>
     </div>
   </div>
+</section>
 
 <!-- ═══════════════════════════════════════
      HOW IT WORKS
@@ -2979,13 +2978,14 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:rgba(255,255,255,.85);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
+    <span class="lb-item" style="color:var(--text-1);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
     <span class="lb-sep">&bull;</span>
+    <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
     <span class="lb-sep">&bull;</span>
-    <!-- duplicate for seamless loop -->
+    <!-- duplicate for loop -->
     <span class="lb-item"><span class="lb-led"></span><span class="lb-label">OP_NET Testnet</span></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">Rate&nbsp;</span><span class="lb-acc" id="lb-gas2">1 sat/vB</span></span>
@@ -2996,13 +2996,14 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqzr…lqylyrcp ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0x5be08132f3efd4d59a4adb27a8f53c1dc8e788db79e5xa086017f82359dfecfc?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr9…uyqa6 ↗</a></span>
+    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0x5be08132f3efd4d59a4adb27a8f53c1dc8e788db79e5aa086017f82359dfecfc?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr9…uyqa6 ↗</a></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:rgba(255,255,255,.85);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
+    <span class="lb-item" style="color:var(--text-1);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
+    <span class="lb-sep">&bull;</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
   </div>
@@ -3173,18 +3174,6 @@ function cloneFooterToPages() {
   });
 }
 setTimeout(cloneFooterToPages, 300);
-
-/* Fallback: simple sub-page footer for vault/legal/dashboard pages */
-(function(){
-  var fc='<div style="text-align:center;font-size:11px;color:var(--text-3);font-family:DM Mono,monospace;padding:4px 0">'+
-    '&copy; 2025 OPWA Protocol. All rights reserved. &nbsp;|&nbsp; '+
-    '<a href="/terms" onclick="navigate(\'/terms\');return false;" style="color:var(--accent);text-decoration:none">Terms</a> &nbsp;|&nbsp; '+
-    '<a href="/privacy" onclick="navigate(\'/privacy\');return false;" style="color:var(--accent);text-decoration:none">Privacy</a>'+
-    '</div>';
-  setTimeout(function(){
-    ['vault-footer','dash-footer','terms-footer','privacy-footer'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.innerHTML.trim())el.innerHTML=fc;});
-  }, 600);
-})();
 
 /* ── NAVBAR SCROLL ── */
 window.addEventListener('scroll', () => {
@@ -4005,6 +3994,14 @@ dashFetch=async function(){await _origDashFetch();await loadChartData();await lo
 
 /* ━━━ TRANSACTION LIST ━━━ */
 var _txCache={}, _txAllData=[], _txPage=0, _txPerPage=10;
+(function(){
+  var ce=document.getElementById('tx-count-label');
+  if(ce) ce.innerHTML='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+
+    '<span style="color:rgba(255,255,255,.65);font-size:11px">— txs</span>'+
+    '<span style="color:rgba(255,255,255,.25)">|</span>'+
+    [10,50,100].map(function(n){return '<button class="tx-ppbtn" data-n="'+n+'" onclick="_txSetPer('+n+')" style="padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.15);background:'+(n===10?'rgba(255,255,255,.25)':'transparent')+';color:rgba(255,255,255,.7);font-size:10px;cursor:pointer;font-family:DM Mono,monospace">'+n+'</button>';}).join('')+
+    '</div>';
+})();
 function _txGoPage(d){var max=Math.ceil(_txAllData.length/_txPerPage)-1;_txPage=Math.max(0,Math.min(max,_txPage+d));renderTxList(_txAllData);}
 function _txSetPer(n){_txPerPage=n;_txPage=0;renderTxList(_txAllData);document.querySelectorAll('.tx-ppbtn').forEach(function(b){b.style.background=parseInt(b.dataset.n)===n?'rgba(255,255,255,.25)':'transparent';});}
 /* ── BECH32M CONVERTER: opt1p... → tb1p... (mesma chave P2TR, HRP diferente) ── */
@@ -4143,12 +4140,21 @@ function renderTxList(txs){
 }
 
 /* ── TOGGLE INVEST PANEL ── */
+(function(){
+  var fc='<div style="text-align:center;font-size:11px;color:var(--text-3);font-family:DM Mono,monospace;padding:4px 0">'+
+    '&copy; 2025 OPWA Protocol. All rights reserved. &nbsp;|&nbsp; '+
+    '<a href="/terms" onclick="navigate(\'/terms\');return false;" style="color:var(--accent);text-decoration:none">Terms</a> &nbsp;|&nbsp; '+
+    '<a href="/privacy" onclick="navigate(\'/privacy\');return false;" style="color:var(--accent);text-decoration:none">Privacy</a>'+
+    '</div>';
+  ['vault-footer','dash-footer','terms-footer','privacy-footer'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=fc;});
+})();
+
 function toggleDesc(btn) {
   var wrap = btn.closest('.card-desc-wrap');
   var desc = wrap.querySelector('.card-desc-short');
   var isOpen = desc.classList.toggle('expanded');
   btn.classList.toggle('open', isOpen);
-  btn.childNodes[btn.childNodes.length-1].textContent = isOpen ? ' Read less' : ' Read more';
+  btn.childNodes[btn.childNodes.length-1].textContent = isOpen ? ' Show less' : ' Read more';
 }
 
 function toggleInvest(id, btn) {
