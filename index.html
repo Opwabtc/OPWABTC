@@ -174,6 +174,38 @@ button:focus-visible,a:focus-visible{
   outline:2px solid var(--accent);
   outline-offset:3px;
 }
+
+/* ── MOTION SYSTEM ── */
+:root {
+  --t1: 100ms cubic-bezier(.4,0,.2,1);  /* Micro: hover, press, focus */
+  --t2: 180ms cubic-bezier(.4,0,.2,1);  /* Structural: card, panel, dropdown */
+  --t3: 280ms cubic-bezier(.4,0,.2,1);  /* Contextual: page, reveal */
+  --shadow-surface: 0 1px 3px rgba(0,0,0,.2), 0 1px 2px rgba(0,0,0,.15);
+  --shadow-elevated: 0 10px 30px rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.2);
+  --shadow-overlay: 0 20px 60px rgba(0,0,0,.5), 0 8px 20px rgba(0,0,0,.3);
+}
+[data-theme="light"] {
+  --shadow-surface: 0 1px 3px rgba(109,40,217,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-elevated: 0 10px 30px rgba(109,40,217,.12), 0 4px 10px rgba(0,0,0,.07);
+  --shadow-overlay: 0 20px 60px rgba(109,40,217,.18), 0 8px 20px rgba(0,0,0,.1);
+}
+/* Scroll-triggered fade-in */
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity var(--t3), transform var(--t3); }
+.reveal.visible { opacity: 1; transform: none; }
+/* Page fade-in */
+.page-fade { animation: pageFadeIn var(--t3) cubic-bezier(.4,0,.2,1) both; }
+@keyframes pageFadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+/* Navbar shrink on scroll */
+.navbar.scrolled { height: 50px; }
+
+
+/* ── TRUST SIGNALS ── */
+.trust-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;opacity:.75}
+.trust-badge{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;
+  color:var(--text-3);letter-spacing:.06em;text-transform:uppercase;font-family:'DM Mono',monospace}
+.trust-badge svg{opacity:.6}
+[data-theme="light"] .trust-badge{color:rgba(59,7,100,.55)}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg-base)}
@@ -258,7 +290,7 @@ button:focus-visible,a:focus-visible{
 .nav-dash-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
 
 
-.nb-right{display:flex;align-items:center;gap:8px}
+.nb-right{display:flex;align-items:center;gap:8px;padding-right:0}
 .gas-pill{
   display:flex;align-items:center;gap:6px;padding:5px 10px;
   background:rgba(255,255,255,.04);border:1px solid var(--border);
@@ -289,7 +321,7 @@ button:focus-visible,a:focus-visible{
 
 /* wallet dropdown */
 .wallet-btn-wrap{position:relative}
-.wallet-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:248px;background:var(--bg-elevated);border:1px solid rgba(249,115,22,.28);border-radius:14px;padding:14px;z-index:9999;box-shadow:0 16px 40px rgba(0,0,0,.35);display:none}
+.wallet-dropdown{position:absolute;top:calc(100% + 14px);right:0;width:248px;background:var(--bg-elevated);border:1px solid rgba(249,115,22,.28);border-radius:14px;padding:14px;z-index:9999;box-shadow:0 16px 40px rgba(0,0,0,.35);display:none}
 .wallet-dropdown.open{display:block}
 [data-theme="light"] .wallet-dropdown{background:#fff;border-color:rgba(124,58,237,.3);box-shadow:0 16px 40px rgba(124,58,237,.18);color:var(--text-1);}
 .wd-btn{display:block;width:100%;text-align:left;padding:8px 8px;background:transparent;border:none;border-radius:7px;color:var(--text-2);font-size:13px;margin-bottom:2px;font-family:inherit;transition:all .15s}
@@ -512,7 +544,7 @@ button:focus-visible,a:focus-visible{
   background:linear-gradient(90deg,transparent,rgba(249,115,22,.45),transparent);
   opacity:0;transition:opacity .2s;
 }
-.card-asset:hover{transform:translateY(-4px) scale(1.012);box-shadow:0 22px 55px rgba(0,0,0,.38),0 0 0 1px var(--accent-border);will-change:transform}
+.card-asset:hover{transform:translateY(-4px) scale(1.012);box-shadow:var(--shadow-elevated),0 0 0 1px var(--accent-border);will-change:transform}
 .card-asset:hover::after{opacity:1}
 [data-theme="light"] .card-asset{background:#ffffff;border-color:rgba(0,0,0,.10);box-shadow:0 2px 12px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05)}
 [data-theme="light"] .card-asset:hover{border-color:rgba(249,115,22,.40);box-shadow:0 12px 40px rgba(249,115,22,.12),0 4px 12px rgba(0,0,0,.08)}
@@ -1029,7 +1061,10 @@ footer{
   animation:toastIn .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);
 }
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.toast-info{background:rgba(22,22,22,.95);border-color:var(--accent);color:var(--text-1)}
+.toast-info{background:var(--bg-elevated);border-color:var(--accent);color:var(--text-1)}
+[data-theme="light"] .toast-info{background:rgba(255,255,255,.97);color:var(--text-1);box-shadow:0 8px 24px rgba(124,58,237,.15)}
+[data-theme="light"] .toast-success{background:rgba(255,255,255,.97);color:#15803d}
+[data-theme="light"] .toast-error{background:rgba(255,255,255,.97);color:#dc2626}
 .toast-success{background:rgba(16,185,129,.12);border-color:var(--success);color:var(--success)}
 .toast-error{background:rgba(239,68,68,.12);border-color:var(--danger);color:#f87171}
 
@@ -1146,7 +1181,6 @@ footer{
 
 .dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
 .dash-page.active{display:flex!important;flex-direction:column}
-.dash-page.active{display:block}
 .chart-range-btn{padding:4px 12px;border-radius:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
 .chart-range-active{background:rgba(255,255,255,.25)!important;border-color:rgba(255,255,255,.5)!important;color:#fff!important}
 .dash-wrap{max-width:960px;margin:0 auto}
@@ -1160,12 +1194,13 @@ footer{
 /* =====================================================================
    LEGAL PAGES
    ===================================================================== */
-.legal-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 100px;background:var(--bg-base)}
-.legal-page.active{display:block}
-.legal-wrap{max-width:760px;margin:0 auto}
-.legal-sec{margin-bottom:24px}
-.legal-sec h2{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:7px}
-.legal-sec p{font-size:14px;color:var(--text-2);line-height:1.72}
+.legal-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
+.legal-page.active{display:flex!important;flex-direction:column;animation:pageFadeIn 280ms cubic-bezier(.4,0,.2,1) both}
+.legal-wrap{max-width:760px;margin:0 auto;padding:0 8px}
+.legal-sec{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--border)}
+.legal-sec h2{font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.legal-sec h2::before{content:"";width:3px;height:16px;background:var(--accent);border-radius:2px;flex-shrink:0;display:inline-block}
+.legal-sec p{font-size:14px;color:var(--text-2);line-height:1.8}
 
 /* =====================================================================
    LIGHT MODE — contraste real, 3D cards, lavanda no footer
@@ -2569,14 +2604,10 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 
           <!-- Timelock countdown -->
           <div class="vault-timelock">
-            <div style="display:flex;justify-content:space-between;align-items:flex-end">
-              <div>
+            <div>
                 <div class="vault-timelock-num" id="vault-blocks-remaining">420</div>
-                <div class="vault-timelock-label">blocks remaining to unlock</div>
-              </div>
-              <div style="text-align:right;font-size:11px;color:var(--text-3)">
-                Current block<br><span id="vault-current-block" style="font-family:'DM Mono',monospace;color:var(--text-2)">—</span>
-              </div>
+                <div class="vault-timelock-label">BLOCKS TO UNLOCK · deposit OPWAY to start countdown</div>
+                <div style="font-size:10px;color:var(--text-3);margin-top:3px;font-family:'DM Mono',monospace" id="vault-timelock-hint">Deposit OPWAY to start the 420-block countdown</div>
             </div>
             <div class="vault-timelock-bar">
               <div class="vault-timelock-bar-fill" id="vault-timelock-fill" style="width:0%"></div>
@@ -2800,6 +2831,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 
 <!-- TERMS PAGE -->
 <div id="page-terms" class="legal-page">
+  <div style="flex:1 0 auto;padding-bottom:60px">
   <div class="legal-wrap">
     <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
     <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Terms of Service</h1>
@@ -2811,13 +2843,15 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <div class="legal-sec"><h2>5. Risks</h2><p>Digital assets involve significant risk including price volatility and smart contract bugs. Do not invest more than you can afford to lose.</p></div>
     <div class="legal-sec"><h2>6. Disclaimers</h2><p>THE PLATFORM IS PROVIDED AS IS WITHOUT WARRANTIES. OPWA IS NOT RESPONSIBLE FOR ANY LOSSES FROM USE OF THE PLATFORM.</p></div>
     <div class="legal-sec"><h2>7. Contact</h2><p>Contact us via GitHub at github.com/Opwabtc or official OPWA community channels.</p></div>
-    <div style="margin-top:40px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-3)">By using OPWA, you agree to these Terms.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="color:var(--text-3);text-decoration:none">Privacy &#x2192;</a></div></div>
+    <div style="margin-top:60px;margin-bottom:40px;padding:28px 32px;border-radius:14px;background:var(--bg-card);border:1px solid var(--border);font-size:14px;color:var(--text-2);line-height:1.7">By using OPWA, you agree to these Terms.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="color:var(--text-3);text-decoration:none">Privacy &#x2192;</a></div></div>
   </div>
-  <footer id="terms-footer" style="margin-top:0"></footer>
+  </div>
+  <footer id="terms-footer" style="margin-top:auto"></footer>
 </div>
 
 <!-- PRIVACY PAGE -->
 <div id="page-privacy" class="legal-page">
+  <div style="flex:1 0 auto;padding-bottom:60px">
   <div class="legal-wrap">
     <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
     <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Privacy Policy</h1>
@@ -2831,7 +2865,8 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <div class="legal-sec"><h2>7. Contact</h2><p>For privacy inquiries, contact us via GitHub at github.com/Opwabtc.</p></div>
     <div style="margin-top:40px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-3)">We are committed to protecting your privacy.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back</a><a href="/terms" onclick="navigate('/terms');return false;" style="color:var(--text-3);text-decoration:none">Terms &#x2192;</a></div></div>
   </div>
-  <footer id="privacy-footer" style="margin-top:0"></footer>
+  </div>
+  <footer id="privacy-footer" style="margin-top:auto"></footer>
 </div>
 
 <!-- ═══════════════════════════════════════
@@ -2988,10 +3023,15 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 /* ── CURSOR ── */
 const cur = document.getElementById('cur');
 const curGlow = document.getElementById('cur-glow');
+let _cx = -200, _cy = -200, _curRaf = false;
+function _moveCursor() {
+  cur.style.left = _cx + 'px'; cur.style.top = _cy + 'px';
+  if (curGlow) { curGlow.style.left = _cx + 'px'; curGlow.style.top = _cy + 'px'; }
+  _curRaf = false;
+}
 document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top  = e.clientY + 'px';
-  if (curGlow) { curGlow.style.left = e.clientX + 'px'; curGlow.style.top = e.clientY + 'px'; }
+  _cx = e.clientX; _cy = e.clientY;
+  if (!_curRaf) { _curRaf = true; requestAnimationFrame(_moveCursor); }
   const t = e.target;
   const isCta = t.closest('.btn-primary,.btn-invest,.btn-confirm');
   const isInput = t.closest('input,textarea,select');
@@ -3000,8 +3040,8 @@ document.addEventListener('mousemove', e => {
   cur.classList.toggle('cur-hover', !isCta && !!isBtn);
   cur.classList.toggle('cur-input', !!isInput);
 }, {passive:true});
-document.addEventListener('mousedown', () => { cur.style.opacity = '0.4'; cur.style.transform = 'translate(-50%,-50%) rotate(45deg) scale(0.8)'; });
-document.addEventListener('mouseup',   () => { cur.style.opacity = ''; cur.style.transform = ''; });
+document.addEventListener('mousedown', () => { cur.style.transform = 'translate(-50%,-50%) rotate(45deg) scale(0.75)'; });
+document.addEventListener('mouseup',   () => { cur.style.transform = ''; });
 
 /* ── THEME ── */
 let theme = 'dark';
@@ -3603,16 +3643,13 @@ async function dashFetch() {
       // silent — deixa dashOpwapBal com valor anterior
     }
 
-    // ── PropertyNFT totalSupply via eth_call (não precisa de Address) ──
+    // ── PropertyNFT totalSupply via getContract (same pattern as OPWAY balance) ──
     try {
-      var supR = await fetch('https://testnet.opnet.org', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',
-          params:[{to:CONTRACTS.propertyNft, data:'0x18160ddd'},'latest']}),
-        signal: AbortSignal.timeout(8000)
-      });
-      var supJ = await supR.json();
-      if (supJ.result) dashSupply = BigInt(supJ.result).toString();
+      const nftContract = getContract(CONTRACTS.propertyNft, OP_20_ABI, provider, _OPNET_NET, senderAddr);
+      const supSim = await nftContract.totalSupply();
+      if (supSim && supSim.properties && supSim.properties.totalSupply != null) {
+        dashSupply = supSim.properties.totalSupply.toString();
+      }
     } catch(_) {}
 
     dashRenderData();
@@ -3874,58 +3911,70 @@ function _opt1ToTb1p(opt1addr) {
   }catch(e){return null;}
 }
 
-async function loadTxHistory(){
-  if(!walletState.addr)return;
-  var addr=walletState.addr, listEl=document.getElementById('tx-list'), countEl=document.getElementById('tx-count-label');
-  if(!listEl)return;
-  var OPWA_CONTRACTS=['opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp','opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6','opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv'];
-  if(_txCache[addr]){renderTxList(_txCache[addr]);return;}
-  listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
-  try{
-    var txs=[];
-    // 1. Converte opt1p... → tb1p... e consulta mempool.space/signet
-    var signetAddr = _opt1ToTb1p(addr);
-    if (signetAddr) {
+async function loadTxHistory() {
+  if (!walletState.addr) return;
+  var addr = walletState.addr;
+  var listEl = document.getElementById('tx-list');
+  var countEl = document.getElementById('tx-count-label');
+  if (!listEl) return;
+  if (_txCache[addr]) { renderTxList(_txCache[addr]); return; }
+  listEl.innerHTML = '<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
+  try {
+    var imp = await _opnetImport();
+    var JSONRpcProvider = imp.JSONRpcProvider;
+    var provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
+
+    // 1. Get user internal OPNet address (32-byte hex)
+    var internalAddr = await provider.getPublicKeyInfo(addr, false);
+    if (!internalAddr) throw new Error('Could not resolve wallet address');
+    var addrHex = internalAddr.replace('0x', '').toLowerCase();
+
+    // 2. Scan last 15 blocks for user transactions
+    var blockNum = await provider.getBlockNumber();
+    var userTxs = [];
+    var SCAN_BLOCKS = 15;
+    for (var i = 0; i < SCAN_BLOCKS; i++) {
       try {
-        var mr = await fetch('https://mempool.space/signet/api/address/' + signetAddr + '/txs',
-          {signal:AbortSignal.timeout(8000)});
-        if (mr.ok) { txs = await mr.json(); if (!Array.isArray(txs)) txs = []; }
-      } catch(_) {}
-    }
-    // 2. Fallback: mempool.opnet.org com o endereço opt1 original
-    if (!txs.length) {
-      try {
-        var mr2 = await fetch('https://mempool.opnet.org/api/address/' + addr + '/txs',
-          {signal:AbortSignal.timeout(7000)});
-        if (mr2.ok) { txs = await mr2.json(); if (!Array.isArray(txs)) txs = []; }
-      } catch(_) {}
-    }
-    var all=txs.slice(0,50).map(function(tx){
-      var hash=tx.txid||tx.hash||tx.tx_hash||'';
-      var sent=tx.vin&&tx.vin.some(function(v){return v.prevout&&v.prevout.scriptpubkey_address===addr;});
-      var isSent=tx.from&&tx.from===addr||sent;
-      var toC=false,cName='Transaction';
-      var toAddr=tx.to||'';
-      OPWA_CONTRACTS.forEach(function(c){
-        if((toAddr&&toAddr.includes(c.slice(0,12)))||(tx.vout&&tx.vout.some(function(o){return(o.scriptpubkey_address||'').includes(c.slice(0,12));}))){
-          toC=true;
-          if(c===OPWA_CONTRACTS[0])cName='Buy OPWAY';
-          else if(c===OPWA_CONTRACTS[1])cName='Mint NFT';
-          else if(c===OPWA_CONTRACTS[2])cName='Stake OPWAY';
+        var block = await provider.getBlock(BigInt(blockNum) - BigInt(i), true);
+        if (!block) continue;
+        var txs = block.transactions || [];
+        for (var j = 0; j < txs.length; j++) {
+          var tx = txs[j];
+          if (!tx.from) continue;
+          var fromHex = Array.from(tx.from).map(function(b) {
+            return b.toString(16).padStart(2, '0');
+          }).join('');
+          if (fromHex !== addrHex) continue;
+          var contractStr = tx.contractAddress
+            ? String.fromCharCode.apply(null, Array.from(tx.contractAddress))
+            : '';
+          var label = 'Transaction';
+          if (contractStr.includes(CONTRACTS.opwayYield.slice(0, 12))) label = 'OPWAY';
+          else if (contractStr.includes(CONTRACTS.propertyNft.slice(0, 12))) label = 'PropertyNFT';
+          else if (contractStr.includes(CONTRACTS.opwaCoin.slice(0, 12))) label = 'OPWACoin';
+          else if (YIELD_VAULT_ADDR && contractStr.includes(YIELD_VAULT_ADDR.slice(0, 12))) label = 'YieldVault';
+          else if (PROPERTY_VAULT_ADDR && contractStr.includes(PROPERTY_VAULT_ADDR.slice(0, 12))) label = 'PropertyVault';
+          var txHash = typeof tx.id === 'string' ? tx.id
+            : (tx.hash ? Array.from(tx.hash).map(function(b){return b.toString(16).padStart(2,'0');}).join('') : '');
+          userTxs.push({
+            hash: txHash,
+            action: label,
+            value: '—',
+            time: null,
+            blockNumber: String(tx.blockNumber || (blockNum - i)),
+            status: 'Confirmed',
+            isOpwa: true
+          });
         }
-      });
-      var method=tx.method||tx.function_name||tx.action||'';
-      if(method.toLowerCase().includes('mint'))cName='Mint';
-      var vOut=0; if(tx.vout)tx.vout.forEach(function(o){vOut+=(o.value||0);});
-      var val=tx.value||tx.amount||(vOut/1e8).toFixed(6);
-      var btcVal=typeof val==='number'?(val/1e8).toFixed(6)+' BTC':val+' BTC';
-      var ts=tx.timestamp?new Date(tx.timestamp*1000):tx.status&&tx.status.block_time?new Date(tx.status.block_time*1000):null;
-      var confirmed=tx.confirmed||tx.status&&tx.status.confirmed||false;
-      return{hash:hash,action:toC?cName:(isSent?'Send BTC':'Receive BTC'),value:btcVal,time:ts,status:confirmed?'Confirmed':'Pending',isOpwa:toC,method:method};
-    });
-    all.sort(function(a,b){if(!a.time)return -1;if(!b.time)return 1;return b.time-a.time;});
-    _txCache[addr]=all; _txAllData=all; _txPage=0; renderTxList(all);
-  }catch(e){if(listEl)listEl.innerHTML='<div style="padding:24px;text-align:center;font-size:12px;color:var(--text-3)">Could not load transactions. <a href="https://opscan.org/accounts/'+addr+'?network=op_testnet" target="_blank" style="color:var(--accent)">View on OPScan ↗</a></div>';}
+      } catch(_) {}
+    }
+    _txCache[addr] = userTxs;
+    _txAllData = userTxs;
+    _txPage = 0;
+    renderTxList(userTxs);
+  } catch(e) {
+    if (listEl) listEl.innerHTML = '<div style="padding:24px;text-align:center;font-size:12px;color:var(--text-3)">Could not load transactions. <a href="https://opscan.org/accounts/' + addr + '?network=op_testnet" target="_blank" style="color:var(--accent)">View on OPScan ↗</a></div>';
+  }
 }
 function renderTxList(txs){
   _txAllData = txs;
@@ -4237,23 +4286,36 @@ function vaultUpdateEarn() {
 
 function vaultUpdateCountdown() {
   var dep = vaultGetDeposit();
-  if (!dep) return;
-  var remaining = Math.max(0, dep.depositBlock + 420 - vaultCurrentBlock);
-  var hue = Math.round((1 - remaining / 420) * 120);
-  var color = 'hsl(' + hue + ',100%,' + (hue < 60 ? '50%' : '55%') + ')';
   var numEl = document.getElementById('vault-blocks-remaining');
   var fillEl = document.getElementById('vault-timelock-fill');
   var wBtn = document.getElementById('vault-withdraw-btn');
+  var hintEl = document.getElementById('vault-timelock-hint');
+  if (!dep) {
+    // No deposit yet — show 420 in red as a reference
+    if (numEl) { numEl.textContent = '420'; numEl.style.color = '#ef4444'; }
+    if (fillEl) fillEl.style.width = '0%';
+    if (hintEl) hintEl.textContent = 'Deposit OPWAY to start the 420-block countdown';
+    return;
+  }
+  var remaining = Math.max(0, dep.depositBlock + 420 - vaultCurrentBlock);
+  // Color: red (0 blocks elapsed) → yellow (halfway) → green (unlocked)
+  var progress = 1 - remaining / 420; // 0=start, 1=done
+  var hue = Math.round(progress * 120); // 0=red, 60=yellow, 120=green
+  var lightness = hue < 60 ? '50%' : '55%';
+  var color = 'hsl(' + hue + ',95%,' + lightness + ')';
   if (numEl) { numEl.textContent = remaining.toLocaleString(); numEl.style.color = color; }
-  var pct = Math.round(((420 - remaining) / 420) * 100);
+  var pct = Math.round(progress * 100);
   if (fillEl) fillEl.style.width = pct + '%';
+  if (hintEl) hintEl.textContent = remaining > 0
+    ? remaining + ' blocks remaining · ~' + Math.round(remaining * 10 / 60) + ' min at 10s/block'
+    : '✅ Timelock complete — ready to withdraw';
   if (wBtn) {
     if (remaining === 0) {
       wBtn.classList.remove('locked'); wBtn.classList.add('unlocked');
       wBtn.disabled = false; wBtn.textContent = '✅ Withdraw OPWAY — Unlocked';
     } else {
       wBtn.classList.add('locked'); wBtn.classList.remove('unlocked');
-      wBtn.disabled = true; wBtn.textContent = '🔒 Withdraw OPWAY — ' + remaining + ' blocks remaining';
+      wBtn.disabled = true; wBtn.textContent = '🔒 Withdraw OPWAY — ' + remaining.toLocaleString() + ' blocks remaining';
     }
   }
 }
@@ -4608,6 +4670,30 @@ function vaultMarkDashboardAssets() {
     }
   });
 }
+
+
+/* ── SCROLL INTELLIGENCE ── */
+(function() {
+  var nav = document.getElementById('navbar');
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        if (nav) nav.classList.toggle('scrolled', window.scrollY > 60);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, {passive:true});
+  // Section reveal on entry
+  var revealEls = document.querySelectorAll('.step-card,.card-asset,.vault-card,.dash-token-card');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, {threshold:0.12});
+    revealEls.forEach(function(el) { el.classList.add('reveal'); io.observe(el); });
+  }
+})();
 
 </script>
 </body>
