@@ -132,7 +132,7 @@
 /* ── BASE ── */
 html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px}
 *{cursor:none!important}
-body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden}
+body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden;display:flex;flex-direction:column}
 a{text-decoration:none;color:inherit}
 button{cursor:none!important;font-family:inherit}
 /* tactile press feedback */
@@ -956,13 +956,13 @@ button:focus-visible,a:focus-visible{
 }
 .live-bar-inner{display:flex;align-items:center;gap:24px;white-space:nowrap;animation:livebarScroll 40s linear infinite;padding:0 16px}
 @keyframes livebarScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text-3);flex-shrink:0}
+.lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.55);flex-shrink:0}
 .lb-item .lb-led{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);flex-shrink:0}
-.lb-label{color:var(--text-3)}
-.lb-val{color:var(--text-2)}
-.lb-acc{color:var(--accent);font-weight:500}
-.lb-addr{color:var(--accent-hover)}
-.lb-sep{color:var(--text-4)}
+.lb-label{color:rgba(255,255,255,.45)}
+.lb-val{color:rgba(255,255,255,.65)}
+.lb-acc{color:#f97316;font-weight:500}
+.lb-addr{color:#fb923c}
+.lb-sep{color:rgba(255,255,255,.2)}
 
 /* =====================================================================
    FOOTER
@@ -1180,15 +1180,16 @@ footer{
    VAULT PAGE
    ===================================================================== */
 .vault-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
-.vault-page.active{display:flex!important;flex-direction:column}
+.vault-page.active{display:flex!important;flex-direction:column;flex:1}
 .vault-page > .vault-wrap{flex:1}
 .vault-wrap{max-width:960px;margin:0 auto}
 .vault-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;align-items:stretch}
 @media(max-width:700px){.vault-grid{grid-template-columns:1fr}}
 .vault-card .vault-btn-primary{margin-top:auto}
 .vault-card .vault-btn-withdraw{margin-top:12px}
+.vault-card .vault-btn-secondary{margin-top:8px}
 /* vault-card itself as flex column so actions align */
-.vault-grid > div.vault-card{display:flex;flex-direction:column}
+.vault-grid > div.vault-card{display:flex;flex-direction:column;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px}
 .vault-card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text-1);margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .vault-card-sub{font-size:12px;color:var(--text-3);margin-bottom:20px}
 .vault-input-wrap{margin-bottom:14px}
@@ -1230,6 +1231,8 @@ footer{
 
 
 .dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
+.dash-page.active{display:flex!important;flex-direction:column;flex:1}
+#main-content{display:flex;flex-direction:column;flex:1}
 .dash-page.active{display:flex!important;flex-direction:column}
 .dash-page > .dash-wrap{flex:1}
 .dash-page.active{display:flex!important;flex-direction:column}
@@ -1247,9 +1250,9 @@ footer{
    LEGAL PAGES
    ===================================================================== */
 .legal-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
-.legal-page.active{display:flex!important;flex-direction:column}
+.legal-page.active{display:flex!important;flex-direction:column;flex:1}
 .legal-page > .legal-wrap{flex:1}
-.legal-page.active{display:flex!important;flex-direction:column;animation:pageFadeIn 280ms cubic-bezier(.4,0,.2,1) both}
+.legal-page.active{display:flex!important;flex-direction:column;flex:1;animation:pageFadeIn 280ms cubic-bezier(.4,0,.2,1) both}
 .legal-wrap{max-width:760px;margin:0 auto;padding:0 8px}
 .legal-sec{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--border)}
 .legal-sec h2{font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:10px;display:flex;align-items:center;gap:8px}
@@ -4006,7 +4009,8 @@ async function loadChartData() {
     // BTC balance in BTC units
     var btcBal = walletState.sats / 1e8;
     // OPWAY raw token count. Each token = 0.00001 BTC = 1,000 sats
-    var opwapTokens = Number(BigInt(dashOpwapBal||'0'));
+    // dashOpwapBal is raw with 8 decimals — divide by 1e8 to get human token count
+    var opwapTokens = Number(BigInt(dashOpwapBal||'0')) / 1e8;
 
     for (var i = days-1; i >= 0; i--) {
       var pd = new Date(); pd.setDate(pd.getDate()-i);
@@ -4021,6 +4025,7 @@ async function loadChartData() {
         : (pd.getMonth()+1)+'/'+pd.getDate());
       chartBtcPts.push({label:label, usd: btcBal * price});
       if (opwapTokens > 0) {
+        // 1 OPWAY = 1,000 sats = 0.00001 BTC
         chartOpwapPts.push({label:label, usd: opwapTokens * 0.00001 * price});
       }
     }
@@ -4317,22 +4322,40 @@ function toggleDesc(btn) {
   btn.childNodes[btn.childNodes.length-1].textContent = isOpen ? ' Show less' : ' Read more';
 }
 
+function _removeExpanderRow() {
+  var old = document.querySelector('.grid-row-expander');
+  if (old) {
+    old.querySelectorAll('.invest-panel').forEach(function(p) {
+      // Reset inline styles set during expansion
+      p.style.display = '';
+      p.style.marginTop = '';
+      p.style.paddingTop = '';
+      p.style.borderTop = '';
+      var origCard = document.querySelector('[data-panel-id="'+p.id+'"]');
+      if (origCard) {
+        origCard.classList.remove('invest-open');
+        origCard.appendChild(p);
+      }
+    });
+    old.remove();
+  }
+}
+
 function toggleInvest(id, btn) {
   const panel = document.getElementById(id);
   const wasOpen = panel.classList.contains('open');
 
-  // Close ALL open panels and remove invest-open from all cards
+  // Close all open panels first
   document.querySelectorAll('.invest-panel.open').forEach(function(p) {
     p.classList.remove('open');
-    var card = p.closest('.card-asset');
+    var card = p.closest('.card-asset') || p.closest('.asset-card') || document.querySelector('[data-panel-id="'+p.id+'"]');
     if (card) card.classList.remove('invest-open');
-    var sibBtn = card && card.querySelector('.btn-invest, .btn-waitlist');
-    if (sibBtn && p.id !== id) {
+    var sibBtn = (p.id === id) ? btn : (card && card.querySelector('.btn-invest, .btn-waitlist'));
+    if (sibBtn) {
       var isWait = p.id === 'p-gamma' || p.id === 'p-sakura';
       sibBtn.innerHTML = isWait
         ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`
         : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
-      // reset fields
       var assetId = p.id.replace('p-','');
       var rEl = document.getElementById(assetId+'-receipt');
       var bEl = document.getElementById(assetId+'-btc');
@@ -4342,11 +4365,33 @@ function toggleInvest(id, btn) {
       if (tEl) tEl.value='';
     }
   });
+  _removeExpanderRow();
 
   if (!wasOpen) {
+    var card = panel.closest('.card-asset') || panel.closest('.asset-card');
+    if (!card) return;
+
+    // Mark card with data attribute so we can find it later
+    card.setAttribute('data-panel-id', id);
+    panel.setAttribute('data-panel-id', id);
+
+    // Create a full-width row expander AFTER the card in the grid
+    var expander = document.createElement('div');
+    expander.className = 'grid-row-expander';
+    expander.style.cssText = 'grid-column:1/-1;background:var(--bg-card);border:1px solid var(--accent-border);border-radius:14px;padding:20px;animation:slideDown .22s cubic-bezier(.4,0,.2,1);';
+
+    // Move the panel into the expander
+    expander.appendChild(panel);
     panel.classList.add('open');
-    var card = panel.closest('.card-asset');
-    if (card) card.classList.add('invest-open');
+    panel.style.display = 'block';
+    panel.style.marginTop = '0';
+    panel.style.paddingTop = '0';
+    panel.style.borderTop = 'none';
+
+    // Insert expander after the card in the grid
+    card.parentNode.insertBefore(expander, card.nextSibling);
+    card.classList.add('invest-open');
+
     if (btn) btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
     setTimeout(function() {
       var asset = id.replace('p-','');
@@ -4971,7 +5016,7 @@ async function vaultLoadVaultedAssets() {
       '</div>' +
       '<div style="font-size:11px;color:var(--text-3);margin-bottom:4px">' + minted.toLocaleString() + ' / ' + p.maxOpway.toLocaleString() + ' minted · ' + pct + '% funded</div>' +
       '<div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:16px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;transition:width .5s"></div></div>' +
-      '<button class="btn-invest" ' + (fullyFunded ? 'disabled style="opacity:.5;cursor:not-allowed"' : 'onclick="toggleInvest(\'vault-' + p.tokenId + '\')"') + '>' +
+      '<button class="btn-invest" ' + (fullyFunded ? 'disabled style="opacity:.5;cursor:not-allowed"' : 'onclick="toggleInvest(\'invest-panel-vault-' + p.tokenId + '\',this)"') + '>' +
         (fullyFunded ? '✅ Fully Funded' : '+ Invest Now') +
       '</button>' +
       '<div id="invest-panel-vault-' + p.tokenId + '" class="invest-panel" style="display:none;margin-top:14px">' +
