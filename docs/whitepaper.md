@@ -100,32 +100,32 @@ Being Bitcoin-native is a strategic moat. Bitcoin holders represent the largest 
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                    USER LAYER                        │
-│     OPWallet / UniSat / XVerse / OKX Extension       │
+│                    USER LAYER                       │
+│     OPWallet / UniSat / XVerse / OKX Extension      │
 └──────────────────────┬──────────────────────────────┘
                        │  BTC Transaction (native L1)
 ┌──────────────────────▼──────────────────────────────┐
-│                  FRONTEND LAYER                      │
-│         Single-Page App — HTML/CSS/JS                │
-│         https://opwa-protocol.vercel.app             │
+│                  FRONTEND LAYER                     │
+│         Single-Page App — HTML/CSS/JS               │
+│         https://opwa-protocol.vercel.app            │
 └──────────────────────┬──────────────────────────────┘
                        │  OP_NET SDK / JSON-RPC
 ┌──────────────────────▼──────────────────────────────┐
-│               OP_NET LAYER (Bitcoin L1)              │
+│               OP_NET LAYER (Bitcoin L1)             │
 │  ┌──────────┐ ┌────────────┐ ┌──────────────────┐   │
 │  │ OPWAY    │ │ PropertyNFT│ │ YieldVault +     │   │
 │  │ (OP-20)  │ │  (OP-721)  │ │ USDOP (OP-20)    │   │
 │  └──────────┘ └────────────┘ └──────────────────┘   │
-│  ┌──────────────────────────────────────────────┐    │
-│  │  PropertyVault — NFT locking + fractionalize │    │
-│  └──────────────────────────────────────────────┘    │
-│         WASM Contracts (AssemblyScript → OP-VM)      │
+│  ┌──────────────────────────────────────────────┐   │
+│  │  PropertyVault — NFT locking + fractionalize │   │
+│  └──────────────────────────────────────────────┘   │
+│         WASM Contracts (AssemblyScript → OP-VM)     │
 └──────────────────────┬──────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────┐
-│                 BITCOIN LAYER 1                      │
-│        Settlement Layer — ~$1.9T Market Cap          │
-│          Taproot + Tapscript + Native UTXO           │
+│                 BITCOIN LAYER 1                     │
+│        Settlement Layer — ~$1.9T Market Cap         │
+│          Taproot + Tapscript + Native UTXO          │
 └─────────────────────────────────────────────────────┘
 ```
 
