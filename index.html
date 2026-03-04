@@ -1592,10 +1592,11 @@ footer{
 .pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 35s linear infinite;will-change:transform;padding:8px 0}
 .pcard-track:hover{animation-play-state:paused}
 @keyframes pcardScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:default}
+.pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;min-width:130px;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;color:inherit}
 .pcard:hover{border-color:var(--accent-border);transform:translateY(-3px);box-shadow:0 8px 24px rgba(249,115,22,.15)}
 [data-theme="light"] .pcard{background:#fff;border-color:rgba(124,58,237,.12)}
 .pcard-ico{font-size:22px;line-height:1}
+.pcard-logo{width:32px;height:32px;object-fit:contain;border-radius:6px;display:block}
 .pcard-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text-1);letter-spacing:.02em;text-align:center}
 .pcard-sub{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;text-align:center}
 
@@ -2359,22 +2360,22 @@ body{overflow-x:hidden}
   </div>
   <div class="pcard-track-wrap">
     <div class="pcard-track">
-      <div class="pcard"><div class="pcard-ico">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></div>
-      <div class="pcard"><div class="pcard-ico">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></div>
-      <div class="pcard"><div class="pcard-ico">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></div>
-      <div class="pcard"><div class="pcard-ico">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></div>
-      <div class="pcard"><div class="pcard-ico">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></div>
-      <div class="pcard"><div class="pcard-ico">🔄</div><div class="pcard-name">MotoSwap</div><div class="pcard-sub">DEX Protocol</div></div>
-      <div class="pcard"><div class="pcard-ico">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></div>
-      <div class="pcard"><div class="pcard-ico">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></div>
-      <div class="pcard"><div class="pcard-ico">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></div>
-      <div class="pcard"><div class="pcard-ico">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></div>
-      <div class="pcard"><div class="pcard-ico">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></div>
-      <div class="pcard"><div class="pcard-ico">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></div>
-      <div class="pcard"><div class="pcard-ico">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></div>
-      <div class="pcard"><div class="pcard-ico">🔄</div><div class="pcard-name">MotoSwap</div><div class="pcard-sub">DEX Protocol</div></div>
-      <div class="pcard"><div class="pcard-ico">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></div>
-      <div class="pcard"><div class="pcard-ico">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></div>
+      <a href="https://opnet.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opnet.org/favicon.ico" alt="OP_NET" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></a>
+      <a href="https://mempool.opnet.org/testnet4" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://mempool.space/resources/mempool-space-logo.png" alt="Testnet4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></a>
+      <a href="https://opscan.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opscan.org/favicon.ico" alt="OPScan" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></a>
+      <a href="https://vibecode.finance" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://vibecode.finance/favicon.ico" alt="Vibecode" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></a>
+      <a href="https://defibible.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://defibible.org/favicon.ico" alt="DeFi Bible" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></a>
+      <a href="https://motoswap.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://motoswap.org/favicon.ico" alt="MotoSwap" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔄</div><div class="pcard-name">MotoSwap</div><div class="pcard-sub">DEX Protocol</div></a>
+      <a href="https://x.com/orangepillonbtc" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://pbs.twimg.com/profile_images/1851446852801490944/2-R3GWKK_200x200.jpg" alt="$PILL" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></a>
+      <a href="https://mempool.opnet.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://mempool.space/resources/mempool-space-logo.png" alt="Mempool" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></a>
+      <a href="https://opnet.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opnet.org/favicon.ico" alt="OP_NET" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></a>
+      <a href="https://mempool.opnet.org/testnet4" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://mempool.space/resources/mempool-space-logo.png" alt="Testnet4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></a>
+      <a href="https://opscan.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opscan.org/favicon.ico" alt="OPScan" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></a>
+      <a href="https://vibecode.finance" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://vibecode.finance/favicon.ico" alt="Vibecode" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></a>
+      <a href="https://defibible.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://defibible.org/favicon.ico" alt="DeFi Bible" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></a>
+      <a href="https://motoswap.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://motoswap.org/favicon.ico" alt="MotoSwap" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔄</div><div class="pcard-name">MotoSwap</div><div class="pcard-sub">DEX Protocol</div></a>
+      <a href="https://x.com/orangepillonbtc" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://pbs.twimg.com/profile_images/1851446852801490944/2-R3GWKK_200x200.jpg" alt="$PILL" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></a>
+      <a href="https://mempool.opnet.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://mempool.space/resources/mempool-space-logo.png" alt="Mempool" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></a>
     </div>
   </div>
 </section>
@@ -2688,6 +2689,19 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 <div id="page-vault" class="vault-page">
   <div style="flex:1 0 auto;padding-bottom:60px">
   <div class="vault-wrap">
+
+    <!-- Wallet not connected — lock screen -->
+    <div id="vault-lock-screen" style="display:none;align-items:center;justify-content:center;min-height:60vh">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:56px 48px;text-align:center;max-width:420px;width:100%">
+        <div style="font-size:48px;margin-bottom:20px">🔒</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-1);margin:0 0 12px">Connect Your Wallet</h2>
+        <p style="font-size:14px;color:var(--text-3);line-height:1.6;margin:0 0 28px">Connect your Bitcoin wallet to access the Vault, stake OPWAY, and earn USDOP yield on OP_NET.</p>
+        <button class="btn-connect" onclick="openWalletModal()" style="width:100%;justify-content:center">Connect Wallet →</button>
+      </div>
+    </div>
+
+    <!-- Vault content — shown when connected -->
+    <div id="vault-content-wrap">
     <div style="margin-bottom:32px">
       <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text-1);margin:0 0 8px">
         🔒 Vault
@@ -2825,7 +2839,8 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         </div>
       </div>
 
-    </div>
+    </div><!-- /vault-grid -->
+  </div><!-- /vault-content-wrap -->
   </div>
   </div><!-- /vault flex-grow -->
   <footer id="vault-footer" style="margin-top:auto"></footer>
@@ -3612,6 +3627,7 @@ function walletConnected(addr, sats, type, publicKey) {
   closeWallet();
   dashRender();
   dashFetch();
+  if (window.location.pathname === '/vault') { vaultInit(); }
 }
 
 function wdDisconnect() {
@@ -3681,7 +3697,7 @@ var CONTRACTS = {
 };
 /* ── Vault contract addresses — fill after deploy ── */
 var USDOP_ADDR          = 'opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu';
-var YIELD_VAULT_ADDR    = 'opt1sqrlvv7l5gdpfagzhgs80rzevyf60cn9t5qa0us8g';
+var YIELD_VAULT_ADDR    = 'opt1sqqna5kthnryd4e44q0urp4veg6y6xp5k65jgj9mv';
 var PROPERTY_VAULT_ADDR = 'opt1sqpqkdmpr6z84l4lw8nhxuj66q02t5ay2vqu4zc6z';
 var TREASURY_P2TR    = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
 var OPWA_SATS_PER_TOKEN = 1000n;
@@ -4589,6 +4605,15 @@ async function vaultFetchBlock() {
 }
 
 function vaultInit() {
+  var lockScreen = document.getElementById('vault-lock-screen');
+  var contentWrap = document.getElementById('vault-content-wrap');
+  if (!walletState.connected) {
+    if (lockScreen) { lockScreen.style.display = 'flex'; }
+    if (contentWrap) { contentWrap.style.display = 'none'; }
+    return;
+  }
+  if (lockScreen) { lockScreen.style.display = 'none'; }
+  if (contentWrap) { contentWrap.style.display = 'block'; }
   vaultFetchBlock();
   if (vaultBlockInterval) clearInterval(vaultBlockInterval);
   vaultBlockInterval = setInterval(vaultFetchBlock, 30000);
@@ -5186,6 +5211,7 @@ function vaultMarkDashboardAssets() {
 
   // ── Section-based nav active highlight (home page only) ──
   var sectionNavMap = {
+    'home':         'nav-home',
     'assets':       'nav-assets',
     'simulator':    'nav-simulator',
     'partners':     'nav-partners',
@@ -5200,17 +5226,12 @@ function vaultMarkDashboardAssets() {
         if (!navId) return;
         var el = document.getElementById(navId);
         if (e.isIntersecting) {
-          // Clear all section nav actives
           Object.values(sectionNavMap).forEach(function(id) {
             var n = document.getElementById(id);
             if (n) n.classList.remove('active');
           });
-          // Also remove home active when in a section
-          var homeEl = document.getElementById('nav-home');
-          if (homeEl) homeEl.classList.remove('active');
           if (el) el.classList.add('active');
         } else {
-          // If leaving all sections, re-activate home
           if (el) el.classList.remove('active');
           var anyActive = Object.values(sectionNavMap).some(function(id) {
             var n = document.getElementById(id);
@@ -5222,7 +5243,7 @@ function vaultMarkDashboardAssets() {
           }
         }
       });
-    }, {threshold:0.3, rootMargin:'-80px 0px -20% 0px'});
+    }, {threshold:0.15, rootMargin:'-80px 0px -30% 0px'});
     Object.keys(sectionNavMap).forEach(function(id) {
       var sec = document.getElementById(id);
       if (sec) sio.observe(sec);
