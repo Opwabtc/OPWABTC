@@ -2720,7 +2720,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           Yield Vault
         </div>
-        <div class="vault-card-sub">Earn USDOP stablecoin · 1 USDOP per 100 OPWAY per block · 420 block timelock</div>
+        <div class="vault-card-sub">Earn USDOP stablecoin · ~15% APY · estimated per 420-block cycle · 420 block timelock</div>
 
         <!-- Deposit form -->
         <div class="vault-input-wrap">
@@ -2728,7 +2728,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
           <input type="number" id="vault-deposit-amount" class="vault-input" min="1" placeholder="e.g. 1000" oninput="vaultUpdateEarn()"/>
         </div>
         <div class="vault-preview" id="vault-earn-preview">
-          You will earn <span id="vault-earn-rate">0.0000</span> USDOP/block
+          You will earn <span id="vault-earn-rate">0.0000</span> USDOP / 420-block cycle
         </div>
         <button class="vault-btn-primary" onclick="vaultDepositOPWAY()">
           ⚡ Deposit OPWAY
@@ -4625,7 +4625,7 @@ function vaultInit() {
 
 function vaultUpdateEarn() {
   var amt = parseFloat(document.getElementById('vault-deposit-amount').value) || 0;
-  var rate = (amt / 100).toFixed(4);
+  var rate = ((amt / 464602) * 420).toFixed(4);
   var el = document.getElementById('vault-earn-rate');
   if (el) el.textContent = rate;
 }
