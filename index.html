@@ -4815,79 +4815,44 @@ async function vaultDepositOPWAY() {
       };
     };
 
-    /* Step 1 — Optimistic stake: skip approve if allowance already sufficient */
-    var c = _fresh();
-    var sim0 = await c.vault.stake(amountBig);
-    var isAlErr = sim0.revert && sim0.revert.toLowerCase().includes('allowance');
-    if (!sim0.revert) {
-      showToast('Staking OPWAY… (sign in wallet)', 'info');
-      var rx0 = await sim0.sendTransaction({
-        signer: null, mldsaSigner: null, refundTo: walletState.addr,
-        network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
-      });
-      showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + rx0.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + rx0.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-      localStorage.setItem('vaultDeposit', JSON.stringify({ amount: amt, depositBlock: vaultCurrentBlock }));
-      vaultRenderPosition();
-      return;
-    }
-    if (!isAlErr) throw new Error(sim0.revert);
-
-    /* Step 2 — Compute deficit and increaseAllowance */
-    showToast('Checking current allowance…', 'info');
+    /* ── Step 1: Check on-chain allowance ──────────────────────────────── */
+    showToast('Checking allowance…', 'info');
     var curAllow = 0n;
     try {
+      var c = _fresh();
       var alRes = await c.opway.allowance(senderAddr, vaultAddrObj);
       if (!alRes.revert && alRes.properties && alRes.properties.remaining != null) {
         curAllow = BigInt(String(alRes.properties.remaining));
       }
     } catch(_) {}
-    var deficit = amountBig > curAllow ? amountBig - curAllow : 0n;
-    if (deficit > 0n) {
+
+    /* ── Step 2: Approve if needed (two-click pattern) ─────────────────── */
+    if (curAllow < amountBig) {
       showToast('Approving OPWAY spend… (sign in wallet)', 'info');
-      var appSim = await c.opway.increaseAllowance(vaultAddrObj, deficit);
-      if (appSim.revert) throw new Error(appSim.revert);
+      var cApp = _fresh();
+      var deficit = amountBig - curAllow;
+      var appSim = await cApp.opway.increaseAllowance(vaultAddrObj, deficit);
+      if (appSim.revert) throw new Error('Approval simulation failed: ' + appSim.revert);
       await appSim.sendTransaction({
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
         network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
       });
-    }
-
-    /* Step 3 — Block-number poll: wait until next block, then verify allowance.
-       Up to 3 block-waits × 11 min each (matches OPNet Signet block times). */
-    showToast('Waiting for approval to be mined…', 'info');
-    var blkBefore = -1;
-    try { blkBefore = await provider.getBlockNumber(); } catch(_) {}
-    var allowConfirmed = curAllow >= amountBig; // already sufficient if deficit was 0
-
-    for (var attempt = 0; attempt < 3 && !allowConfirmed; attempt++) {
-      for (var waited = 0; waited < 660_000 && !allowConfirmed; waited += 8000) {
-        await new Promise(function(r) { setTimeout(r, 8000); });
-        showToast('Waiting for block confirmation… (' + Math.round((waited + 8000) / 1000) + 's, attempt ' + (attempt + 1) + '/3)', 'info');
-        try {
-          var blkNow = await provider.getBlockNumber();
-          if (blkNow > blkBefore) {
-            var cChk = _fresh();
-            var chk = await cChk.opway.allowance(senderAddr, vaultAddrObj);
-            if (!chk.revert && chk.properties && chk.properties.remaining != null) {
-              if (BigInt(String(chk.properties.remaining)) >= amountBig) { allowConfirmed = true; break; }
-            }
-            blkBefore = blkNow; // move baseline forward for next outer attempt
-            break;              // block advanced but not confirmed yet — next attempt
-          }
-        } catch(_) {}
-      }
-    }
-
-    if (!allowConfirmed) {
-      showToast('Approval pending — please try again in a few seconds', 'info');
+      showToast('✅ Approval TX submitted! OPNet blocks take ~10 min — click <b>Stake</b> again after the next block confirms.', 'success', true);
       return;
     }
 
-    /* Step 4 — Stake with fresh chain read */
+    /* ── Step 3: Stake ─────────────────────────────────────────────────── */
     showToast('Staking OPWAY… (sign in wallet)', 'info');
-    var cStake = _fresh();
-    var stakeSim = await cStake.vault.stake(amountBig);
-    if (stakeSim.revert) throw new Error(stakeSim.revert);
+    var cS = _fresh();
+    var stakeSim = await cS.vault.stake(amountBig);
+    if (stakeSim.revert) {
+      if (stakeSim.revert.toLowerCase().includes('allowance')) {
+        showToast('Allowance not confirmed yet — wait for the next block (~10 min) then click Stake again.', 'info');
+      } else {
+        throw new Error(stakeSim.revert);
+      }
+      return;
+    }
     var stakeRx = await stakeSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
