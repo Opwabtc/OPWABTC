@@ -218,13 +218,15 @@ button:focus-visible,a:focus-visible{
 .navbar{
   position:fixed;top:12px;left:50%;transform:translateX(-50%);
   z-index:1000;
-  width:calc(100% - 48px);max-width:1200px;
-  height:58px;
+  width:calc(100% - 48px);max-width:1240px;
+  height:56px;
   background:rgba(10,10,10,.94);
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border:1px solid var(--border);border-radius:14px;
-  display:flex;align-items:center;
-  padding:0 16px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 18px;
   gap:0;
   transition:box-shadow .3s,border-color .3s;
   overflow:visible;
@@ -238,7 +240,7 @@ button:focus-visible,a:focus-visible{
 [data-theme="light"] .gas-pill{background:rgba(255,255,255,.35);border-color:rgba(109,40,217,.25);color:#3b0764;box-shadow:none}
 [data-theme="light"] .navbar.scrolled{box-shadow:0 8px 32px rgba(124,58,237,.22);border-color:rgba(124,58,237,.30)}
 
-.nb-left{display:flex;align-items:center;flex:0 0 auto}
+.nb-left{display:flex;align-items:center;justify-content:flex-start}
 .logo{display:flex;align-items:center;gap:7px;flex-shrink:0}
 .logo-mark{
   width:34px;height:34px;border-radius:9px;
@@ -250,11 +252,9 @@ button:focus-visible,a:focus-visible{
 .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--text-1);letter-spacing:.01em;line-height:1.15}
 .logo-sub{font-size:8.5px;color:var(--text-3);letter-spacing:.38em;text-transform:uppercase;margin-top:0px;line-height:1;text-align:center;width:100%}
 
-/* Nav links — centralizados, generosos, com ícone */
+/* Nav links — centro do grid de 3 colunas */
 .nav-links{
-  display:flex;align-items:center;gap:2px;
-  position:absolute;left:50%;transform:translateX(-50%);
-  padding:0 4px;
+  display:flex;align-items:center;justify-content:center;gap:2px;
   white-space:nowrap;
 }
 .nav-link{
@@ -301,7 +301,7 @@ button:focus-visible,a:focus-visible{
 .nav-dash-sep{display:none}
 
 
-.nb-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nb-right{display:flex;align-items:center;justify-content:flex-end;gap:8px}
 .gas-pill{
   display:flex;align-items:center;gap:6px;padding:5px 10px;
   background:rgba(255,255,255,.04);border:1px solid var(--border);
@@ -1578,9 +1578,9 @@ footer{
 .pcard-track-wrap::before,.pcard-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
 .pcard-track-wrap::before{left:0;background:linear-gradient(to right,var(--bg-base),transparent)}
 .pcard-track-wrap::after{right:0;background:linear-gradient(to left,var(--bg-base),transparent)}
-.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 40s linear infinite;will-change:transform;padding:8px 16px}
+.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 35s linear infinite;will-change:transform;padding:8px 0}
 .pcard-track:hover{animation-play-state:paused}
-@keyframes pcardScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes pcardScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:default}
 .pcard:hover{border-color:var(--accent-border);transform:translateY(-3px);box-shadow:0 8px 24px rgba(249,115,22,.15)}
 [data-theme="light"] .pcard{background:#fff;border-color:rgba(124,58,237,.12)}
@@ -1619,7 +1619,21 @@ body{overflow-x:hidden}
 .toast a{pointer-events:all!important}
 
 /* ── SUB-PAGE FOOTER FIX ── */
-.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface)!important;border-top:1px solid var(--border)!important;margin-top:auto!important;display:block!important;padding:0!important}
+.vault-page footer,.legal-page footer,#page-dashboard footer{
+  width:100%!important;
+  border-top:1px solid var(--border)!important;
+  padding:64px 80px 36px!important;
+  background:#1a1a1a!important;
+  margin-top:auto!important;
+  display:block!important;
+  box-sizing:border-box!important;
+}
+[data-theme="light"] .vault-page footer,
+[data-theme="light"] .legal-page footer,
+[data-theme="light"] #page-dashboard footer{
+  border-top-color:rgba(124,58,237,.13)!important;
+  background:rgba(196,181,253,.45)!important;
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -2764,6 +2778,9 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
             </span>
             <img id="pvault-photo-preview" style="display:none;width:100%;height:140px;object-fit:cover;border-radius:8px" alt="Property preview"/>
           </label>
+          <button id="pvault-photo-clear" onclick="pvaultPhotoClear()" style="display:none;margin-top:6px;padding:5px 12px;border-radius:7px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;font-size:11px;font-weight:600;cursor:pointer;width:100%">
+            ✕ Remove Photo
+          </button>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="vault-input-wrap">
@@ -2778,7 +2795,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div class="vault-preview" id="pvault-max-preview">
           Max OPWAY mintable: <span id="pvault-max-opway">—</span>
         </div>
-        <button class="vault-btn-primary" onclick="pvaultListProperty()">
+        <button class="vault-btn-primary" onclick="pvaultListProperty()" style="background:linear-gradient(135deg,#16a34a,#15803d);box-shadow:0 4px 16px rgba(22,163,74,.3)">
           🏛 List Property in Vault
         </button>
 
@@ -2934,13 +2951,13 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
           <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.9)">Transaction History</div>
           <div style="font-size:10px;color:rgba(255,255,255,.6);font-family:'DM Mono',monospace" id="tx-count-label"></div>
         </div>
-        <div style="display:grid;grid-template-columns:110px 1fr 60px 80px 110px 72px;padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.1)">
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6)">Hash</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6)">Action</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Value</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Block</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Time</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Status</span>
+        <div style="display:grid;grid-template-columns:30px 1fr auto auto auto auto;align-items:center;gap:0;padding:8px 20px;border-bottom:1px solid rgba(255,255,255,.08)">
+          <span></span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4)">Tx Hash / Method</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:0 18px;text-align:right">Value</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:0 18px;text-align:right">Block</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:0 18px;text-align:right;min-width:110px">Age</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4);text-align:right">Status</span>
         </div>
         <div id="tx-list"><div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div></div>
       </div>
@@ -3205,16 +3222,53 @@ function toggleTheme() {
   if(chartBtcPts.length) setTimeout(drawPortfolioChart, 50);
 }
 
-/* ── CLONE FOOTER INTO ALL PAGES ── */
-function cloneFooterToPages() {
-  var mainFooter = document.querySelector('#main-content > footer');
-  if (!mainFooter) return;
+/* ── SUBPAGE FOOTERS — HTML direto, idêntico ao home ── */
+(function injectSubFooters(){
+  var FH = '<div class="footer-grid">'
+    +'<div>'
+      +'<div class="ft-logo-row"><div class="logo-mark">OP</div><div><div class="logo-text">OPWA</div><div class="logo-sub">Protocol</div></div></div>'
+      +'<p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>'
+      +'<div class="ft-social">'
+        +'<a href="https://x.com/" class="soc-btn" title="X / Twitter"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>'
+        +'<a href="https://github.com/Opwabtc/OPWABTC" class="soc-btn soc-btn-github" target="_blank" title="GitHub"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></a>'
+      +'</div>'
+    +'</div>'
+    +'<div>'
+      +'<div class="ft-col-title">Platform</div>'
+      +'<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Assets</a>'
+      +'<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg> Simulator</a>'
+      +'<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> How It Works</a>'
+      +'<a href="/dashboard" onclick="navigate(\'/dashboard\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</a>'
+    +'</div>'
+    +'<div>'
+      +'<div class="ft-col-title">Build &amp; Tools</div>'
+      +'<a href="https://dev.opnet.org/" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Build on OP_NET \u2197</a>'
+      +'<a href="https://faucet.opnet.org/" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg> Testnet Faucet \u2197</a>'
+      +'<a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg> Get OP_Wallet \u2197</a>'
+      +'<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> OPScan Explorer \u2197</a>'
+      +'<a href="https://mempool.opnet.org/pt/testnet4" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Mempool Testnet \u2197</a>'
+    +'</div>'
+    +'<div>'
+      +'<div class="ft-col-title">Resources</div>'
+      +'<a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link ft-whitepaper" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Whitepaper \u2197</a>'
+      +'<a href="https://defibible.org/" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg> DeFi Bible \u2197</a>'
+      +'<a href="https://vibecode.finance/ecosystem" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg> Vibecode Ecosystem \u2197</a>'
+      +'<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My OPScan Profile \u2197</a>'
+      +'<hr style="border:none;border-top:1px solid var(--border);margin:11px 0"/>'
+      +'<a href="https://faucet.opnet.org/" class="ft-link ft-faucet" target="_blank">Get Testnet BTC \u2192</a>'
+    +'</div>'
+  +'</div>'
+  +'<hr class="ft-sep"/>'
+  +'<div class="ft-bottom">'
+    +'<div class="ft-copy">\u00a9 2026 OPWA Protocol. All rights reserved.<span style="margin-left:18px;font-size:10px;opacity:.7">Site made by <a href="https://x.com/HashBalls23" target="_blank" rel="noopener" style="color:#d4af37;font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.04em;text-shadow:0 0 12px rgba(212,175,55,.4)">Hash</a></span></div>'
+    +'<div class="ft-net-badge"><span style="width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);display:inline-block;animation:blink 2s infinite"></span> OP_NET Testnet</div>'
+    +'<div class="ft-legal"><a href="/terms" onclick="navigate(\'/terms\');return false;">Terms</a><a href="/privacy" onclick="navigate(\'/privacy\');return false;">Privacy</a></div>'
+  +'</div>';
   ['vault-footer','dash-footer','terms-footer','privacy-footer'].forEach(function(id){
     var el = document.getElementById(id);
-    if (el) { el.innerHTML = mainFooter.innerHTML; el.className = mainFooter.className; }
+    if (el) el.innerHTML = FH;
   });
-}
-setTimeout(cloneFooterToPages, 300);
+})();
 
 /* ── NAVBAR SCROLL ── */
 window.addEventListener('scroll', () => {
@@ -4166,81 +4220,70 @@ function renderTxList(txs){
 
   if(countEl) countEl.innerHTML =
     '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
-    '<span style="color:rgba(255,255,255,.65);font-size:11px">' + total + ' txs</span>' +
-    '<span style="color:rgba(255,255,255,.25)">|</span>' +
+    '<span style="color:rgba(255,255,255,.65);font-size:11px;font-family:monospace">' + total + ' transactions</span>' +
+    '<span style="color:rgba(255,255,255,.2)">|</span>' +
     [10,50,100].map(function(n){
-      return '<button class="tx-ppbtn" data-n="'+n+'" onclick="_txSetPer('+n+')" style="padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.2);font-size:10px;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;font-family:monospace;background:'+(n===_txPerPage?'rgba(255,255,255,.25)':'transparent')+'">'+n+'</button>';
+      return '<button class="tx-ppbtn" data-n="'+n+'" onclick="_txSetPer('+n+')" style="width:32px;height:22px;border-radius:5px;border:1px solid rgba(255,255,255,.18);font-size:10px;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;font-family:monospace;background:'+(n===_txPerPage?'rgba(255,255,255,.2)':'transparent')+'">'+n+'</button>';
     }).join('') + '</div>';
 
   if(!listEl) return;
   if(!total){
-    listEl.innerHTML='<div style="padding:26px 22px;text-align:center;font-size:13px;color:rgba(255,255,255,.7)">No transactions found for this wallet.</div>';
+    listEl.innerHTML='<div style="padding:32px;text-align:center;font-size:13px;color:rgba(255,255,255,.45)">No transactions found. <a href="https://opscan.org/accounts/'+((window.walletState&&window.walletState.addr)||'')+'?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:none">View on OPScan ↗</a></div>';
     return;
   }
+
   listEl.innerHTML = page.map(function(tx){
-    var sh = tx.hash ? tx.hash.slice(0,8)+'…'+tx.hash.slice(-6) : '—';
-    var ts = tx.time ? tx.time.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    // Hash
+    var sh = tx.hash ? tx.hash.slice(0,10)+'...'+tx.hash.slice(-8) : '—';
     var href = tx.hash ? 'https://opscan.org/transactions/'+tx.hash+'?network=op_testnet' : '#';
-    var ac = tx.action==='Buy OPWAY'?'#f97316':tx.action==='Mint NFT'?'#a78bfa':tx.action==='Receive BTC'?'#4ade80':'rgba(255,255,255,.8)';
+    // Block — convert hex to decimal if needed
+    var rawBlock = tx.blockNumber || '—';
+    var blockDec = rawBlock;
+    if (typeof rawBlock === 'string' && rawBlock.startsWith('0x')) {
+      blockDec = parseInt(rawBlock, 16).toString();
+    }
+    // Time
+    var ts = tx.time ? tx.time.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    // Method badge color
+    var methodColors = {
+      'OPWAY':'rgba(167,139,250,.15)','PropertyNFT':'rgba(249,115,22,.12)',
+      'YieldVault':'rgba(34,197,94,.12)','USDOP':'rgba(251,191,36,.12)',
+      'Deploy':'rgba(96,165,250,.12)','Contract Call':'rgba(255,255,255,.07)'
+    };
+    var mBg = methodColors[tx.action] || 'rgba(255,255,255,.07)';
+    var mColor = tx.action==='OPWAY'?'#a78bfa':tx.action==='PropertyNFT'?'#f97316':tx.action==='YieldVault'?'#4ade80':tx.action==='USDOP'?'#fbbf24':tx.action==='Deploy'?'#60a5fa':'rgba(255,255,255,.7)';
     var sc = tx.status==='Confirmed'?'#4ade80':'#fbbf24';
-    var dot = tx.isOpwa?'#7c3aed':'#f97316';
-    var blockNum = tx.blockNumber || '—';
-    return '<div style="display:grid;grid-template-columns:110px 1fr 60px 80px 110px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.1);transition:background .15s">'
-      +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11px;color:#f97316;text-decoration:none;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+sh+'</a>'
-      +'<span style="font-size:12px;font-weight:600;color:'+ac+';display:flex;align-items:center">'+tx.action+'</span>'
-      +'<span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.85);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.value+'</span>'
-      +'<span style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.55);text-align:right;display:flex;align-items:center;justify-content:flex-end">#'+blockNum+'</span>'
-      +'<span style="font-size:10px;color:rgba(255,255,255,.65);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+ts+'</span>'
-      +'<span style="font-size:10px;font-weight:700;color:'+sc+';text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.status+'</span>'
-      +'</div>';
+    var dotColor = tx.isOpwa?'#7c3aed':'#f97316';
+
+    return '<div style="display:grid;grid-template-columns:auto 1fr auto auto auto auto;align-items:center;gap:0;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.06);transition:background .12s;cursor:default" onmouseover="this.style.background=\'rgba(255,255,255,.03)\'" onmouseout="this.style.background=\'transparent\'">'
+      // Status dot
+      +'<div style="margin-right:10px"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25)"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>'
+      // Hash + method
+      +'<div style="min-width:0">'
+        +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11.5px;color:#f97316;text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">'+sh+'</a>'
+        +'<span style="display:inline-block;margin-top:3px;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:'+mBg+';color:'+mColor+'">'+tx.action+'</span>'
+      +'</div>'
+      // Value
+      +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.5)">'+tx.value+'</span></div>'
+      // Block
+      +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.45)">#'+blockDec+'</span></div>'
+      // Time
+      +'<div style="padding:0 18px;text-align:right;min-width:110px"><span style="font-size:11px;color:rgba(255,255,255,.45)">'+ts+'</span></div>'
+      // Status badge
+      +'<div style="text-align:right"><span style="display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.04em;background:rgba(34,197,94,.1);color:'+sc+';border:1px solid rgba(34,197,94,.2)">'+tx.status+'</span></div>'
+    +'</div>';
   }).join('');
 
   if(total > _txPerPage){
-    listEl.innerHTML += '<div style="display:flex;justify-content:center;align-items:center;gap:12px;padding:12px 22px;border-top:1px solid rgba(255,255,255,.1)">'
-      +'<button onclick="_txGoPage(-1)" style="padding:5px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font-size:12px;font-weight:700;cursor:pointer;opacity:'+(start===0?'.35':'1')+'" '+(start===0?'disabled':'')+'>← Prev</button>'
-      +'<span style="font-size:11px;color:rgba(255,255,255,.6);font-family:monospace">'+(start+1)+'-'+end+' / '+total+'</span>'
-      +'<button onclick="_txGoPage(1)" style="padding:5px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font-size:12px;font-weight:700;cursor:pointer;opacity:'+(_txPage>=maxPage?'.35':'1')+'" '+(_txPage>=maxPage?'disabled':'')+'>Next →</button>'
-      +'</div>';
+    listEl.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-top:1px solid rgba(255,255,255,.06)">'
+      +'<span style="font-size:11px;color:rgba(255,255,255,.4);font-family:monospace">Showing '+(start+1)+'–'+end+' of '+total+'</span>'
+      +'<div style="display:flex;gap:6px">'
+      +'<button onclick="_txGoPage(-1)" style="padding:5px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);font-size:12px;font-weight:600;cursor:pointer;opacity:'+(start===0?'.3':'1')+'" '+(start===0?'disabled':'')+'>← Prev</button>'
+      +'<button onclick="_txGoPage(1)" style="padding:5px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);font-size:12px;font-weight:600;cursor:pointer;opacity:'+(_txPage>=maxPage?'.3':'1')+'" '+(_txPage>=maxPage?'disabled':'')+'>Next →</button>'
+      +'</div>'
+    +'</div>';
   }
 }
-
-/* ── SUBPAGE FOOTERS — same as home ── */
-(function(){
-  var fc='<div class="footer-grid">'+
-    '<div><div class="ft-logo-row"><div class="logo-mark">OP</div><div><div class="logo-text">OPWA</div><div class="logo-sub">Protocol</div></div></div>'+
-    '<p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>'+
-    '<div class="ft-social">'+
-    '<a href="https://x.com/" class="soc-btn" title="X / Twitter"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>'+
-    '<a href="https://github.com/Opwabtc/OPWABTC" class="soc-btn soc-btn-github" target="_blank" title="GitHub"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></a>'+
-    '</div></div>'+
-    '<div><div class="ft-col-title">Platform</div>'+
-    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Assets</a>'+
-    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg> Simulator</a>'+
-    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> How It Works</a>'+
-    '<a href="/dashboard" onclick="navigate(\'/dashboard\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</a></div>'+
-    '<div><div class="ft-col-title">Build &amp; Tools</div>'+
-    '<a href="https://dev.opnet.org/" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Build on OP_NET \u2197</a>'+
-    '<a href="https://faucet.opnet.org/" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg> Testnet Faucet \u2197</a>'+
-    '<a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/></svg> Get OP_Wallet \u2197</a>'+
-    '<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> OPScan Explorer \u2197</a>'+
-    '<a href="https://mempool.opnet.org/pt/testnet4" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> Mempool Testnet \u2197</a></div>'+
-    '<div><div class="ft-col-title">Resources</div>'+
-    '<a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link ft-whitepaper" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Whitepaper \u2197</a>'+
-    '<a href="https://defibible.org/" class="ft-link" target="_blank">DeFi Bible \u2197</a>'+
-    '<a href="https://vibecode.finance/ecosystem" class="ft-link" target="_blank">Vibecode Ecosystem \u2197</a>'+
-    '<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank">My OPScan Profile \u2197</a>'+
-    '<hr style="border:none;border-top:1px solid var(--border);margin:11px 0"/>'+
-    '<a href="https://faucet.opnet.org/" class="ft-link ft-faucet" target="_blank">Get Testnet BTC \u2192</a></div>'+
-    '</div>'+
-    '<hr class="ft-sep"/>'+
-    '<div class="ft-bottom">'+
-    '<div class="ft-copy">&copy; 2026 OPWA Protocol. All rights reserved.<span style="margin-left:18px;font-size:10px;opacity:.7">Site made by <a href="https://x.com/HashBalls23" target="_blank" rel="noopener" style="color:#d4af37;font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.04em;text-shadow:0 0 12px rgba(212,175,55,.4)">Hash</a></span></div>'+
-    '<div class="ft-net-badge"><span style="width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);display:inline-block;animation:blink 2s infinite"></span> OP_NET Testnet</div>'+
-    '<div class="ft-legal"><a href="/terms" onclick="navigate(\'/terms\');return false;">Terms</a><a href="/privacy" onclick="navigate(\'/privacy\');return false;">Privacy</a></div>'+
-    '</div>';
-  ['vault-footer','dash-footer','terms-footer','privacy-footer'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=fc;});
-})();
-
 function toggleDesc(btn) {
   var wrap = btn.closest('.card-desc-wrap');
   var desc = wrap.querySelector('.card-desc-short');
@@ -4483,8 +4526,24 @@ var vaultCurrentBlock = 0;
 async function vaultFetchBlock() {
   try {
     var b = 0;
-    try { var _r1=await fetch('https://mempool.opnet.org/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(_r1.ok) b=await _r1.json(); } catch(_e1){}
-    if (!b) { try { var _r2=await fetch('https://mempool.space/signet/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(_r2.ok) b=await _r2.json(); } catch(_e2){} }
+    // Use OPNet RPC — same scale as Blockchain.block.number in contracts (~3,700)
+    try {
+      var bnRaw = await dashRpcCallRaw('btc_blockNumber', []);
+      if (bnRaw != null) {
+        b = typeof bnRaw === 'string' && bnRaw.startsWith('0x')
+          ? parseInt(bnRaw, 16) : parseInt(String(bnRaw));
+      }
+    } catch(_e1) {}
+    // Fallback eth_blockNumber
+    if (!b) {
+      try {
+        var bnRaw2 = await dashRpcCallRaw('eth_blockNumber', []);
+        if (bnRaw2 != null) {
+          b = typeof bnRaw2 === 'string' && bnRaw2.startsWith('0x')
+            ? parseInt(bnRaw2, 16) : parseInt(String(bnRaw2));
+        }
+      } catch(_e2) {}
+    }
     if (!b) return;
     vaultCurrentBlock = b;
     var el = document.getElementById('vault-current-block');
@@ -4707,11 +4766,26 @@ function pvaultPhotoPreview(input) {
     var img = document.getElementById('pvault-photo-preview');
     var placeholder = document.getElementById('pvault-photo-placeholder');
     var label = document.getElementById('pvault-photo-label');
+    var clearBtn = document.getElementById('pvault-photo-clear');
     if (img) { img.src = e.target.result; img.style.display = 'block'; }
     if (placeholder) placeholder.style.display = 'none';
-    if (label) { label.style.borderColor = 'var(--accent-border)'; label.style.background = 'transparent'; }
+    if (label) { label.style.borderColor = 'var(--accent-border)'; label.style.borderStyle = 'solid'; }
+    if (clearBtn) clearBtn.style.display = 'block';
   };
   reader.readAsDataURL(file);
+}
+
+function pvaultPhotoClear() {
+  var img = document.getElementById('pvault-photo-preview');
+  var placeholder = document.getElementById('pvault-photo-placeholder');
+  var label = document.getElementById('pvault-photo-label');
+  var clearBtn = document.getElementById('pvault-photo-clear');
+  var input = document.getElementById('pvault-photo');
+  if (img) { img.src = ''; img.style.display = 'none'; }
+  if (placeholder) placeholder.style.display = 'flex';
+  if (label) { label.style.borderColor = 'var(--border)'; label.style.borderStyle = 'dashed'; }
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (input) input.value = '';
 }
 
 function pvaultUpdateMax() {
@@ -4916,6 +4990,8 @@ function vaultMarkDashboardAssets() {
 }
 
 
+
+
 /* ── SCROLL INTELLIGENCE ── */
 (function() {
   var nav = document.getElementById('navbar');
@@ -4936,6 +5012,50 @@ function vaultMarkDashboardAssets() {
       entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
     }, {threshold:0.12});
     revealEls.forEach(function(el) { el.classList.add('reveal'); io.observe(el); });
+  }
+
+  // ── Section-based nav active highlight (home page only) ──
+  var sectionNavMap = {
+    'assets':       'nav-assets',
+    'simulator':    'nav-simulator',
+    'partners':     'nav-partners',
+    'how-it-works': 'nav-protocol'
+  };
+  if ('IntersectionObserver' in window) {
+    var sio = new IntersectionObserver(function(entries) {
+      if (window.location.pathname !== '/' && window.location.pathname !== '') return;
+      entries.forEach(function(e) {
+        var navId = sectionNavMap[e.target.id];
+        if (!navId) return;
+        var el = document.getElementById(navId);
+        if (e.isIntersecting) {
+          // Clear all section nav actives
+          Object.values(sectionNavMap).forEach(function(id) {
+            var n = document.getElementById(id);
+            if (n) n.classList.remove('active');
+          });
+          // Also remove home active when in a section
+          var homeEl = document.getElementById('nav-home');
+          if (homeEl) homeEl.classList.remove('active');
+          if (el) el.classList.add('active');
+        } else {
+          // If leaving all sections, re-activate home
+          if (el) el.classList.remove('active');
+          var anyActive = Object.values(sectionNavMap).some(function(id) {
+            var n = document.getElementById(id);
+            return n && n.classList.contains('active');
+          });
+          if (!anyActive) {
+            var homeEl = document.getElementById('nav-home');
+            if (homeEl) homeEl.classList.add('active');
+          }
+        }
+      });
+    }, {threshold:0.3, rootMargin:'-80px 0px -20% 0px'});
+    Object.keys(sectionNavMap).forEach(function(id) {
+      var sec = document.getElementById(id);
+      if (sec) sio.observe(sec);
+    });
   }
 })();
 
