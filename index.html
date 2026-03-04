@@ -4593,6 +4593,7 @@ function vaultInit() {
   if (vaultBlockInterval) clearInterval(vaultBlockInterval);
   vaultBlockInterval = setInterval(vaultFetchBlock, 30000);
   vaultRenderPosition();
+  vaultSyncChainState(); // async fire-and-forget: syncs localStorage from getStake+getDepositBlock
   pvaultRenderListed();
   vaultLoadVaultedAssets();
 }
@@ -4684,6 +4685,45 @@ function vaultGetDeposit() {
   try { return JSON.parse(localStorage.getItem('vaultDeposit') || 'null'); } catch(e) { return null; }
 }
 
+/* ── Sync localStorage with on-chain getStake + getDepositBlock ──
+   Called on vaultInit() (page/tab load). Handles: new device, cleared cache,
+   top-up totals, and post-unstake cleanup.
+   Fire-and-forget (no await needed at call site). ── */
+async function vaultSyncChainState() {
+  if (!walletState.connected || !YIELD_VAULT_ADDR) return;
+  try {
+    var imp = await _opnetImport();
+    var provider = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    var senderAddr = await buildSenderAddress(imp.Address);
+    var SYNC_ABI = [
+      { name:'getStake',        type:imp.BitcoinAbiTypes.Function, payable:false,
+        inputs:[{name:'user',type:imp.ABIDataTypes.ADDRESS}],
+        outputs:[{name:'amount',type:imp.ABIDataTypes.UINT256}] },
+      { name:'getDepositBlock', type:imp.BitcoinAbiTypes.Function, payable:false,
+        inputs:[{name:'user',type:imp.ABIDataTypes.ADDRESS}],
+        outputs:[{name:'block',type:imp.ABIDataTypes.UINT256}] }
+    ];
+    var vault = imp.getContract(YIELD_VAULT_ADDR, SYNC_ABI, provider, _OPNET_NET, senderAddr);
+    var stakeRes = await vault.getStake(senderAddr);
+    if (stakeRes.revert || !stakeRes.properties || stakeRes.properties.amount == null) return;
+    var rawStake = BigInt(String(stakeRes.properties.amount));
+    if (rawStake === 0n) {
+      localStorage.removeItem('vaultDeposit');
+    } else {
+      var humanAmt = Number(rawStake / 100_000_000n);
+      var depBlock = 0;
+      try {
+        var blockRes = await vault.getDepositBlock(senderAddr);
+        if (!blockRes.revert && blockRes.properties && blockRes.properties.block != null) {
+          depBlock = Number(BigInt(String(blockRes.properties.block)));
+        }
+      } catch(_) {}
+      localStorage.setItem('vaultDeposit', JSON.stringify({ amount: humanAmt, depositBlock: depBlock }));
+    }
+    vaultRenderPosition();
+  } catch(_) {}
+}
+
 function vaultRenderPosition() {
   var dep = vaultGetDeposit();
   var wrap = document.getElementById('vault-position-wrap');
@@ -4754,6 +4794,7 @@ async function vaultDepositOPWAY() {
         network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
       });
       showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + rx0.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + rx0.transactionId.slice(0,10) + '…↗</a>', 'success', true);
+      localStorage.setItem('vaultDeposit', JSON.stringify({ amount: amt, depositBlock: vaultCurrentBlock }));
       vaultRenderPosition();
       return;
     }
@@ -4817,6 +4858,7 @@ async function vaultDepositOPWAY() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
+    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: amt, depositBlock: vaultCurrentBlock }));
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
@@ -4845,6 +4887,7 @@ async function vaultClaimUSDOP() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ USDOP claimed! TX: <a href="https://opscan.org/transactions/' + claimReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + claimReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
+    vaultRenderPosition(); // refresh accrued display — getAccruedRewards will return 0 after claim
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
@@ -4872,6 +4915,7 @@ async function vaultWithdrawOPWAY() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ OPWAY unstaked! TX: <a href="https://opscan.org/transactions/' + unstakeReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + unstakeReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
+    localStorage.removeItem('vaultDeposit'); // contract cleared _stakes — mirror in localStorage
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
