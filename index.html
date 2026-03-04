@@ -4640,16 +4640,44 @@ function vaultUpdateCountdown() {
   }
 }
 
-function vaultUpdateAccrued() {
+async function vaultUpdateAccrued() {
   var dep = vaultGetDeposit();
-  if (!dep || !vaultCurrentBlock) return;
-  var blocks = Math.max(0, vaultCurrentBlock - dep.depositBlock);
-  var usdopNum = blocks * (dep.amount / 100);
-  var formatted = usdopNum >= 1000
-    ? '$ ' + usdopNum.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
-    : '$ ' + usdopNum.toFixed(2);
-  var el = document.getElementById('vpos-usdop');
-  if (el) el.textContent = formatted;
+  var el  = document.getElementById('vpos-usdop');
+  if (!dep || !el) return;
+  function _fmt(n) {
+    return n >= 1000
+      ? '$ ' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+      : '$ ' + n.toFixed(2);
+  }
+  // Source of truth: getAccruedRewards uses _lastClaims (resets on claim),
+  // so it correctly reflects rewards since last claim, not since deposit.
+  if (walletState.connected && YIELD_VAULT_ADDR) {
+    try {
+      var imp = await _opnetImport();
+      var provider   = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+      var senderAddr = await buildSenderAddress(imp.Address);
+      var ACC_ABI = [{
+        name: 'getAccruedRewards',
+        type: imp.BitcoinAbiTypes.Function,
+        payable: false,
+        inputs:  [{ name: 'user',    type: imp.ABIDataTypes.ADDRESS }],
+        outputs: [{ name: 'rewards', type: imp.ABIDataTypes.UINT256 }]
+      }];
+      var vault = imp.getContract(YIELD_VAULT_ADDR, ACC_ABI, provider, _OPNET_NET, senderAddr);
+      var res   = await vault.getAccruedRewards(senderAddr);
+      if (!res.revert && res.properties && res.properties.rewards != null) {
+        var raw   = BigInt(String(res.properties.rewards));
+        var human = Number(raw / 10000n) / 10000;
+        el.textContent = _fmt(human);
+        return;
+      }
+    } catch (_) {}
+  }
+  // Fallback: local estimate (accurate only if claimRewards never called since stake)
+  if (vaultCurrentBlock) {
+    var blocks = Math.max(0, vaultCurrentBlock - dep.depositBlock);
+    el.textContent = _fmt(blocks * (dep.amount / 100));
+  }
 }
 
 function vaultGetDeposit() {
