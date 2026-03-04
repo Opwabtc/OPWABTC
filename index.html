@@ -3243,10 +3243,14 @@ document.addEventListener('mousedown', () => { cur.style.transform = 'translate(
 document.addEventListener('mouseup',   () => { cur.style.transform = ''; });
 
 /* ── THEME ── */
-let theme = 'dark';
+let theme = localStorage.getItem('theme') || 'dark';
 const themeBtn = document.getElementById('theme-btn');
+document.documentElement.setAttribute('data-theme', theme);
+document.body.setAttribute('data-theme', theme);
+if (theme === 'light' && themeBtn) themeBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 function toggleTheme() {
   theme = theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', theme);
   document.documentElement.setAttribute('data-theme', theme);
   document.body.setAttribute('data-theme', theme);
   themeBtn.innerHTML = theme === 'dark'
@@ -3448,8 +3452,6 @@ async function confirmInvest(asset) {
   try {
     // OPWAYield contract — public mint(), 1000 sats per token (0.00001 BTC)
     // Contract stores treasury bech32; simulation uses hasTo so out.to matches stored value.
-    const TREASURY_OPT = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
-    const OPWAY_ADDR   = 'opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv';
     const count    = BigInt(tokenCount);
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
@@ -3463,18 +3465,18 @@ async function confirmInvest(asset) {
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-    const provider    = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _net);
+    const provider    = new JSONRpcProvider('https://testnet.opnet.org', _net);
     const senderAddr  = await buildSenderAddress(Address);
-    const contract    = getContract(OPWAY_ADDR, OPWAY_ABI, provider, _net, senderAddr);
+    const contract    = getContract(CONTRACTS.opwayYield, OPWAY_ABI, provider, _net, senderAddr);
     // hasTo: server passes to string as-is to contract's out.to
     // Contract compares out.to == _treasuryTo (stored bech32) — no Uint8Array involved.
-    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_OPT, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
     const simulation = await contract.mint(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:satsAmt + 100_000n,
-      extraOutputs:[{ address:TREASURY_OPT, value:Number(satsAmt) }],
+      extraOutputs:[{ address:TREASURY_P2TR, value:Number(satsAmt) }],
     });
     const txid = receipt.transactionId;
     showToast('✅ ' + tokenCount + ' OPWAY minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:#f97316;font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>', 'success', true);
@@ -3543,7 +3545,8 @@ function adjVal(id, baseDir) {
 function calcSim() {
   let iv = parseFloat(document.getElementById('initial-val').value) || 0;
   let mv = parseFloat(document.getElementById('monthly-val').value) || 0;
-  const bp = btcPrice || 65000;
+  const bp = btcPrice || 0;
+  if (!bp) return;
   let initBtc = iv, monBtc = mv;
   if (simCurrency === 'usd') {
     initBtc = iv / bp; monBtc = mv / bp;
@@ -3613,6 +3616,7 @@ function handleConnectClick() {
 }
 
 function walletConnected(addr, sats, type, publicKey) {
+  if (!addr || !addr.startsWith('opt1p')) { showToast('Wrong network — switch to OPNet Testnet', 'error'); return; }
   walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || ''};
   const short = addr.slice(0, 8) + '...' + addr.slice(-6);
   const btn = document.getElementById('connect-btn');
@@ -3620,7 +3624,7 @@ function walletConnected(addr, sats, type, publicKey) {
   let e;
   e = document.getElementById('wd-address'); if (e) e.textContent = addr;
   e = document.getElementById('wd-balance'); if (e) e.textContent = '\u20BF ' + (sats / 1e8).toFixed(5);
-  e = document.getElementById('wd-balance-usd'); if (e) e.textContent = '\u2248 $' + ((sats / 1e8) * (btcPrice || 65000)).toFixed(2);
+  e = document.getElementById('wd-balance-usd'); if (e) e.textContent = btcPrice ? '\u2248 $' + ((sats / 1e8) * btcPrice).toFixed(2) : '\u2248 $ \u2014';
   e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'inline-flex';
   e = document.getElementById('lb-wallet'); if (e) e.textContent = short;
   showToast('Connected: ' + short, 'success');
@@ -3730,7 +3734,7 @@ async function mintPropertyNFT() {
       { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
       { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-    var provider   = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _net);
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org', _net);
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, _net, senderAddr);
     var priceRes = await contract.mintPrice();
@@ -3778,7 +3782,7 @@ async function loadVault() {
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
-    var provider   = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _net);
+    var provider   = new JSONRpcProvider('https://testnet.opnet.org', _net);
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, _net, senderAddr);
 
@@ -3837,7 +3841,7 @@ async function loadVault() {
 
 /* helper RPC raw para totalSupply no vault */
 async function dashRpcCallRaw(method, params) {
-  var res = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
+  var res = await fetch('https://testnet.opnet.org', {
     method: 'POST', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ jsonrpc:'2.0', id:1, method, params })
   });
@@ -3855,7 +3859,7 @@ function fmtAmt(raw, dec) {
 
 async function dashRpcCall(data) {
   try {
-    var r = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
+    var r = await fetch('https://testnet.opnet.org', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to: CONTRACTS.opwayYield, data:data},'latest']}),
@@ -3872,7 +3876,7 @@ async function dashFetch() {
     // ── OPWAY balance + PropertyNFT totalSupply via getContract ──
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, Address } = await _opnetImport();
-      const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+      const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
       const senderAddr = await buildSenderAddress(Address);
       const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
       const balSim = await opwayContract.balanceOf(senderAddr);
@@ -3896,7 +3900,7 @@ async function dashFetch() {
 }
 
 function dashRenderData() {
-  var bp = btcPrice || 65000;
+  var bp = btcPrice || 0;
   var bb = walletState.sats / 1e8;
   var bu = bb * bp;
   var on = fmtAmt(dashOpwapBal, 8);
@@ -3906,9 +3910,9 @@ function dashRenderData() {
   var pct = Math.min(100, (sn / 100) * 100);
   function s(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
   s('dash-btc-val', '\u20BF ' + bb.toFixed(5));
-  s('dash-btc-usd', '\u2248 $' + bu.toFixed(2) + ' USD');
+  s('dash-btc-usd', bp ? '\u2248 $' + bu.toFixed(2) + ' USD' : '\u2248 $ \u2014');
   s('dash-opwap-val', on);
-  s('dash-total-usd', '$' + (bu + ou).toFixed(0));
+  s('dash-total-usd', bp ? '$' + (bu + ou).toFixed(0) : '$\u2014');
   s('dash-opwap-bal', on);
   s('dash-opwap-btc', '\u2248 ' + ob.toFixed(6) + ' BTC');
   s('dash-supply-pct', pct.toFixed(1) + '%');
@@ -4031,7 +4035,7 @@ async function loadChartData() {
 
     for (var i = days-1; i >= 0; i--) {
       var pd = new Date(); pd.setDate(pd.getDate()-i);
-      var price = btcPrice || 65000;
+      var price = btcPrice || 0;
       if (priceHist.length) {
         var tgt = pd.getTime();
         var closest = priceHist.reduce(function(a,b){ return Math.abs(b[0]-tgt)<Math.abs(a[0]-tgt)?b:a; });
@@ -4425,7 +4429,8 @@ function toggleDisp(btn, mode, assetId) {
 var ASSET_TOKENS = { alpha:1000, beta:2000, gamma:3000, delta:1500, epsilon:5000 }; // recalculated below
 // Token count = property USD value / (btcPrice * 0.00001) — recalculated when btcPrice loads
 function recalcAssetTokens() {
-  var bp = btcPrice || 65000;
+  var bp = btcPrice || 0;
+  if (!bp) return;
   var tokenPriceUSD = bp * 0.00001; // 1 OPWAY = 1000 sats = 0.00001 BTC
   Object.keys(ASSET_USD).forEach(function(id) {
     ASSET_TOKENS[id] = Math.round(ASSET_USD[id] / tokenPriceUSD);
@@ -4520,7 +4525,7 @@ async function fetchOpNetBlock() {
     // 3. OPNet RPC eth_blockNumber fallback
     if (!h) {
       try {
-        var r3 = await fetch('https://testnet.opnet.org/api/v1/json-rpc',{method:'POST',headers:{'Content-Type':'application/json'},
+        var r3 = await fetch('https://testnet.opnet.org',{method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_blockNumber',params:[]}),signal:AbortSignal.timeout(5000)});
         var j3 = await r3.json();
         if (j3 && j3.result) h = parseInt(j3.result, 16);
@@ -4560,8 +4565,6 @@ async function fetchGas() {
 }
 
 fetchPrices(); fetchGas(); fetchOpNetBlock();
-// Inicializa preços imediatamente com fallback $65k (substitui os "—")
-if (!btcPrice) { btcPrice = 65000; updateAllAssetPrices(); recalcAssetTokens(); }
 setInterval(fetchOpNetBlock, 60000);
 setInterval(fetchPrices, 30000);
 setInterval(fetchGas,   30000);
@@ -4631,6 +4634,7 @@ function vaultUpdateEarn() {
 }
 
 function vaultUpdateCountdown() {
+  if (vaultCurrentBlock === 0) return;
   var dep = vaultGetDeposit();
   var numEl = document.getElementById('vault-blocks-remaining');
   var fillEl = document.getElementById('vault-timelock-fill');
@@ -4680,7 +4684,7 @@ async function vaultUpdateAccrued() {
   if (walletState.connected && YIELD_VAULT_ADDR) {
     try {
       var imp = await _opnetImport();
-      var provider   = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+      var provider   = new imp.JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
       var senderAddr = await buildSenderAddress(imp.Address);
       var ACC_ABI = [{
         name: 'getAccruedRewards',
@@ -4718,7 +4722,7 @@ async function vaultSyncChainState() {
   if (!walletState.connected || !YIELD_VAULT_ADDR) return;
   try {
     var imp = await _opnetImport();
-    var provider = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    var provider = new imp.JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     var senderAddr = await buildSenderAddress(imp.Address);
     var SYNC_ABI = [
       { name:'getStake',        type:imp.BitcoinAbiTypes.Function, payable:false,
@@ -4793,7 +4797,7 @@ async function vaultDepositOPWAY() {
   showToast('Preparing stake…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
@@ -4904,7 +4908,7 @@ async function vaultClaimUSDOP() {
   showToast('Claiming USDOP rewards…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const CLAIM_ABI = [
       { name:'claimRewards', type:BitcoinAbiTypes.Function, payable:false,
@@ -4932,7 +4936,7 @@ async function vaultWithdrawOPWAY() {
   showToast('Requesting unstake…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const UNSTAKE_ABI = [
       { name:'unstake', type:BitcoinAbiTypes.Function, payable:false,
@@ -5011,7 +5015,7 @@ async function pvaultListProperty() {
   showToast('Preparing NFT approval…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const tokenIdBig = BigInt(tid);
 
@@ -5090,7 +5094,7 @@ async function pvaultRemove(tokenId) {
   showToast('Delisting property #' + tokenId + '…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = new JSONRpcProvider('https://testnet.opnet.org', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
     const DELIST_ABI = [
       { name:'delistProperty', type:BitcoinAbiTypes.Function, payable:false,
