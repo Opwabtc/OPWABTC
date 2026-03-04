@@ -1,111 +1,90 @@
-# OPWA — Tokenomics
+# OPWA Protocol — Tokenomics
 
-> Version: 0.1.0-testnet | Last updated: February 2026  
-> ⚠️ Tokenomics are subject to change before mainnet. This is a working document.
+> **Status:** Draft — Full tokenomics and airdrop mechanics to be announced prior to mainnet launch.
 
 ---
 
-## OPWACOIN (OP-20 Platform Token)
+## Token Overview
 
-### Overview
+The OPWA Protocol uses two native tokens and one NFT standard:
+
+| Token | Standard | Role |
+|---|---|---|
+| OPWAY (OPWACoin) | OP-20 | Governance & utility token |
+| USDOP | OP-20 | Protocol stablecoin — yield and payment currency |
+| PropertyNFT | OP-721 | Represents sole title of a real-world property |
+
+---
+
+## OPWAY (OPWACoin)
+
+**Standard:** OP-20 (Bitcoin L1 via OP_NET)
+**Contract:** `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp`
+
+### Price & Minting
+- 1 OPWAY = 1,000 sats = 0.00001 BTC
+- Minting is atomic on-chain: BTC sent to treasury → OPWAY minted in the same transaction
+- No intermediary, no off-chain step, no bridge
+
+### Utility
+- **Staking:** Deposit OPWAY into YieldVault to earn USDOP stablecoin yield
+- **Investing:** Use OPWAY to purchase fractional shares of tokenized real estate
+- **Governance:** On-chain voting rights for protocol parameters (activation planned Q4 2026)
+- **Airdrop eligibility:** Early holders and stakers will be considered for airdrop (details TBA)
+
+### Supply & Distribution
+> Full supply schedule, allocation breakdown, vesting, and airdrop mechanics to be published before mainnet launch.
+
+---
+
+## USDOP
+
+**Standard:** OP-20 (Bitcoin L1 via OP_NET)
+**Contract:** `opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu`
+
+### Earning Mechanism
+- Stake OPWAY in the YieldVault contract
+- Earn **1 USDOP per 100 OPWAY per OP_NET block**
+- 420-block timelock before withdrawal (~70 minutes on OP_NET Testnet)
+- Approximate yield: ~15% APY
+
+### Use Cases (current and planned)
+- Yield payment for OPWAY stakers
+- Future: property purchase payments on the marketplace
+- Future: rental income distribution via YieldDistributor
+- Future: platform fee settlement
+
+### Minting
+- USDOP is minted exclusively by the YieldVault contract
+- Cannot be purchased directly — must be earned through staking
+
+---
+
+## PropertyNFT
+
+**Standard:** OP-721 (Bitcoin L1 via OP_NET)
+**Contract:** `opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6`
+
+- One NFT per real-world property
+- Represents sole on-chain title of the asset
+- Legal documentation linked via IPFS
+- Can be deposited into PropertyVault to enable fractional community investment
+- When 100% of fractional shares are acquired, NFT is unlocked and full title transferred
+
+---
+
+## YieldVault Parameters
 
 | Parameter | Value |
-|-----------|-------|
-| Token Name | OPWACoin |
-| Symbol | OPWA |
-| Standard | OP-20 (Bitcoin L1 via OP_NET) |
-| Decimals | 8 (matching Bitcoin satoshi precision) |
-| Max Supply | 21,000,000 OPWA |
-| Initial Supply | TBD |
-| Network | Bitcoin L1 (OP_NET) |
-
-The maximum supply of 21,000,000 deliberately mirrors Bitcoin's 21 million BTC supply cap — a philosophical alignment with Bitcoin's scarcity model.
+|---|---|
+| Yield rate | 1 USDOP per 100 OPWAY per block |
+| Timelock | 420 blocks (~70 min on OP_NET Testnet) |
+| Top-up | Supported (YieldVault v2) |
+| Withdrawal | After timelock expiry |
+| Approximate APY | ~15% |
 
 ---
 
-### Token Utility
+## Disclaimer
 
-OPWACoin serves multiple functions within the OPWA ecosystem:
-
-**Governance:** Token holders vote on protocol parameter changes — fee rates, approved property validators, yield distribution schedules, and protocol upgrades. Voting power is proportional to token holdings.
-
-**Platform fees:** A portion of marketplace transaction fees may be paid in OPWA tokens, creating protocol-level demand. Specific fee structures will be defined before mainnet.
-
-**Staking (Planned):** Token holders may stake OPWA to earn a share of platform fees. Staking parameters to be defined in governance documentation.
-
-**Validator whitelisting (Planned):** Property validators (entities that verify off-chain legal compliance) may be required to stake OPWA as a performance bond.
-
----
-
-### Supply Distribution (Proposed)
-
-> ⚠️ This is a preliminary allocation model. Final allocations will be published before mainnet token generation event (TGE).
-
-| Allocation | % | Amount | Vesting |
-|------------|---|--------|---------|
-| Community & Ecosystem | 40% | 8,400,000 | 4-year linear |
-| Team & Founders | 20% | 4,200,000 | 1-year cliff + 3-year linear |
-| Investors | 15% | 3,150,000 | 6-month cliff + 2-year linear |
-| Protocol Treasury | 15% | 3,150,000 | DAO-controlled |
-| Liquidity Provision | 10% | 2,100,000 | Immediate (DEX liquidity) |
-
----
-
-## FractionalTokens (Per-Property OP-20)
-
-Each tokenized property has its own dedicated FractionalToken contract.
-
-### Parameters
-
-| Parameter | Value |
-|-----------|-------|
-| Standard | OP-20 |
-| Supply | Fixed at fractionalization — no further minting |
-| Decimals | 0 (whole share units) or 8 (sub-share precision) |
-| Transferability | Freely transferable on Motoswap or P2P |
-
-### Pricing Model (Conceptual)
-
-Initial share price at fractionalization:
-```
-initialSharePrice = propertyValuation / totalShares
-
-Example:
-  propertyValuation = 1,000,000 USD (converted to BTC equivalent)
-  totalShares = 10,000
-  initialSharePrice = 100 USD per share (in BTC equivalent)
-```
-
-Secondary market price is determined by supply/demand on Motoswap DEX. The "floor" price is theoretically the redemption value (buyback price offered by property owner), but market price may trade above or below this.
-
----
-
-## Fee Structure (Proposed)
-
-| Action | Fee | Recipient |
-|--------|-----|-----------|
-| Property tokenization (minting NFT) | 0.1% of property value | Protocol treasury |
-| Fractionalization | 0.05% of total share value | Protocol treasury |
-| Marketplace buy/sell | 0.5% per side | Protocol treasury (50%) + liquidity providers (50%) |
-| Yield deposit | 0.2% of yield amount | Protocol treasury |
-| Yield claim | 0% | — |
-
-All fees are subject to governance vote adjustment within hardcoded bounds (min 0%, max 2% for marketplace).
-
----
-
-## Motoswap Integration
-
-OPWA FractionalTokens will be listed on **Motoswap** — the native Bitcoin L1 DEX built on OP_NET — enabling:
-
-- Automated Market Maker (AMM) liquidity pools
-- Price discovery for fractional property shares
-- BTC ↔ FractionalToken swaps in one transaction
-- Liquidity provider fees for OPWA/BTC and property token/BTC pairs
-
-This integration is planned for **Q2 2026** alongside mainnet migration.
-
----
-
-*For technical implementation, see [technical-architecture.md](./technical-architecture.md)*  
-*For security considerations, see [security-model.md](./security-model.md)*
+All figures above apply to OP_NET Testnet only. Parameters including yield rate, timelock duration, and token supply are subject to change via protocol governance before and after mainnet launch. This document does not constitute financial advice.

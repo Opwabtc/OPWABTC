@@ -1,137 +1,145 @@
-# OPWA — Smart Contract API Reference
+# OPWA Protocol — Contract Reference
 
-> Network: OP_NET Testnet | Standard: OP-20 / OP-721 (AssemblyScript → WASM)
-> Source: `contracts/op20/OPWACoin.ts` | `contracts/op721/PropertyNFT.ts`
-
----
-
-## OPWACoin (OP-20)
-
-**Symbol:** `OPWA` | **Decimals:** 8 | **Max Supply:** 21,000,000 OPWA
-**Contract Address:** See [testnet-deployments.md](./testnet-deployments.md)
-
-### Read Methods
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `name()` | `string` | Token name: `"OPWACoin"` |
-| `symbol()` | `string` | Token ticker: `"OPWA"` |
-| `decimals()` | `u8` | Decimal places: `8` |
-| `totalSupply()` | `u256` | Current circulating supply |
-| `balanceOf(account: Address)` | `u256` | Token balance for `account` |
-| `allowance(owner: Address, spender: Address)` | `u256` | Approved spend amount |
-
-### Write Methods
-
-| Method | Parameters | Description |
-|--------|-----------|-------------|
-| `transfer(to: Address, value: u256)` | recipient, amount | Transfer tokens from caller |
-| `approve(spender: Address, value: u256)` | spender, amount | Approve spend on caller's behalf |
-| `transferFrom(from, to, value)` | sender, recipient, amount | Transfer with allowance |
-| `mint(to: Address, value: u256)` | recipient, amount | **Owner only** — mint new tokens |
-| `burn(value: u256)` | amount | Burn caller's tokens |
-
-### Frontend Usage (opnet SDK)
-
-```typescript
-import { getContract, IOP20Contract, OP_20_ABI } from 'opnet';
-import { provider, network } from '@/lib/opnet';
-
-const contract = getContract<IOP20Contract>(
-  OPWA_TOKEN_ADDRESS,
-  OP_20_ABI,
-  provider,
-  network,
-);
-
-// Read balance
-const result = await contract.balanceOf(userAddress);
-const balance: bigint = result.properties.balance;
-
-// Read metadata
-const name = (await contract.name()).properties.name;
-const symbol = (await contract.symbol()).properties.symbol;
-const decimals = (await contract.decimals()).properties.decimals;
-const totalSupply = (await contract.totalSupply()).properties.totalSupply;
-```
+**Network:** OP_NET Testnet (Bitcoin Signet)
+**RPC:** https://regtest.opnet.org
+**Explorer:** https://opscan.org
 
 ---
 
-## PropertyNFT (OP-721)
+## Deployed Contracts
 
-**Name:** `OPWA Property` | **Symbol:** `OPWA-PROP`
-**Contract Address:** See [testnet-deployments.md](./testnet-deployments.md)
+| Contract | Standard | Address | Explorer |
+|---|---|---|---|
+| OPWACoin (OPWAY) | OP-20 | `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp` | [OPScan ↗](https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet) |
+| PropertyNFT | OP-721 | `opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6` | [OPScan ↗](https://opscan.org) |
+| YieldVault | Custom | `opt1sqzjaxfszmf6dltnjhx2txz08ezzqxvakzcuz7msw` | [OPScan ↗](https://opscan.org) |
+| USDOP | OP-20 | `opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu` | [OPScan ↗](https://opscan.org) |
+| OPWAYield v3 | Custom | `opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv` | [OPScan ↗](https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet) |
 
-Each NFT token ID maps to a unique real-world property. The `tokenURI` points to IPFS/Arweave metadata containing legal documents and property details.
-
-### Read Methods
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `name()` | `string` | Collection name |
-| `symbol()` | `string` | Collection symbol |
-| `tokenURI(tokenId: u256)` | `string` | IPFS URI for token metadata |
-| `ownerOf(tokenId: u256)` | `Address` | Current owner of token |
-| `balanceOf(owner: Address)` | `u256` | NFTs held by `owner` |
-| `getApproved(tokenId: u256)` | `Address` | Approved operator for token |
-| `isApprovedForAll(owner, operator)` | `bool` | Operator approval status |
-
-### Write Methods
-
-| Method | Parameters | Description |
-|--------|-----------|-------------|
-| `mint(metadataURI: string)` | IPFS/data URI | **Owner only** — mint new property NFT |
-| `fractionalize(tokenId, fractionalContract)` | token ID, contract address | Lock NFT, mark as fractionalized |
-| `unlockOnRedemption(tokenId)` | token ID | **Fractional contract only** — unlock NFT |
-| `transferFrom(from, to, tokenId)` | sender, recipient, token | Transfer (blocked if fractionalized) |
-| `approve(to, tokenId)` | operator, token | Approve single transfer |
-| `setApprovalForAll(operator, approved)` | operator, bool | Approve all tokens |
-
-### Token Metadata Schema
-
-```json
-{
-  "property_id": "prop-001",
-  "name": "Downtown Penthouse São Paulo",
-  "location": "Av. Paulista 1000, São Paulo, BR",
-  "area_sqm": 120,
-  "valuation_sats": 5000000000,
-  "property_type": "residential",
-  "total_fractions": 1000000,
-  "image_uri": "ipfs://QmXxx..."
-}
-```
-
-### Mint via Admin Panel
-
-The frontend provides an admin panel at `/admin/mint` (accessible after wallet connection). Only the contract owner address can successfully call `mint()`.
+> ⚠️ Do NOT change contract addresses or redeploy without a full documentation update.
 
 ---
 
-## YieldDistributor (Custom)
+## Contract Details
 
-> Status: In Development — not yet deployed on testnet.
+### OPWACoin (OPWAY) — OP-20
+**File:** `contracts/op20/OPWACoin.ts`
+**ABI:** `contracts/abis/OPWACoin.abi.json`
 
-Distributes rental income collected in BTC/OPWA to `FractionalToken` holders pro-rata.
+The governance and utility token of the OPWA Protocol.
 
-| Method | Description |
-|--------|-------------|
-| `depositYield(propertyId, amount)` | Owner deposits rental income |
-| `claim(propertyId)` | Holder claims proportional yield |
-| `pendingYield(propertyId, holder)` | View unclaimed yield |
-
----
-
-## Error Codes
-
-| Error | Meaning |
-|-------|---------|
-| `PropertyNFT: caller is not token owner` | Only NFT owner can fractionalize |
-| `PropertyNFT: token is fractionalized — redeem all shares first` | Transfer blocked while fractionalized |
-| `PropertyNFT: only registered fractional contract can unlock` | Unlock restricted to paired contract |
-| `OP-20: transfer amount exceeds balance` | Insufficient token balance |
-| `OP-20: transfer amount exceeds allowance` | Insufficient approved amount |
+| Function | Description |
+|---|---|
+| `mint()` | Called by treasury — mints OPWAY atomically when BTC is received |
+| `transfer(to, amount)` | Transfer OPWAY between addresses |
+| `approve(spender, amount)` | Approve spender for vault deposits |
+| `balanceOf(address)` | Query OPWAY balance |
+| `totalSupply()` | Query total minted supply |
 
 ---
 
-*Last updated: February 2026*
+### PropertyNFT — OP-721
+**File:** `contracts/op721/PropertyNFT.ts`
+**ABI:** `contracts/abis/PropertyNFT.abi.json`
+
+Represents unique real estate asset ownership. One NFT per property.
+
+| Function | Description |
+|---|---|
+| `mint(to, tokenId, uri)` | Mint a new PropertyNFT with IPFS metadata URI |
+| `ownerOf(tokenId)` | Query current owner |
+| `transferFrom(from, to, tokenId)` | Transfer NFT ownership |
+| `approve(to, tokenId)` | Approve PropertyVault to lock the NFT |
+| `tokenURI(tokenId)` | Get IPFS metadata URI |
+
+---
+
+### YieldVault — Custom
+**File:** `contracts/vault/YieldVault.ts`
+**ABI:** `contracts/abis/YieldVault.abi.json`
+
+Accepts OPWAY deposits and distributes USDOP yield per block.
+
+| Function | Description |
+|---|---|
+| `stake(amount)` | Deposit OPWAY. Starts 420-block timelock. Supports top-up. |
+| `getStake(address)` | Query staked OPWAY amount |
+| `getDepositBlock(address)` | Query block number at time of deposit |
+| `getAccruedRewards(address)` | Query accrued USDOP (on-chain) |
+| `claimRewards()` | Claim accrued USDOP to wallet |
+| `unstake()` | Withdraw OPWAY after timelock expires |
+
+**Parameters:**
+- Yield rate: 1 USDOP per 100 OPWAY per block
+- Timelock: 420 blocks (~70 min on OP_NET Testnet)
+- Version: v2 (supports top-up stake)
+
+---
+
+### USDOP — OP-20
+**File:** `contracts/vault/USDOP.ts`
+
+Protocol-native stablecoin. Minted exclusively by the YieldVault contract.
+
+| Function | Description |
+|---|---|
+| `mint(to, amount)` | Called by YieldVault only — mints USDOP on claim |
+| `transfer(to, amount)` | Transfer USDOP between addresses |
+| `balanceOf(address)` | Query USDOP balance |
+
+---
+
+### PropertyVault — Custom
+**File:** `contracts/vault/PropertyVault.ts`
+**ABI:** `contracts/abis/PropertyVault.abi.json`
+
+Locks a PropertyNFT and enables fractional OPWAY investment from the community.
+
+| Function | Description |
+|---|---|
+| `listProperty(tokenId, maxOpway)` | Lock NFT and set maximum OPWAY raise amount |
+| `invest(tokenId, amount)` | Invest OPWAY into a listed property |
+| `getPropertyInfo(tokenId)` | Query property listing details |
+| `withdrawNFT(tokenId)` | Unlock NFT when fully funded or cancelled |
+
+---
+
+### YieldDistributor — Custom *(In Development)*
+**File:** `contracts/yield/YieldDistributor.ts`
+
+Distributes rental income pro-rata to fractional token holders. Not yet deployed.
+
+---
+
+### Governance — Custom *(Planned)*
+**Directory:** `contracts/governance/`
+
+On-chain voting for protocol parameters using OPWACoin. Planned for Q4 2026.
+
+---
+
+## ABI Files
+
+All ABI files are located in `contracts/abis/`:
+
+| File | Contract |
+|---|---|
+| `OPWACoin.abi.json` | OPWACoin (OPWAY) |
+| `PropertyNFT.abi.json` | PropertyNFT |
+| `YieldVault.abi.json` | YieldVault |
+| `PropertyVault.abi.json` | PropertyVault |
+| `OP20.abi.json` | Generic OP-20 interface |
+| `OP721.abi.json` | Generic OP-721 interface |
+
+---
+
+## Build Artifacts
+
+Compiled WASM files in `contracts/build/`:
+
+| File | Contract |
+|---|---|
+| `OPWACoin.wasm` | OPWACoin (OPWAY) |
+| `YieldVault.wasm` | YieldVault |
+| `USDOP.wasm` | USDOP |
+| `PropertyVault.wasm` | PropertyVault |
