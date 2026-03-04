@@ -5219,34 +5219,29 @@ function vaultMarkDashboardAssets() {
     'tech-info':    'nav-protocol'
   };
   if ('IntersectionObserver' in window) {
-    var sio = new IntersectionObserver(function(entries) {
+    function handleSectionEntry(e) {
       if (window.location.pathname !== '/' && window.location.pathname !== '') return;
-      entries.forEach(function(e) {
-        var navId = sectionNavMap[e.target.id];
-        if (!navId) return;
-        var el = document.getElementById(navId);
-        if (e.isIntersecting) {
-          Object.values(sectionNavMap).forEach(function(id) {
-            var n = document.getElementById(id);
-            if (n) n.classList.remove('active');
-          });
-          if (el) el.classList.add('active');
-        } else {
-          if (el) el.classList.remove('active');
-          var anyActive = Object.values(sectionNavMap).some(function(id) {
-            var n = document.getElementById(id);
-            return n && n.classList.contains('active');
-          });
-          if (!anyActive) {
-            var homeEl = document.getElementById('nav-home');
-            if (homeEl) homeEl.classList.add('active');
-          }
-        }
-      });
-    }, {threshold:0.15, rootMargin:'-80px 0px -30% 0px'});
+      var navId = sectionNavMap[e.target.id];
+      if (!navId) return;
+      var el = document.getElementById(navId);
+      if (e.isIntersecting) {
+        Object.values(sectionNavMap).forEach(function(id) {
+          var n = document.getElementById(id); if (n) n.classList.remove('active');
+        });
+        if (el) el.classList.add('active');
+      } else {
+        if (el) el.classList.remove('active');
+        var anyActive = Object.values(sectionNavMap).some(function(id) {
+          var n = document.getElementById(id); return n && n.classList.contains('active');
+        });
+        if (!anyActive) { var h = document.getElementById('nav-home'); if (h) h.classList.add('active'); }
+      }
+    }
+    var sio = new IntersectionObserver(function(entries){entries.forEach(handleSectionEntry);},{threshold:0.15,rootMargin:'-80px 0px -30% 0px'});
+    var sioShort = new IntersectionObserver(function(entries){entries.forEach(handleSectionEntry);},{threshold:0,rootMargin:'-80px 0px -10% 0px'});
     Object.keys(sectionNavMap).forEach(function(id) {
-      var sec = document.getElementById(id);
-      if (sec) sio.observe(sec);
+      var sec = document.getElementById(id); if (!sec) return;
+      if (id === 'partners') { sioShort.observe(sec); } else { sio.observe(sec); }
     });
   }
 })();
