@@ -520,9 +520,10 @@ button:focus-visible,a:focus-visible{
 .search-input::placeholder{color:var(--text-3)}
 .search-input:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px var(--accent-dim)}
 
-.assets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
-@media(max-width:1100px){.assets-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:680px){.assets-grid{grid-template-columns:1fr}}
+.assets-grid{columns:3;column-gap:18px;align-items:start;position:relative}
+.assets-grid .card-asset{break-inside:avoid;margin-bottom:18px;display:inline-block;width:100%}
+@media(max-width:1100px){.assets-grid{columns:2}}
+@media(max-width:680px){.assets-grid{columns:1}}
 /* When a card has an open invest panel, span full row */
 
 
@@ -956,13 +957,13 @@ button:focus-visible,a:focus-visible{
 }
 .live-bar-inner{display:flex;align-items:center;gap:24px;white-space:nowrap;animation:livebarScroll 40s linear infinite;padding:0 16px}
 @keyframes livebarScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.55);flex-shrink:0}
+.lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.55)!important;flex-shrink:0}
 .lb-item .lb-led{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);flex-shrink:0}
-.lb-label{color:rgba(255,255,255,.45)}
-.lb-val{color:rgba(255,255,255,.65)}
-.lb-acc{color:#f97316;font-weight:500}
-.lb-addr{color:#fb923c}
-.lb-sep{color:rgba(255,255,255,.2)}
+.lb-label{color:rgba(255,255,255,.45)!important}
+.lb-val{color:rgba(255,255,255,.65)!important}
+.lb-acc{color:#f97316!important;font-weight:500}
+.lb-addr{color:#fb923c!important}
+.lb-sep{color:rgba(255,255,255,.2)!important}
 
 /* =====================================================================
    FOOTER
@@ -3053,7 +3054,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:var(--text-1);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
+    <span class="lb-item" style="color:rgba(255,255,255,.85);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
     <span class="lb-sep">&bull;</span>
@@ -3075,7 +3076,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:var(--text-1);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
+    <span class="lb-item" style="color:rgba(255,255,255,.85);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
     <span class="lb-sep">&bull;</span>
@@ -4323,32 +4324,18 @@ function toggleDesc(btn) {
 }
 
 function _removeExpanderRow() {
-  var old = document.querySelector('.grid-row-expander');
-  if (old) {
-    old.querySelectorAll('.invest-panel').forEach(function(p) {
-      // Reset inline styles set during expansion
-      p.style.display = '';
-      p.style.marginTop = '';
-      p.style.paddingTop = '';
-      p.style.borderTop = '';
-      var origCard = document.querySelector('[data-panel-id="'+p.id+'"]');
-      if (origCard) {
-        origCard.classList.remove('invest-open');
-        origCard.appendChild(p);
-      }
-    });
-    old.remove();
-  }
+  // nothing to remove externally - panels stay inside cards
 }
 
 function toggleInvest(id, btn) {
   const panel = document.getElementById(id);
   const wasOpen = panel.classList.contains('open');
 
-  // Close all open panels first
+  // Close all open panels
   document.querySelectorAll('.invest-panel.open').forEach(function(p) {
     p.classList.remove('open');
-    var card = p.closest('.card-asset') || p.closest('.asset-card') || document.querySelector('[data-panel-id="'+p.id+'"]');
+    p.style.display = 'none';
+    var card = p.closest('.card-asset') || p.closest('.asset-card');
     if (card) card.classList.remove('invest-open');
     var sibBtn = (p.id === id) ? btn : (card && card.querySelector('.btn-invest, .btn-waitlist'));
     if (sibBtn) {
@@ -4357,41 +4344,19 @@ function toggleInvest(id, btn) {
         ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`
         : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
       var assetId = p.id.replace('p-','');
-      var rEl = document.getElementById(assetId+'-receipt');
-      var bEl = document.getElementById(assetId+'-btc');
-      var tEl = document.getElementById(assetId+'-tokens');
-      if (rEl) rEl.style.display='none';
-      if (bEl) bEl.value='';
-      if (tEl) tEl.value='';
+      ['receipt','btc','tokens'].forEach(function(s){
+        var el = document.getElementById(assetId+'-'+s);
+        if (el) { if(s==='receipt') el.style.display='none'; else el.value=''; }
+      });
     }
   });
-  _removeExpanderRow();
 
   if (!wasOpen) {
     var card = panel.closest('.card-asset') || panel.closest('.asset-card');
     if (!card) return;
-
-    // Mark card with data attribute so we can find it later
-    card.setAttribute('data-panel-id', id);
-    panel.setAttribute('data-panel-id', id);
-
-    // Create a full-width row expander AFTER the card in the grid
-    var expander = document.createElement('div');
-    expander.className = 'grid-row-expander';
-    expander.style.cssText = 'grid-column:1/-1;background:var(--bg-card);border:1px solid var(--accent-border);border-radius:14px;padding:20px;animation:slideDown .22s cubic-bezier(.4,0,.2,1);';
-
-    // Move the panel into the expander
-    expander.appendChild(panel);
     panel.classList.add('open');
     panel.style.display = 'block';
-    panel.style.marginTop = '0';
-    panel.style.paddingTop = '0';
-    panel.style.borderTop = 'none';
-
-    // Insert expander after the card in the grid
-    card.parentNode.insertBefore(expander, card.nextSibling);
     card.classList.add('invest-open');
-
     if (btn) btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
     setTimeout(function() {
       var asset = id.replace('p-','');
@@ -4675,49 +4640,16 @@ function vaultUpdateCountdown() {
   }
 }
 
-async function vaultUpdateAccrued() {
+function vaultUpdateAccrued() {
   var dep = vaultGetDeposit();
-  var el  = document.getElementById('vpos-usdop');
-  if (!dep || !el) return;
-
-  function _fmt(n) {
-    return n >= 1000
-      ? '$ ' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
-      : '$ ' + n.toFixed(2);
-  }
-
-  // On-chain source: getAccruedRewards uses _lastClaims (resets on claimRewards),
-  // so it returns the exact pending amount regardless of intermediate claims.
-  if (walletState.connected && YIELD_VAULT_ADDR) {
-    try {
-      var imp = await _opnetImport();
-      var provider   = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
-      var senderAddr = await buildSenderAddress(imp.Address);
-      var ACC_ABI = [{
-        name: 'getAccruedRewards',
-        type: imp.BitcoinAbiTypes.Function,
-        payable: false,
-        inputs:  [{ name: 'user',    type: imp.ABIDataTypes.ADDRESS }],
-        outputs: [{ name: 'rewards', type: imp.ABIDataTypes.UINT256 }]
-      }];
-      var vault = imp.getContract(YIELD_VAULT_ADDR, ACC_ABI, provider, _OPNET_NET, senderAddr);
-      var res   = await vault.getAccruedRewards(senderAddr);
-      if (!res.revert && res.properties && res.properties.rewards != null) {
-        var raw = BigInt(String(res.properties.rewards));
-        // Two-step divide to avoid float precision loss on large values
-        var human = Number(raw / 10000n) / 10000;
-        el.textContent = _fmt(human);
-        return;
-      }
-    } catch (_) { /* fall through to local estimate */ }
-  }
-
-  // Fallback: local estimate using depositBlock as proxy for lastClaim.
-  // Only accurate if claimRewards() was never called since the last stake.
-  if (vaultCurrentBlock) {
-    var blocks   = Math.max(0, vaultCurrentBlock - dep.depositBlock);
-    el.textContent = _fmt(blocks * (dep.amount / 100));
-  }
+  if (!dep || !vaultCurrentBlock) return;
+  var blocks = Math.max(0, vaultCurrentBlock - dep.depositBlock);
+  var usdopNum = blocks * (dep.amount / 100);
+  var formatted = usdopNum >= 1000
+    ? '$ ' + usdopNum.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+    : '$ ' + usdopNum.toFixed(2);
+  var el = document.getElementById('vpos-usdop');
+  if (el) el.textContent = formatted;
 }
 
 function vaultGetDeposit() {
