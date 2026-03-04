@@ -4733,7 +4733,10 @@ async function vaultSyncChainState() {
     if (stakeRes.revert || !stakeRes.properties || stakeRes.properties.amount == null) return;
     var rawStake = BigInt(String(stakeRes.properties.amount));
     if (rawStake === 0n) {
-      localStorage.removeItem('vaultDeposit');
+      // Do not clear localStorage on a zero read — could be RPC latency or wrong block.
+      // localStorage is only cleared after a confirmed unstake() transaction.
+      vaultRenderPosition();
+      return;
     } else {
       var humanAmt = Number(rawStake / 100_000_000n);
       var depBlock = 0;
@@ -4871,7 +4874,10 @@ async function vaultDepositOPWAY() {
       }
     }
 
-    if (!allowConfirmed) showToast('Approval unconfirmed — attempting stake anyway…', 'info');
+    if (!allowConfirmed) {
+      showToast('Approval pending — please try again in a few seconds', 'info');
+      return;
+    }
 
     /* Step 4 — Stake with fresh chain read */
     showToast('Staking OPWAY… (sign in wallet)', 'info');
