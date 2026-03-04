@@ -48,7 +48,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.7.0] — 2026-03-01 · Session 31–30
+## [0.7.0] — 2026-03-01 · Sessions 30–31
 
 ### Fixed
 - Vault block sync restored after regression in cb74e8cd
@@ -78,7 +78,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.5.0] — 2026-02-20 · Sessions 22–27
+## [0.5.0] — 2026-02-27 · Sessions 22–27
 
 ### Added
 - **Dashboard page** (`/dashboard`) always visible in navbar
@@ -95,7 +95,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.4.0] — 2026-02-10 · Sessions 15–21
+## [0.4.0] — 2026-02-27 · Sessions 15–21
 
 ### Added
 - **Vault page** (`/vault`) with YieldVault staking UI
@@ -116,7 +116,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.3.0] — 2026-01-28 · Sessions 8–14
+## [0.3.0] — 2026-02-26 · Sessions 8–14
 
 ### Added
 - Fractional investment accordion cards with receipt preview (tokens, BTC cost)
@@ -133,7 +133,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.2.0] — 2026-01-15 · Sessions 3–7
+## [0.2.0] — 2026-02-26 · Sessions 3–7
 
 ### Added
 - **OPWACoin (OPWAY)** deployed on OP_NET Testnet (`opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp`)
@@ -153,7 +153,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.0] — 2026-01-05 · Sessions 1–2
+## [0.1.0] — 2026-02-26 · Sessions 1–2
 
 ### Added
 - Initial commit — OPWA Bitcoin Real Estate Platform
