@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <meta name="theme-color" content="#f97316"/>
 <meta name="description" content="OPWA &#x2014; Fractionalized real estate investment platform built natively on Bitcoin via OP_NET."/>
-<title>OPWA &#x2014; Real Estate on Bitcoin</title>
+<title>OPWA</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* =====================================================================
@@ -254,17 +254,17 @@ button:focus-visible,a:focus-visible{
 
 /* Nav links — centro do grid de 3 colunas */
 .nav-links{
-  display:flex;align-items:center;justify-content:center;gap:2px;
+  display:flex;align-items:center;justify-content:center;gap:1px;
   white-space:nowrap;
 }
 .nav-link{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:7px 10px;border-radius:9px;font-size:12.5px;font-weight:500;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:6px 8px;border-radius:8px;font-size:11.5px;font-weight:500;
   color:var(--text-2);transition:color .15s,background .15s;
   white-space:nowrap;letter-spacing:.01em;
   position:relative;
 }
-.nav-link svg{opacity:.55;transition:opacity .15s;flex-shrink:0}
+.nav-link svg{opacity:.55;transition:opacity .15s;flex-shrink:0;width:12px;height:12px}
 .nav-link:hover{color:var(--text-1);background:rgba(255,255,255,.07)}
 .nav-link:hover svg{opacity:.9}
 /* Active state: background + top rounded bar indicator */
@@ -520,7 +520,7 @@ button:focus-visible,a:focus-visible{
 .search-input::placeholder{color:var(--text-3)}
 .search-input:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px var(--accent-dim)}
 
-.assets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.assets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
 @media(max-width:1100px){.assets-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.assets-grid{grid-template-columns:1fr}}
 /* When a card has an open invest panel, span full row */
@@ -1001,7 +1001,7 @@ footer{
 .ft-sep{border:none;border-top:1px solid var(--border);margin-bottom:24px}
 [data-theme="light"] .ft-sep{border-top-color:rgba(124,58,237,.12)}
 .ft-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.ft-copy{color:#fff!important;font-size:11.5px;color:var(--text-3)}
+.ft-copy{font-size:11.5px;color:var(--text-2)}
 .ft-copy a{color:var(--accent)}
 .ft-net-badge{
   background:var(--success-dim);color:var(--success);
@@ -1181,11 +1181,14 @@ footer{
    ===================================================================== */
 .vault-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
 .vault-page.active{display:flex!important;flex-direction:column}
+.vault-page > .vault-wrap{flex:1}
 .vault-wrap{max-width:960px;margin:0 auto}
-.vault-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+.vault-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;align-items:stretch}
 @media(max-width:700px){.vault-grid{grid-template-columns:1fr}}
-.vault-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;overflow:hidden}
-.vault-card::before{content:'';position:absolute;inset:0;opacity:.04;background:linear-gradient(135deg,var(--accent),transparent);pointer-events:none}
+.vault-card .vault-btn-primary{margin-top:auto}
+.vault-card .vault-btn-withdraw{margin-top:12px}
+/* vault-card itself as flex column so actions align */
+.vault-grid > div.vault-card{display:flex;flex-direction:column}
 .vault-card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text-1);margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .vault-card-sub{font-size:12px;color:var(--text-3);margin-bottom:20px}
 .vault-input-wrap{margin-bottom:14px}
@@ -1228,6 +1231,8 @@ footer{
 
 .dash-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
 .dash-page.active{display:flex!important;flex-direction:column}
+.dash-page > .dash-wrap{flex:1}
+.dash-page.active{display:flex!important;flex-direction:column}
 .chart-range-btn{padding:4px 12px;border-radius:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
 .chart-range-active{background:rgba(255,255,255,.25)!important;border-color:rgba(255,255,255,.5)!important;color:#fff!important}
 .dash-wrap{max-width:960px;margin:0 auto}
@@ -1242,6 +1247,8 @@ footer{
    LEGAL PAGES
    ===================================================================== */
 .legal-page{display:none;min-height:100vh;padding:calc(var(--navbar-h) + 70px) 24px 0;background:var(--bg-base);flex-direction:column}
+.legal-page.active{display:flex!important;flex-direction:column}
+.legal-page > .legal-wrap{flex:1}
 .legal-page.active{display:flex!important;flex-direction:column;animation:pageFadeIn 280ms cubic-bezier(.4,0,.2,1) both}
 .legal-wrap{max-width:760px;margin:0 auto;padding:0 8px}
 .legal-sec{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--border)}
@@ -1348,7 +1355,7 @@ footer{
 [data-theme="light"] .soc-btn{background:rgba(255,255,255,.4);border-color:rgba(109,40,217,.22);color:#3b0764}
 [data-theme="light"] .soc-btn:hover{border-color:var(--purple-border);background:var(--purple-dim);color:var(--purple)}
 [data-theme="light"] .ft-sep{border-top-color:var(--border)}
-[data-theme="light"] .ft-bottom{color:var(--text-3)}
+[data-theme="light"] .ft-bottom{color:rgba(59,7,100,.85)}
 [data-theme="light"] .ft-copy a{color:var(--purple)}
 [data-theme="light"] .ft-legal a:hover{color:var(--purple)}
 [data-theme="light"] .ft-net-badge{background:var(--success-dim);border-color:var(--success-border)}
@@ -1624,7 +1631,7 @@ body{overflow-x:hidden}
   border-top:1px solid var(--border)!important;
   padding:64px 80px 36px!important;
   background:#1a1a1a!important;
-  margin-top:auto!important;
+  margin-top:60px!important;
   display:block!important;
   box-sizing:border-box!important;
 }
@@ -1676,9 +1683,14 @@ body{overflow-x:hidden}
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         Partners
       </a>
-      <!-- Protocol -->
-      <a class="nav-link" href="#how-it-works" onclick="navScrollTo('how-it-works');return false;" id="nav-protocol">
+      <!-- How It Works -->
+      <a class="nav-link" href="#how-it-works" onclick="navScrollTo('how-it-works');return false;" id="nav-howitworks">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
+        How It Works
+      </a>
+      <!-- Protocol -->
+      <a class="nav-link" href="#tech-info" onclick="navScrollTo('tech-info');return false;" id="nav-protocol">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         Protocol
       </a>
       <!-- Vault -->
@@ -2337,8 +2349,10 @@ body{overflow-x:hidden}
 </section>
 
 <section class="section partners-section" id="partners" style="padding:52px 0;overflow:hidden">
-  <div class="s-label" style="text-align:center;margin-bottom:6px">Ecosystem &amp; Partners</div>
-  <h2 class="s-title" style="text-align:center;margin-bottom:32px">Built on Leading <span class="acc">Bitcoin Infrastructure</span></h2>
+  <div style="max-width:1200px;margin:0 auto;padding:0 40px;text-align:center">
+    <div class="s-label" style="margin-bottom:6px">Ecosystem &amp; Partners</div>
+    <h2 class="s-title" style="margin-bottom:32px">Built on Leading <span class="acc">Bitcoin Infrastructure</span></h2>
+  </div>
   <div class="pcard-track-wrap">
     <div class="pcard-track">
       <div class="pcard"><div class="pcard-ico">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></div>
@@ -3979,7 +3993,7 @@ function setChartRange(r, btn) {
 async function loadChartData() {
   if (!walletState.addr) return;
   var statusEl = document.getElementById('chart-status');
-  if (statusEl) statusEl.textContent = 'Loading on-chain data…';
+  if (statusEl) statusEl.textContent = 'Loading price data…';
   var days = chartRange === '1w' ? 7 : chartRange === '1m' ? 30 : 90;
   try {
     var priceHist = [];
@@ -3987,45 +4001,31 @@ async function loadChartData() {
       var cgR = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days='+days+'&interval=daily',{signal:AbortSignal.timeout(8000)});
       if (cgR.ok) priceHist = (await cgR.json()).prices || [];
     } catch(_) {}
-    var txHist = [];
-    // OP_NET testnet runs on Signet — use signet mempool. tb1p address needed for mempool.space
-    var mempoolAddr = walletState.addr; // opt1p... works on opnet mempool
-    var sources = ['https://mempool.opnet.org/api/address/'+mempoolAddr+'/txs','https://mempool.space/signet/api/address/'+mempoolAddr+'/txs'];
-    for (var si=0; si<sources.length && !txHist.length; si++) {
-      try { var mR = await fetch(sources[si],{signal:AbortSignal.timeout(7000)}); if (mR.ok) txHist = await mR.json(); } catch(_) {}
-    }
-    var currentSats = walletState.sats, runBalance = currentSats;
-    var dailyBal = {}, today = new Date();
-    for (var d=0; d<days; d++) {
-      var day = new Date(today); day.setDate(today.getDate()-d);
-      var dayStr = day.toISOString().split('T')[0];
-      var dayStart = Math.floor(new Date(day.setHours(0,0,0,0))/1000), dayEnd = dayStart+86400;
-      txHist.forEach(function(tx){
-        var ts = tx.status&&tx.status.block_time?tx.status.block_time:0;
-        if (ts>=dayStart&&ts<dayEnd){
-          var isSent=tx.vin&&tx.vin.some(function(v){return v.prevout&&v.prevout.scriptpubkey_address===walletState.addr;});
-          var val=0; if(tx.vout) tx.vout.forEach(function(o){if(o.scriptpubkey_address===walletState.addr)val+=(o.value||0);});
-          if(isSent) runBalance+=val; else runBalance-=val;
-        }
-      });
-      dailyBal[dayStr] = Math.max(0, runBalance);
-    }
+
     chartBtcPts=[]; chartOpwapPts=[];
-    // OPWAY: each token = 0.00001 BTC (1,000 sats). dashOpwapBal is raw integer token units.
+    // BTC balance in BTC units
+    var btcBal = walletState.sats / 1e8;
+    // OPWAY raw token count. Each token = 0.00001 BTC = 1,000 sats
     var opwapTokens = Number(BigInt(dashOpwapBal||'0'));
-    for (var i=days-1; i>=0; i--) {
-      var pd=new Date(); pd.setDate(pd.getDate()-i);
-      var pdStr=pd.toISOString().split('T')[0];
-      var price=btcPrice||65000;
-      if(priceHist.length){var tgt=pd.getTime(),cl=priceHist.reduce(function(p,c){return Math.abs(c[0]-tgt)<Math.abs(p[0]-tgt)?c:p;});price=cl[1]||price;}
-      var sats=dailyBal[pdStr]!==undefined?dailyBal[pdStr]:currentSats;
-      var label=i===0?'Now':(chartRange==='1w'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][pd.getDay()]:(pd.getMonth()+1)+'/'+pd.getDate());
-      chartBtcPts.push({label:label,usd:(sats/1e8)*price});
-      // OPWAY value = tokens × 0.00001 BTC × USD price per BTC
-      chartOpwapPts.push({label:label,usd:opwapTokens * 0.00001 * price});
+
+    for (var i = days-1; i >= 0; i--) {
+      var pd = new Date(); pd.setDate(pd.getDate()-i);
+      var price = btcPrice || 65000;
+      if (priceHist.length) {
+        var tgt = pd.getTime();
+        var closest = priceHist.reduce(function(a,b){ return Math.abs(b[0]-tgt)<Math.abs(a[0]-tgt)?b:a; });
+        price = closest[1] || price;
+      }
+      var label = i===0 ? 'Now' : (chartRange==='1w'
+        ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][pd.getDay()]
+        : (pd.getMonth()+1)+'/'+pd.getDate());
+      chartBtcPts.push({label:label, usd: btcBal * price});
+      if (opwapTokens > 0) {
+        chartOpwapPts.push({label:label, usd: opwapTokens * 0.00001 * price});
+      }
     }
     drawPortfolioChart();
-    if (statusEl) statusEl.textContent = 'Mempool + OPNet · Updated '+new Date().toLocaleTimeString();
+    if (statusEl) statusEl.textContent = 'CoinGecko + OPNet · Updated '+new Date().toLocaleTimeString();
   } catch(e) { if(statusEl) statusEl.textContent='Chart unavailable'; }
 }
 
@@ -4048,7 +4048,8 @@ function drawPortfolioChart() {
   var pL=44,pR=12,pT=14,pB=28,cw=w-pL-pR,ch=220-pT-pB,pts=chartBtcPts.length;
   var allV=chartBtcPts.map(function(p){return p.usd;}).concat(chartOpwapPts.map(function(p){return p.usd;}));
   var maxV=Math.max.apply(null,allV)||1;
-  var topV = maxV < 10 ? 100 : maxV * 2.2;
+  // Use 1.3x max so both lines are visible — no more 2.2x over-scale
+  var topV = maxV < 1 ? 10 : maxV * 1.3;
   function xp(i){return pL+(i/(pts-1||1))*cw;}
   function yp(v){return pT+ch-(v/topV)*ch;}
   // Grid lines
@@ -4092,6 +4093,14 @@ function drawPortfolioChart() {
     ctx.fillStyle=isLight?'#ea580c':'#f97316';ctx.font='bold 10px DM Mono,monospace';
     ctx.textAlign=lx>cw*.8?'right':'left';
     ctx.fillText('$'+chartBtcPts[pts-1].usd.toLocaleString('en',{maximumFractionDigits:0}),lx+(lx>cw*.8?-10:10),ly-10);
+  }
+  // Last OPWAY point dot + label
+  if(chartOpwapPts.length && chartOpwapPts[pts-1].usd > 0){
+    var ox=xp(pts-1),oy=yp(chartOpwapPts[pts-1].usd);
+    ctx.beginPath();ctx.arc(ox,oy,5,0,Math.PI*2);ctx.fillStyle=isLight?'#7c3aed':'#a78bfa';ctx.fill();
+    ctx.fillStyle=isLight?'#7c3aed':'#a78bfa';ctx.font='bold 10px DM Mono,monospace';
+    ctx.textAlign='right';
+    ctx.fillText('$'+chartOpwapPts[pts-1].usd.toLocaleString('en',{maximumFractionDigits:2}),ox-8,oy-10);
   }
 }
 window.addEventListener('resize',function(){if(chartBtcPts.length)drawPortfolioChart();});
@@ -4142,71 +4151,87 @@ async function loadTxHistory() {
   if (!listEl) return;
   if (_txCache[addr]) { renderTxList(_txCache[addr]); return; }
   listEl.innerHTML = '<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
-  try {
-    // 1. Current block number (returns hex string e.g. "0x0eb4")
-    var bnRaw = await dashRpcCallRaw('btc_blockNumber', []);
-    var blockNum = 0;
-    if (bnRaw != null) {
-      blockNum = typeof bnRaw === 'string' && bnRaw.startsWith('0x')
-        ? parseInt(bnRaw, 16) : parseInt(String(bnRaw));
-    }
-    if (!blockNum) throw new Error('no block');
 
-    // 2. Scan last 50 blocks — identify user txs by output address (no "from" field in OPNet)
-    var userTxs = [];
-    var SCAN_BLOCKS = 50;
-    for (var i = 0; i < SCAN_BLOCKS && userTxs.length < 100; i++) {
-      var bn = blockNum - i;
-      if (bn < 1) break;
-      try {
-        var hexBn = '0x' + bn.toString(16);
-        var block = await dashRpcCallRaw('btc_getBlockByNumber', [hexBn, true]);
-        if (!block || !block.transactions) continue;
-        var txs = block.transactions;
-        for (var j = 0; j < txs.length; j++) {
-          var tx = txs[j];
-          // Only Interaction and Deployment txs are OPNet contract txs
-          if (tx.OPNetType !== 'Interaction' && tx.OPNetType !== 'Deployment') continue;
-          // Sender has no "from" field — identify by change output going back to user's address
-          var outputs = tx.outputs || [];
-          var isUser = outputs.some(function(o) {
-            return o.scriptPubKey && o.scriptPubKey.address === addr;
-          });
-          if (!isUser) continue;
-          // Label by contract address
-          var cAddr = (tx.contractAddress || '').toLowerCase();
-          var label = 'Contract Call';
-          if (tx.OPNetType === 'Deployment') {
-            label = 'Deploy';
-          } else if (cAddr) {
-            if (cAddr === CONTRACTS.opwayYield.toLowerCase())          label = 'OPWAY';
-            else if (cAddr === CONTRACTS.propertyNft.toLowerCase())    label = 'PropertyNFT';
-            else if (cAddr === CONTRACTS.opwaCoin.toLowerCase())       label = 'OPWACoin';
-            else if (YIELD_VAULT_ADDR && cAddr === YIELD_VAULT_ADDR.toLowerCase())       label = 'YieldVault';
-            else if (PROPERTY_VAULT_ADDR && cAddr === PROPERTY_VAULT_ADDR.toLowerCase()) label = 'PropertyVault';
-            else if (USDOP_ADDR && cAddr === USDOP_ADDR.toLowerCase())                   label = 'USDOP';
-          }
-          // Hash: tx.hash is already a hex string in OPNet block data
-          var txHash = typeof tx.hash === 'string' ? tx.hash
-            : (typeof tx.id === 'string' ? tx.id : '');
-          userTxs.push({
-            hash: txHash,
-            action: label,
-            value: '—',
-            time: null,
-            blockNumber: String(tx.blockNumber || bn),
-            status: 'Confirmed',
-            isOpwa: true
+  var userTxs = [];
+
+  try {
+    // Strategy 1: OPScan REST API (most reliable — same data as the OPScan UI)
+    var opscanUrl = 'https://opscan.org/api/v1/address/' + addr + '/transactions?network=op_testnet&limit=50';
+    try {
+      var osR = await fetch(opscanUrl, {signal: AbortSignal.timeout(8000)});
+      if (osR.ok) {
+        var osData = await osR.json();
+        var txList = osData.transactions || osData.data || osData.txs || osData || [];
+        if (Array.isArray(txList) && txList.length > 0) {
+          userTxs = txList.map(function(tx) {
+            var hash = tx.hash || tx.txid || tx.id || '';
+            var blockRaw = tx.blockNumber || tx.block_number || tx.block || '';
+            var blockDec = typeof blockRaw === 'number' ? String(blockRaw)
+              : (typeof blockRaw === 'string' && blockRaw.startsWith('0x') ? String(parseInt(blockRaw,16)) : String(blockRaw||''));
+            var method = tx.method || tx.type || tx.action || 'Contract Call';
+            var timeVal = tx.timestamp || tx.block_time || null;
+            return {
+              hash: hash,
+              action: method,
+              value: tx.value ? (parseFloat(tx.value)/1e8).toFixed(6)+' BTC' : '—',
+              time: timeVal ? new Date(timeVal*1000) : null,
+              blockNumber: blockDec,
+              status: tx.status === 1 || tx.status === 'confirmed' || tx.status === 'Confirmed' ? 'Confirmed' : 'Pending',
+              isOpwa: true
+            };
           });
         }
-      } catch(_) {}
+      }
+    } catch(_os) {}
+
+    // Strategy 2: OPNet block scan fallback (if OPScan API unavailable)
+    if (!userTxs.length) {
+      var bnRaw = await dashRpcCallRaw('btc_blockNumber', []);
+      var blockNum = 0;
+      if (bnRaw != null) {
+        blockNum = typeof bnRaw === 'string' && bnRaw.startsWith('0x')
+          ? parseInt(bnRaw, 16) : parseInt(String(bnRaw));
+      }
+      if (blockNum) {
+        var SCAN_BLOCKS = 30;
+        for (var i = 0; i < SCAN_BLOCKS && userTxs.length < 50; i++) {
+          var bn = blockNum - i;
+          if (bn < 1) break;
+          try {
+            var hexBn = '0x' + bn.toString(16);
+            var block = await dashRpcCallRaw('btc_getBlockByNumber', [hexBn, true]);
+            if (!block || !block.transactions) continue;
+            for (var j = 0; j < block.transactions.length; j++) {
+              var tx = block.transactions[j];
+              if (tx.OPNetType !== 'Interaction' && tx.OPNetType !== 'Deployment') continue;
+              var outputs = tx.outputs || [];
+              var isUser = outputs.some(function(o){return o.scriptPubKey&&o.scriptPubKey.address===addr;});
+              if (!isUser) continue;
+              var cAddr = (tx.contractAddress||'').toLowerCase();
+              var label = tx.OPNetType==='Deployment' ? 'Deploy' : 'Contract Call';
+              if (cAddr===CONTRACTS.opwayYield.toLowerCase()) label='OPWAY';
+              else if (cAddr===CONTRACTS.propertyNft.toLowerCase()) label='PropertyNFT';
+              else if (cAddr===CONTRACTS.opwaCoin.toLowerCase()) label='OPWACoin';
+              var txHash = typeof tx.hash==='string'?tx.hash:(tx.id||'');
+              // blockNumber: always store as decimal string
+              var bnVal = tx.blockNumber != null
+                ? (typeof tx.blockNumber==='string'&&tx.blockNumber.startsWith('0x') ? String(parseInt(tx.blockNumber,16)) : String(tx.blockNumber))
+                : String(bn);
+              userTxs.push({hash:txHash,action:label,value:'—',time:null,blockNumber:bnVal,status:'Confirmed',isOpwa:true});
+            }
+          } catch(_) {}
+        }
+      }
     }
-    _txCache[addr] = userTxs;
-    _txAllData = userTxs;
-    _txPage = 0;
+  } catch(e) {}
+
+  _txCache[addr] = userTxs;
+  _txAllData = userTxs;
+  _txPage = 0;
+  if (!userTxs.length) {
+    listEl.innerHTML = '<div style="padding:32px;text-align:center;font-size:12px;color:var(--text-3)">No transactions found. <a href="https://opscan.org/accounts/'+addr+'?network=op_testnet" target="_blank" style="color:var(--accent)">View on OPScan ↗</a></div>';
+  } else {
     renderTxList(userTxs);
-  } catch(e) {
-    if (listEl) listEl.innerHTML = '<div style="padding:24px;text-align:center;font-size:12px;color:var(--text-3)">Could not load transactions. <a href="https://opscan.org/accounts/' + addr + '?network=op_testnet" target="_blank" style="color:var(--accent)">View on OPScan ↗</a></div>';
   }
 }
 function renderTxList(txs){
@@ -5019,7 +5044,8 @@ function vaultMarkDashboardAssets() {
     'assets':       'nav-assets',
     'simulator':    'nav-simulator',
     'partners':     'nav-partners',
-    'how-it-works': 'nav-protocol'
+    'how-it-works': 'nav-howitworks',
+    'tech-info':    'nav-protocol'
   };
   if ('IntersectionObserver' in window) {
     var sio = new IntersectionObserver(function(entries) {
