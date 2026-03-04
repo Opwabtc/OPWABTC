@@ -1,21 +1,21 @@
-[![CI](https://github.com/Opwabtc/OPWABTC/actions/workflows/ci.yml/badge.svg)](https://github.com/Opwabtc/OPWABTC/actions) [![Vercel](https://vercelbadge.vercel.app/api/Opwabtc/OPWABTC)](https://op-real-estate-platform.vercel.app/)
-
 # OPWA — Onchain Proof of World Asset
 
-> **Real Estate Tokenization on Bitcoin Layer 1, Powered by OP_NET**
+> Real Estate Tokenization on Bitcoin Layer 1, Powered by OP_NET
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Network: Bitcoin L1](https://img.shields.io/badge/Network-Bitcoin%20L1-orange)](https://opnet.org)
-[![Status: Testnet](https://img.shields.io/badge/Status-Testnet-blue)](./docs/testnet-deployments.md)
-[![Frontend: Live](https://img.shields.io/badge/Frontend-Live-green)](https://op-real-estate-platform.vercel.app/)
+[![Network: Bitcoin L1](https://img.shields.io/badge/Network-Bitcoin%20L1-orange.svg)](https://opnet.org)
+[![Status: Testnet](https://img.shields.io/badge/Status-Testnet-blue.svg)](https://opwa-protocol.vercel.app)
+[![Deploy: Vercel](https://img.shields.io/badge/Deploy-Vercel-black.svg)](https://opwa-protocol.vercel.app)
 
 ---
 
 ## Overview
 
-OPWA is the first real estate tokenization protocol built **natively on Bitcoin Layer 1** via the [OP_NET](https://opnet.org) smart contract infrastructure. It enables fractional ownership of premium real estate through OP-20 fungible tokens and OP-721 NFTs — without bridges, sidechains, or wrapped assets.
+OPWA is the first real estate tokenization protocol built natively on Bitcoin Layer 1 via the OP_NET smart contract infrastructure. It enables fractional ownership of premium real estate through **OPWAY tokens** (OP-20) and **PropertyNFTs** (OP-721) — without bridges, sidechains, or wrapped assets.
 
-Bitcoin holders interact with real estate tokens using native BTC, on the Bitcoin blockchain, with full self-custody preserved throughout the entire investment lifecycle.
+Investors buy OPWAY tokens with native BTC, stake them in the **YieldVault** to earn **USDOP** (the protocol's stablecoin), and use those tokens to invest in fractional real estate shares. **OPWACoin (OPWAY)** is also the governance token of the protocol — tokenomics and airdrop details to be announced.
+
+Full self-custody is preserved throughout the entire investment lifecycle. Your BTC never leaves your wallet.
 
 ---
 
@@ -24,23 +24,27 @@ Bitcoin holders interact with real estate tokens using native BTC, on the Bitcoi
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                        USER LAYER                            │
-│           OPWallet / UniSat / XVerse Browser Extension       │
+│       OPWallet / UniSat / XVerse / OKX Browser Extension     │
 └─────────────────────────┬────────────────────────────────────┘
                           │  BTC Transaction (native L1)
 ┌─────────────────────────▼────────────────────────────────────┐
 │                     FRONTEND LAYER                           │
-│      React 19 + TypeScript + Vite + TailwindCSS + Zustand    │
-│          https://op-real-estate-platform.vercel.app/         │
+│         Single-Page App — HTML / CSS / JavaScript            │
+│              https://opwa-protocol.vercel.app                │
+│    Pages: Home · Vault · Dashboard · Terms · Privacy         │
 └─────────────────────────┬────────────────────────────────────┘
-                          │  opnet SDK calls
+                          │  OP_NET SDK / JSON-RPC
 ┌─────────────────────────▼────────────────────────────────────┐
 │                  OP_NET LAYER (Bitcoin L1)                   │
-│   ┌─────────────┐  ┌─────────────┐  ┌──────────────────┐     │
-│   │  OPWACOIN   │  │ Property NFT│  │  Yield Dist.     │     │
-│   │  (OP-20)    │  │  (OP-721)   │  │  (Yield.ts)      │     │
-│   └─────────────┘  └─────────────┘  └──────────────────┘     │
-│               WASM Contracts (AssemblyScript)                │
-│              Deployed via Taproot / UTXO Model               │
+│  ┌───────────┐  ┌─────────────┐  ┌──────────────────────┐   │
+│  │  OPWAY    │  │ PropertyNFT │  │  YieldVault + USDOP  │   │
+│  │  (OP-20)  │  │  (OP-721)   │  │  (Yield + Stable)    │   │
+│  └───────────┘  └─────────────┘  └──────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │         PropertyVault — NFT locking + fractionalize  │    │
+│  └──────────────────────────────────────────────────────┘    │
+│              WASM Contracts (AssemblyScript → OP-VM)         │
+│             Deployed via Taproot / UTXO Model                │
 └─────────────────────────┬────────────────────────────────────┘
                           │
 ┌─────────────────────────▼────────────────────────────────────┐
@@ -55,27 +59,134 @@ Bitcoin holders interact with real estate tokens using native BTC, on the Bitcoi
 ## Smart Contract Stack
 
 | Contract | Standard | Description | Status |
-|----------|----------|-------------|--------|
-| `OPWACoin` | OP-20 | Platform governance & utility token | Testnet |
-| `PropertyNFT` | OP-721 | Represents unique real estate asset ownership | Testnet |
-| `FractionalToken` | OP-20 | Per-property fungible fractional shares | Testnet |
-| `YieldDistributor` | Custom | Rental income distribution to token holders | Development |
-| `Governance` | Custom | On-chain voting for protocol parameters | Planned |
+|---|---|---|---|
+| OPWACoin (OPWAY) | OP-20 | Governance & utility token. 1 OPWAY = 1,000 sats. Minted atomically on BTC send. | ✅ Testnet |
+| PropertyNFT | OP-721 | Represents unique real estate asset. One NFT per property. | ✅ Testnet |
+| YieldVault | Custom | Accepts OPWAY deposits. Distributes USDOP yield. 420-block timelock. | ✅ Testnet |
+| USDOP | OP-20 | Protocol stablecoin. Earned by staking OPWAY. Future payment currency. | ✅ Testnet |
+| PropertyVault | Custom | Locks PropertyNFT and enables fractional OPWAY investment. | ✅ Testnet |
+| YieldDistributor | Custom | Distributes rental income pro-rata to fractional token holders. | 🔧 Development |
+| Governance | Custom | On-chain voting for protocol parameters via OPWACoin. | 📋 Planned |
 
-All contracts are written in **AssemblyScript**, compiled to **WASM**, and deployed on Bitcoin L1 via OP_NET. No EVM. No Solidity. Native Bitcoin.
+All contracts are written in AssemblyScript, compiled to WASM, and deployed on Bitcoin L1 via OP_NET. No EVM. No Solidity. Native Bitcoin.
+
+---
+
+## Token Model
+
+### OPWAY (OPWACoin)
+- **Standard:** OP-20
+- **Role:** Governance token of the OPWA Protocol. Future utility includes protocol voting, fee discounts, and airdrop eligibility.
+- **Price:** 1 OPWAY = 1,000 sats = 0.00001 BTC
+- **Minting:** Atomic on-chain — BTC sent to treasury mints OPWAY in the same transaction, no intermediary.
+- **Tokenomics & Airdrop:** To be announced.
+
+### USDOP
+- **Standard:** OP-20
+- **Role:** Protocol-native stablecoin. The yield and payment currency of the OPWA ecosystem.
+- **Earning:** Stake OPWAY in the YieldVault → earn 1 USDOP per 100 OPWAY per OP_NET block (~15% APY).
+- **Future use:** Property purchases, rental distributions, platform fees.
+
+### PropertyNFT
+- **Standard:** OP-721
+- **Role:** Represents sole title of a real-world property on-chain. One NFT per asset.
+- **Locking:** Deposited into PropertyVault to enable fractional community investment.
+
+---
+
+## Deployed Contracts (OP_NET Testnet)
+
+Contracts are compiled to WASM (AssemblyScript → OP-VM) and deployed on Bitcoin L1 via OP_NET Testnet.
+
+| Contract | Standard | Address | Explorer |
+|---|---|---|---|
+| OPWACoin (OPWAY) | OP-20 | `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp` | [OPScan ↗](https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet) |
+| PropertyNFT | OP-721 | `opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6` | [OPScan ↗](https://opscan.org) |
+| YieldVault | Custom | `opt1sqzjaxfszmf6dltnjhx2txz08ezzqxvakzcuz7msw` | [OPScan ↗](https://opscan.org) |
+| USDOP | OP-20 | `opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu` | [OPScan ↗](https://opscan.org) |
+| OPWAYield v3 | Custom | `opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv` | [OPScan ↗](https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet) |
+
+> ⚠️ Do not change contract addresses. See [docs/testnet-deployments.md](docs/testnet-deployments.md) for full deployment records.
+
+---
+
+## How It Works
+
+### For Investors
+
+```
+1. ACQUIRE   — Buy OPWAY tokens with native BTC.
+               1 OPWAY = 1,000 sats. No bridge. No wrapping.
+
+2. STAKE     — Deposit OPWAY into the YieldVault.
+               420-block timelock (~70 min on OP_NET Testnet).
+
+3. EARN      — Accrue USDOP stablecoin every block.
+               Rate: 1 USDOP per 100 OPWAY per block (~15% APY).
+
+4. INVEST    — Use OPWAY to buy fractional shares of real estate
+               assets listed on the OPWA marketplace.
+
+5. REDEEM    — When 100% of fractional shares are acquired, the
+               PropertyNFT is unlocked and full property title
+               transferred to the buyer.
+```
+
+### For Property Owners
+
+```
+1. TOKENIZE     — Verify property and upload legal docs to IPFS.
+                  Mint a PropertyNFT (OP-721) representing sole title.
+
+2. FRACTIONALIZE — Deposit NFT into PropertyVault.
+                   Set maximum OPWAY amount to raise.
+                   Community can invest fractionally via the marketplace.
+
+3. COLLECT      — Receive OPWAY from investors.
+                   Future: distribute rental income via YieldDistributor.
+```
+
+---
+
+## Frontend
+
+The OPWA frontend is a single-page application (SPA) built as a static HTML/CSS/JS file, deployed on Vercel. No build step required — the entire interface, routing, and contract interactions are self-contained in `index.html`.
+
+**Live:** https://opwa-protocol.vercel.app
+
+**Pages:**
+- `/` — Home: marketplace, asset cards, simulator, how it works, partners
+- `/vault` — Yield Vault: deposit OPWAY, earn USDOP, list PropertyNFTs
+- `/dashboard` — Portfolio: wallet balance, transaction history (OPScan-style), OPWAY chart
+- `/terms` — Terms of Service
+- `/privacy` — Privacy Policy
+
+**Supported Wallets:** OPWallet · UniSat · XVerse · OKX
+
+**Features implemented:**
+- Live BTC price feed (CoinGecko)
+- Gas converter widget
+- Dark / Light mode
+- Custom animated cursor
+- Fractional investment accordion cards with receipt preview
+- Investment simulator with BTC/USD toggle
+- Scrolling partners carousel
+- YieldVault with on-chain block polling and USDOP accrual display
+- Dashboard with live OPWAY balance, portfolio chart, and paginated TX history
+- PropertyNFT minting with photo upload
+- SPA routing with browser history API
 
 ---
 
 ## OP-20 Standard Overview
 
-OP-20 is the Bitcoin-native fungible token standard on OP_NET, analogous to ERC-20 on Ethereum. Key differences:
+OP-20 is the Bitcoin-native fungible token standard on OP_NET, analogous to ERC-20 on Ethereum.
 
-- Gas is paid in **native BTC** — no secondary token required
-- Transactions are **Bitcoin Layer 1 UTXOs** — not account-model
-- Contracts execute in **WASM** via the OP-VM engine
-- Full **self-custody** — your BTC never leaves your wallet
-
-Core interface:
+**Key differences from ERC-20:**
+- Gas paid in native BTC — no secondary token required
+- Transactions are Bitcoin Layer 1 UTXOs — not account-model
+- Contracts execute in WASM via the OP-VM engine
+- Full self-custody — your BTC never leaves your wallet
 
 ```typescript
 // Standard OP-20 interface (AssemblyScript)
@@ -96,9 +207,7 @@ interface IOP20 {
 
 ## OP-721 Standard Overview
 
-OP-721 is the Bitcoin-native non-fungible token standard. Each `PropertyNFT` represents a unique real estate asset with on-chain metadata.
-
-Core interface:
+OP-721 is the Bitcoin-native non-fungible token standard. Each PropertyNFT represents a unique real estate asset with on-chain metadata.
 
 ```typescript
 // Standard OP-721 interface (AssemblyScript)
@@ -116,98 +225,34 @@ interface IOP721 {
 
 ---
 
-## Deployed Contracts (OP_NET Testnet)
-
-> Contracts are compiled to WASM (AssemblyScript → OP-VM) and deployed on Bitcoin L1 via OP_NET Testnet.
-
-| Contract | Standard | Address | Explorer |
-|----------|----------|---------|----------|
-| `OPWACoin` | OP-20 | `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp` | [OPScan](https://testnet.opscan.io) |
-| `PropertyNFT` | OP-721 | `opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6` | [OPScan](https://testnet.opscan.io) |
-| `OPWAYield v3` | Custom | `opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv` | [OPScan](https://testnet.opscan.io) |
-
-Full deployment records: [docs/testnet-deployments.md](./docs/testnet-deployments.md)
-
----
-
-## How It Works
-
-```
-1. TOKENIZE  — A real-world property is verified and its legal docs uploaded to IPFS.
-               The owner mints a PropertyNFT (OP-721) representing sole title.
-
-2. FRACTIONALIZE — The NFT is locked and a FractionalToken (OP-20) is deployed.
-                   Investors buy fractional shares with native BTC.
-
-3. EARN      — Rental income is deposited on-chain to the YieldDistributor contract,
-               which distributes yield pro-rata to FractionalToken holders in OPWA.
-
-4. TRADE     — Fractional shares and OPWA tokens trade on Motoswap (AMM DEX on OP_NET)
-               with native BTC liquidity pairs.
-
-5. REDEEM    — When 100% of fractional shares are bought back, the PropertyNFT is
-               unlocked and the full property title is returned to the redeemer.
-```
-
----
-
-## Testnet Status
-
-See [docs/testnet-deployments.md](./docs/testnet-deployments.md) for current deployment records.
-
-OP_NET Mainnet launch: **March 17, 2026**. OPWA will migrate all contracts post-mainnet launch.
-
----
-
-## Quickstart
-
-### Prerequisites
-
-- Node.js 18+
-- npm 9+
-- OPWallet, UniSat, or XVerse browser extension
-
-### Frontend Setup
-
-```bash
-git clone https://github.com/Opwabtc/OPWABTC.git
-cd OPWABTC
-
-npm install
-npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173)
-
-### Environment Variables
-
-Create a `.env` file at project root:
-
-```env
-VITE_OP_NET_TESTNET_RPC=https://testnet.opnet.org/rpc
-VITE_OP_NET_TESTNET_CHAIN_ID=1338
-VITE_API_BASE_URL=https://api.opwa.btc
-```
-
-### Build & Deploy
-
-```bash
-npm run build       # Outputs to dist/
-npm run preview     # Preview production build locally
-vercel --prod       # Deploy to Vercel
-```
-
----
-
 ## Project Structure
 
 ```
 OPWABTC/
 ├── contracts/
-│   ├── op20/               # OPWACOIN fungible token contract
-│   ├── op721/              # PropertyNFT non-fungible token contract
-│   ├── yield/              # Yield distribution contract
-│   └── governance/         # Governance contract (planned)
+│   ├── abis/               # ABI definitions for all contracts
+│   ├── op20/               # OPWACoin (OPWAY) fungible token
+│   ├── op721/              # PropertyNFT non-fungible token
+│   ├── vault/              # YieldVault, USDOP, PropertyVault contracts
+│   └── yield/              # YieldDistributor (in development)
+├── OPWACoin/
+│   └── src/                # Extended token contracts (stablecoin, pegged, oracle)
+├── scripts/                # Deployment and configuration scripts
+│   ├── deploy-token.ts
+│   ├── deploy-nft.ts
+│   ├── deploy-yield-vault.ts
+│   ├── deploy-usdop.ts
+│   ├── deploy-property-vault.ts
+│   ├── configure-property-vault.ts
+│   ├── set-minter.ts
+│   ├── set-treasury.ts
+│   └── set-vault-addresses.ts
+├── src/                    # React component library (in development)
+│   ├── components/
+│   ├── hooks/
+│   ├── pages/
+│   ├── store/
+│   └── types/
 ├── docs/
 │   ├── whitepaper.md
 │   ├── technical-architecture.md
@@ -217,32 +262,72 @@ OPWABTC/
 │   └── testnet-deployments.md
 ├── audits/                 # Security audit reports
 ├── tests/                  # Contract unit tests
-├── src/                    # React frontend
-│   ├── components/
-│   ├── hooks/
-│   ├── lib/
-│   ├── pages/
-│   ├── store/
-│   └── types/
-├── index.html
+├── index.html              # ← Production frontend (SPA, deployed on Vercel)
+├── dist/                   # Vercel build output
+├── vercel.json
 ├── package.json
 ├── vite.config.ts
-├── vercel.json
-├── README.md
-├── CHANGELOG.md
-└── LICENSE
+└── README.md
+```
+
+> **Note:** The production frontend is `index.html` — a self-contained SPA deployed directly via Vercel. The `src/` directory contains a React component library under development for a future modular architecture migration.
+
+---
+
+## Quickstart
+
+### Prerequisites
+- Node.js 18+
+- npm 9+
+- OPWallet, UniSat, XVerse, or OKX browser extension
+
+### Run Locally
+
+```bash
+git clone https://github.com/Opwabtc/OPWABTC.git
+cd OPWABTC
+```
+
+Open `index.html` directly in your browser, or serve it locally:
+
+```bash
+npx serve .
+# → http://localhost:3000
+```
+
+### Deploy to Vercel
+
+```bash
+vercel --prod
+```
+
+Vercel serves `index.html` as a static SPA. Routing is handled client-side via the History API — `vercel.json` rewrites all paths to `index.html`.
+
+### Environment
+
+The app uses public RPC endpoints configured directly in `index.html`:
+
+```
+OP_NET Testnet RPC: https://regtest.opnet.org
+OP_NET Chain ID: 1338
 ```
 
 ---
 
 ## Roadmap
 
-| Quarter | Milestone |
-|---------|-----------|
-| Q1 2026 | Smart contracts on OP_NET testnet (OP-20 + OP-721), wallet integration, frontend marketplace |
-| Q2 2026 | Mainnet migration (post March 17), first tokenized properties listed, Motoswap liquidity |
-| Q3 2026 | Rental yield distribution via smart contracts, multi-geography expansion |
-| Q4 2026 | Governance token activation, institutional partnerships, secondary market |
+| Quarter | Milestone | Status |
+|---|---|---|
+| Q1 2026 | Contracts on Testnet (OPWAY, PropertyNFT, YieldVault, USDOP, PropertyVault) | ✅ Done |
+| Q1 2026 | Wallet integration (OPWallet, UniSat, XVerse, OKX) | ✅ Done |
+| Q1 2026 | Frontend: marketplace, vault, dashboard, simulator | ✅ Live |
+| Q2 2026 | OP_NET Mainnet migration (post March 17, 2026) | ⏳ In progress |
+| Q2 2026 | First real tokenized properties listed | 🔜 Planned |
+| Q2 2026 | Motoswap liquidity integration | 🔜 Planned |
+| Q3 2026 | Rental yield distribution via YieldDistributor | 🔧 In development |
+| Q3 2026 | Multi-geography property expansion | 🔜 Planned |
+| Q4 2026 | OPWACoin governance activation + airdrop | 🔜 Planned |
+| Q4 2026 | Institutional partnerships, secondary market | 🔜 Planned |
 
 ---
 
@@ -253,13 +338,23 @@ OPWABTC/
 3. Commit using conventional commits: `feat(contract): add yield distributor`
 4. Push and open a Pull Request
 
-Commit convention: `feat | fix | refactor | docs | chore | test` + `(scope)` + description.
+**Commit convention:** `feat | fix | refactor | docs | chore | test` + `(scope)` + description.
+
+---
+
+## Security Notice
+
+OPWA is currently operating exclusively on Bitcoin Testnet via OP_NET. No real assets are at risk. All tokens are test-only and carry zero monetary value.
+
+Some dependencies inherited from the OP_NET ecosystem may surface advisories in `npm audit`. These are known upstream issues and do not affect the security of the testnet deployment. A full audit will be conducted prior to mainnet launch.
+
+See [docs/security-model.md](docs/security-model.md) for the complete security architecture.
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](./LICENSE)
+MIT License — see [LICENSE](LICENSE)
 
 ---
 
@@ -269,13 +364,4 @@ This platform is experimental and operates on testnet. Cryptocurrency investment
 
 ---
 
-> **Bitcoin is the settlement layer. OP_NET is the execution layer. OPWA is the application layer.**
-
-
-## Security Notice
-
-OPWA is currently operating exclusively on **Bitcoin Testnet** via OP_NET. No real assets are at risk. All tokens are test-only and carry zero monetary value.
-
-Some dependencies inherited from the OP_NET ecosystem may surface advisories in `npm audit`. These are known upstream issues and do not affect the security of the testnet deployment. A full audit will be conducted prior to mainnet launch.
-
-See [docs/security-model.md](./docs/security-model.md) for the complete security architecture.
+**Bitcoin is the settlement layer. OP_NET is the execution layer. OPWA is the application layer.**
