@@ -252,7 +252,7 @@ button:focus-visible,a:focus-visible{
 
 /* Nav links — centralizados, generosos, com ícone */
 .nav-links{
-  display:flex;align-items:center;gap:1px;
+  display:flex;align-items:center;gap:2px;
   position:absolute;left:50%;transform:translateX(-50%);
   padding:0 4px;
   white-space:nowrap;
@@ -262,34 +262,43 @@ button:focus-visible,a:focus-visible{
   padding:7px 10px;border-radius:9px;font-size:12.5px;font-weight:500;
   color:var(--text-2);transition:color .15s,background .15s;
   white-space:nowrap;letter-spacing:.01em;
+  position:relative;
 }
 .nav-link svg{opacity:.55;transition:opacity .15s;flex-shrink:0}
 .nav-link:hover{color:var(--text-1);background:rgba(255,255,255,.07)}
 .nav-link:hover svg{opacity:.9}
+/* Active state: background + top rounded bar indicator */
 .nav-link.active{color:var(--accent);background:var(--accent-dim)}
 .nav-link.active svg{opacity:1}
+.nav-link.active::before{
+  content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+  width:60%;height:3px;background:var(--accent);border-radius:0 0 3px 3px;
+  box-shadow:0 0 8px rgba(249,115,22,.6);
+}
 [data-theme="light"] .nav-link{color:rgba(59,21,120,.85)}
 [data-theme="light"] .nav-link:hover{background:rgba(109,40,217,.18);color:#3b0764}
 [data-theme="light"] .nav-link:hover svg{opacity:1}
 [data-theme="light"] .nav-link.active{color:#3b0764;background:rgba(109,40,217,.22)}
+[data-theme="light"] .nav-link.active::before{background:#7c3aed;box-shadow:0 0 8px rgba(124,58,237,.5)}
 
-/* Terms/Privacy — mesmo estilo dos outros, só levemente mais suave */
-.nav-link-legal{
-  opacity:.65;
-}
+/* Terms/Privacy subtle */
+.nav-link-legal{opacity:.65}
 .nav-link-legal:hover{opacity:1!important}
 [data-theme="light"] .nav-link-legal{color:var(--text-2)!important}
 
-/* Dashboard pill */
+/* Dashboard — same style as all others (no more pill) */
 .nav-link-dashboard{
-  background:var(--purple-dim)!important;
-  border:1px solid var(--purple-border)!important;
-  color:var(--purple-soft)!important;
-  font-weight:700!important;border-radius:20px!important;
-  padding:5px 12px!important;font-size:12px!important;gap:5px!important;
+  background:none!important;border:none!important;
+  color:var(--text-2)!important;
+  font-weight:500!important;border-radius:9px!important;
+  padding:7px 10px!important;font-size:12.5px!important;gap:5px!important;
 }
-.nav-link-dashboard:hover{background:rgba(124,58,237,.20)!important;color:#c4b5fd!important}
-.nav-dash-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
+.nav-link-dashboard:hover{background:rgba(255,255,255,.07)!important;color:var(--text-1)!important}
+.nav-link-dashboard.active{color:var(--accent)!important;background:var(--accent-dim)!important}
+[data-theme="light"] .nav-link-dashboard{color:rgba(59,21,120,.85)!important}
+[data-theme="light"] .nav-link-dashboard:hover{background:rgba(109,40,217,.18)!important;color:#3b0764!important}
+[data-theme="light"] .nav-link-dashboard.active{color:#3b0764!important;background:rgba(109,40,217,.22)!important}
+.nav-dash-sep{display:none}
 
 
 .nb-right{display:flex;align-items:center;gap:8px;margin-left:auto}
@@ -403,9 +412,7 @@ button:focus-visible,a:focus-visible{
   margin-bottom:22px;
   text-align:center;
   position:relative;z-index:1;
-  transition:text-shadow .4s ease;
 }
-.hero-title:hover{text-shadow:0 0 60px rgba(255,255,255,.45),0 0 120px rgba(255,255,255,.2)}
 @media(max-width:700px){.hero-title{font-size:clamp(36px,10vw,60px)}}
 .hero-title .line-white{color:var(--text-1)}
 .hero-title .line-orange{color:var(--accent)}
@@ -479,9 +486,9 @@ button:focus-visible,a:focus-visible{
   margin-bottom:14px;
 }
 .s-label::before{content:'';display:block;width:16px;height:1px;background:var(--accent)}
-.s-title{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,38px);font-weight:800;line-height:1.08;margin-bottom:12px;transition:text-shadow .4s ease}
+.s-title{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,38px);font-weight:800;line-height:1.08;margin-bottom:12px;display:inline-block;transition:transform .35s cubic-bezier(.4,0,.2,1),text-shadow .35s ease}
 .s-title .acc{color:var(--accent)}
-.s-title:hover{text-shadow:0 0 40px rgba(255,255,255,.55),0 0 80px rgba(255,255,255,.25),0 0 120px rgba(255,255,255,.1)}
+.s-title:hover{transform:scale(1.04) perspective(400px) translateZ(8px);text-shadow:0 0 12px rgba(255,255,255,.18),0 0 24px rgba(255,255,255,.08)}
 .s-sub{font-size:15px;color:var(--text-2);max-width:520px;line-height:1.72;margin-bottom:48px}
 
 /* =====================================================================
@@ -516,6 +523,9 @@ button:focus-visible,a:focus-visible{
 .assets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 @media(max-width:1100px){.assets-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.assets-grid{grid-template-columns:1fr}}
+/* When a card has an open invest panel, span full row */
+.assets-grid .card-asset.invest-open{grid-column:1 / -1;transition:none}
+.assets-grid .card-asset.invest-open:hover{transform:none}
 
 /* Asset Card */
 .card-asset{
@@ -1115,7 +1125,7 @@ footer{
 .modal-overlay.open{display:flex}
 .modal{
   background:#1a1a1a;border:1px solid rgba(255,255,255,.07);
-  border-radius:18px;padding:24px;width:100%;max-width:400px;
+  border-radius:18px;padding:24px;width:100%;max-width:340px;
   box-shadow:0 32px 80px rgba(0,0,0,.7);
   animation:modalIn .22s ease;
 }
@@ -1154,7 +1164,7 @@ footer{
 .w-name{font-size:14px;font-weight:600;color:#f5f5f5;margin-bottom:2px;line-height:1}
 .w-desc{font-size:11.5px;color:#6b6b6b}
 .w-badge{margin-left:auto;padding:3px 8px;border-radius:5px;flex-shrink:0;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.28);color:var(--accent)}
-.wallet-install{font-size:11px;color:#525252;text-align:center;padding:2px 4px 6px;margin-bottom:2px;margin-top:-2px}
+.wallet-install{font-size:11px;color:#525252;text-align:center;padding:6px 4px;margin-bottom:4px}
 .wallet-install a{color:var(--accent);text-decoration:none}
 .wallet-install a:hover{text-decoration:underline}
 
@@ -1355,9 +1365,6 @@ footer{
   background:rgba(15,10,5,.92);
   border-top-color:rgba(249,115,22,.25);
 }
-[data-theme="light"] .lb-item{color:#fff!important}
-[data-theme="light"] .lb-item .lb-label{color:rgba(255,255,255,.7)!important}
-[data-theme="light"] .lb-item .lb-acc{color:#fff!important}
 
 /* ── HERO LIGHT ── */
 [data-theme="light"] .hero-stats{
@@ -1611,7 +1618,7 @@ body{overflow-x:hidden}
 .toast a{pointer-events:all!important}
 
 /* ── SUB-PAGE FOOTER FIX ── */
-.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface,var(--bg-card))!important;border-top:1px solid var(--border)!important;margin-top:auto!important;display:block!important;}
+.vault-page footer,.legal-page footer,#page-dashboard footer{width:100%!important;background:var(--bg-surface)!important;border-top:1px solid var(--border)!important;margin-top:auto!important;display:block!important;padding:0!important}
 </style>
 </head>
 <body data-theme="dark">
@@ -1640,28 +1647,33 @@ body{overflow-x:hidden}
         Home
       </a>
       <!-- Assets -->
-      <a class="nav-link" href="#assets" onclick="navScrollTo('assets');return false;">
+      <a class="nav-link" href="#assets" onclick="navScrollTo('assets');return false;" id="nav-assets">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
         Assets
       </a>
       <!-- Simulator -->
-      <a class="nav-link" href="#simulator" onclick="navScrollTo('simulator');return false;">
+      <a class="nav-link" href="#simulator" onclick="navScrollTo('simulator');return false;" id="nav-simulator">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
         Simulator
       </a>
-      <!-- How It Works -->
-      <a class="nav-link" href="#how-it-works" onclick="navScrollTo('how-it-works');return false;">
+      <!-- Partners -->
+      <a class="nav-link" href="#partners" onclick="navScrollTo('partners');return false;" id="nav-partners">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Partners
+      </a>
+      <!-- Protocol -->
+      <a class="nav-link" href="#how-it-works" onclick="navScrollTo('how-it-works');return false;" id="nav-protocol">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
-        How It Works
+        Protocol
       </a>
       <!-- Vault -->
       <a class="nav-link" href="/vault" onclick="navigate('/vault');return false;" id="nav-vault">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
         Vault
       </a>
-      <div class="nav-dash-sep"></div>
+      <!-- Dashboard -->
       <a class="nav-link nav-link-dashboard" href="/dashboard" onclick="navigate('/dashboard');return false;" id="nav-dashboard">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Dashboard
       </a>
     </div>
@@ -2618,7 +2630,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <hr class="ft-sep"/>
   <div class="ft-bottom">
     <div class="ft-copy">
-        &copy; 2025 OPWA Protocol. All rights reserved.
+        &copy; 2026 OPWA Protocol. All rights reserved.
         <span style="margin-left:18px;font-size:10px;opacity:.7">
           Site made by <a href="https://x.com/HashBalls23" target="_blank" rel="noopener"
             style="color:#d4af37;font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.04em;text-shadow:0 0 12px rgba(212,175,55,.4)">Hash</a>
@@ -2691,7 +2703,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
             <div class="vault-divider" style="margin:8px 0"></div>
             <div style="text-align:center;margin-bottom:4px">
               <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">USDOP Accrued (est.)</div>
-              <div class="vault-acc-usdop" id="vpos-usdop">0.0000</div>
+              <div class="vault-acc-usdop" id="vpos-usdop">$ 0.00</div>
             </div>
           </div>
           <button class="vault-btn-secondary" style="background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.25);color:#22c55e" onclick="vaultClaimUSDOP()">
@@ -2741,6 +2753,17 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
           <div class="vault-input-label">Short Description <span style="color:var(--text-3);font-weight:400">(max 120 chars)</span></div>
           <textarea id="pvault-desc" class="vault-textarea" maxlength="120" placeholder="Brief description of the property..."></textarea>
         </div>
+        <div class="vault-input-wrap">
+          <div class="vault-input-label">Property Photo <span style="color:var(--text-3);font-weight:400">(experimental · not saved on-chain)</span></div>
+          <label id="pvault-photo-label" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:100px;border:2px dashed var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s;background:var(--bg-elevated);overflow:hidden;position:relative">
+            <input type="file" id="pvault-photo" accept="image/*" style="display:none" onchange="pvaultPhotoPreview(this)"/>
+            <span id="pvault-photo-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-3);font-size:12px">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Click to upload photo
+            </span>
+            <img id="pvault-photo-preview" style="display:none;width:100%;height:140px;object-fit:cover;border-radius:8px" alt="Property preview"/>
+          </label>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="vault-input-wrap">
             <div class="vault-input-label">Property Value (BTC)</div>
@@ -2785,7 +2808,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div style="font-size:42px;margin-bottom:14px">&#x1F512;</div>
         <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:10px">Connect Your Wallet</div>
         <div style="font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.6">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</div>
-        <button onclick="openWalletModal()" style="padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;color:#fff;font-weight:600;font-size:14px">Connect Wallet</button>
+        <button onclick="navigate('/');setTimeout(function(){openWalletModal();},200)" style="padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;color:#fff;font-weight:600;font-size:14px">Go Home to Connect</button>
       </div>
     </div>
     <div id="dash-content" style="display:none">
@@ -2910,10 +2933,11 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
           <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.9)">Transaction History</div>
           <div style="font-size:10px;color:rgba(255,255,255,.6);font-family:'DM Mono',monospace" id="tx-count-label"></div>
         </div>
-        <div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.1)">
+        <div style="display:grid;grid-template-columns:110px 1fr 60px 80px 110px 72px;padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.1)">
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6)">Hash</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6)">Action</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Value</span>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Block</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Time</span>
           <span style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right">Status</span>
         </div>
@@ -2931,15 +2955,20 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <div class="legal-wrap">
     <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
     <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Terms of Service</h1>
-    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: January 2025 &middot; OPWA Protocol</p>
-    <div class="legal-sec"><h2>1. Acceptance of Terms</h2><p>By accessing or using the OPWA platform, you agree to be bound by these Terms. OPWA is a decentralized real estate tokenization protocol built on Bitcoin via OP_NET smart contracts.</p></div>
-    <div class="legal-sec"><h2>2. Nature of the Platform</h2><p>OPWA enables fractional ownership of real-world assets through blockchain tokenization on OP_NET Testnet. The Platform does not guarantee returns, liquidity, or token value.</p></div>
-    <div class="legal-sec"><h2>3. Eligibility</h2><p>You must be at least 18 years old and legally permitted to participate in digital asset transactions in your jurisdiction.</p></div>
-    <div class="legal-sec"><h2>4. Wallet and Private Keys</h2><p>OPWA does not custody your funds or private keys. You are solely responsible for your wallet security. All transactions are irreversible once confirmed on-chain.</p></div>
-    <div class="legal-sec"><h2>5. Risks</h2><p>Digital assets involve significant risk including price volatility and smart contract bugs. Do not invest more than you can afford to lose.</p></div>
-    <div class="legal-sec"><h2>6. Disclaimers</h2><p>THE PLATFORM IS PROVIDED AS IS WITHOUT WARRANTIES. OPWA IS NOT RESPONSIBLE FOR ANY LOSSES FROM USE OF THE PLATFORM.</p></div>
-    <div class="legal-sec"><h2>7. Contact</h2><p>Contact us via GitHub at github.com/Opwabtc or official OPWA community channels.</p></div>
-    <div style="margin-top:60px;margin-bottom:40px;padding:28px 32px;border-radius:14px;background:var(--bg-card);border:1px solid var(--border);font-size:14px;color:var(--text-2);line-height:1.7">By using OPWA, you agree to these Terms.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="color:var(--text-3);text-decoration:none">Privacy &#x2192;</a></div></div>
+    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: March 2026 &middot; OPWA Protocol &middot; OP_NET Testnet</p>
+    <div class="legal-sec"><h2>1. Acceptance of Terms</h2><p>By accessing or using the OPWA Protocol platform — including the web application at opwa-protocol.vercel.app, smart contracts deployed on OP_NET Testnet, and any associated tools — you confirm that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree to all terms, you must discontinue use immediately. These terms apply to all visitors, users, investors, and property listers on the platform.</p></div>
+    <div class="legal-sec"><h2>2. Nature of the Platform</h2><p>OPWA Protocol is an experimental, decentralized real estate tokenization protocol built natively on Bitcoin's Layer 1 via OP_NET smart contracts. It enables fractional ownership of real-world assets represented as OP-20 tokens (OPWAY Coin) and OP-721 NFTs (PropertyNFT). The platform operates exclusively on OP_NET Testnet. No mainnet deployment exists at this time. All assets, balances, and transactions are experimental and carry no guarantee of value, liquidity, or real-world legal enforceability. OPWA does not act as a broker, custodian, financial advisor, or real estate agent.</p></div>
+    <div class="legal-sec"><h2>3. Eligibility &amp; Jurisdictional Restrictions</h2><p>You must be at least 18 years of age and legally permitted to participate in digital asset transactions in your jurisdiction. OPWA Protocol does not provide services to residents of jurisdictions where digital asset transactions, DeFi protocols, or tokenized real estate are prohibited by law. It is your sole responsibility to determine the legal status of your participation. Users from sanctioned regions or those subject to applicable financial sanctions programs are prohibited from using this platform.</p></div>
+    <div class="legal-sec"><h2>4. Wallet, Private Keys &amp; Self-Custody</h2><p>OPWA Protocol is a non-custodial platform. We do not at any time hold, store, or have access to your private keys, seed phrases, or wallet credentials. You are entirely responsible for the security of your wallet (OP_Wallet, Unisat, Xverse, OKX, or any compatible Bitcoin wallet). All on-chain transactions are irreversible once confirmed. OPWA bears no responsibility for loss of funds due to user error, wallet compromise, phishing attacks, or hardware failure. Never share your seed phrase with anyone, including OPWA team members.</p></div>
+    <div class="legal-sec"><h2>5. YieldVault &amp; Staking</h2><p>The YieldVault smart contract allows OPWAY holders to stake tokens in exchange for USDOP stablecoin yield at approximately 15% APY, subject to a 420-block timelock (~70 minutes on OP_NET Testnet). Yield accrual rates, timelock durations, and reward token availability are subject to change via protocol governance. Staked tokens are locked per the contract logic; OPWA Protocol cannot override on-chain conditions or manually release funds. Yield estimates displayed in the interface are approximations and may differ from actual on-chain balances due to block timing variances.</p></div>
+    <div class="legal-sec"><h2>6. PropertyNFT &amp; Property Vault</h2><p>PropertyNFT (OP-721) tokens represent experimental fractional ownership interests in simulated real estate assets on testnet. These tokens have no legal real-world property rights, title, or enforceability unless explicitly established through applicable law and separate legal documentation. Listing a PropertyNFT in the Property Vault is an on-chain action. OPWA Protocol does not verify, appraise, or warrant any property valuations entered by users. All property data is user-generated and unverified.</p></div>
+    <div class="legal-sec"><h2>7. Risk Disclosures</h2><p>Digital assets and DeFi protocols involve substantial risk. Smart contract bugs, oracle failures, network congestion, or protocol exploits may result in partial or total loss of funds. Price volatility of BTC and OPWAY tokens is significant. OP_NET Testnet is an experimental environment — the protocol may be reset, paused, or discontinued without notice. Do not invest funds you cannot afford to lose. Past performance of any asset or yield rate is not indicative of future results.</p></div>
+    <div class="legal-sec"><h2>8. Intellectual Property</h2><p>All OPWA Protocol source code is published under open-source licenses as available on <a href="https://github.com/Opwabtc/OPWABTC" target="_blank" style="color:var(--accent)">github.com/Opwabtc</a>. The OPWA name, logo, and brand assets are the property of the OPWA Protocol team. Unauthorized commercial use of branding is prohibited. Smart contract ABIs and token standards follow OP_NET specifications and are governed by their respective licenses.</p></div>
+    <div class="legal-sec"><h2>9. Disclaimers &amp; Limitation of Liability</h2><p>THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. OPWA PROTOCOL AND ITS CONTRIBUTORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF FUNDS, DATA, PROFITS, OR GOODWILL ARISING FROM USE OF OR INABILITY TO USE THE PLATFORM, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p></div>
+    <div class="legal-sec"><h2>10. Modifications</h2><p>OPWA Protocol reserves the right to update these Terms at any time. Continued use of the platform after changes constitutes acceptance. We will indicate the last updated date at the top of this document.</p></div>
+    <div class="legal-sec"><h2>11. Governing Law</h2><p>These Terms shall be governed by the laws of the applicable jurisdiction of the OPWA Protocol contributors. Any disputes shall be resolved through good-faith negotiation before formal proceedings. Given the decentralized nature of the protocol, on-chain logic supersedes any off-chain dispute resolution in matters of fund custody and contract execution.</p></div>
+    <div class="legal-sec"><h2>12. Contact</h2><p>For inquiries, reach us via <a href="https://github.com/Opwabtc/OPWABTC" target="_blank" style="color:var(--accent)">GitHub</a>, official OPWA community channels, or X (<a href="https://x.com/" target="_blank" style="color:var(--accent)">@OPWA Protocol</a>). For security vulnerabilities, use responsible disclosure through our GitHub repository.</p></div>
+    <div style="margin-top:60px;margin-bottom:40px;padding:28px 32px;border-radius:14px;background:var(--bg-card);border:1px solid var(--border);font-size:14px;color:var(--text-2);line-height:1.7">By using OPWA Protocol, you acknowledge that you have read, understood, and agree to these Terms of Service in their entirety.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back to Home</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="color:var(--text-3);text-decoration:none">Privacy Policy &#x2192;</a></div></div>
   </div>
   </div>
   <footer id="terms-footer" style="margin-top:auto"></footer>
@@ -2951,15 +2980,20 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <div class="legal-wrap">
     <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
     <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Privacy Policy</h1>
-    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: January 2025 &middot; OPWA Protocol</p>
-    <div class="legal-sec"><h2>1. Overview</h2><p>OPWA Protocol is committed to transparency. This policy explains what data we collect, how we use it, and your rights.</p></div>
-    <div class="legal-sec"><h2>2. Information We Collect</h2><p>We do not collect personally identifiable information. Your wallet address and transaction data are recorded on the OP_NET blockchain and are publicly visible.</p></div>
-    <div class="legal-sec"><h2>3. Blockchain Data</h2><p>All transactions are permanently recorded on Bitcoin via OP_NET. This data is public and immutable.</p></div>
-    <div class="legal-sec"><h2>4. Analytics</h2><p>We may use privacy-respecting analytics to understand usage patterns. We do not use cookies for advertising.</p></div>
-    <div class="legal-sec"><h2>5. Third-Party Services</h2><p>We integrate with CoinGecko, Mempool.opnet.org, and OPScan. Each has its own privacy policy.</p></div>
-    <div class="legal-sec"><h2>6. Wallet Extensions</h2><p>OPWA only reads your public key. We never request private keys or seed phrases.</p></div>
-    <div class="legal-sec"><h2>7. Contact</h2><p>For privacy inquiries, contact us via GitHub at github.com/Opwabtc.</p></div>
-    <div style="margin-top:40px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-3)">We are committed to protecting your privacy.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back</a><a href="/terms" onclick="navigate('/terms');return false;" style="color:var(--text-3);text-decoration:none">Terms &#x2192;</a></div></div>
+    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: March 2026 &middot; OPWA Protocol &middot; OP_NET Testnet</p>
+    <div class="legal-sec"><h2>1. Overview &amp; Commitment</h2><p>OPWA Protocol is built on the principles of transparency, decentralization, and user sovereignty. This Privacy Policy describes what information we collect (or explicitly do not collect), how we operate, and your rights as a user of the OPWA Protocol platform. We are committed to data minimization — we only process what is strictly necessary for the protocol to function.</p></div>
+    <div class="legal-sec"><h2>2. Information We Do Not Collect</h2><p>OPWA Protocol does not collect, store, or process personally identifiable information (PII) such as your name, email address, phone number, physical address, or government identification. We do not require account registration or login credentials. We do not use tracking cookies, advertising pixels, or behavioral profiling. We do not sell user data to any third party.</p></div>
+    <div class="legal-sec"><h2>3. Blockchain &amp; On-Chain Data</h2><p>All transactions executed through OPWA Protocol are recorded permanently on the Bitcoin blockchain via OP_NET. This includes wallet addresses, transaction hashes, token transfer amounts, smart contract interactions, NFT minting events, and vault staking actions. This data is publicly visible on OPScan (<a href="https://opscan.org" target="_blank" style="color:var(--accent)">opscan.org</a>) and inherent to the transparent nature of blockchain technology. OPWA Protocol has no ability to delete, modify, or obscure on-chain data.</p></div>
+    <div class="legal-sec"><h2>4. Wallet Address Usage</h2><p>When you connect a wallet, OPWA Protocol reads your public key and wallet address solely for the purpose of: displaying your BTC and token balances, loading your transaction history, rendering your portfolio dashboard, and submitting signed transactions on your behalf. Your public key is used to derive your on-chain identity on OP_NET. We never request, store, or transmit your private key or seed phrase.</p></div>
+    <div class="legal-sec"><h2>5. Analytics &amp; Platform Telemetry</h2><p>We may use privacy-respecting, anonymized analytics to understand aggregate platform usage patterns — such as page visit counts, feature usage frequency, and error rates. These analytics do not contain wallet addresses or any user-identifiable data. We do not use Google Analytics, Meta Pixel, or similar tracking services that build behavioral profiles. Any analytics tool used will be disclosed in future updates to this policy.</p></div>
+    <div class="legal-sec"><h2>6. Third-Party Integrations</h2><p>OPWA Protocol integrates with several external services to provide functionality: <strong>CoinGecko API</strong> for live BTC price data (no personal data shared); <strong>Mempool.opnet.org</strong> for OP_NET block data and transaction broadcasting (wallet address included in transactions); <strong>OPScan</strong> for blockchain explorer links (publicly accessible data); <strong>Google Fonts</strong> (Syne, DM Sans, DM Mono) loaded via CDN — Google may log IP addresses per their privacy policy. Each third-party service operates under its own privacy policy.</p></div>
+    <div class="legal-sec"><h2>7. Local Storage</h2><p>OPWA Protocol uses browser localStorage to persist user preferences (theme selection) and vault deposit state (deposit block, OPWAY amount) for UI continuity between sessions. This data never leaves your device and is not transmitted to OPWA servers. You can clear this data at any time through your browser settings.</p></div>
+    <div class="legal-sec"><h2>8. Children's Privacy</h2><p>OPWA Protocol is not intended for users under the age of 18. We do not knowingly collect any information from minors. If you believe a minor has accessed the platform, please contact us so we can take appropriate action.</p></div>
+    <div class="legal-sec"><h2>9. Security</h2><p>OPWA Protocol employs standard web security practices including HTTPS encryption for all data in transit. However, no system is 100% secure. Given the non-custodial nature of the protocol, the security of your funds ultimately depends on the security of your own wallet and private keys. We strongly recommend using hardware wallets for significant holdings and never reusing seed phrases across services.</p></div>
+    <div class="legal-sec"><h2>10. Changes to This Policy</h2><p>We may update this Privacy Policy as the protocol evolves. Any material changes will be reflected in the "Last updated" date at the top of this page. We encourage you to review this policy periodically. Continued use of OPWA Protocol after an update constitutes acceptance of the revised policy.</p></div>
+    <div class="legal-sec"><h2>11. Your Rights</h2><p>Given the non-custodial and on-chain nature of OPWA Protocol, most data processing is performed transparently on the public blockchain and cannot be altered or deleted. For any off-chain data concerns, you may contact us via GitHub to request clarification, correction of documentation, or erasure of any off-chain records we may hold (if applicable). We will respond within 30 days.</p></div>
+    <div class="legal-sec"><h2>12. Contact</h2><p>For privacy-related inquiries, contact the OPWA Protocol team via <a href="https://github.com/Opwabtc/OPWABTC" target="_blank" style="color:var(--accent)">github.com/Opwabtc</a> or through official community channels. Please include "Privacy Inquiry" in your subject line.</p></div>
+    <div style="margin-top:40px;padding:20px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);font-size:13px;color:var(--text-2);line-height:1.7">OPWA Protocol is designed with your privacy in mind. We believe in building trustless, transparent systems where you remain in full control of your data and assets.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back to Home</a><a href="/terms" onclick="navigate('/terms');return false;" style="color:var(--text-3);text-decoration:none">Terms of Service &#x2192;</a></div></div>
   </div>
   </div>
   <footer id="privacy-footer" style="margin-top:auto"></footer>
@@ -3499,7 +3533,7 @@ function walletConnected(addr, sats, type, publicKey) {
   e = document.getElementById('wd-address'); if (e) e.textContent = addr;
   e = document.getElementById('wd-balance'); if (e) e.textContent = '\u20BF ' + (sats / 1e8).toFixed(5);
   e = document.getElementById('wd-balance-usd'); if (e) e.textContent = '\u2248 $' + ((sats / 1e8) * (btcPrice || 65000)).toFixed(2);
-  
+  e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'inline-flex';
   e = document.getElementById('lb-wallet'); if (e) e.textContent = short;
   showToast('Connected: ' + short, 'success');
   closeWallet();
@@ -3513,7 +3547,7 @@ function wdDisconnect() {
   if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
   let e;
   e = document.getElementById('wallet-dropdown'); if (e) e.classList.remove('open');
-  
+  e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'none';
   e = document.getElementById('lb-wallet'); if (e) e.textContent = 'not connected';
   showToast('Wallet disconnected', 'info');
   if (window.location.pathname === '/dashboard') navigate('/');
@@ -3831,6 +3865,12 @@ function navigate(p) {
   renderRoute();
 }
 
+function setNavActive(id) {
+  document.querySelectorAll('.nav-link').forEach(function(el){ el.classList.remove('active'); });
+  var el = id ? document.getElementById(id) : null;
+  if (el) el.classList.add('active');
+}
+
 function renderRoute() {
   var p = window.location.pathname;
   var main = document.getElementById('main-content');
@@ -3845,14 +3885,19 @@ function renderRoute() {
   if (vault) vault.classList.remove('active');
   if (p === '/terms') {
     if (terms) terms.classList.add('active');
+    setNavActive(null);
   } else if (p === '/privacy') {
     if (privacy) privacy.classList.add('active');
+    setNavActive(null);
   } else if (p === '/dashboard') {
     if (dash) { dash.classList.add('active'); dashRender(); }
+    setNavActive('nav-dashboard');
   } else if (p === '/vault') {
     if (vault) { vault.classList.add('active'); vaultInit(); }
+    setNavActive('nav-vault');
   } else {
     if (main) main.style.display = 'block';
+    setNavActive('nav-home');
   }
   window.scrollTo(0, 0);
 }
@@ -3911,7 +3956,8 @@ async function loadChartData() {
       dailyBal[dayStr] = Math.max(0, runBalance);
     }
     chartBtcPts=[]; chartOpwapPts=[];
-    var opwapBig = Number(BigInt(dashOpwapBal||'0'));
+    // OPWAY: each token = 0.00001 BTC (1,000 sats). dashOpwapBal is raw integer token units.
+    var opwapTokens = Number(BigInt(dashOpwapBal||'0'));
     for (var i=days-1; i>=0; i--) {
       var pd=new Date(); pd.setDate(pd.getDate()-i);
       var pdStr=pd.toISOString().split('T')[0];
@@ -3920,7 +3966,8 @@ async function loadChartData() {
       var sats=dailyBal[pdStr]!==undefined?dailyBal[pdStr]:currentSats;
       var label=i===0?'Now':(chartRange==='1w'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][pd.getDay()]:(pd.getMonth()+1)+'/'+pd.getDate());
       chartBtcPts.push({label:label,usd:(sats/1e8)*price});
-      chartOpwapPts.push({label:label,usd:(opwapBig/1e8)*0.00001*price*((days-i)/days)});
+      // OPWAY value = tokens × 0.00001 BTC × USD price per BTC
+      chartOpwapPts.push({label:label,usd:opwapTokens * 0.00001 * price});
     }
     drawPortfolioChart();
     if (statusEl) statusEl.textContent = 'Mempool + OPNet · Updated '+new Date().toLocaleTimeString();
@@ -4131,15 +4178,17 @@ function renderTxList(txs){
   }
   listEl.innerHTML = page.map(function(tx){
     var sh = tx.hash ? tx.hash.slice(0,8)+'…'+tx.hash.slice(-6) : '—';
-    var ts = tx.time ? tx.time.toLocaleDateString()+' '+tx.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : 'Pending';
+    var ts = tx.time ? tx.time.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
     var href = tx.hash ? 'https://opscan.org/transactions/'+tx.hash+'?network=op_testnet' : '#';
     var ac = tx.action==='Buy OPWAY'?'#f97316':tx.action==='Mint NFT'?'#a78bfa':tx.action==='Receive BTC'?'#4ade80':'rgba(255,255,255,.8)';
     var sc = tx.status==='Confirmed'?'#4ade80':'#fbbf24';
     var dot = tx.isOpwa?'#7c3aed':'#f97316';
-    return '<div style="display:grid;grid-template-columns:110px 1fr 88px 96px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.1);transition:background .15s">'
+    var blockNum = tx.blockNumber || '—';
+    return '<div style="display:grid;grid-template-columns:110px 1fr 60px 80px 110px 72px;padding:10px 22px;border-bottom:1px solid rgba(255,255,255,.1);transition:background .15s">'
       +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11px;color:#f97316;text-decoration:none;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+sh+'</a>'
       +'<span style="font-size:12px;font-weight:600;color:'+ac+';display:flex;align-items:center">'+tx.action+'</span>'
       +'<span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.85);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.value+'</span>'
+      +'<span style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.55);text-align:right;display:flex;align-items:center;justify-content:flex-end">#'+blockNum+'</span>'
       +'<span style="font-size:10px;color:rgba(255,255,255,.65);text-align:right;display:flex;align-items:center;justify-content:flex-end">'+ts+'</span>'
       +'<span style="font-size:10px;font-weight:700;color:'+sc+';text-align:right;display:flex;align-items:center;justify-content:flex-end">'+tx.status+'</span>'
       +'</div>';
@@ -4154,7 +4203,7 @@ function renderTxList(txs){
   }
 }
 
-/* ── TOGGLE INVEST PANEL ── */
+/* ── SUBPAGE FOOTERS — same as home ── */
 (function(){
   var fc='<div class="footer-grid">'+
     '<div><div class="ft-logo-row"><div class="logo-mark">OP</div><div><div class="logo-text">OPWA</div><div class="logo-sub">Protocol</div></div></div>'+
@@ -4164,18 +4213,18 @@ function renderTxList(txs){
     '<a href="https://github.com/Opwabtc/OPWABTC" class="soc-btn soc-btn-github" target="_blank" title="GitHub"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></a>'+
     '</div></div>'+
     '<div><div class="ft-col-title">Platform</div>'+
-    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link">Assets</a>'+
-    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link">Simulator</a>'+
-    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link">How It Works</a>'+
-    '<a href="/dashboard" onclick="navigate(\'/dashboard\');return false;" class="ft-link">Dashboard</a></div>'+
+    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Assets</a>'+
+    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg> Simulator</a>'+
+    '<a href="/" onclick="navigate(\'/\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> How It Works</a>'+
+    '<a href="/dashboard" onclick="navigate(\'/dashboard\');return false;" class="ft-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</a></div>'+
     '<div><div class="ft-col-title">Build &amp; Tools</div>'+
-    '<a href="https://dev.opnet.org/" class="ft-link" target="_blank">Build on OP_NET \u2197</a>'+
-    '<a href="https://faucet.opnet.org/" class="ft-link" target="_blank">Testnet Faucet \u2197</a>'+
-    '<a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" class="ft-link" target="_blank">Get OP_Wallet \u2197</a>'+
-    '<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank">OPScan Explorer \u2197</a>'+
-    '<a href="https://mempool.opnet.org/pt/testnet4" class="ft-link" target="_blank">Mempool Testnet \u2197</a></div>'+
+    '<a href="https://dev.opnet.org/" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Build on OP_NET \u2197</a>'+
+    '<a href="https://faucet.opnet.org/" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg> Testnet Faucet \u2197</a>'+
+    '<a href="https://chromewebstore.google.com/detail/opwallet/pmbjpcmaaladnfpacpmhmnfmpklgbdjb" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/></svg> Get OP_Wallet \u2197</a>'+
+    '<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> OPScan Explorer \u2197</a>'+
+    '<a href="https://mempool.opnet.org/pt/testnet4" class="ft-link" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> Mempool Testnet \u2197</a></div>'+
     '<div><div class="ft-col-title">Resources</div>'+
-    '<a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link ft-whitepaper" target="_blank">Whitepaper \u2197</a>'+
+    '<a href="https://github.com/Opwabtc/OPWABTC/blob/main/docs/whitepaper.md" class="ft-link ft-whitepaper" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Whitepaper \u2197</a>'+
     '<a href="https://defibible.org/" class="ft-link" target="_blank">DeFi Bible \u2197</a>'+
     '<a href="https://vibecode.finance/ecosystem" class="ft-link" target="_blank">Vibecode Ecosystem \u2197</a>'+
     '<a href="https://opscan.org/?network=op_testnet" class="ft-link" target="_blank">My OPScan Profile \u2197</a>'+
@@ -4184,7 +4233,7 @@ function renderTxList(txs){
     '</div>'+
     '<hr class="ft-sep"/>'+
     '<div class="ft-bottom">'+
-    '<div class="ft-copy">&copy; 2025 OPWA Protocol. All rights reserved.<span style="margin-left:18px;font-size:10px;opacity:.7">Site made by <a href="https://x.com/HashBalls23" target="_blank" rel="noopener" style="color:#d4af37;font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.04em;text-shadow:0 0 12px rgba(212,175,55,.4)">Hash</a></span></div>'+
+    '<div class="ft-copy">&copy; 2026 OPWA Protocol. All rights reserved.<span style="margin-left:18px;font-size:10px;opacity:.7">Site made by <a href="https://x.com/HashBalls23" target="_blank" rel="noopener" style="color:#d4af37;font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.04em;text-shadow:0 0 12px rgba(212,175,55,.4)">Hash</a></span></div>'+
     '<div class="ft-net-badge"><span style="width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);display:inline-block;animation:blink 2s infinite"></span> OP_NET Testnet</div>'+
     '<div class="ft-legal"><a href="/terms" onclick="navigate(\'/terms\');return false;">Terms</a><a href="/privacy" onclick="navigate(\'/privacy\');return false;">Privacy</a></div>'+
     '</div>';
@@ -4203,35 +4252,38 @@ function toggleInvest(id, btn) {
   const panel = document.getElementById(id);
   const wasOpen = panel.classList.contains('open');
 
-  // Close all open panels first
-  document.querySelectorAll('.invest-panel.open').forEach(p => {
+  // Close ALL open panels and remove invest-open from all cards
+  document.querySelectorAll('.invest-panel.open').forEach(function(p) {
     p.classList.remove('open');
-    const sibBtn = p.closest('.card-asset')?.querySelector('.btn-invest, .btn-waitlist');
+    var card = p.closest('.card-asset');
+    if (card) card.classList.remove('invest-open');
+    var sibBtn = card && card.querySelector('.btn-invest, .btn-waitlist');
     if (sibBtn && p.id !== id) {
-      const isWaitlist = p.id === 'p-gamma' || p.id === 'p-sakura';
-      sibBtn.innerHTML = isWaitlist
+      var isWait = p.id === 'p-gamma' || p.id === 'p-sakura';
+      sibBtn.innerHTML = isWait
         ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Join Waitlist`
         : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Invest Now`;
+      // reset fields
+      var assetId = p.id.replace('p-','');
+      var rEl = document.getElementById(assetId+'-receipt');
+      var bEl = document.getElementById(assetId+'-btc');
+      var tEl = document.getElementById(assetId+'-tokens');
+      if (rEl) rEl.style.display='none';
+      if (bEl) bEl.value='';
+      if (tEl) tEl.value='';
     }
   });
 
   if (!wasOpen) {
     panel.classList.add('open');
+    var card = panel.closest('.card-asset');
+    if (card) card.classList.add('invest-open');
     if (btn) btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close`;
     setTimeout(function() {
       var asset = id.replace('p-','');
       var btcEl = document.getElementById(asset + '-btc');
       if (btcEl) btcEl.focus();
     }, 230);
-  } else {
-    // Was open, now closed - reset its receipt
-    const asset = id.replace('p-','');
-    const r = document.getElementById(asset + '-receipt');
-    if (r) r.style.display = 'none';
-    const btcEl = document.getElementById(asset + '-btc');
-    const tokEl = document.getElementById(asset + '-tokens');
-    if (btcEl) btcEl.value = '';
-    if (tokEl) tokEl.value = '';
   }
 }
 
@@ -4429,19 +4481,9 @@ var vaultCurrentBlock = 0;
 
 async function vaultFetchBlock() {
   try {
-    // Use OPNet RPC btc_blockNumber — same scale as contract's Blockchain.block.number
     var b = 0;
-    try {
-      var bnRaw = await dashRpcCallRaw('btc_blockNumber', []);
-      if (bnRaw) b = parseInt(bnRaw, 16);
-    } catch(_e1) {}
-    // fallback: eth_blockNumber
-    if (!b) {
-      try {
-        var bnRaw2 = await dashRpcCallRaw('eth_blockNumber', []);
-        if (bnRaw2) b = parseInt(bnRaw2, 16);
-      } catch(_e2) {}
-    }
+    try { var _r1=await fetch('https://mempool.opnet.org/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(_r1.ok) b=await _r1.json(); } catch(_e1){}
+    if (!b) { try { var _r2=await fetch('https://mempool.space/signet/api/blocks/tip/height',{signal:AbortSignal.timeout(5000)}); if(_r2.ok) b=await _r2.json(); } catch(_e2){} }
     if (!b) return;
     vaultCurrentBlock = b;
     var el = document.getElementById('vault-current-block');
@@ -4503,31 +4545,16 @@ function vaultUpdateCountdown() {
   }
 }
 
-async function vaultUpdateAccrued() {
+function vaultUpdateAccrued() {
   var dep = vaultGetDeposit();
-  var el = document.getElementById('vpos-usdop');
-  if (!dep) return;
-  // Try on-chain getAccruedRewards first (uses _lastClaims, not _depositBlocks)
-  try {
-    var senderAddr = walletState.addr;
-    if (senderAddr && typeof getContract === 'function') {
-      const { JSONRpcProvider, getContract: _gc, networks } = await import('https://esm.sh/@btc-vision/transaction?bundle');
-      const provider = new JSONRpcProvider('https://regtest.opnet.org', networks.opnetTestnet);
-      const GET_ACCRUED_ABI = [{"name":"getAccruedRewards","type":"function","stateMutability":"view","inputs":[{"name":"user","type":"address"}],"outputs":[{"name":"","type":"uint256"}]}];
-      const vc = _gc(YIELD_VAULT_ADDR, GET_ACCRUED_ABI, provider, networks.opnetTestnet, senderAddr);
-      const res = await vc.getAccruedRewards(senderAddr);
-      if (res && res.result !== undefined) {
-        var onChainVal = (Number(res.result) / 1e8).toFixed(4);
-        if (el) el.textContent = onChainVal;
-        return;
-      }
-    }
-  } catch(_e) { /* fallback to estimate */ }
-  // Fallback: block-based estimate using OPNet block scale
-  if (!vaultCurrentBlock) return;
+  if (!dep || !vaultCurrentBlock) return;
   var blocks = Math.max(0, vaultCurrentBlock - dep.depositBlock);
-  var usdop = (blocks * (dep.amount / 100)).toFixed(4);
-  if (el) el.textContent = usdop;
+  var usdopNum = blocks * (dep.amount / 100);
+  var formatted = usdopNum >= 1000
+    ? '$ ' + usdopNum.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+    : '$ ' + usdopNum.toFixed(2);
+  var el = document.getElementById('vpos-usdop');
+  if (el) el.textContent = formatted;
 }
 
 function vaultGetDeposit() {
@@ -4670,6 +4697,21 @@ async function vaultWithdrawOPWAY() {
 }
 
 /* ── PROPERTY VAULT ── */
+
+function pvaultPhotoPreview(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = document.getElementById('pvault-photo-preview');
+    var placeholder = document.getElementById('pvault-photo-placeholder');
+    var label = document.getElementById('pvault-photo-label');
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+    if (placeholder) placeholder.style.display = 'none';
+    if (label) { label.style.borderColor = 'var(--accent-border)'; label.style.background = 'transparent'; }
+  };
+  reader.readAsDataURL(file);
+}
 
 function pvaultUpdateMax() {
   var btc = parseFloat(document.getElementById('pvault-btc').value) || 0;
