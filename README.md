@@ -36,10 +36,10 @@ Full self-custody is preserved throughout the entire investment lifecycle. Your 
                           │  OP_NET SDK / JSON-RPC
 ┌─────────────────────────▼────────────────────────────────────┐
 │                  OP_NET LAYER (Bitcoin L1)                   │
-│  ┌───────────┐  ┌─────────────┐  ┌──────────────────────┐    │
-│  │  OPWAY    │  │ PropertyNFT │  │  YieldVault + USDOP  │    │
-│  │  (OP-20)  │  │  (OP-721)   │  │  (Yield + Stable)    │    │
-│  └───────────┘  └─────────────┘  └──────────────────────┘    │
+│  ┌───────────┐  ┌─────────────┐  ┌──────────────────────┐   │
+│  │  OPWAY    │  │ PropertyNFT │  │  YieldVault + USDOP  │   │
+│  │  (OP-20)  │  │  (OP-721)   │  │  (Yield + Stable)    │   │
+│  └───────────┘  └─────────────┘  └──────────────────────┘   │
 │  ┌──────────────────────────────────────────────────────┐    │
 │  │         PropertyVault — NFT locking + fractionalize  │    │
 │  └──────────────────────────────────────────────────────┘    │
