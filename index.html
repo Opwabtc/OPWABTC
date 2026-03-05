@@ -2925,7 +2925,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span style="padding:5px 13px;border-radius:20px;background:var(--success-dim);border:1px solid var(--success-border);font-size:11px;font-weight:700;color:var(--success)">&#x25CF; CONNECTED</span>
-          <button onclick="dashFetch()" class="dash-btn-small">&#x21BB; Refresh</button>
+          <button onclick="dashFetch();vaultInit&&vaultInit();showToast('Refreshing data…','info')" class="dash-btn-small">&#x21BB; Refresh</button>
         </div>
       </div>
       <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap">
@@ -3676,6 +3676,14 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
       /* For Xverse/OKX or if extension not loaded yet, restore UI silently with saved data */
     }
     walletConnected(s.addr, sats, s.type, publicKey);
+    // Force fetch after restore — wallet was already connected on page load
+    setTimeout(function() {
+      if (walletState.connected) {
+        dashFetch();
+        var vaultPage = document.getElementById('page-vault');
+        if (vaultPage && vaultPage.classList.contains('active')) vaultInit();
+      }
+    }, 800);
     // Restore pending block widget if approval was in progress
     try {
       var pending = localStorage.getItem('opwa_pending_approval');
