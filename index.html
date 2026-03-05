@@ -1478,6 +1478,12 @@ footer{
   background:radial-gradient(circle,rgba(124,58,237,.05) 0%,transparent 70%);
   pointer-events:none;
 }
+.tech-section::after{
+  content:'';position:absolute;top:60px;left:50%;transform:translateX(-50%);
+  width:600px;height:300px;
+  background:radial-gradient(ellipse,rgba(249,115,22,.07) 0%,transparent 70%);
+  pointer-events:none;
+}
 .tech-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1200px;margin:0 auto;
 }
@@ -1610,7 +1616,7 @@ footer{
 .pcard-track-wrap::before,.pcard-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
 .pcard-track-wrap::before{left:0;background:linear-gradient(to right,var(--bg-base),transparent)}
 .pcard-track-wrap::after{right:0;background:linear-gradient(to left,var(--bg-base),transparent)}
-.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 35s linear infinite;will-change:transform;padding:8px 0}
+.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 40s linear infinite;will-change:transform;padding:8px 0}
 .pcard-track:hover{animation-play-state:paused}
 @keyframes pcardScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;min-width:130px;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;color:inherit}
@@ -2491,7 +2497,7 @@ body{overflow-x:hidden}
   <div style="max-width:1200px;margin:0 auto">
     <div style="text-align:center;margin-bottom:52px">
       <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--purple-soft);margin-bottom:12px">Protocol Infrastructure</div>
-      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:800;color:var(--text-1);margin-bottom:12px">Built on Bitcoin's L1</h2>
+      <h2 class="s-title" style="font-size:clamp(26px,4vw,42px);margin-bottom:12px">Built on <span class="acc">Bitcoin's L1</span></h2>
       <p style="font-size:14px;color:var(--text-2);max-width:520px;margin:0 auto;line-height:1.7">OPWA uses OP_NET smart contracts running natively on Bitcoin with no bridges, no wrapped tokens and no compromises.</p>
     </div>
     <div class="tech-grid">
@@ -2712,7 +2718,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <div class="vault-wrap">
 
     <!-- ── FLOATING PENDING BLOCK WIDGET (lateral direita) ── -->
-    <div id="pending-block-wrap" style="display:none;position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:900;width:190px">
+    <div id="pending-block-wrap" style="display:none;position:fixed;right:24px;bottom:80px;z-index:900;width:190px">
       <div class="pending-block-box state-pending" id="pending-block-box">
         <div class="pending-block-header">
           <span class="pending-block-label">⛏ Next Block</span>
@@ -3722,6 +3728,8 @@ function wdDisconnect() {
   e = document.getElementById('wallet-dropdown'); if (e) e.classList.remove('open');
   e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'none';
   e = document.getElementById('lb-wallet'); if (e) e.textContent = 'not connected';
+  var blockWrap = document.getElementById('pending-block-wrap'); if (blockWrap) blockWrap.style.display = 'none';
+  if (_mempoolInterval) { clearInterval(_mempoolInterval); _mempoolInterval = null; }
   showToast('Wallet disconnected', 'info');
   if (window.location.pathname === '/dashboard') navigate('/');
   dashRender();
@@ -4650,6 +4658,24 @@ fetchPrices(); fetchGas(); fetchOpNetBlock();
 setInterval(fetchOpNetBlock, 60000);
 setInterval(fetchPrices, 30000);
 setInterval(fetchGas,   30000);
+
+// ── CAROUSEL INFINITE LOOP FIX ──
+(function() {
+  var track = document.querySelector('.pcard-track');
+  if (!track) return;
+  // Remove duplicate set if already present, rebuild clean
+  var cards = Array.from(track.querySelectorAll('.pcard'));
+  var half = Math.floor(cards.length / 2);
+  // If already duplicated (even count), use only first half as source
+  var originals = cards.length > 0 ? cards.slice(0, half || cards.length) : cards;
+  // Clear and rebuild with exactly 2 copies for seamless loop
+  track.innerHTML = '';
+  originals.forEach(function(c) { track.appendChild(c.cloneNode(true)); });
+  originals.forEach(function(c) { track.appendChild(c.cloneNode(true)); });
+  // Adjust animation duration based on card count
+  var duration = Math.max(20, originals.length * 5);
+  track.style.animationDuration = duration + 's';
+})();
 vaultLoadVaultedAssets();
 
 /* ═══════════════════════════════════════════════════════
@@ -4739,7 +4765,7 @@ function vaultUpdateCountdown() {
   var pct = Math.round(progress * 100);
   if (fillEl) fillEl.style.width = pct + '%';
   if (hintEl) hintEl.textContent = remaining > 0
-    ? remaining + ' blocks remaining · ~' + Math.round(remaining * 10 / 60) + ' min at 10s/block'
+    ? remaining + ' blocks remaining · ~' + Math.round(remaining * 10) + ' min at 10min/block'
     : '✅ Timelock complete — ready to withdraw';
   if (wBtn) {
     if (remaining === 0) {
