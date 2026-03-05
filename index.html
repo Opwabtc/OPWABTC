@@ -959,6 +959,10 @@ button:focus-visible,a:focus-visible{
 .live-bar-inner{display:flex;align-items:center;gap:24px;white-space:nowrap;animation:livebarScroll 40s linear infinite;padding:0 16px}
 @keyframes livebarScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .lb-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.55)!important;flex-shrink:0}
+.lb-item.lb-white{color:#ffffff!important}
+.lb-item.lb-green{color:#22c55e!important}
+[data-theme="light"] .lb-item.lb-white{color:#ffffff!important}
+[data-theme="light"] .lb-item.lb-green{color:#22c55e!important}
 .lb-item .lb-led{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);flex-shrink:0}
 .lb-label{color:rgba(255,255,255,.45)!important}
 .lb-val{color:rgba(255,255,255,.65)!important}
@@ -3119,9 +3123,9 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:rgba(255,255,255,.85);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
+    <span class="lb-item lb-white" style="font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
+    <span class="lb-item lb-green" style="font-weight:600">15% APY · Borderless · Trustless</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
@@ -3141,9 +3145,9 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:rgba(255,255,255,.85);font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
+    <span class="lb-item lb-white" style="font-weight:600">🏠 Real Estate on Bitcoin — Earn in USD</span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item" style="color:#22c55e;font-weight:600">15% APY · Borderless · Trustless</span>
+    <span class="lb-item lb-green" style="font-weight:600">15% APY · Borderless · Trustless</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item" style="margin-left:4px"><span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700">OP_30</span></span>
@@ -4006,7 +4010,7 @@ function dashRenderData() {
   var pct = Math.min(100, (sn / 100) * 100);
   function s(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
   s('dash-btc-val', '\u20BF ' + bb.toFixed(5));
-  s('dash-btc-usd', bp ? '\u2248 $' + bu.toFixed(2) + ' USD' : '\u2248 $ \u2014');
+  s('dash-btc-usd', bp ? '\u2248 $' + bu.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' USD' : '\u2248 $ \u2014');
   s('dash-opwap-val', on);
   s('dash-total-usd', bp ? '$' + (bu + ou).toFixed(0) : '$\u2014');
   s('dash-opwap-bal', on);
