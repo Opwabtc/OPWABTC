@@ -1731,7 +1731,7 @@ body{overflow-x:hidden}
     </div>
   </div>
   <div class="nb-right">
-    <div class="gas-pill" style="display:none!important">
+    <div class="gas-pill">
       <span class="led"></span>
       <span id="nav-gas">&#x2014; sat/vB</span>
     </div>
@@ -2750,7 +2750,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </h1>
       <div style="font-size:14px;color:var(--text-3);max-width:520px;line-height:1.6">
         Deposit OPWAY tokens to earn USDOP yield, or list your PropertyNFT to enable fractional investment.
-        
+        <span style="color:var(--accent);font-weight:600"> Contracts deploying soon.</span>
       </div>
     </div>
 
@@ -2822,7 +2822,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       <div class="vault-card">
         <div class="vault-card-title">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Property Vault <span style="color:#f97316;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:.08em">SOON</span>
+          Property Vault
         </div>
         <div class="vault-card-sub">List your PropertyNFT to enable fractional OPWAY investment from the community</div>
 
@@ -3056,7 +3056,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <div class="legal-sec"><h2>3. Eligibility &amp; Jurisdictional Restrictions</h2><p>You must be at least 18 years of age and legally permitted to participate in digital asset transactions in your jurisdiction. OPWA Protocol does not provide services to residents of jurisdictions where digital asset transactions, DeFi protocols, or tokenized real estate are prohibited by law. It is your sole responsibility to determine the legal status of your participation. Users from sanctioned regions or those subject to applicable financial sanctions programs are prohibited from using this platform.</p></div>
     <div class="legal-sec"><h2>4. Wallet, Private Keys &amp; Self-Custody</h2><p>OPWA Protocol is a non-custodial platform. We do not at any time hold, store, or have access to your private keys, seed phrases, or wallet credentials. You are entirely responsible for the security of your wallet (OP_Wallet, Unisat, Xverse, OKX, or any compatible Bitcoin wallet). All on-chain transactions are irreversible once confirmed. OPWA bears no responsibility for loss of funds due to user error, wallet compromise, phishing attacks, or hardware failure. Never share your seed phrase with anyone, including OPWA team members.</p></div>
     <div class="legal-sec"><h2>5. YieldVault &amp; Staking</h2><p>The YieldVault smart contract allows OPWAY holders to stake tokens in exchange for USDOP stablecoin yield at approximately 15% APY, subject to a 420-block timelock (~70 minutes on OP_NET Testnet). Yield accrual rates, timelock durations, and reward token availability are subject to change via protocol governance. Staked tokens are locked per the contract logic; OPWA Protocol cannot override on-chain conditions or manually release funds. Yield estimates displayed in the interface are approximations and may differ from actual on-chain balances due to block timing variances.</p></div>
-    <div class="legal-sec"><h2>6. PropertyNFT &amp; Property Vault <span style="color:#f97316;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:.08em">SOON</span></h2><p>PropertyNFT (OP-721) tokens represent experimental fractional ownership interests in simulated real estate assets on testnet. These tokens have no legal real-world property rights, title, or enforceability unless explicitly established through applicable law and separate legal documentation. Listing a PropertyNFT in the Property Vault is an on-chain action. OPWA Protocol does not verify, appraise, or warrant any property valuations entered by users. All property data is user-generated and unverified.</p></div>
+    <div class="legal-sec"><h2>6. PropertyNFT &amp; Property Vault</h2><p>PropertyNFT (OP-721) tokens represent experimental fractional ownership interests in simulated real estate assets on testnet. These tokens have no legal real-world property rights, title, or enforceability unless explicitly established through applicable law and separate legal documentation. Listing a PropertyNFT in the Property Vault is an on-chain action. OPWA Protocol does not verify, appraise, or warrant any property valuations entered by users. All property data is user-generated and unverified.</p></div>
     <div class="legal-sec"><h2>7. Risk Disclosures</h2><p>Digital assets and DeFi protocols involve substantial risk. Smart contract bugs, oracle failures, network congestion, or protocol exploits may result in partial or total loss of funds. Price volatility of BTC and OPWAY tokens is significant. OP_NET Testnet is an experimental environment and the protocol may be reset, paused, or discontinued without notice. Do not invest funds you cannot afford to lose. Past performance of any asset or yield rate is not indicative of future results.</p></div>
     <div class="legal-sec"><h2>8. Intellectual Property</h2><p>All OPWA Protocol source code is published under open-source licenses as available on <a href="https://github.com/Opwabtc/OPWABTC" target="_blank" style="color:var(--accent)">github.com/Opwabtc</a>. The OPWA name, logo, and brand assets are the property of the OPWA Protocol team. Unauthorized commercial use of branding is prohibited. Smart contract ABIs and token standards follow OP_NET specifications and are governed by their respective licenses.</p></div>
     <div class="legal-sec"><h2>9. Disclaimers &amp; Limitation of Liability</h2><p>THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. OPWA PROTOCOL AND ITS CONTRIBUTORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF FUNDS, DATA, PROFITS, OR GOODWILL ARISING FROM USE OF OR INABILITY TO USE THE PLATFORM, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p></div>
@@ -3184,7 +3184,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <button class="gas-conv-btn" id="g-res-btn">&#x2192; USD</button>
   </div>
 </div>
-<button class="gas-trigger" id="gas-trigger-btn" style="display:none!important" onclick="toggleGas()">
+<button class="gas-trigger" id="gas-trigger-btn" onclick="toggleGas()">
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
 </button>
 
@@ -3670,6 +3670,18 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
       /* For Xverse/OKX or if extension not loaded yet, restore UI silently with saved data */
     }
     walletConnected(s.addr, sats, s.type, publicKey);
+    // Restore pending block widget if approval was in progress
+    try {
+      var pending = localStorage.getItem('opwa_pending_approval');
+      if (pending) {
+        var p = JSON.parse(pending);
+        if (p && p.amt && p.amountBig && p.approvalBlock) {
+          _pendingApproval = { amt: p.amt, amountBig: BigInt(p.amountBig) };
+          // Small delay to let vault page render first
+          setTimeout(function() { _startBlockWidget(p.approvalBlock); }, 1200);
+        }
+      }
+    } catch(_) {}
   } catch(e) { /* silent */ }
 })();
 
@@ -4970,6 +4982,7 @@ function _stopBlockWidget() {
   _pendingApproval = null;
   _mempoolLastBlock = null;
   _mempoolLastBlockTimestamp = null;
+  localStorage.removeItem('opwa_pending_approval');
   // Reset box state for next use
   var boxEl = document.getElementById('pending-block-box');
   var badgeEl = document.getElementById('pending-block-badge');
@@ -5072,6 +5085,7 @@ async function vaultDepositOPWAY() {
       // Save pending state and show block widget
       _pendingApproval = { amt: amt, amountBig: amountBig };
       var snapBlock = vaultCurrentBlock;
+      localStorage.setItem('opwa_pending_approval', JSON.stringify({ amt: amt, amountBig: amountBig.toString(), approvalBlock: snapBlock }));
       _startBlockWidget(snapBlock);
       showToast('✅ Approval TX submitted! Waiting for block confirmation…', 'success', true);
       return;
@@ -5433,24 +5447,41 @@ function vaultMarkDashboardAssets() {
     'tech-info':    'nav-protocol'
   };
   if ('IntersectionObserver' in window) {
-    function handleSectionEntry(e) {
+    // Track which sections are currently visible
+    var _visibleSections = {};
+    var _navDebounce = null;
+
+    function _applyNavActive() {
       if (window.location.pathname !== '/' && window.location.pathname !== '') return;
-      var navId = sectionNavMap[e.target.id];
-      if (!navId) return;
-      var el = document.getElementById(navId);
-      if (e.isIntersecting) {
-        Object.values(sectionNavMap).forEach(function(id) {
-          var n = document.getElementById(id); if (n) n.classList.remove('active');
-        });
+      // Pick the visible section whose top is closest to (but below) the navbar
+      var best = null, bestTop = Infinity;
+      Object.keys(_visibleSections).forEach(function(id) {
+        if (!_visibleSections[id]) return;
+        var sec = document.getElementById(id);
+        if (!sec) return;
+        var top = Math.abs(sec.getBoundingClientRect().top);
+        if (top < bestTop) { bestTop = top; best = id; }
+      });
+      // If nothing visible, fall back to 'home' only when near the top
+      if (!best) {
+        best = window.scrollY < 200 ? 'home' : null;
+      }
+      Object.values(sectionNavMap).forEach(function(id) {
+        var n = document.getElementById(id); if (n) n.classList.remove('active');
+      });
+      if (best && sectionNavMap[best]) {
+        var el = document.getElementById(sectionNavMap[best]);
         if (el) el.classList.add('active');
-      } else {
-        if (el) el.classList.remove('active');
-        var anyActive = Object.values(sectionNavMap).some(function(id) {
-          var n = document.getElementById(id); return n && n.classList.contains('active');
-        });
-        if (!anyActive) { var h = document.getElementById('nav-home'); if (h) h.classList.add('active'); }
       }
     }
+
+    function handleSectionEntry(e) {
+      if (window.location.pathname !== '/' && window.location.pathname !== '') return;
+      _visibleSections[e.target.id] = e.isIntersecting;
+      if (_navDebounce) clearTimeout(_navDebounce);
+      _navDebounce = setTimeout(_applyNavActive, 60);
+    }
+
     var sio = new IntersectionObserver(function(entries){entries.forEach(handleSectionEntry);},{threshold:0.15,rootMargin:'-80px 0px -30% 0px'});
     var sioShort = new IntersectionObserver(function(entries){entries.forEach(handleSectionEntry);},{threshold:0,rootMargin:'-80px 0px -10% 0px'});
     Object.keys(sectionNavMap).forEach(function(id) {
