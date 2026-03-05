@@ -247,10 +247,10 @@ button:focus-visible,a:focus-visible{
   width:34px;height:34px;border-radius:9px;
   background:linear-gradient(135deg,#f97316,#ea580c);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;
   box-shadow:0 0 18px rgba(249,115,22,.35);flex-shrink:0;
 }
-.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--text-1);letter-spacing:.01em;line-height:1.15}
+.logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text-1);letter-spacing:.01em;line-height:1.15}
 .logo-sub{font-size:8.5px;color:var(--text-3);letter-spacing:.38em;text-transform:uppercase;margin-top:0px;line-height:1;text-align:center;width:100%}
 
 /* Nav links — centro do grid de 3 colunas */
@@ -432,7 +432,7 @@ button:focus-visible,a:focus-visible{
   display:inline-flex;align-items:center;gap:7px;
   padding:13px 26px;border-radius:11px;
   background:linear-gradient(135deg,#f97316,#ea580c);
-  color:#fff;font-size:14px;font-weight:600;border:none;
+  color:#fff;font-size:14px;font-weight:600;letter-spacing:.02em;border:none;
   position:relative;overflow:hidden;
   box-shadow:0 4px 20px rgba(249,115,22,.40);
   transition:transform .15s,box-shadow .15s;
@@ -487,7 +487,7 @@ button:focus-visible,a:focus-visible{
   margin-bottom:14px;
 }
 .s-label::before{content:'';display:block;width:16px;height:1px;background:var(--accent)}
-.s-title{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,38px);font-weight:800;line-height:1.08;margin-bottom:12px;display:inline-block;transition:transform .35s cubic-bezier(.4,0,.2,1),text-shadow .35s ease}
+.s-title{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,38px);font-weight:700;line-height:1.08;margin-bottom:12px;display:inline-block;transition:transform .35s cubic-bezier(.4,0,.2,1),text-shadow .35s ease}
 .s-title .acc{color:var(--accent)}.theme-light .s-title .acc{color:#f97316}
 .s-title:hover{transform:scale(1.04) perspective(400px) translateZ(8px);text-shadow:0 0 12px rgba(255,255,255,.18),0 0 24px rgba(255,255,255,.08)}
 .s-sub{font-size:15px;color:var(--text-2);max-width:520px;line-height:1.72;margin-bottom:48px}
@@ -562,7 +562,7 @@ button:focus-visible,a:focus-visible{
   background:linear-gradient(90deg,transparent,rgba(249,115,22,.45),transparent);
   opacity:0;transition:opacity .2s;
 }
-.card-asset:hover{transform:translateY(-4px) scale(1.012);box-shadow:var(--shadow-elevated),0 0 0 1px var(--accent-border);will-change:transform}
+.card-asset:hover{transform:translateY(-3px) scale(1.008);box-shadow:var(--shadow-elevated),0 0 0 1px var(--accent-border);will-change:transform}
 .card-asset:hover::after{opacity:1}
 [data-theme="light"] .card-asset{background:#ffffff;border-color:rgba(0,0,0,.10);box-shadow:0 2px 12px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05)}
 [data-theme="light"] .card-asset:hover{border-color:rgba(249,115,22,.40);box-shadow:0 12px 40px rgba(249,115,22,.12),0 4px 12px rgba(0,0,0,.08)}
@@ -593,7 +593,7 @@ button:focus-visible,a:focus-visible{
 .card-id-small{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3)}
 .card-pair{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);margin-bottom:4px}
 .card-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text-1);margin-bottom:5px}
-.card-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:4px}
+.card-desc{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:4px}
 .card-desc-wrap{margin-bottom:14px}
 .card-desc-short{
   font-size:13px;color:var(--text-2);line-height:1.65;
@@ -646,7 +646,7 @@ button:focus-visible,a:focus-visible{
 .btn-invest{
   width:100%;padding:11px;border-radius:9px;
   background:linear-gradient(135deg,#f97316,#ea580c);
-  color:#fff;font-size:14px;font-weight:600;border:none;
+  color:#fff;font-size:14px;font-weight:600;letter-spacing:.02em;border:none;
   box-shadow:0 4px 16px rgba(249,115,22,.25);
   transition:transform .15s,box-shadow .15s;
   display:flex;align-items:center;justify-content:center;gap:6px;
@@ -1061,7 +1061,7 @@ footer{
 }
 
 .gas-widget-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
-.gas-widget-title{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:#a3a3a3;letter-spacing:.12em;text-transform:uppercase}
+.gas-widget-title{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#a3a3a3;letter-spacing:.16em;text-transform:uppercase}
 [data-theme="light"] .gas-widget-title{color:#5c4f3a}
 .gas-live-badge{display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--success)}
 .gas-live-dot{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 4px var(--success);animation:blink 2s infinite}
@@ -1163,7 +1163,7 @@ footer{
 }
 .wallet-opt:hover{border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.06)}
 .wallet-opt.featured{border-color:rgba(249,115,22,.32);background:rgba(249,115,22,.08)}
-.w-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;font-weight:800;font-family:'Syne',sans-serif}
+.w-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;font-weight:700;font-family:'Syne',sans-serif}
 .w-ico.op{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;box-shadow:0 3px 12px rgba(249,115,22,.35);font-size:13px}
 .w-ico.uni{background:linear-gradient(135deg,#ff007a,#7b0035);color:#fff}
 .w-ico.xv{background:linear-gradient(135deg,#5546ff,#2a1a9a);color:#fff}
@@ -1196,20 +1196,20 @@ footer{
 .vault-card .vault-btn-secondary{margin-top:8px}
 /* vault-card itself as flex column so actions align */
 .vault-grid > div.vault-card{display:flex;flex-direction:column;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px}
-.vault-card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text-1);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.vault-card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-1);margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .vault-card-sub{font-size:12px;color:var(--text-3);margin-bottom:20px}
 .vault-input-wrap{margin-bottom:14px}
-.vault-input-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
-.vault-input{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:14px;font-family:'DM Mono',monospace;outline:none;transition:border-color .15s}
-.vault-input:focus{border-color:var(--accent-border)}
+.vault-input-label{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
+.vault-input{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:14px;font-family:'DM Mono',monospace;outline:none;transition:border-color .2s,box-shadow .2s}
+.vault-input:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px rgba(249,115,22,.08)}
 .vault-input select,.vault-input textarea{background:transparent;border:none;outline:none;color:var(--text-1);font-family:inherit;font-size:14px;width:100%}
 .vault-select{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:14px;outline:none;transition:border-color .15s;appearance:none}
-.vault-select:focus{border-color:var(--accent-border)}
+.vault-select:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px rgba(249,115,22,.08)}
 .vault-textarea{width:100%;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;outline:none;resize:vertical;min-height:72px;transition:border-color .15s;font-family:'DM Sans',sans-serif}
 .vault-textarea:focus{border-color:var(--accent-border)}
-.vault-btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.02em;box-shadow:0 4px 16px rgba(249,115,22,.3);transition:all .2s;margin-top:4px}
+.vault-btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:600;font-family:'Syne',sans-serif;letter-spacing:.025em;box-shadow:0 4px 16px rgba(249,115,22,.3);transition:all .2s;margin-top:4px}
 .vault-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(249,115,22,.4)}
-.vault-btn-secondary{width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:11px;color:var(--text-2);font-size:13px;font-weight:600;transition:all .2s;margin-top:8px}
+.vault-btn-secondary{width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:11px;color:var(--text-2);font-size:13px;font-weight:500;letter-spacing:.01em;transition:all .2s;margin-top:8px}
 .vault-btn-secondary:hover{border-color:var(--border-hover);color:var(--text-1)}
 .vault-divider{height:1px;background:var(--border);margin:20px 0}
 .vault-preview{padding:12px 14px;background:var(--bg-elevated);border-radius:10px;font-size:12px;color:var(--text-2);margin-bottom:14px;font-family:'DM Mono',monospace;border:1px solid var(--border)}
@@ -1229,7 +1229,7 @@ footer{
 .pending-block-box.state-pending{border-color:rgba(251,191,36,.35);background:rgba(20,20,20,.97);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px rgba(251,191,36,.2)}
 .pending-block-box.state-confirmed{border-color:rgba(59,130,246,.45);background:rgba(20,20,20,.97);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px rgba(59,130,246,.25)}
 .pending-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.pending-block-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3)}
+.pending-block-label{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)}
 .pending-block-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace}
 .pending-block-badge.pending{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
 .pending-block-badge.confirmed{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.35)}
@@ -1248,10 +1248,10 @@ footer{
 .vault-position-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
 .vault-position-val{font-family:'DM Mono',monospace;font-weight:600;color:var(--accent)}
 /* Vault badge on dashboard */
-.vault-badge{position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;font-size:9px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:20px;font-family:'Syne',sans-serif;box-shadow:0 2px 8px rgba(249,115,22,.4)}
+.vault-badge{position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 8px;border-radius:20px;font-family:'Syne',sans-serif;box-shadow:0 2px 8px rgba(249,115,22,.4)}
 /* Lock icon on asset cards */
 .asset-vault-lock{position:absolute;top:10px;right:10px;width:22px;height:22px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:6px;display:flex;align-items:center;justify-content:center}
-.vault-earn-rate{font-size:22px;font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:8px 0 2px}
+.vault-earn-rate{font-size:22px;font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);margin:8px 0 2px}
 .vault-earn-label{font-size:11px;color:var(--text-3)}
 .vault-acc-usdop{font-size:28px;font-family:'Syne',sans-serif;font-weight:800;color:#22c55e;margin:6px 0 2px}
 
@@ -1460,7 +1460,7 @@ footer{
   box-shadow:0 2px 10px rgba(249,115,22,.10);
 }
 .diff-ico{font-size:22px;flex-shrink:0;margin-top:1px}
-.diff-amount{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent);line-height:1}
+.diff-amount{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--accent);line-height:1}
 .diff-title{font-size:12px;font-weight:600;color:var(--text-2);margin-top:3px}
 .diff-sub{font-size:10.5px;color:var(--text-3);margin-top:4px;font-style:italic}
 
@@ -1529,7 +1529,7 @@ footer{
   color:var(--purple-soft);margin-bottom:8px;
 }
 .tech-card-title{
-  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:700;
   color:var(--text-1);margin-bottom:10px;
 }
 .tech-card-desc{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px}
@@ -2747,7 +2747,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <div id="vault-lock-screen" style="display:none;align-items:center;justify-content:center;min-height:60vh">
       <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:56px 48px;text-align:center;max-width:420px;width:100%">
         <div style="font-size:48px;margin-bottom:20px">🔒</div>
-        <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-1);margin:0 0 12px">Connect Your Wallet</h2>
+        <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text-1);margin:0 0 12px">Connect Your Wallet</h2>
         <p style="font-size:14px;color:var(--text-3);line-height:1.6;margin:0 0 28px">Connect your Bitcoin wallet to access the Vault, stake OPWAY, and earn USDOP yield on OP_NET.</p>
         <button class="btn-connect" onclick="openWalletModal()" style="width:100%;justify-content:center">Connect Wallet →</button>
       </div>
@@ -2756,7 +2756,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <!-- Vault content — shown when connected -->
     <div id="vault-content-wrap">
     <div style="margin-bottom:32px">
-      <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text-1);margin:0 0 8px">
+      <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--text-1);margin:0 0 8px">
         🔒 Vault
       </h1>
       <div style="font-size:14px;color:var(--text-3);max-width:520px;line-height:1.6">
@@ -2911,7 +2911,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <div id="dash-noconn" class="dash-noconn">
       <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:56px 48px;text-align:center;max-width:420px;width:100%">
         <div style="font-size:48px;margin-bottom:20px">🔒</div>
-        <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-1);margin:0 0 12px">Connect Your Wallet</h2>
+        <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text-1);margin:0 0 12px">Connect Your Wallet</h2>
         <p style="font-size:14px;color:var(--text-3);line-height:1.6;margin:0 0 28px">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</p>
         <button class="btn-connect" onclick="openWalletModal()" style="width:100%;justify-content:center">Connect Wallet →</button>
       </div>
@@ -2919,7 +2919,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <div id="dash-content" style="display:none">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap">
         <div>
-          <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text-1);margin:0 0 6px">My Portfolio</h1>
+          <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--text-1);margin:0 0 6px">My Portfolio</h1>
           <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span id="dash-addr-short">-</span>
             <span>&middot;</span>
@@ -2934,17 +2934,17 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </div>
       <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap">
         <div class="dash-stat">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">BTC Balance</div>
+          <div style="font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">BTC Balance</div>
           <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--text-1);margin-bottom:4px" id="dash-btc-val">&#x20BF; 0.00000</div>
           <div style="font-size:12px;color:var(--text-2)" id="dash-btc-usd">&#x2248; $0.00 USD</div>
         </div>
         <div class="dash-stat">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">OPWAY Tokens</div>
+          <div style="font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">OPWAY Tokens</div>
           <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--accent);margin-bottom:4px" id="dash-opwap-val">0</div>
           <div style="font-size:12px;color:var(--text-2)">&#x25B2; +12.4% this month</div>
         </div>
         <div class="dash-stat">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Portfolio USD</div>
+          <div style="font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Portfolio USD</div>
           <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--gold);margin-bottom:4px" id="dash-total-usd">$0</div>
           <div style="font-size:12px;color:var(--text-2)">Live price</div>
         </div>
@@ -2954,7 +2954,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">Token Holdings</div>
       <div class="dash-token-card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <span style="font-weight:800;font-size:16px;color:var(--accent)">OPWAY</span>
+          <span style="font-weight:700;font-size:16px;color:var(--accent)">OPWAY</span>
           <span style="font-size:10px;background:rgba(34,197,94,.18);color:#4ade80;border-radius:20px;padding:3px 9px;font-weight:700">OP_20</span>
         </div>
         <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:900;color:var(--text-1);margin-bottom:4px" id="dash-opwap-bal">0</div>
@@ -3059,7 +3059,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <div style="flex:1 0 auto;padding-bottom:60px">
   <div class="legal-wrap">
     <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
-    <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Terms of Service</h1>
+    <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:var(--text-1);margin-bottom:8px">Terms of Service</h1>
     <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: March 2026 &middot; OPWA Protocol &middot; OP_NET Testnet</p>
     <div class="legal-sec"><h2>1. Acceptance of Terms</h2><p>By accessing or using the OPWA Protocol platform, including the web application at opwa-protocol.vercel.app, smart contracts deployed on OP_NET Testnet and any associated tools, you confirm that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree to all terms, you must discontinue use immediately. These terms apply to all visitors, users, investors, and property listers on the platform.</p></div>
     <div class="legal-sec"><h2>2. Nature of the Platform</h2><p>OPWA Protocol is an experimental, decentralized real estate tokenization protocol built natively on Bitcoin's Layer 1 via OP_NET smart contracts. It enables fractional ownership of real-world assets represented as OP-20 tokens (OPWAY Coin) and OP-721 NFTs (PropertyNFT). The platform operates exclusively on OP_NET Testnet. No mainnet deployment exists at this time. All assets, balances, and transactions are experimental and carry no guarantee of value, liquidity, or real-world legal enforceability. OPWA does not act as a broker, custodian, financial advisor, or real estate agent.</p></div>
@@ -3084,7 +3084,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <div style="flex:1 0 auto;padding-bottom:60px">
   <div class="legal-wrap">
     <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px">Legal</div>
-    <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text-1);margin-bottom:8px">Privacy Policy</h1>
+    <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:var(--text-1);margin-bottom:8px">Privacy Policy</h1>
     <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-3);margin-bottom:36px">Last updated: March 2026 &middot; OPWA Protocol &middot; OP_NET Testnet</p>
     <div class="legal-sec"><h2>1. Overview &amp; Commitment</h2><p>OPWA Protocol is built on the principles of transparency, decentralization, and user sovereignty. This Privacy Policy describes what information we collect (or explicitly do not collect), how we operate, and your rights as a user of the OPWA Protocol platform. We are committed to data minimization — we only process what is strictly necessary for the protocol to function.</p></div>
     <div class="legal-sec"><h2>2. Information We Do Not Collect</h2><p>OPWA Protocol does not collect, store, or process personally identifiable information (PII) such as your name, email address, phone number, physical address, or government identification. We do not require account registration or login credentials. We do not use tracking cookies, advertising pixels, or behavioral profiling. We do not sell user data to any third party.</p></div>
@@ -3623,15 +3623,15 @@ function calcSim() {
   var iconEl = document.getElementById('sim-icon-left');
   if (iconEl) iconEl.textContent = simCurrency === 'usd' ? '$' : '\u20BF';
   if (simCurrency === 'usd') {
-    document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2});
-    document.getElementById('res-total').textContent  = 'Total accumulated: $' + (opwa * bp).toLocaleString('en', {maximumFractionDigits:2});
-    var initStrD = '$' + (initBtc * bp).toLocaleString('en', {maximumFractionDigits:0}) + ' initial';
+    document.getElementById('res-gain').textContent   = gainUsd.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('res-total').textContent  = 'Total accumulated: $' + (opwa * bp).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    var initStrD = '$' + (initBtc * bp).toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0}) + ' initial';
     document.getElementById('opwa-sub').textContent = label + ' \u00B7 ' + initStrD;
     document.getElementById('fi-sub').textContent   = label + ' \u00B7 ' + initStrD;
     document.getElementById('sa-sub').textContent   = label + ' \u00B7 ' + initStrD;
-    document.getElementById('opwa-val').textContent = '$' + ((opwa - initBtc) * bp).toLocaleString('en', {maximumFractionDigits:2});
-    document.getElementById('fi-val').textContent   = '$' + ((fi - initBtc) * bp).toLocaleString('en', {maximumFractionDigits:2});
-    document.getElementById('sa-val').textContent   = '$' + ((sa - initBtc) * bp).toLocaleString('en', {maximumFractionDigits:2});
+    document.getElementById('opwa-val').textContent = '$' + ((opwa - initBtc) * bp).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('fi-val').textContent   = '$' + ((fi - initBtc) * bp).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('sa-val').textContent   = '$' + ((sa - initBtc) * bp).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   } else {
     var gainBtc = opwa - initBtc;
     document.getElementById('res-gain').textContent   = gainBtc.toFixed(4);
@@ -3648,7 +3648,7 @@ function calcSim() {
   const dc   = document.getElementById('diff-card');
   if (diff > 0 && initBtc > 0) {
     dc.style.display = 'flex';
-    document.getElementById('diff-amount').textContent = '+$' + (diff * bp).toFixed(2);
+    document.getElementById('diff-amount').textContent = '+$' + (diff * bp).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
     document.getElementById('diff-title').textContent = 'more than Fixed Income';
     document.getElementById('diff-sub').textContent   = 'after ' + label + ' with OPWA at 15% APY';
   } else {
@@ -3677,7 +3677,12 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
       try { var accs = await window.unisat.getAccounts(); if (!accs || !accs.includes(s.addr)) { localStorage.removeItem('opwa_wallet'); return; } } catch(_) { return; }
       try { var b2 = await window.unisat.getBalance(); sats = b2.total || 0; } catch(_) {}
     } else {
-      /* For Xverse/OKX or if extension not loaded yet, restore UI silently with saved data */
+      /* Xverse / OKX — fetch native balance where the wallet API is available */
+      if (s.type === 'OKX' && window.okxwallet && window.okxwallet.bitcoin) {
+        try { var b3 = await window.okxwallet.bitcoin.getBalance(); sats = b3.total || 0; } catch(_) {}
+      } else if (s.type === 'Xverse' && window.BitcoinProvider) {
+        try { var b4 = await window.BitcoinProvider.request('getBalance', {}); sats = (b4 && b4.result && b4.result.total) || 0; } catch(_) {}
+      }
     }
     walletConnected(s.addr, sats, s.type, publicKey);
     // Force fetch after restore — wallet was already connected on page load
@@ -3924,7 +3929,7 @@ async function loadVault() {
       var opscanUrl = 'https://opscan.org/accounts/' + (walletState.addr || CONTRACTS.propertyNft) + '?network=op_testnet';
       return '<div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .18s" onmouseover="this.style.borderColor=\'var(--purple-border)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
         '<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple-soft);margin-bottom:6px">Real Asset</div>' +
-        '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:16px;color:var(--text-1);margin-bottom:4px">#' + id + '</div>' +
+        '<div style="font-family:\'Syne\',sans-serif;font-weight:700;font-size:16px;color:var(--text-1);margin-bottom:4px">#' + id + '</div>' +
         '<div style="display:flex;gap:5px;margin-bottom:10px">' +
           '<span style="font-size:9px;background:var(--purple-dim);color:var(--purple-soft);border:1px solid var(--purple-border);border-radius:4px;padding:2px 6px;font-weight:700">OPWANFT</span>' +
           '<span style="font-size:9px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border);border-radius:4px;padding:2px 6px;font-weight:700">OP-721</span>' +
@@ -4010,9 +4015,9 @@ function dashRenderData() {
   var pct = Math.min(100, (sn / 100) * 100);
   function s(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
   s('dash-btc-val', '\u20BF ' + bb.toFixed(5));
-  s('dash-btc-usd', bp ? '\u2248 $' + bu.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' USD' : '\u2248 $ \u2014');
+  s('dash-btc-usd', bp ? '\u2248 $' + bu.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' USD' : '\u2248 $ \u2014');
   s('dash-opwap-val', on);
-  s('dash-total-usd', bp ? '$' + (bu + ou).toFixed(0) : '$\u2014');
+  s('dash-total-usd', bp ? '$' + (bu + ou).toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0}) : '$\u2014');
   s('dash-opwap-bal', on);
   s('dash-opwap-btc', '\u2248 ' + ob.toFixed(6) + ' BTC');
   s('dash-supply-pct', pct.toFixed(1) + '%');
@@ -5191,10 +5196,15 @@ async function vaultDepositOPWAY() {
     /* ── Step 2: Approve if needed ── */
     if (curAllow < amountBig) {
       /* Reset existing allowance to 0 first to avoid unexpected wallet behavior (Correction 2) */
+      var APPROVE_ABI = [
+        { name: 'approve', type: BitcoinAbiTypes.Function, payable: false,
+          inputs: [{ name: 'spender', type: ABIDataTypes.ADDRESS }, { name: 'amount', type: ABIDataTypes.UINT256 }],
+          outputs: [{ name: 'success', type: ABIDataTypes.BOOL }] }
+      ];
       if (curAllow > 0n) {
         showToast('Resetting previous allowance to 0… (sign in wallet)', 'info');
-        var cReset = _fresh();
-        var resetSim = await cReset.opway.approve(vaultAddrObj, 0n);
+        var cReset = getContract(CONTRACTS.opwayYield, APPROVE_ABI, provider, _OPNET_NET, senderAddr);
+        var resetSim = await cReset.approve(vaultAddrObj, 0n);
         if (resetSim.revert) throw new Error('Allowance reset failed: ' + resetSim.revert);
         await resetSim.sendTransaction({
           signer: null, mldsaSigner: null, refundTo: walletState.addr,
@@ -5204,8 +5214,8 @@ async function vaultDepositOPWAY() {
       } else {
         showToast('Approving OPWAY spend… (sign in wallet)', 'info');
       }
-      var cApp = _fresh();
-      var appSim = await cApp.opway.approve(vaultAddrObj, amountBig);
+      var cApp = getContract(CONTRACTS.opwayYield, APPROVE_ABI, provider, _OPNET_NET, senderAddr);
+      var appSim = await cApp.approve(vaultAddrObj, amountBig);
       if (appSim.revert) throw new Error('Approval simulation failed: ' + appSim.revert);
       await appSim.sendTransaction({
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
@@ -5490,7 +5500,7 @@ async function vaultLoadVaultedAssets() {
         '<span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em">' + p.type + '</span>' +
         '<span style="font-size:10px;color:var(--success);background:var(--success-dim);border:1px solid var(--success-border);padding:2px 8px;border-radius:20px;font-weight:700">ACTIVE</span>' +
       '</div>' +
-      '<div style="font-family:\'Syne\',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text-1);margin-bottom:4px">' + typeEmoji + ' ' + p.name + '</div>' +
+      '<div style="font-family:\'Syne\',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-1);margin-bottom:4px">' + typeEmoji + ' ' + p.name + '</div>' +
       '<div style="font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.5">' + (p.description || 'Vaulted property asset available for fractional investment.') + '</div>' +
       '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">' +
         '<span style="color:var(--text-3)">Max OPWAY</span>' +
