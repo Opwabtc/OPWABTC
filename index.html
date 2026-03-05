@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <meta name="theme-color" content="#f97316"/>
 <meta name="description" content="OPWA &#x2014; Fractionalized real estate investment platform built natively on Bitcoin via OP_NET."/>
-<title>OPWA</title>
+<title>💊 OPWA</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* =====================================================================
@@ -1731,7 +1732,7 @@ body{overflow-x:hidden}
     </div>
   </div>
   <div class="nb-right">
-    <div class="gas-pill">
+    <div class="gas-pill" style="display:none!important">
       <span class="led"></span>
       <span id="nav-gas">&#x2014; sat/vB</span>
     </div>
@@ -2750,7 +2751,6 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </h1>
       <div style="font-size:14px;color:var(--text-3);max-width:520px;line-height:1.6">
         Deposit OPWAY tokens to earn USDOP yield, or list your PropertyNFT to enable fractional investment.
-        <span style="color:var(--accent);font-weight:600"> Contracts deploying soon.</span>
       </div>
     </div>
 
@@ -2822,7 +2822,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       <div class="vault-card">
         <div class="vault-card-title">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Property Vault
+          Property Vault <span style="color:#f97316;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:.08em">SOON</span>
         </div>
         <div class="vault-card-sub">List your PropertyNFT to enable fractional OPWAY investment from the community</div>
 
@@ -3184,7 +3184,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <button class="gas-conv-btn" id="g-res-btn">&#x2192; USD</button>
   </div>
 </div>
-<button class="gas-trigger" id="gas-trigger-btn" onclick="toggleGas()">
+<button class="gas-trigger" id="gas-trigger-btn" onclick="toggleGas()" style="display:none!important">
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
 </button>
 
@@ -4035,6 +4035,8 @@ function navScrollTo(id) {
 
 function navigate(p) {
   window.history.pushState({}, '', p);
+  // Cancel any pending section observer debounce so it doesn't overwrite the new active state
+  if (window._navDebounce) { clearTimeout(window._navDebounce); window._navDebounce = null; }
   renderRoute();
 }
 
@@ -5060,6 +5062,20 @@ async function vaultDepositOPWAY() {
       };
     };
 
+    /* ── Step 0: Check OPWAY balance ── */
+    try {
+      var balCheck = _fresh().opway;
+      var balRes = await balCheck.balanceOf(senderAddr);
+      if (!balRes.revert && balRes.properties && balRes.properties.balance != null) {
+        var userBal = BigInt(String(balRes.properties.balance));
+        if (userBal < amountBig) {
+          var humanBal = Number(userBal) / 1e8;
+          showToast('Insufficient OPWAY balance. You have ' + humanBal.toFixed(2) + ' OPWAY.', 'error');
+          return;
+        }
+      }
+    } catch(_) { /* silent — proceed if check fails */ }
+
     /* ── Step 1: Check on-chain allowance ── */
     showToast('Checking allowance…', 'info');
     var curAllow = 0n;
@@ -5449,6 +5465,7 @@ function vaultMarkDashboardAssets() {
   if ('IntersectionObserver' in window) {
     // Track which sections are currently visible
     var _visibleSections = {};
+    window._navDebounce = null;
     var _navDebounce = null;
 
     function _applyNavActive() {
@@ -5480,6 +5497,7 @@ function vaultMarkDashboardAssets() {
       _visibleSections[e.target.id] = e.isIntersecting;
       if (_navDebounce) clearTimeout(_navDebounce);
       _navDebounce = setTimeout(_applyNavActive, 60);
+      window._navDebounce = _navDebounce;
     }
 
     var sio = new IntersectionObserver(function(entries){entries.forEach(handleSectionEntry);},{threshold:0.15,rootMargin:'-80px 0px -30% 0px'});
