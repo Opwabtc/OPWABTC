@@ -1229,7 +1229,7 @@ footer{
 .pending-block-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace}
 .pending-block-badge.pending{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
 .pending-block-badge.confirmed{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.35)}
-.pending-block-num{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-1);margin-bottom:4px;line-height:1}[data-theme="light"] .pending-block-num{color:#f0ede8!important}
+.pending-block-num{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-1);margin-bottom:4px;line-height:1}
 .pending-block-meta{font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace;display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
 .pending-block-bar-wrap{height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-bottom:10px}
 .pending-block-bar-fill{height:100%;border-radius:4px;transition:width .5s linear;background:linear-gradient(90deg,#fbbf24,#f97316)}
@@ -3675,7 +3675,7 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
       var pending = localStorage.getItem('opwa_pending_approval');
       if (pending) {
         var p = JSON.parse(pending);
-        if (p && p.amt && p.amountBig && p.approvalBlock != null) {
+        if (p && p.amt && p.amountBig && p.approvalBlock) {
           _pendingApproval = { amt: p.amt, amountBig: BigInt(p.amountBig) };
           // Small delay to let vault page render first
           setTimeout(function() { _startBlockWidget(p.approvalBlock); }, 1200);
@@ -4995,17 +4995,6 @@ function _stopBlockWidget() {
 }
 
 async function vaultExecuteStake() {
-  if (!_pendingApproval) {
-    try {
-      var _saved = localStorage.getItem('opwa_pending_approval');
-      if (_saved) {
-        var _p = JSON.parse(_saved);
-        if (_p && _p.amt && _p.amountBig) {
-          _pendingApproval = { amt: _p.amt, amountBig: BigInt(_p.amountBig) };
-        }
-      }
-    } catch(_) {}
-  }
   if (!_pendingApproval) { showToast('No pending approval found — please deposit again.', 'error'); return; }
   var { amt, amountBig } = _pendingApproval;
   var stakeBtn = document.getElementById('pending-stake-btn');
