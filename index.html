@@ -4905,6 +4905,7 @@ var _mempoolInterval = null;
 var _mempoolLastBlock = null;
 var _mempoolLastBlockTimestamp = null; // Unix seconds — real block timestamp from API
 var _blockConfirmTimeout = null;
+var _allowancePollInterval = null;
 
 /* Fetch tip height + real block timestamp in one call via /api/blocks (returns array) */
 async function _fetchMempoolTip() {
@@ -4993,9 +4994,10 @@ function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
     if (badgeEl)  { badgeEl.className = 'pending-block-badge confirmed'; badgeEl.textContent = 'CONFIRMED'; }
     if (barEl)    { barEl.style.width = '100%'; barEl.classList.add('done'); }
     if (etaEl)    etaEl.textContent = 'Block confirmed ✓';
-    if (stakeBtn) { stakeBtn.disabled = false; stakeBtn.className = 'pending-block-stake-btn ready'; stakeBtn.textContent = '⚡ Stake OPWAY — Ready!'; }
+    if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.className = 'pending-block-stake-btn'; stakeBtn.textContent = '🔍 Verifying allowance on-chain…'; }
     clearInterval(_mempoolInterval);
     _mempoolInterval = null;
+    _startAllowancePoll();
   } else {
     if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.className = 'pending-block-stake-btn'; stakeBtn.textContent = '🔒 Waiting for block confirmation… (' + pct + '%)'; }
   }
@@ -5007,6 +5009,7 @@ function _stopBlockWidget() {
   if (wrap) wrap.style.display = 'none';
   if (depositBtn) { depositBtn.disabled = false; depositBtn.style.opacity = ''; }
   if (_mempoolInterval) { clearInterval(_mempoolInterval); _mempoolInterval = null; }
+  if (_allowancePollInterval) { clearInterval(_allowancePollInterval); _allowancePollInterval = null; }
   _pendingApproval = null;
   _mempoolLastBlock = null;
   _mempoolLastBlockTimestamp = null;
@@ -5020,15 +5023,75 @@ function _stopBlockWidget() {
   if (barEl) { barEl.style.width = '0%'; barEl.classList.remove('done'); }
 }
 
+/* ── ALLOWANCE POLL — waits for on-chain confirmation before enabling Stake ── */
+async function _startAllowancePoll() {
+  if (_allowancePollInterval) { clearInterval(_allowancePollInterval); _allowancePollInterval = null; }
+  if (!_pendingApproval) return;
+
+  async function _checkAllow() {
+    if (!_pendingApproval) { clearInterval(_allowancePollInterval); _allowancePollInterval = null; return; }
+    var { amountBig } = _pendingApproval;
+    try {
+      const { getContract, JSONRpcProvider, OP_20_ABI, Address } = await _opnetImport();
+      const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+      const senderAddr = await buildSenderAddress(Address);
+      const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
+      if (!vaultAddrObj) return;
+      var opway = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
+      var alRes = await opway.allowance(senderAddr, vaultAddrObj);
+      if (!alRes.revert && alRes.properties && alRes.properties.remaining != null) {
+        var onChainAllow = BigInt(String(alRes.properties.remaining));
+        if (onChainAllow >= amountBig) {
+          clearInterval(_allowancePollInterval);
+          _allowancePollInterval = null;
+          var btn = document.getElementById('pending-stake-btn');
+          if (btn) { btn.disabled = false; btn.className = 'pending-block-stake-btn ready'; btn.textContent = '⚡ Stake OPWAY — Ready!'; }
+        }
+      }
+    } catch(_) {}
+  }
+
+  _checkAllow();
+  _allowancePollInterval = setInterval(_checkAllow, 5000);
+  // Safety timeout: after 90s enable the button anyway so the user isn't stuck
+  setTimeout(function() {
+    if (_allowancePollInterval) {
+      clearInterval(_allowancePollInterval);
+      _allowancePollInterval = null;
+      var btn = document.getElementById('pending-stake-btn');
+      if (btn && btn.disabled) { btn.disabled = false; btn.className = 'pending-block-stake-btn ready'; btn.textContent = '⚡ Stake OPWAY — Ready!'; }
+    }
+  }, 90000);
+}
+
 async function vaultExecuteStake() {
   if (!_pendingApproval) { showToast('No pending approval found — please deposit again.', 'error'); return; }
   var { amt, amountBig } = _pendingApproval;
   var stakeBtn = document.getElementById('pending-stake-btn');
-  if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.textContent = 'Staking… (sign in wallet)'; }
+  if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.textContent = 'Verifying allowance on-chain…'; }
   try {
-    const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
+    const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
     const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
     const senderAddr = await buildSenderAddress(Address);
+    const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
+    if (!vaultAddrObj) throw new Error('Could not resolve vault address — please retry');
+
+    /* ── Verify allowance on-chain before staking (Correction 3) ── */
+    var onChainAllow = 0n;
+    try {
+      var opwayChk = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
+      var alRes = await opwayChk.allowance(senderAddr, vaultAddrObj);
+      if (!alRes.revert && alRes.properties && alRes.properties.remaining != null) {
+        onChainAllow = BigInt(String(alRes.properties.remaining));
+      }
+    } catch(_) {}
+    if (onChainAllow < amountBig) {
+      showToast('Allowance not yet confirmed on-chain — please wait a moment and try again.', 'info');
+      if (stakeBtn) { stakeBtn.disabled = false; stakeBtn.className = 'pending-block-stake-btn ready'; stakeBtn.textContent = '⚡ Stake OPWAY — Ready!'; }
+      return;
+    }
+
+    if (stakeBtn) stakeBtn.textContent = 'Staking… (sign in wallet)';
     const YIELD_ABI = [
       { name:'stake', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[{name:'amount',type:ABIDataTypes.UINT256}],
@@ -5115,10 +5178,22 @@ async function vaultDepositOPWAY() {
 
     /* ── Step 2: Approve if needed ── */
     if (curAllow < amountBig) {
-      showToast('Approving OPWAY spend… (sign in wallet)', 'info');
+      /* Reset existing allowance to 0 first to avoid unexpected wallet behavior (Correction 2) */
+      if (curAllow > 0n) {
+        showToast('Resetting previous allowance to 0… (sign in wallet)', 'info');
+        var cReset = _fresh();
+        var resetSim = await cReset.opway.approve(vaultAddrObj, 0n);
+        if (resetSim.revert) throw new Error('Allowance reset failed: ' + resetSim.revert);
+        await resetSim.sendTransaction({
+          signer: null, mldsaSigner: null, refundTo: walletState.addr,
+          network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+        });
+        showToast('Allowance reset. Now approving full amount… (sign in wallet)', 'info');
+      } else {
+        showToast('Approving OPWAY spend… (sign in wallet)', 'info');
+      }
       var cApp = _fresh();
-      var deficit = amountBig - curAllow;
-      var appSim = await cApp.opway.increaseAllowance(vaultAddrObj, deficit);
+      var appSim = await cApp.opway.approve(vaultAddrObj, amountBig);
       if (appSim.revert) throw new Error('Approval simulation failed: ' + appSim.revert);
       await appSim.sendTransaction({
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
