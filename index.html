@@ -5195,16 +5195,11 @@ async function vaultDepositOPWAY() {
 
     /* ── Step 2: Approve if needed ── */
     if (curAllow < amountBig) {
-      /* Reset existing allowance to 0 first to avoid unexpected wallet behavior (Correction 2) */
-      var APPROVE_ABI = [
-        { name: 'approve', type: BitcoinAbiTypes.Function, payable: false,
-          inputs: [{ name: 'spender', type: ABIDataTypes.ADDRESS }, { name: 'amount', type: ABIDataTypes.UINT256 }],
-          outputs: [{ name: 'success', type: ABIDataTypes.BOOL }] }
-      ];
+      /* OP-20 has no approve() — use decreaseAllowance to reset then increaseAllowance to set */
       if (curAllow > 0n) {
-        showToast('Resetting previous allowance to 0… (sign in wallet)', 'info');
-        var cReset = getContract(CONTRACTS.opwayYield, APPROVE_ABI, provider, _OPNET_NET, senderAddr);
-        var resetSim = await cReset.approve(vaultAddrObj, 0n);
+        showToast('Resetting previous allowance… (sign in wallet)', 'info');
+        var cReset = _fresh();
+        var resetSim = await cReset.opway.decreaseAllowance(vaultAddrObj, curAllow);
         if (resetSim.revert) throw new Error('Allowance reset failed: ' + resetSim.revert);
         await resetSim.sendTransaction({
           signer: null, mldsaSigner: null, refundTo: walletState.addr,
@@ -5214,8 +5209,8 @@ async function vaultDepositOPWAY() {
       } else {
         showToast('Approving OPWAY spend… (sign in wallet)', 'info');
       }
-      var cApp = getContract(CONTRACTS.opwayYield, APPROVE_ABI, provider, _OPNET_NET, senderAddr);
-      var appSim = await cApp.approve(vaultAddrObj, amountBig);
+      var cApp = _fresh();
+      var appSim = await cApp.opway.increaseAllowance(vaultAddrObj, amountBig);
       if (appSim.revert) throw new Error('Approval simulation failed: ' + appSim.revert);
       await appSim.sendTransaction({
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
