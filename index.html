@@ -4051,7 +4051,7 @@ function renderRoute() {
     if (privacy) privacy.classList.add('active');
     setNavActive(null);
   } else if (p === '/dashboard') {
-    if (dash) { dash.classList.add('active'); dashRender(); }
+    if (dash) { dash.classList.add('active'); dashRender(); if (walletState.connected) dashFetch(); }
     setNavActive('nav-dashboard');
   } else if (p === '/vault') {
     if (vault) { vault.classList.add('active'); vaultInit(); }
@@ -4863,22 +4863,18 @@ var _pendingApproval = null; // { amt, amountBig, targetBlock } when approval su
 /* ── MEMPOOL BLOCK TRACKER ── */
 var _mempoolInterval = null;
 var _mempoolLastBlock = null;
-var _mempoolLastBlockTime = null; // timestamp (ms) when last block was seen
+var _mempoolLastBlockTimestamp = null; // Unix seconds — real block timestamp from API
 var _blockConfirmTimeout = null;
 
-async function _fetchMempoolBlock() {
+/* Fetch tip height + real block timestamp in one call via /api/blocks (returns array) */
+async function _fetchMempoolTip() {
   try {
-    var r = await fetch('https://mempool.opnet.org/testnet4/api/blocks/tip/height');
+    var r = await fetch('https://mempool.opnet.org/testnet4/api/blocks', { signal: AbortSignal.timeout(6000) });
     if (!r.ok) return null;
-    return parseInt(await r.text());
-  } catch(_) { return null; }
-}
-
-async function _fetchMempoolBlockData(height) {
-  try {
-    var r = await fetch('https://mempool.opnet.org/testnet4/api/block-summary/' + height);
-    if (!r.ok) return null;
-    return await r.json();
+    var arr = await r.json();
+    if (!Array.isArray(arr) || !arr.length) return null;
+    var tip = arr[0]; // most recent block first
+    return { height: tip.height, timestamp: tip.timestamp }; // timestamp = Unix seconds
   } catch(_) { return null; }
 }
 
@@ -4892,18 +4888,16 @@ function _startBlockWidget(approvalBlock) {
   _mempoolInterval = setInterval(function() { _pollMempoolBlock(approvalBlock); }, 15000);
 }
 
-
 async function _pollMempoolBlock(approvalBlock) {
-  var height = await _fetchMempoolBlock();
-  if (!height) return;
+  var tip = await _fetchMempoolTip();
+  if (!tip) return;
 
-  // Detect new block
-  if (_mempoolLastBlock === null) {
+  var height = tip.height;
+
+  // Update real block timestamp when a new block arrives
+  if (_mempoolLastBlock === null || height > _mempoolLastBlock) {
     _mempoolLastBlock = height;
-    _mempoolLastBlockTime = Date.now();
-  } else if (height > _mempoolLastBlock) {
-    _mempoolLastBlock = height;
-    _mempoolLastBlockTime = Date.now();
+    _mempoolLastBlockTimestamp = tip.timestamp; // real unix seconds from network
   }
 
   // Also check OP_NET block to see if approval confirmed
@@ -4921,26 +4915,35 @@ async function _pollMempoolBlock(approvalBlock) {
 }
 
 function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
-  var numEl   = document.getElementById('pending-block-num');
-  var txsEl   = document.getElementById('pending-block-txs');
-  var etaEl   = document.getElementById('pending-block-eta');
-  var feeEl   = document.getElementById('pending-block-fee');
-  var barEl   = document.getElementById('pending-block-bar');
-  var boxEl   = document.getElementById('pending-block-box');
-  var badgeEl = document.getElementById('pending-block-badge');
+  var numEl    = document.getElementById('pending-block-num');
+  var txsEl    = document.getElementById('pending-block-txs');
+  var etaEl    = document.getElementById('pending-block-eta');
+  var feeEl    = document.getElementById('pending-block-fee');
+  var barEl    = document.getElementById('pending-block-bar');
+  var boxEl    = document.getElementById('pending-block-box');
+  var badgeEl  = document.getElementById('pending-block-badge');
   var stakeBtn = document.getElementById('pending-stake-btn');
 
   var nextBlock = mempoolHeight + 1;
-  if (numEl) numEl.textContent = nextBlock.toLocaleString();
+  if (numEl) numEl.textContent = nextBlock.toLocaleString('en').replace(',','.');
 
-  // Time-based progress: blocks every ~10 min (600s)
-  var elapsed = _mempoolLastBlockTime ? (Date.now() - _mempoolLastBlockTime) / 1000 : 0;
+  // ── CORRECT TIMER LOGIC ──
+  // elapsed = now - real timestamp of last confirmed block (in seconds)
+  // remaining = max(0, 600 - elapsed)  →  "last block was X min ago, so next in 10-X min"
+  var nowSec = Math.floor(Date.now() / 1000);
+  var elapsed = _mempoolLastBlockTimestamp ? Math.max(0, nowSec - _mempoolLastBlockTimestamp) : 0;
+  var remainingSec = Math.max(0, 600 - elapsed);
+  var remainingMin = Math.ceil(remainingSec / 60);
   var progress = Math.min(elapsed / 600, 1);
   var pct = Math.round(progress * 100);
+
   if (barEl) barEl.style.width = pct + '%';
 
-  var remaining = Math.max(0, Math.round((600 - elapsed) / 60));
-  if (etaEl) etaEl.textContent = remaining > 0 ? '~' + remaining + ' min remaining' : 'confirming…';
+  if (remainingSec === 0) {
+    if (etaEl) etaEl.textContent = 'Please wait a moment…';
+  } else {
+    if (etaEl) etaEl.textContent = '~' + remainingMin + ' min remaining';
+  }
 
   // Confirmed if OP_NET moved at least 1 block past approval
   var confirmed = opBlock > approvalBlock;
@@ -4966,7 +4969,7 @@ function _stopBlockWidget() {
   if (_mempoolInterval) { clearInterval(_mempoolInterval); _mempoolInterval = null; }
   _pendingApproval = null;
   _mempoolLastBlock = null;
-  _mempoolLastBlockTime = null;
+  _mempoolLastBlockTimestamp = null;
   // Reset box state for next use
   var boxEl = document.getElementById('pending-block-box');
   var badgeEl = document.getElementById('pending-block-badge');
@@ -5006,7 +5009,9 @@ async function vaultExecuteStake() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: amt, depositBlock: vaultCurrentBlock }));
+    var _prevDep = vaultGetDeposit();
+    var _newAmt = amt + (_prevDep ? (_prevDep.amount || 0) : 0);
+    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: _newAmt, depositBlock: vaultCurrentBlock }));
     _stopBlockWidget();
     vaultRenderPosition();
   } catch(e) {
@@ -5089,7 +5094,9 @@ async function vaultDepositOPWAY() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: amt, depositBlock: vaultCurrentBlock }));
+    var _prevDep2 = vaultGetDeposit();
+    var _newAmt2 = amt + (_prevDep2 ? (_prevDep2.amount || 0) : 0);
+    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: _newAmt2, depositBlock: vaultCurrentBlock }));
     _stopBlockWidget();
     vaultRenderPosition();
   } catch(e) {
