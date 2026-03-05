@@ -617,7 +617,7 @@ button:focus-visible,a:focus-visible{
   background:transparent;color:var(--text-3);font-size:11px;font-weight:600;
   font-family:'DM Mono',monospace;transition:all .15s;
 }
-.dt-btn.active{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
+.dt-btn.active{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}.dt-btn.active-usd{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.35);color:#4ade80}
 
 .card-stats{
   display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
@@ -2361,7 +2361,6 @@ body{overflow-x:hidden}
   <div class="pcard-track-wrap">
     <div class="pcard-track">
       <a href="https://opnet.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opnet.org/favicon.ico" alt="OP_NET" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></a>
-      <a href="https://mempool.opnet.org/testnet4" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://pbs.twimg.com/profile_images/1655688849643675650/y-r2GdQ4_400x400.jpg" alt="Testnet4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></a>
       <a href="https://opscan.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opscan.org/favicon.ico" alt="OPScan" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></a>
       <a href="https://vibecode.finance" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://vibecode.finance/favicon.ico" alt="Vibecode" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></a>
       <a href="https://defibible.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://defibible.org/favicon.ico" alt="DeFi Bible" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></a>
@@ -2369,7 +2368,6 @@ body{overflow-x:hidden}
       <a href="https://x.com/orangepillonbtc" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://pbs.twimg.com/profile_images/1943449115506921472/4S10756S_400x400.jpg" alt="$PILL" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">💊</div><div class="pcard-name">$PILL</div><div class="pcard-sub">BTC-Native Token</div></a>
       <a href="https://mempool.opnet.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://pbs.twimg.com/profile_images/1655688849643675650/y-r2GdQ4_400x400.jpg" alt="Mempool" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🏊</div><div class="pcard-name">Mempool</div><div class="pcard-sub">Network Monitor</div></a>
       <a href="https://opnet.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opnet.org/favicon.ico" alt="OP_NET" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔗</div><div class="pcard-name">OP_NET</div><div class="pcard-sub">Smart Contract Layer</div></a>
-      <a href="https://mempool.opnet.org/testnet4" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://pbs.twimg.com/profile_images/1655688849643675650/y-r2GdQ4_400x400.jpg" alt="Testnet4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">₿</div><div class="pcard-name">Testnet4</div><div class="pcard-sub">Bitcoin Network</div></a>
       <a href="https://opscan.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://opscan.org/favicon.ico" alt="OPScan" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">🔍</div><div class="pcard-name">OPScan</div><div class="pcard-sub">Block Explorer</div></a>
       <a href="https://vibecode.finance" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://vibecode.finance/favicon.ico" alt="Vibecode" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">⚡</div><div class="pcard-name">Vibecode</div><div class="pcard-sub">Ecosystem Partner</div></a>
       <a href="https://defibible.org" target="_blank" rel="noopener" class="pcard"><img class="pcard-logo" src="https://defibible.org/favicon.ico" alt="DeFi Bible" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="pcard-ico" style="display:none">📖</div><div class="pcard-name">DeFi Bible</div><div class="pcard-sub">Research &amp; Education</div></a>
@@ -2853,6 +2851,24 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </div>
 
     </div><!-- /vault-grid -->
+
+    <!-- MEMPOOL BLOCK MONITOR: visible only when user has active stake -->
+    <div id="vault-block-monitor" style="display:none;margin-top:24px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Block Confirmation Monitor
+        <span id="vbm-live-dot" style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;animation:vbm-pulse 1.5s ease-in-out infinite"></span>
+      </div>
+      <style>@keyframes vbm-pulse{0%,100%{opacity:1}50%{opacity:.3}}</style>
+      <div id="vbm-blocks-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px">
+        <div style="font-size:12px;color:var(--text-3);padding:8px">Fetching blocks…</div>
+      </div>
+      <div id="vbm-tx-info" style="display:none;margin-top:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--text-3)">
+        <span style="color:var(--text-2);font-weight:600">Your stake TX:</span>
+        <a id="vbm-tx-link" href="#" target="_blank" style="color:var(--accent);text-decoration:none;font-family:'DM Mono',monospace;font-size:11px;margin-left:8px"></a>
+        <span id="vbm-tx-status" style="margin-left:12px;font-weight:700"></span>
+      </div>
+    </div>
   </div><!-- /vault-content-wrap -->
   </div>
   </div><!-- /vault flex-grow -->
@@ -2868,11 +2884,11 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <div style="flex:1 0 auto;padding-bottom:60px">
   <div class="dash-wrap">
     <div id="dash-noconn" class="dash-noconn">
-      <div style="text-align:center;max-width:360px;padding:48px 32px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px">
-        <div style="font-size:42px;margin-bottom:14px">&#x1F512;</div>
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:10px">Connect Your Wallet</div>
-        <div style="font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.6">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</div>
-        <button onclick="navigate('/');setTimeout(function(){openWalletModal();},200)" style="padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;color:#fff;font-weight:600;font-size:14px">Go Home to Connect</button>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:56px 48px;text-align:center;max-width:420px;width:100%">
+        <div style="font-size:48px;margin-bottom:20px">🔒</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-1);margin:0 0 12px">Connect Your Wallet</h2>
+        <p style="font-size:14px;color:var(--text-3);line-height:1.6;margin:0 0 28px">Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</p>
+        <button class="btn-connect" onclick="navigate('/');setTimeout(function(){openWalletModal();},200)" style="width:100%;justify-content:center">Connect Wallet →</button>
       </div>
     </div>
     <div id="dash-content" style="display:none">
@@ -4452,8 +4468,8 @@ function sortAssets(by) { /* placeholder */ }
 /* ── TOGGLE DISPLAY MODE (BTC/USD per card) ── */
 function toggleDisp(btn, mode, assetId) {
   const wrap = btn.closest('.card-asset');
-  wrap.querySelectorAll('.dt-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  wrap.querySelectorAll('.dt-btn').forEach(b => { b.classList.remove('active'); b.classList.remove('active-usd'); });
+  if (mode === 'usd') { btn.classList.add('active-usd'); } else { btn.classList.add('active'); }
   const priceEl = document.getElementById(assetId + '-price');
   if (!priceEl) return;
   const usd = ASSET_USD[assetId] || 0;
@@ -4647,6 +4663,7 @@ async function vaultFetchBlock() {
     if (el) el.textContent = b.toLocaleString();
     vaultUpdateCountdown();
     vaultUpdateAccrued();
+    if (_vbmInterval) vbmFetch();
   } catch(e) { /* silent */ }
 }
 
@@ -4664,8 +4681,9 @@ function vaultInit() {
   if (vaultBlockInterval) clearInterval(vaultBlockInterval);
   vaultBlockInterval = setInterval(vaultFetchBlock, 30000);
   vaultRenderPosition();
-  vaultCheckPendingApprove(); // restore pending approve UI if user refreshed mid-flow
-  vaultSyncChainState(); // async fire-and-forget: syncs localStorage from getStake+getDepositBlock
+  vaultCheckPendingApprove();
+  vaultSyncChainState();
+  if (vaultGetDeposit()) vbmStart(null);
   pvaultRenderListed();
   vaultLoadVaultedAssets();
 }
@@ -4711,6 +4729,106 @@ function vaultCheckPendingApprove() {
       localStorage.removeItem('vaultPendingApprove');
     }
   } catch(_) {}
+}
+
+/* ══════════════════════════════════════════
+   MEMPOOL BLOCK MONITOR
+   Fetches live data from mempool.opnet.org
+   Shows only when user has active stake.
+   Color: green(low fee) → yellow → orange → red(high fee) → blue(confirmed)
+   ══════════════════════════════════════════ */
+var _vbmInterval = null;
+var _vbmLastTxId = null;
+var _vbmConfirmedBlock = null;
+
+function _vbmColor(satVb) {
+  if (satVb <= 1)  return { bg:'rgba(34,197,94,.10)',  border:'rgba(34,197,94,.35)',  text:'#4ade80' };
+  if (satVb <= 2)  return { bg:'rgba(251,191,36,.10)', border:'rgba(251,191,36,.35)', text:'#fbbf24' };
+  if (satVb <= 5)  return { bg:'rgba(249,115,22,.10)', border:'rgba(249,115,22,.35)', text:'#f97316' };
+  return             { bg:'rgba(239,68,68,.12)',  border:'rgba(239,68,68,.45)',  text:'#ef4444' };
+}
+
+async function vbmFetch() {
+  var dep = vaultGetDeposit();
+  var monitorEl = document.getElementById('vault-block-monitor');
+  if (!dep || !monitorEl) return;
+  monitorEl.style.display = 'block';
+  try {
+    var resp = await fetch('https://mempool.opnet.org/api/v1/blocks', { signal: AbortSignal.timeout(8000) });
+    if (!resp.ok) return;
+    var blocks = await resp.json();
+    var row = document.getElementById('vbm-blocks-row');
+    if (!row || !blocks || !blocks.length) return;
+
+    var html = '';
+
+    // Pending next block
+    try {
+      var mr = await fetch('https://mempool.opnet.org/api/v1/fees/mempool-blocks', { signal: AbortSignal.timeout(6000) });
+      if (mr.ok) {
+        var mb = (await mr.json())[0];
+        if (mb) {
+          var ps = mb.medianFee || 1;
+          var pc = _vbmColor(ps);
+          html += '<div style="border-radius:12px;padding:14px 16px;border:1px solid ' + pc.border + ';background:' + pc.bg + ';font-family:\'DM Mono\',monospace">' +
+            '<div style="font-size:9px;font-weight:700;color:' + pc.text + ';text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">⏳ Next Block</div>' +
+            '<div style="font-size:26px;font-weight:900;font-family:\'Syne\',sans-serif;color:' + pc.text + '">' + (vaultCurrentBlock + 1).toLocaleString() + '</div>' +
+            '<div style="font-size:10px;color:var(--text-3);margin-top:5px">~' + ps.toFixed(1) + ' sat/vB</div>' +
+            '<div style="font-size:10px;color:var(--text-3)">' + (mb.nTx || 0).toLocaleString() + ' txs · ~5 min</div>' +
+          '</div>';
+        }
+      }
+    } catch(_) {}
+
+    // Recent confirmed blocks (up to 5)
+    blocks.slice(0, 5).forEach(function(blk) {
+      var satVb = (blk.extras && blk.extras.medianFee) ? blk.extras.medianFee : 1;
+      var isUserBlock = dep.depositBlock && blk.height === dep.depositBlock;
+      var confirmed = isUserBlock && _vbmConfirmedBlock;
+      var col = confirmed
+        ? { bg:'rgba(59,130,246,.12)', border:'rgba(59,130,246,.45)', text:'#60a5fa' }
+        : _vbmColor(satVb);
+      var timeAgo = blk.timestamp ? Math.round((Date.now() / 1000 - blk.timestamp) / 60) + ' min ago' : '';
+      html += '<div style="border-radius:12px;padding:14px 16px;border:1px solid ' + col.border + ';background:' + col.bg + ';font-family:\'DM Mono\',monospace">' +
+        (isUserBlock ? '<div style="font-size:9px;font-weight:700;color:' + col.text + ';text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">⚡ Your Block</div>' : '') +
+        '<div style="font-size:26px;font-weight:900;font-family:\'Syne\',sans-serif;color:' + col.text + '">' + blk.height.toLocaleString() + '</div>' +
+        '<div style="font-size:10px;color:var(--text-3);margin-top:5px">~' + satVb.toFixed(1) + ' sat/vB</div>' +
+        '<div style="font-size:10px;color:var(--text-3)">' + (blk.tx_count || 0).toLocaleString() + ' txs</div>' +
+        (timeAgo ? '<div style="font-size:9px;color:var(--text-3);margin-top:3px">' + timeAgo + '</div>' : '') +
+        (confirmed ? '<div style="font-size:9px;font-weight:700;color:#60a5fa;margin-top:5px">✔ CONFIRMED</div>' : '') +
+      '</div>';
+      if (isUserBlock && blocks[0] && blocks[0].height >= blk.height) _vbmConfirmedBlock = blocks[0].height;
+    });
+
+    row.innerHTML = html;
+
+    // TX bar
+    if (_vbmLastTxId) {
+      var txInfo = document.getElementById('vbm-tx-info');
+      var txLink = document.getElementById('vbm-tx-link');
+      var txStatus = document.getElementById('vbm-tx-status');
+      if (txInfo) txInfo.style.display = 'block';
+      if (txLink) { txLink.href = 'https://opscan.org/transactions/' + _vbmLastTxId + '?network=op_testnet'; txLink.textContent = _vbmLastTxId.slice(0, 14) + '…'; }
+      if (txStatus) {
+        txStatus.textContent = _vbmConfirmedBlock ? '✔ Block ' + dep.depositBlock + ' confirmed' : '⏳ Awaiting confirmation…';
+        txStatus.style.color = _vbmConfirmedBlock ? '#60a5fa' : '#fbbf24';
+      }
+    }
+  } catch(e) { /* silent */ }
+}
+
+function vbmStart(txId) {
+  if (txId) _vbmLastTxId = txId;
+  _vbmConfirmedBlock = null;
+  vbmFetch();
+  if (_vbmInterval) clearInterval(_vbmInterval);
+  _vbmInterval = setInterval(vbmFetch, 30000);
+}
+
+function vbmStop() {
+  if (_vbmInterval) { clearInterval(_vbmInterval); _vbmInterval = null; }
+  var el = document.getElementById('vault-block-monitor');
+  if (el) el.style.display = 'none';
 }
 
 function vaultUpdateEarn() {
@@ -4847,7 +4965,7 @@ function vaultRenderPosition() {
   var dep = vaultGetDeposit();
   var wrap = document.getElementById('vault-position-wrap');
   if (!wrap) return;
-  if (!dep) { wrap.style.display = 'none'; return; }
+  if (!dep) { wrap.style.display = 'none'; vbmStop(); return; }
   wrap.style.display = 'block';
   var d = document.getElementById('vpos-deposited');
   var b = document.getElementById('vpos-block');
@@ -4953,6 +5071,7 @@ async function vaultDepositOPWAY() {
     var _prevAmt = _prevDep ? (_prevDep.amount || 0) : 0;
     localStorage.setItem('vaultDeposit', JSON.stringify({ amount: _prevAmt + amt, depositBlock: vaultCurrentBlock }));
     vaultRenderPosition();
+    vbmStart(stakeRx.transactionId);
     setTimeout(function(){ vaultSyncChainState(); }, 5000);
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
