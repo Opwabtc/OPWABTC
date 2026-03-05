@@ -2730,9 +2730,22 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div class="vault-preview" id="vault-earn-preview">
           You will earn <span id="vault-earn-rate">0.0000</span> USDOP / 420-block cycle
         </div>
-        <button class="vault-btn-primary" onclick="vaultDepositOPWAY()">
+        <!-- Normal deposit button (hidden when approve is pending) -->
+        <button class="vault-btn-primary" id="vault-btn-deposit" onclick="vaultDepositOPWAY()">
           ⚡ Deposit OPWAY
         </button>
+        <!-- Pending approve state (shown after approve TX sent) -->
+        <div id="vault-approve-pending" style="display:none">
+          <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:12px;color:#fbbf24;line-height:1.5">
+            ⏳ <strong>Approval submitted.</strong> OPNet blocks take ~10 min. Come back here after the next block and click Stake to complete.
+          </div>
+          <button class="vault-btn-primary" onclick="vaultDepositOPWAY()" style="background:linear-gradient(135deg,#16a34a,#15803d);box-shadow:0 4px 16px rgba(22,163,74,.3)">
+            ✅ Stake OPWAY
+          </button>
+          <button onclick="vaultCancelPendingApprove()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text-3);font-size:12px;cursor:pointer">
+            Cancel / Change Amount
+          </button>
+        </div>
 
         <!-- Active position (shown if localStorage has deposit) -->
         <div id="vault-position-wrap" style="display:none">
@@ -3618,6 +3631,7 @@ function handleConnectClick() {
 function walletConnected(addr, sats, type, publicKey) {
   if (!addr || !addr.startsWith('opt1p')) { showToast('Wrong network — switch to OPNet Testnet', 'error'); return; }
   walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || ''};
+  try { localStorage.setItem('wt', type); } catch(_) {}
   const short = addr.slice(0, 8) + '...' + addr.slice(-6);
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = short; btn.classList.add('connected'); }
@@ -3636,6 +3650,7 @@ function walletConnected(addr, sats, type, publicKey) {
 
 function wdDisconnect() {
   walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
+  try { localStorage.removeItem('wt'); localStorage.removeItem('vaultPendingApprove'); } catch(_) {}
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
   let e;
@@ -3996,6 +4011,34 @@ function renderRoute() {
 }
 
 window.addEventListener('popstate', renderRoute);
+
+/* ── SILENT AUTO-RECONNECT on refresh ──
+   Reads wallet type from localStorage, tries getAccounts() without
+   triggering the browser popup. If the extension already has permission,
+   it returns accounts silently. If not, it fails silently.
+   Never blocks renderRoute(). ── */
+(async function tryAutoReconnect() {
+  try {
+    var savedType = localStorage.getItem('wt');
+    if (!savedType) return;
+    var accounts = [], sats = 0, publicKey = '';
+    if (savedType === 'OP_Wallet' && window.opnet) {
+      accounts = await window.opnet.getAccounts();
+      try { var b = await window.opnet.getBalance(); sats = b.total || 0; } catch(_) {}
+      try { publicKey = await window.opnet.getPublicKey(); } catch(_) {}
+    } else if (savedType === 'Unisat' && window.unisat) {
+      accounts = await window.unisat.getAccounts();
+      try { var b2 = await window.unisat.getBalance(); sats = b2.total || 0; } catch(_) {}
+      try { publicKey = await window.unisat.getPublicKey(); } catch(_) {}
+    } else if (savedType === 'OKX' && window.okxwallet) {
+      accounts = await window.okxwallet.bitcoin.getAccounts();
+    }
+    if (accounts && accounts.length > 0) {
+      walletConnected(accounts[0], sats, savedType, publicKey);
+    }
+  } catch(_) { /* silent — user will connect manually */ }
+})();
+
 renderRoute();
 
 /* close wallet dropdown on outside click */
@@ -4621,9 +4664,53 @@ function vaultInit() {
   if (vaultBlockInterval) clearInterval(vaultBlockInterval);
   vaultBlockInterval = setInterval(vaultFetchBlock, 30000);
   vaultRenderPosition();
+  vaultCheckPendingApprove(); // restore pending approve UI if user refreshed mid-flow
   vaultSyncChainState(); // async fire-and-forget: syncs localStorage from getStake+getDepositBlock
   pvaultRenderListed();
   vaultLoadVaultedAssets();
+}
+
+/* ── Pending Approve state helpers ── */
+function vaultShowPendingApprove(amt) {
+  var btnDeposit = document.getElementById('vault-btn-deposit');
+  var pendingDiv = document.getElementById('vault-approve-pending');
+  var input = document.getElementById('vault-deposit-amount');
+  var preview = document.getElementById('vault-earn-preview');
+  if (btnDeposit) btnDeposit.style.display = 'none';
+  if (pendingDiv) pendingDiv.style.display = 'block';
+  if (input) { input.value = amt || ''; input.disabled = true; input.style.opacity = '.5'; }
+  if (preview) preview.style.display = 'none';
+}
+
+function vaultClearPendingApprove() {
+  var btnDeposit = document.getElementById('vault-btn-deposit');
+  var pendingDiv = document.getElementById('vault-approve-pending');
+  var input = document.getElementById('vault-deposit-amount');
+  var preview = document.getElementById('vault-earn-preview');
+  if (btnDeposit) btnDeposit.style.display = '';
+  if (pendingDiv) pendingDiv.style.display = 'none';
+  if (input) { input.value = ''; input.disabled = false; input.style.opacity = ''; }
+  if (preview) preview.style.display = '';
+}
+
+function vaultCancelPendingApprove() {
+  try { localStorage.removeItem('vaultPendingApprove'); } catch(_) {}
+  vaultClearPendingApprove();
+  showToast('Pending approve cleared — you can enter a new amount.', 'info');
+}
+
+function vaultCheckPendingApprove() {
+  try {
+    var raw = localStorage.getItem('vaultPendingApprove');
+    if (!raw) return;
+    var obj = JSON.parse(raw);
+    // Expire after 2 hours (approve expires or stale)
+    if (obj && obj.ts && (Date.now() - obj.ts) < 7200000) {
+      vaultShowPendingApprove(obj.amount);
+    } else {
+      localStorage.removeItem('vaultPendingApprove');
+    }
+  } catch(_) {}
 }
 
 function vaultUpdateEarn() {
@@ -4837,7 +4924,9 @@ async function vaultDepositOPWAY() {
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
         network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
       });
-      showToast('✅ Approval TX submitted! OPNet blocks take ~10 min — click <b>Stake</b> again after the next block confirms.', 'success', true);
+      showToast('✅ Approval submitted! Wait ~10 min for the next block, then click <b>Stake OPWAY</b>.', 'success', true);
+      try { localStorage.setItem('vaultPendingApprove', JSON.stringify({ amount: amt, ts: Date.now() })); } catch(_) {}
+      vaultShowPendingApprove(amt);
       return;
     }
 
@@ -4858,8 +4947,13 @@ async function vaultDepositOPWAY() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: amt, depositBlock: vaultCurrentBlock }));
+    try { localStorage.removeItem('vaultPendingApprove'); } catch(_) {}
+    vaultClearPendingApprove();
+    var _prevDep = vaultGetDeposit();
+    var _prevAmt = _prevDep ? (_prevDep.amount || 0) : 0;
+    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: _prevAmt + amt, depositBlock: vaultCurrentBlock }));
     vaultRenderPosition();
+    setTimeout(function(){ vaultSyncChainState(); }, 5000);
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
