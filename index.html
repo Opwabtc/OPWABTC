@@ -3539,10 +3539,10 @@ async function confirmInvest(asset) {
   const panel = document.getElementById('p-' + asset);
   const btn   = panel ? panel.querySelector('.btn-confirm') : null;
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
+  let count = BigInt(tokenCount);
   try {
     // OPWAYield contract — public mint(), 1000 sats per token (0.00001 BTC)
     // Contract stores treasury bech32; simulation uses hasTo so out.to matches stored value.
-    const count    = BigInt(tokenCount);
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
     const mod = await import('https://esm.sh/opnet?bundle');
