@@ -18,15 +18,8 @@ import { u256 } from '@btc-vision/as-bignum/assembly';
 
 // ── NetEvents ──────────────────────────────────────────────────────────────────
 
-@event('Mint')
-class MintEvent extends NetEvent {
-  constructor(to: string, tokenId: u256, priceSats: u64) {
-    super('Mint');
-    this.set('to', to);
-    this.set('tokenId', tokenId.toString());
-    this.set('priceSats', priceSats.toString());
-  }
-}
+// R-014: use standard NetEvent pattern instead of @event class
+const MintEvent = new NetEvent('Mint', ['address', 'uint256', 'uint64']);
 
 // ── Contract ───────────────────────────────────────────────────────────────────
 
@@ -83,8 +76,7 @@ export class PropertyNFT extends OP721 {
 
     // FIX HIGH #12: emit event
     if (success) {
-      const ev = new MintEvent(to, tokenId, paid);
-      ev.emit();
+      Blockchain.emit(MintEvent, [to, tokenId, u256.fromU64(paid)]);
     }
 
     return success;
