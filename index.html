@@ -3991,12 +3991,15 @@ async function loadVault() {
 
 /* helper RPC raw para totalSupply no vault */
 async function dashRpcCallRaw(method, params) {
-  var res = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ jsonrpc:'2.0', id:1, method, params })
-  });
-  var j = await res.json();
-  return j && j.result ? j.result : null;
+  try {
+    var res = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ jsonrpc:'2.0', id:1, method, params }),
+      signal: AbortSignal.timeout(8000)
+    });
+    var j = await res.json();
+    return j && j.result ? j.result : null;
+  } catch(_) { return null; }
 }
 
 function fmtAmt(raw, dec) {
@@ -5360,10 +5363,11 @@ async function vaultDepositOPWAY() {
       var cApp = _fresh();
       var appSim = await cApp.opway.increaseAllowance(vaultAddrObj, amountBig);
       if (appSim.revert) throw new Error('Approval simulation failed: ' + appSim.revert);
-      await appSim.sendTransaction({
+      const appRx = await appSim.sendTransaction({
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
         network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
       });
+      if (!appRx) throw new Error('Approval TX not broadcast — please try again.');
       // Bug 1: never persist approvalBlock = 0 — it confirms instantly on any reload
       if (vaultCurrentBlock === 0) {
         showToast('Block height not loaded yet — please wait a moment and try again.', 'error');
