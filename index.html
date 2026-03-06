@@ -4999,7 +4999,7 @@ var _provider = null; // FIX 5.23/5.24: singleton provider — not recreated per
 async function _getProvider() {
   if (!_provider) {
     const { JSONRpcProvider } = await _opnetImport();
-    _provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    _provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
   }
   return _provider;
 }
