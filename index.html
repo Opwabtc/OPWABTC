@@ -3553,9 +3553,9 @@ async function confirmInvest(asset) {
     // Contract stores treasury bech32; simulation uses hasTo so out.to matches stored value.
     const satsAmt  = count * 1000n;
     const tokenAmt = count * 100_000_000n;
-    const mod = await import('https://esm.sh/opnet?bundle');
+    const mod = await import('https://esm.sh/opnet@1.8.1-rc.16?bundle');
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, TransactionOutputFlags, ABIDataTypes } = mod;
-    const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    const { Address } = await import('https://esm.sh/@btc-vision/transaction@1.8.0-rc.10?bundle');
     const _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     const OPWAY_ABI = [
       ...OP_20_ABI,
@@ -3887,9 +3887,9 @@ async function mintPropertyNFT() {
   status.textContent = 'Waiting for wallet confirmation…';
   status.style.color = 'var(--text-2)';
   try {
-    var mod = await import('https://esm.sh/opnet?bundle');
+    var mod = await import('https://esm.sh/opnet@1.8.1-rc.16?bundle');
     var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
-    var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { Address } = await import('https://esm.sh/@btc-vision/transaction@1.8.0-rc.10?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
@@ -3943,9 +3943,9 @@ async function loadVault() {
   cardsEl.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px">Loading assets…</div>';
 
   try {
-    var mod = await import('https://esm.sh/opnet?bundle');
+    var mod = await import('https://esm.sh/opnet@1.8.1-rc.16?bundle');
     var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
-    var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+    var { Address } = await import('https://esm.sh/@btc-vision/transaction@1.8.0-rc.10?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
     var provider   = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _net);
@@ -4971,7 +4971,7 @@ function vaultRenderPosition() {
 
 /* ══════════════════════════════════════════
    VAULT — Real OPNet contract calls
-   Pattern: import esm.sh/opnet?bundle, _net hardcoded,
+   Pattern: import esm.sh/opnet@1.8.1-rc.16?bundle, _net hardcoded,
    signer:null, mldsaSigner:null, refundTo:walletState.addr
    ══════════════════════════════════════════ */
 
@@ -4985,8 +4985,8 @@ const _OPNET_NET = {
 var _opnetModuleCache = null;
 async function _opnetImport() {
   if (_opnetModuleCache) return _opnetModuleCache;
-  const mod = await import('https://esm.sh/opnet?bundle');
-  const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
+  const mod = await import('https://esm.sh/opnet@1.8.1-rc.16?bundle');
+  const { Address } = await import('https://esm.sh/@btc-vision/transaction@1.8.0-rc.10?bundle');
   _opnetModuleCache = { ...mod, Address };
   return _opnetModuleCache;
 }
