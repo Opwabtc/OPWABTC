@@ -23,6 +23,11 @@ export interface OPNetTransactionReceipt {
 //   result: number;
 // }
 
+// R-013: typed interface instead of provider as any
+interface ProviderWithGas {
+  gasParameters?: () => Promise<{ bitcoin: { recommended: { medium: number } } }>;
+}
+
 export function useSendTransaction() {
   const { provider, network, walletAddress } = useOPNETWallet();
 
@@ -36,7 +41,7 @@ export function useSendTransaction() {
     // 1. Get current fee rate from provider via gasParameters() (FIX 5.56/5.68)
     let feeRate: number | undefined;
     try {
-      const gasParams = await (provider as any).gasParameters?.();
+      const gasParams = await (provider as unknown as ProviderWithGas).gasParameters?.();
       feeRate = gasParams?.bitcoin?.recommended?.medium ?? undefined;
     } catch(_) { feeRate = undefined; }
     void feeRate; // consumed below if provider supports it
