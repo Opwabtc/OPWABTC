@@ -6,13 +6,12 @@
  *            These methods exist in the frontend ABI but were missing from the contract source.
  * FIX CF-14: Import path as-bignum → @btc-vision/as-bignum/assembly
  * FIX CF-11: onUpdate() lifecycle hook added
- * FIX CF-12: NetEvents for mint, buy, config
+ * FIX CF-12: NetEvents for buy, config, price
  */
 import {
   OP20,
   OP20InitParameters,
 } from '@btc-vision/btc-runtime/runtime/contracts/OP20';
-// FIX CF-14: was 'as-bignum/assembly'
 import { u256 } from '@btc-vision/as-bignum/assembly';
 import {
   Blockchain,

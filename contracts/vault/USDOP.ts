@@ -45,7 +45,7 @@ const MAX_EPOCH_MINT: u256 = u256.fromString('1000000000000000'); // 10M × 10^8
 const MAX_SUPPLY: u256 = u256.fromString('10000000000000000000'); // 100B × 10^8
 
 // FIX CF-12: NetEvents
-const MinterSetEvent  = new NetEvent('MinterSet',  ['address']);
+const MinterChangedEvent = new NetEvent('MinterChanged', ['address']);
 const MintEvent       = new NetEvent('MintUSDOP',  ['address', 'uint256']);
 
 @final
@@ -95,7 +95,7 @@ export class USDOP extends OP20 {
         this._minter.value       = minter;
         this._minterLocked.value = u256.One; // lock forever
 
-        Blockchain.emit(MinterSetEvent, [minter]);
+        Blockchain.emit(MinterChangedEvent, [minter]);
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
