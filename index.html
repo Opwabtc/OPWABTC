@@ -3496,11 +3496,15 @@ function _hexToBytes(hex) {
   for (var i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i*2, i*2+2), 16);
   return out;
 }
+function sanitizeText(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 async function buildSenderAddress(Address) {
   var pubkeyBytes = walletState.publicKey ? _hexToBytes(walletState.publicKey) : new Uint8Array(33);
   var mldsaKey = new Uint8Array(32);
-  if (window.opnet && typeof window.opnet.getMLDSAPublicKey === 'function') {
-    try { mldsaKey = _hexToBytes(await window.opnet.getMLDSAPublicKey()); } catch(_) {}
+  if (walletState.hashedMLDSAKey) {
+    try { mldsaKey = _hexToBytes(walletState.hashedMLDSAKey); } catch(_) {}
   }
   return new Address(mldsaKey, pubkeyBytes);
 }
@@ -3697,7 +3701,7 @@ calcSim();
 
 
 /* ── WALLET STATE ── */
-var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
+var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:'', hashedMLDSAKey:''};
 
 /* ── AUTO-RECONNECT on page load ── */
 (async function tryRestoreWallet() {
@@ -3757,9 +3761,16 @@ function handleConnectClick() {
   }
 }
 
-function walletConnected(addr, sats, type, publicKey) {
+async function walletConnected(addr, sats, type, publicKey) {
   if (!addr || !addr.startsWith('opt1p')) { showToast('Wrong network — switch to OPNet Testnet', 'error'); return; }
-  walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || ''};
+  walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || '', hashedMLDSAKey:''};
+  if (window.opnet && typeof window.opnet.getMLDSAPublicKey === 'function') {
+    try {
+      var _rawKey = _hexToBytes(await window.opnet.getMLDSAPublicKey());
+      var _hashBuf = await crypto.subtle.digest('SHA-256', _rawKey);
+      walletState.hashedMLDSAKey = Array.from(new Uint8Array(_hashBuf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+    } catch(_) {}
+  }
   try { localStorage.setItem('opwa_wallet', JSON.stringify({addr:addr, type:type, publicKey: publicKey || ''})); } catch(_) {}
   const short = addr.slice(0, 8) + '...' + addr.slice(-6);
   const btn = document.getElementById('connect-btn');
@@ -3778,7 +3789,8 @@ function walletConnected(addr, sats, type, publicKey) {
 }
 
 function wdDisconnect() {
-  walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
+  walletState = {connected:false, addr:'', sats:0, type:'', publicKey:'', hashedMLDSAKey:''};
+  _opnetModuleCache = null;
   try { localStorage.removeItem('opwa_wallet'); } catch(_) {}
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = 'Connect Wallet'; btn.classList.remove('connected'); }
@@ -4468,7 +4480,7 @@ function renderTxList(txs){
       // Hash + method
       +'<div style="min-width:0">'
         +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11.5px;color:#f97316;text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">'+sh+'</a>'
-        +'<span style="display:inline-block;margin-top:3px;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:'+mBg+';color:'+mColor+'">'+tx.action+'</span>'
+        +'<span style="display:inline-block;margin-top:3px;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:'+mBg+';color:'+mColor+'">'+sanitizeText(tx.action)+'</span>'
       +'</div>'
       // Value
       +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.5)">'+tx.value+'</span></div>'
@@ -4648,7 +4660,12 @@ async function fetchPrices() {
     for (var pi=0; pi<priceSrcs.length && !price; pi++) {
       try { var v = await priceSrcs[pi](); if (v && v > 1000) price = v; } catch(_) {}
     }
-    if (!price) price = 65000; // último recurso: valor estático
+    if (!price) {
+      // No fallback — show stale price warning instead of misleading $65k
+      const heroPriceEl = document.getElementById('hero-btc-price');
+      if (heroPriceEl && !btcPrice) heroPriceEl.textContent = 'Price unavailable';
+      return; // btcPrice stays at last known value (or 0 on first load)
+    }
     btcPrice = price;
     const fmt = '$' + btcPrice.toLocaleString('en',{maximumFractionDigits:0});
     const heroPriceEl = document.getElementById('hero-btc-price');
@@ -4961,15 +4978,18 @@ const _OPNET_NET = {
   pubKeyHash: 111, scriptHash: 196, wif: 239
 };
 
+var _opnetModuleCache = null;
 async function _opnetImport() {
+  if (_opnetModuleCache) return _opnetModuleCache;
   const mod = await import('https://esm.sh/opnet?bundle');
   const { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
-  return { ...mod, Address };
+  _opnetModuleCache = { ...mod, Address };
+  return _opnetModuleCache;
 }
 
 /* ── PENDING APPROVAL STATE ── */
 var _pendingApproval = null;         // { amt, amountBig, approvalBlock } when approval submitted
-var _sessionDepositInitiated = false; // true only after increaseAllowance TX sent this session
+var _sessionDepositInitiated = (function(){ try { return !!localStorage.getItem('opwa_deposit_initiated'); } catch(_){ return false; } })(); // persisted across reloads
 
 /* ── MEMPOOL BLOCK TRACKER ── */
 var _mempoolInterval = null;
@@ -5109,6 +5129,7 @@ async function _resetAllowanceAndStop() {
 
 function _stopBlockWidget() {
   _sessionDepositInitiated = false;
+  try { localStorage.removeItem('opwa_deposit_initiated'); } catch(_) {}
   var wrap = document.getElementById('pending-block-wrap');
   var depositBtn = document.getElementById('vault-deposit-btn');
   if (wrap) wrap.style.display = 'none';
@@ -5380,6 +5401,7 @@ async function vaultDepositOPWAY() {
       _pendingApproval = { amt: amt, amountBig: amountBig, approvalBlock: snapBlock };
       localStorage.setItem('opwa_pending_approval', JSON.stringify({ amt: amt, amountBig: amountBig.toString(), approvalBlock: snapBlock }));
       _sessionDepositInitiated = true;
+      try { localStorage.setItem('opwa_deposit_initiated', '1'); } catch(_) {}
       _startBlockWidget(snapBlock);
       showToast('✅ Approval TX submitted! Waiting for block confirmation…', 'success', true);
       return;
@@ -5605,8 +5627,8 @@ function pvaultRenderListed() {
   wrap.style.display = 'block';
   list.innerHTML = props.map(function(p){
     return '<div style="background:var(--bg-elevated);border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">' +
-      '<div><div style="font-weight:600;font-size:13px;color:var(--text-1)">' + p.name + '</div>' +
-      '<div style="font-size:11px;color:var(--text-3);margin-top:2px">' + p.type + ' · NFT #' + p.tokenId + ' · ' + (p.maxOpway||0).toLocaleString() + ' OPWAY max</div></div>' +
+      '<div><div style="font-weight:600;font-size:13px;color:var(--text-1)">'+sanitizeText(p.name)+'</div>' +
+      '<div style="font-size:11px;color:var(--text-3);margin-top:2px">'+sanitizeText(p.type)+' · NFT #'+p.tokenId+' · '+(p.maxOpway||0).toLocaleString()+' OPWAY max</div></div>' +
       '<button onclick="pvaultRemove(' + p.tokenId + ')" style="padding:5px 10px;background:var(--danger-dim);border:1px solid var(--danger-border);border-radius:8px;color:var(--danger);font-size:11px;font-weight:600">Remove</button>' +
       '</div>';
   }).join('');
@@ -5670,11 +5692,11 @@ async function vaultLoadVaultedAssets() {
     cards += '<div class="asset-card" style="position:relative" id="vault-asset-' + p.tokenId + '">' +
       '<div class="asset-vault-lock"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>' +
       '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
-        '<span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em">' + p.type + '</span>' +
+        '<span style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em">' + sanitizeText(p.type) + '</span>' +
         '<span style="font-size:10px;color:var(--success);background:var(--success-dim);border:1px solid var(--success-border);padding:2px 8px;border-radius:20px;font-weight:700">ACTIVE</span>' +
       '</div>' +
-      '<div style="font-family:\'Syne\',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-1);margin-bottom:4px">' + typeEmoji + ' ' + p.name + '</div>' +
-      '<div style="font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.5">' + (p.description || 'Vaulted property asset available for fractional investment.') + '</div>' +
+      '<div style="font-family:\'Syne\',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-1);margin-bottom:4px">' + typeEmoji + ' ' + sanitizeText(p.name) + '</div>' +
+      '<div style="font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.5">' + sanitizeText(p.description || 'Vaulted property asset available for fractional investment.') + '</div>' +
       '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">' +
         '<span style="color:var(--text-3)">Max OPWAY</span>' +
         '<span style="font-family:\'DM Mono\',monospace;color:var(--text-1);font-weight:600">' + p.maxOpway.toLocaleString() + '</span>' +
