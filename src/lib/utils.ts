@@ -55,6 +55,7 @@ export const calculateAPY = (monthlyRent: number, propertyValue: number): number
   return (annualRent / propertyValue) * 100;
 };
 
+/** @demo TEST/DEMO ONLY — uses Math.random(), never call with real data */
 export const generateMockPriceHistory = (days: number, basePrice: number) => {
   const history = [];
   let currentPrice = basePrice;
@@ -78,6 +79,7 @@ export const generateMockPriceHistory = (days: number, basePrice: number) => {
   return history;
 };
 
+/** @demo TEST/DEMO ONLY — returns hardcoded mock property data */
 export const generateMockProperties = () => {
   return [
     {
@@ -165,6 +167,7 @@ export const generateMockProperties = () => {
   ];
 };
 
+/** @demo TEST/DEMO ONLY — returns hardcoded mock portfolio data */
 export const generateMockPortfolio = () => {
   return {
     totalValueBTC: 2.5 * 100000000, // 2.5 BTC in satoshis
@@ -201,6 +204,7 @@ export const generateMockPortfolio = () => {
   };
 };
 
+/** @demo TEST/DEMO ONLY — returns hardcoded mock transaction data */
 export const generateMockTransactions = () => {
   return [
     {
