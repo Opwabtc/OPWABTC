@@ -4983,8 +4983,8 @@ const _OPNET_NET = {
 };
 
 var _opnetModuleCache = null;
-async function _opnetImport() {
-  if (_opnetModuleCache) return _opnetModuleCache;
+async async function _opnetImport() {
+  if (_opnetModuleCache) return Promise.resolve(_opnetModuleCache);
   const mod = await import('https://esm.sh/opnet@1.8.1-rc.16?bundle');
   const { Address } = await import('https://esm.sh/@btc-vision/transaction@1.8.0-rc.10?bundle');
   _opnetModuleCache = { ...mod, Address };
