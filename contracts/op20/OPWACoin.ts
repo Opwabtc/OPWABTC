@@ -120,7 +120,7 @@ export class OPWACoin extends OP20 {
       }
     }
 
-    this._mint(to, amount);
+    this._mintBuy(to, amount);
     Blockchain.emit(BuyEvent, [to, amount, price]);
 
     const result = new BytesWriter(1);
@@ -193,6 +193,12 @@ export class OPWACoin extends OP20 {
     const result = new BytesWriter(1);
     result.writeBoolean(true);
     return result;
+  }
+
+  // Internal buy-path mint — bypasses caller guard because buy() already verified BTC payment.
+  // NEVER call this from any public method other than buy().
+  private _mintBuy(to: Address, amount: u256): void {
+    super._mint(to, amount);
   }
 
   // Override _mint to also allow the designated minter (YieldVault)
