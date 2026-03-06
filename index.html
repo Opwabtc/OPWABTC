@@ -4891,7 +4891,7 @@ async function vaultUpdateAccrued() {
   if (walletState.connected && YIELD_VAULT_ADDR) {
     try {
       var imp = await _opnetImport();
-      var provider   = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+      var provider   = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
       var senderAddr = await buildSenderAddress(imp.Address);
       var ACC_ABI = [{
         name: 'getAccruedRewards',
@@ -4929,7 +4929,7 @@ async function vaultSyncChainState() {
   if (!walletState.connected || !YIELD_VAULT_ADDR) return;
   try {
     var imp = await _opnetImport();
-    var provider = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    var provider = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     var senderAddr = await buildSenderAddress(imp.Address);
     var SYNC_ABI = [
       { name:'getStake',        type:imp.BitcoinAbiTypes.Function, payable:false,
@@ -5129,7 +5129,7 @@ async function _resetAllowanceAndStop() {
   try {
     showToast('Resetting allowance on-chain… (sign in wallet)', 'info');
     var imp = await _opnetImport();
-    var provider = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    var provider = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     var senderAddr = await buildSenderAddress(imp.Address);
     var vaultAddrObj = await _contractAddr(imp.Address, YIELD_VAULT_ADDR);
     if (!vaultAddrObj) return;
