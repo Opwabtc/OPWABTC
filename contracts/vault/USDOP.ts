@@ -139,14 +139,14 @@ export class USDOP extends OP20 {
 
         // Check if we're in a new epoch (currentBlock - epochStart >= EPOCH_BLOCKS)
         const blocksSinceEpoch = SafeMath.sub(currentBlock, epochStart);
-        if (blocksSinceEpoch >= u256.fromU64(EPOCH_BLOCKS)) {
+        if (u256.gte(blocksSinceEpoch, u256.fromU64(EPOCH_BLOCKS))) {
             // New epoch — reset counter
             this._epochBlock.value = currentBlock;
             epochMinted = u256.Zero;
         }
 
         const newEpochTotal = SafeMath.add(epochMinted, amount);
-        if (newEpochTotal > MAX_EPOCH_MINT) {
+        if (u256.gt(newEpochTotal, MAX_EPOCH_MINT)) {
             throw new Revert('USDOP: epoch mint cap exceeded — max 10M USDOP per day');
         }
 
