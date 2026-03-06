@@ -8,12 +8,14 @@ export const OPWACoinAbi = [
         inputs: [{ name: 'pubkey', type: ABIDataTypes.ADDRESS }],
         outputs: [{ name: 'success', type: ABIDataTypes.BOOL }],
         type: BitcoinAbiTypes.Function,
+        onlyOwner: true,
     },
     {
         name: 'setPrice',
         inputs: [{ name: 'newPrice', type: ABIDataTypes.UINT256 }],
         outputs: [{ name: 'success', type: ABIDataTypes.BOOL }],
         type: BitcoinAbiTypes.Function,
+        onlyOwner: true,
     },
     {
         name: 'getPrice',

@@ -107,7 +107,7 @@ export class USDOP extends OP20 {
     @method()
     @returns({ name: 'minter', type: ABIDataTypes.ADDRESS })
     public getMinter(_calldata: Calldata): BytesWriter {
-        const result = new BytesWriter(32);
+        const result = new BytesWriter(33); // FIX 5.41: Address = 33 bytes
         result.writeAddress(this._minter.value);
         return result;
     }

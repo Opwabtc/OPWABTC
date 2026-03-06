@@ -24,6 +24,6 @@ export async function getTokenInfo(contractAddress: string) {
 
 export async function getTokenBalance(contractAddress: string, userAddress: string): Promise<bigint> {
   // FIX: Address.fromString takes (string, string) — use the address string directly
-  const addr = Address.fromString(userAddress);
-  return fetchTokenBalance(contractAddress, addr, provider, network);
+  // FIX 5.21: pass userAddress string directly — fetchTokenBalance handles Address construction
+  return fetchTokenBalance(contractAddress, userAddress as unknown as Address, provider, network);
 }

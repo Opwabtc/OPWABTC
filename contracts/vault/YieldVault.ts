@@ -1,4 +1,5 @@
-import { u256 } from '@btc-vision/as-bignum/assembly';
+import { StoredBoolean,
+ u256 } from '@btc-vision/as-bignum/assembly';
 import {
     ReentrancyGuard,
     Blockchain,
@@ -59,6 +60,7 @@ export class YieldVault extends ReentrancyGuard {
     @returns({ name: 'success', type: ABIDataTypes.BOOL })
     public setAddresses(calldata: Calldata): BytesWriter {
         this.onlyDeployer(Blockchain.tx.sender);
+        if (this._configured.value) throw new Revert('YieldVault: already configured');
         const opway = calldata.readAddress();
         const usdop = calldata.readAddress();
         this._opway.value = opway;
