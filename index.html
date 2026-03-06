@@ -3734,10 +3734,13 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
       var pending = localStorage.getItem('opwa_pending_approval');
       if (pending) {
         var p = JSON.parse(pending);
-        if (p && p.amt && p.amountBig && p.approvalBlock != null) {
+        if (p && p.amt && p.amountBig && p.approvalBlock && p.approvalBlock > 0) {
           _pendingApproval = { amt: p.amt, amountBig: BigInt(p.amountBig) };
           // Small delay to let vault page render first
           setTimeout(function() { _startBlockWidget(p.approvalBlock); }, 1200);
+        } else {
+          // approvalBlock = 0 or missing: stale entry — remove to avoid instant confirm on reload
+          localStorage.removeItem('opwa_pending_approval');
         }
       }
     } catch(_) {}
@@ -5064,6 +5067,35 @@ function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
   }
 }
 
+/* ── Reset on-chain allowance + clear pending state after a stake failure ── */
+async function _resetAllowanceAndStop() {
+  _stopBlockWidget();
+  if (!YIELD_VAULT_ADDR) return;
+  try {
+    showToast('Resetting allowance on-chain… (sign in wallet)', 'info');
+    var imp = await _opnetImport();
+    var provider = new imp.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    var senderAddr = await buildSenderAddress(imp.Address);
+    var vaultAddrObj = await _contractAddr(imp.Address, YIELD_VAULT_ADDR);
+    if (!vaultAddrObj) return;
+    var opway = imp.getContract(CONTRACTS.opwayYield, imp.OP_20_ABI, provider, _OPNET_NET, senderAddr);
+    var alRes = await opway.allowance(senderAddr, vaultAddrObj);
+    if (!alRes.revert && alRes.properties && alRes.properties.remaining != null) {
+      var curAllow = BigInt(String(alRes.properties.remaining));
+      if (curAllow > 0n) {
+        var decSim = await opway.decreaseAllowance(vaultAddrObj, curAllow);
+        if (!decSim.revert) {
+          await decSim.sendTransaction({
+            signer: null, mldsaSigner: null, refundTo: walletState.addr,
+            network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
+          });
+          showToast('Allowance reset. Deposit OPWAY again to retry.', 'success');
+        }
+      }
+    }
+  } catch(_) {}
+}
+
 function _stopBlockWidget() {
   var wrap = document.getElementById('pending-block-wrap');
   var depositBtn = document.getElementById('vault-deposit-btn');
@@ -5114,12 +5146,21 @@ async function _startAllowancePoll() {
 
   _checkAllow();
   _allowancePollInterval = setInterval(_checkAllow, 5000);
-  // Safety timeout: after 20s enable the button anyway so the user isn't stuck
-  // (covers page reload after block confirmed — allowance already on-chain)
+  // Safety timeout: after 20s, only enable stake if pending state is fully valid
   setTimeout(function() {
     if (_allowancePollInterval) {
       clearInterval(_allowancePollInterval);
       _allowancePollInterval = null;
+      // Bug 4: validate all three conditions before arming the button
+      if (!_pendingApproval || !_pendingApproval.approvalBlock || _pendingApproval.approvalBlock === 0) {
+        _stopBlockWidget();
+        return;
+      }
+      var inputAmt = parseFloat((document.getElementById('vault-deposit-amount') || {}).value) || 0;
+      if (Math.abs(inputAmt - _pendingApproval.amt) > 0.5) {
+        _stopBlockWidget();
+        return;
+      }
       var btn = document.getElementById('vault-deposit-btn');
       if (btn && btn.disabled) { btn.disabled = false; btn.style.opacity = ''; btn.textContent = '⚡ Stake OPWAY — Ready!'; btn.onclick = vaultExecuteStake; }
     }
@@ -5196,7 +5237,7 @@ async function vaultExecuteStake() {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
     else { showToast('Stake failed: ' + msg.slice(0,60), 'error'); }
-    if (stakeBtn) { stakeBtn.disabled = false; stakeBtn.textContent = '⚡ Stake OPWAY — Ready!'; }
+    _resetAllowanceAndStop(); // fire-and-forget: zero on-chain allowance + reset UI
   }
 }
 
@@ -5206,6 +5247,7 @@ async function vaultDepositOPWAY() {
   var amt = parseFloat(document.getElementById('vault-deposit-amount').value);
   if (!amt || amt < 1) { showToast('Enter a valid OPWAY amount', 'info'); return; }
   showToast('Preparing stake…', 'info');
+  var _stakePhase = false;
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
     const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
@@ -5225,7 +5267,7 @@ async function vaultDepositOPWAY() {
       };
     };
 
-    /* ── Step 0: Check OPWAY balance ── */
+    /* ── Step 0: Check OPWAY balance — hard block, never silent ── */
     try {
       var balCheck = _fresh().opway;
       var balRes = await balCheck.balanceOf(senderAddr);
@@ -5236,8 +5278,14 @@ async function vaultDepositOPWAY() {
           showToast('Insufficient OPWAY balance. You have ' + humanBal.toFixed(2) + ' OPWAY.', 'error');
           return;
         }
+      } else {
+        showToast('Could not verify OPWAY balance — please try again.', 'error');
+        return;
       }
-    } catch(_) { /* silent — proceed if check fails */ }
+    } catch(_) {
+      showToast('Could not verify OPWAY balance — please try again.', 'error');
+      return;
+    }
 
     /* ── Step 1: Check on-chain allowance ── */
     showToast('Checking allowance…', 'info');
@@ -5273,6 +5321,11 @@ async function vaultDepositOPWAY() {
         signer: null, mldsaSigner: null, refundTo: walletState.addr,
         network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
       });
+      // Bug 1: never persist approvalBlock = 0 — it confirms instantly on any reload
+      if (vaultCurrentBlock === 0) {
+        showToast('Block height not loaded yet — please wait a moment and try again.', 'error');
+        return;
+      }
       // Save pending state and show block widget
       _pendingApproval = { amt: amt, amountBig: amountBig };
       var snapBlock = vaultCurrentBlock;
@@ -5283,6 +5336,7 @@ async function vaultDepositOPWAY() {
     }
 
     /* ── Step 3: Stake (allowance already enough) ── */
+    _stakePhase = true;
     showToast('Staking OPWAY… (sign in wallet)', 'info');
     var cS = _fresh();
     var stakeSim = await cS.vault.stake(amountBig);
@@ -5309,6 +5363,7 @@ async function vaultDepositOPWAY() {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
     else { showToast('Stake failed: ' + msg.slice(0,60), 'error'); }
+    if (_stakePhase) { _resetAllowanceAndStop(); }
   }
 }
 
