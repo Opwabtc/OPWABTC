@@ -2752,9 +2752,6 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div class="pending-block-bar-wrap">
           <div class="pending-block-bar-fill" id="pending-block-bar" style="width:0%"></div>
         </div>
-        <button class="pending-block-stake-btn" id="pending-stake-btn" disabled onclick="vaultExecuteStake()">
-          🔒 Aguardando bloco…
-        </button>
       </div>
     </div>
 
@@ -3469,6 +3466,29 @@ function syncInvest(asset, field, raw) {
   }
 }
 
+function syncInvestInputs(assetId, field) {
+  const btcEl    = document.getElementById(assetId + '-btc');
+  const tokensEl = document.getElementById(assetId + '-tokens');
+  const rcvEl    = document.getElementById('rcv-' + assetId);
+  const rcvSats  = document.getElementById('rcv-sats-' + assetId);
+  const val = parseFloat(field === 'btc' ? (btcEl && btcEl.value) : (tokensEl && tokensEl.value));
+  if (!val || val <= 0) return;
+  let tokens, btcAmt;
+  if (field === 'btc') {
+    tokens = Math.floor(val / BTC_PER_TOKEN);
+    btcAmt = val;
+    if (tokensEl) tokensEl.value = tokens;
+  } else {
+    tokens = Math.floor(val);
+    btcAmt = tokens * BTC_PER_TOKEN;
+    if (btcEl) btcEl.value = btcAmt.toFixed(5);
+  }
+  if (tokens > 0) {
+    if (rcvEl)   rcvEl.textContent = tokens.toLocaleString('en') + ' OPWAY';
+    if (rcvSats) rcvSats.textContent = '\u2248 ' + btcAmt.toFixed(8) + ' BTC (' + (tokens * SATS_PER_TOKEN).toLocaleString('en') + ' sats)';
+  }
+}
+
 /* ── OPNet Address helpers ── */
 function _hexToBytes(hex) {
   var clean = (hex || '').replace(/^0x/, '');
@@ -3714,7 +3734,7 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
       var pending = localStorage.getItem('opwa_pending_approval');
       if (pending) {
         var p = JSON.parse(pending);
-        if (p && p.amt && p.amountBig && p.approvalBlock) {
+        if (p && p.amt && p.amountBig && p.approvalBlock != null) {
           _pendingApproval = { amt: p.amt, amountBig: BigInt(p.amountBig) };
           // Small delay to let vault page render first
           setTimeout(function() { _startBlockWidget(p.approvalBlock); }, 1200);
@@ -3761,8 +3781,7 @@ function wdDisconnect() {
   e = document.getElementById('wallet-dropdown'); if (e) e.classList.remove('open');
   e = document.getElementById('nav-dashboard'); if (e) e.style.display = 'none';
   e = document.getElementById('lb-wallet'); if (e) e.textContent = 'not connected';
-  var blockWrap = document.getElementById('pending-block-wrap'); if (blockWrap) blockWrap.style.display = 'none';
-  if (_mempoolInterval) { clearInterval(_mempoolInterval); _mempoolInterval = null; }
+  _stopBlockWidget();
   showToast('Wallet disconnected', 'info');
   if (window.location.pathname === '/dashboard') navigate('/');
   dashRender();
@@ -3869,6 +3888,7 @@ async function mintPropertyNFT() {
     var txid = receipt.transactionId;
     status.innerHTML = '✅ Minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>';
     status.style.color = 'var(--success)';
+    _txCache = {};
     showToast('🏠 Real Asset minted!', 'success');
     setTimeout(function(){ loadVault(); }, 3000);
   } catch(err) {
@@ -3996,7 +4016,7 @@ async function dashFetch() {
   try {
     // ── OPWAY balance + PropertyNFT totalSupply via getContract ──
     try {
-      const { getContract, JSONRpcProvider, OP_20_ABI, Address } = await _opnetImport();
+      const { getContract, JSONRpcProvider, OP_20_ABI, OP_721_ABI, Address } = await _opnetImport();
       const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
       const senderAddr = await buildSenderAddress(Address);
       const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
@@ -4005,7 +4025,7 @@ async function dashFetch() {
         ? balSim.properties.balance.toString()
         : '0';
       dashOpwapBal = rawBal;
-      const nftContract = getContract(CONTRACTS.propertyNft, OP_20_ABI, provider, _OPNET_NET, senderAddr);
+      const nftContract = getContract(CONTRACTS.propertyNft, OP_721_ABI, provider, _OPNET_NET, senderAddr);
       const supSim = await nftContract.totalSupply();
       if (supSim && supSim.properties && supSim.properties.totalSupply != null) {
         dashSupply = supSim.properties.totalSupply.toString();
@@ -4298,7 +4318,7 @@ async function loadTxHistory() {
   var addr = walletState.addr;
   var listEl = document.getElementById('tx-list');
   if (!listEl) return;
-  if (_txCache[addr]) { renderTxList(_txCache[addr]); return; }
+  if (_txCache[addr]) { _txAllData = _txCache[addr]; renderTxList(_txCache[addr]); return; }
   listEl.innerHTML = '<div style="padding:26px 22px;text-align:center;font-size:13px;color:var(--text-3)">Loading transactions…</div>';
 
   var userTxs = [];
@@ -4354,7 +4374,8 @@ async function loadTxHistory() {
               var tx = block.transactions[j];
               if (tx.OPNetType !== 'Interaction' && tx.OPNetType !== 'Deployment') continue;
               var outputs = tx.outputs || [];
-              var isUser = outputs.some(function(o){return o.scriptPubKey&&o.scriptPubKey.address===addr;});
+              var _tb1Addr = _opt1ToTb1p(addr);
+              var isUser = outputs.some(function(o){var a=o.scriptPubKey&&o.scriptPubKey.address;return a===addr||a===_tb1Addr;});
               if (!isUser) continue;
               var cAddr = (tx.contractAddress||'').toLowerCase();
               var label = tx.OPNetType==='Deployment' ? 'Deploy' : 'Contract Call';
@@ -4522,7 +4543,7 @@ function filterAssets(cat, btn) {
 function searchAssets(q) {
   const lq = q.toLowerCase();
   document.querySelectorAll('#assets-grid .card-asset').forEach(card => {
-    card.style.display = card.dataset.name.includes(lq) ? '' : 'none';
+    card.style.display = (card.dataset.name || '').toLowerCase().includes(lq) ? '' : 'none';
   });
 }
 
@@ -4852,7 +4873,7 @@ async function vaultUpdateAccrued() {
 }
 
 function vaultGetDeposit() {
-  try { return JSON.parse(localStorage.getItem('vaultDeposit') || 'null'); } catch(e) { return null; }
+  try { return JSON.parse(localStorage.getItem('vaultDeposit_' + walletState.addr) || 'null'); } catch(e) { return null; }
 }
 
 /* ── Sync localStorage with on-chain getStake + getDepositBlock ──
@@ -4891,7 +4912,11 @@ async function vaultSyncChainState() {
           depBlock = Number(BigInt(String(blockRes.properties.block)));
         }
       } catch(_) {}
-      localStorage.setItem('vaultDeposit', JSON.stringify({ amount: humanAmt, depositBlock: depBlock }));
+      localStorage.setItem('vaultDeposit_' + walletState.addr, JSON.stringify({ amount: humanAmt, depositBlock: depBlock }));
+      // Stake confirmed on-chain — clear any stale pending approval state
+      if (localStorage.getItem('opwa_pending_approval')) {
+        _stopBlockWidget();
+      }
     }
     vaultRenderPosition();
   } catch(_) {}
@@ -4996,7 +5021,7 @@ function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
   var barEl    = document.getElementById('pending-block-bar');
   var boxEl    = document.getElementById('pending-block-box');
   var badgeEl  = document.getElementById('pending-block-badge');
-  var stakeBtn = document.getElementById('pending-stake-btn');
+  var depositBtn = document.getElementById('vault-deposit-btn');
 
   var nextBlock = mempoolHeight + 1;
   if (numEl) numEl.textContent = nextBlock.toLocaleString('en').replace(',','.');
@@ -5031,11 +5056,11 @@ function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
     _mempoolInterval = null;
     // Only start allowance poll once — guard against repeated calls after reload
     if (!_allowancePollInterval) {
-      if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.className = 'pending-block-stake-btn'; stakeBtn.textContent = '🔍 Verifying allowance on-chain…'; }
+      if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔍 Verifying allowance on-chain…'; }
       _startAllowancePoll();
     }
   } else {
-    if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.className = 'pending-block-stake-btn'; stakeBtn.textContent = '🔒 Waiting for block confirmation… (' + pct + '%)'; }
+    if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔒 Waiting for block… (' + pct + '%)'; }
   }
 }
 
@@ -5043,7 +5068,7 @@ function _stopBlockWidget() {
   var wrap = document.getElementById('pending-block-wrap');
   var depositBtn = document.getElementById('vault-deposit-btn');
   if (wrap) wrap.style.display = 'none';
-  if (depositBtn) { depositBtn.disabled = false; depositBtn.style.opacity = ''; }
+  if (depositBtn) { depositBtn.disabled = false; depositBtn.style.opacity = ''; depositBtn.textContent = '⚡ Deposit OPWAY'; depositBtn.onclick = vaultDepositOPWAY; }
   if (_mempoolInterval) { clearInterval(_mempoolInterval); _mempoolInterval = null; }
   if (_allowancePollInterval) { clearInterval(_allowancePollInterval); _allowancePollInterval = null; }
   _pendingApproval = null;
@@ -5080,8 +5105,8 @@ async function _startAllowancePoll() {
         if (onChainAllow >= amountBig) {
           clearInterval(_allowancePollInterval);
           _allowancePollInterval = null;
-          var btn = document.getElementById('pending-stake-btn');
-          if (btn) { btn.disabled = false; btn.className = 'pending-block-stake-btn ready'; btn.textContent = '⚡ Stake OPWAY — Ready!'; }
+          var btn = document.getElementById('vault-deposit-btn');
+          if (btn) { btn.disabled = false; btn.style.opacity = ''; btn.textContent = '⚡ Stake OPWAY — Ready!'; btn.onclick = vaultExecuteStake; }
         }
       }
     } catch(_) {}
@@ -5095,16 +5120,27 @@ async function _startAllowancePoll() {
     if (_allowancePollInterval) {
       clearInterval(_allowancePollInterval);
       _allowancePollInterval = null;
-      var btn = document.getElementById('pending-stake-btn');
-      if (btn && btn.disabled) { btn.disabled = false; btn.className = 'pending-block-stake-btn ready'; btn.textContent = '⚡ Stake OPWAY — Ready!'; }
+      var btn = document.getElementById('vault-deposit-btn');
+      if (btn && btn.disabled) { btn.disabled = false; btn.style.opacity = ''; btn.textContent = '⚡ Stake OPWAY — Ready!'; btn.onclick = vaultExecuteStake; }
     }
   }, 20000);
 }
 
 async function vaultExecuteStake() {
+  if (!_pendingApproval) {
+    try {
+      var _saved = localStorage.getItem('opwa_pending_approval');
+      if (_saved) {
+        var _p = JSON.parse(_saved);
+        if (_p && _p.amt && _p.amountBig) {
+          _pendingApproval = { amt: _p.amt, amountBig: BigInt(_p.amountBig) };
+        }
+      }
+    } catch(_) {}
+  }
   if (!_pendingApproval) { showToast('No pending approval found — please deposit again.', 'error'); return; }
   var { amt, amountBig } = _pendingApproval;
-  var stakeBtn = document.getElementById('pending-stake-btn');
+  var stakeBtn = document.getElementById('vault-deposit-btn');
   if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.textContent = 'Verifying allowance on-chain…'; }
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
@@ -5124,7 +5160,7 @@ async function vaultExecuteStake() {
     } catch(_) {}
     if (onChainAllow < amountBig) {
       showToast('Allowance not yet confirmed on-chain — please wait a moment and try again.', 'info');
-      if (stakeBtn) { stakeBtn.disabled = false; stakeBtn.className = 'pending-block-stake-btn ready'; stakeBtn.textContent = '⚡ Stake OPWAY — Ready!'; }
+      if (stakeBtn) { stakeBtn.disabled = false; stakeBtn.textContent = '⚡ Stake OPWAY — Ready!'; }
       return;
     }
 
@@ -5152,14 +5188,15 @@ async function vaultExecuteStake() {
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     var _prevDep = vaultGetDeposit();
     var _newAmt = amt + (_prevDep ? (_prevDep.amount || 0) : 0);
-    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: _newAmt, depositBlock: vaultCurrentBlock }));
+    localStorage.setItem('vaultDeposit_' + walletState.addr, JSON.stringify({ amount: _newAmt, depositBlock: vaultCurrentBlock }));
+    _txCache = {};
     _stopBlockWidget();
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
     else { showToast('Stake failed: ' + msg.slice(0,60), 'error'); }
-    if (stakeBtn) { stakeBtn.disabled = false; stakeBtn.className = 'pending-block-stake-btn ready'; stakeBtn.textContent = '⚡ Stake OPWAY — Ready!'; }
+    if (stakeBtn) { stakeBtn.disabled = false; stakeBtn.textContent = '⚡ Stake OPWAY — Ready!'; }
   }
 }
 
@@ -5264,7 +5301,8 @@ async function vaultDepositOPWAY() {
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     var _prevDep2 = vaultGetDeposit();
     var _newAmt2 = amt + (_prevDep2 ? (_prevDep2.amount || 0) : 0);
-    localStorage.setItem('vaultDeposit', JSON.stringify({ amount: _newAmt2, depositBlock: vaultCurrentBlock }));
+    localStorage.setItem('vaultDeposit_' + walletState.addr, JSON.stringify({ amount: _newAmt2, depositBlock: vaultCurrentBlock }));
+    _txCache = {};
     _stopBlockWidget();
     vaultRenderPosition();
   } catch(e) {
@@ -5294,6 +5332,7 @@ async function vaultClaimUSDOP() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ USDOP claimed! TX: <a href="https://opscan.org/transactions/' + claimReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + claimReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
+    _txCache = {};
     vaultRenderPosition(); // refresh accrued display — getAccruedRewards will return 0 after claim
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
@@ -5322,7 +5361,8 @@ async function vaultWithdrawOPWAY() {
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('✅ OPWAY unstaked! TX: <a href="https://opscan.org/transactions/' + unstakeReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + unstakeReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
-    localStorage.removeItem('vaultDeposit'); // contract cleared _stakes — mirror in localStorage
+    localStorage.removeItem('vaultDeposit_' + walletState.addr); // contract cleared _stakes — mirror in localStorage
+    _txCache = {};
     vaultRenderPosition();
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
@@ -5424,6 +5464,7 @@ async function pvaultListProperty() {
     ['pvault-name','pvault-desc','pvault-btc','pvault-tokenid'].forEach(function(id){
       var el = document.getElementById(id); if (el) el.value = '';
     });
+    _txCache = {};
     pvaultRenderListed();
     vaultLoadVaultedAssets();
     showToast('✅ Property #' + tid + ' listed! TX: <a href="https://opscan.org/transactions/' + listReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + listReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
@@ -5523,16 +5564,16 @@ async function vaultLoadVaultedAssets() {
       '</div>' +
       '<div style="font-size:11px;color:var(--text-3);margin-bottom:4px">' + minted.toLocaleString() + ' / ' + p.maxOpway.toLocaleString() + ' minted · ' + pct + '% funded</div>' +
       '<div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:16px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;transition:width .5s"></div></div>' +
-      '<button class="btn-invest" ' + (fullyFunded ? 'disabled style="opacity:.5;cursor:not-allowed"' : 'onclick="toggleInvest(\'invest-panel-vault-' + p.tokenId + '\',this)"') + '>' +
+      '<button class="btn-invest" ' + (fullyFunded ? 'disabled style="opacity:.5;cursor:not-allowed"' : 'onclick="toggleInvest(\'p-vault-' + p.tokenId + '\',this)"') + '>' +
         (fullyFunded ? '✅ Fully Funded' : '+ Invest Now') +
       '</button>' +
-      '<div id="invest-panel-vault-' + p.tokenId + '" class="invest-panel" style="display:none;margin-top:14px">' +
+      '<div id="p-vault-' + p.tokenId + '" class="invest-panel" style="display:none;margin-top:14px">' +
         '<div style="font-size:11px;color:var(--text-3);margin-bottom:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Investment Details</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">' +
           '<div><div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Amount (BTC)</div>' +
-          '<input type="number" class="invest-input" id="btc-input-vault-' + p.tokenId + '" value="0.00001" step="0.00001" min="0.00001" oninput="syncInvestInputs(\'vault-' + p.tokenId + '\',\'btc\')"/></div>' +
+          '<input type="number" class="invest-input" id="vault-' + p.tokenId + '-btc" value="0.00001" step="0.00001" min="0.00001" oninput="syncInvestInputs(\'vault-' + p.tokenId + '\',\'btc\')"/></div>' +
           '<div><div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Number of Tokens</div>' +
-          '<input type="number" class="invest-input" id="tok-input-vault-' + p.tokenId + '" value="1" min="1" oninput="syncInvestInputs(\'vault-' + p.tokenId + '\',\'tok\')"/></div>' +
+          '<input type="number" class="invest-input" id="vault-' + p.tokenId + '-tokens" value="1" min="1" oninput="syncInvestInputs(\'vault-' + p.tokenId + '\',\'tok\')"/></div>' +
         '</div>' +
         '<div style="font-size:11px;color:var(--text-3);margin-bottom:10px">1 token = 0.00001 BTC (1,000 sats)</div>' +
         '<div style="text-align:center;padding:12px;background:var(--accent-dim);border-radius:10px;margin-bottom:12px">' +
