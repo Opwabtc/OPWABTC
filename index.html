@@ -5636,7 +5636,7 @@ async function _pvaultExecuteList(provider,net,senderAddr,pending){
     vaultLoadVaultedAssets();
     ["pvault-name","pvault-desc","pvault-btc","pvault-tokenid"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
     _txCache={};
-    showToast("✅ Property #"+pending.tokenId+" listed! TX: <a href="https://opscan.org/transactions/"+listReceipt.transactionId+"?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">"+listReceipt.transactionId.slice(0,10)+"…↗</a>","success",true);
+    showToast("✅ Property #"+pendingpending.tokenId+' listed! TX: <a href="https://opscan.org/transactions/'+listReceipt.transactionId+'?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">'+listReceipt.transactionId.slice(0,10)+'…↗</a>','success',true);
   }catch(e){
     var msg=e&&e.message?e.message:String(e);
     showToast("List failed: "+msg.slice(0,60),"error");
