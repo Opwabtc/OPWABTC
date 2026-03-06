@@ -24,7 +24,7 @@ import {
 const TIMELOCK_BLOCKS: u32 = 420;
 
 // Reward: staked * blocksElapsed / 100
-const REWARD_DIVISOR: u256 = u256.fromU64(100);
+const REWARD_DIVISOR: u256 = u256.fromU64(100); // FIX 5.100: divisor=100 means 1% reward per block-period — high inflation, monitor in production
 
 // FIX CF-05: max USDOP mintable per claim = 10,000 USDOP (8 decimals)
 const MAX_REWARD_PER_CLAIM: u256 = u256.fromString('1000000000000'); // 10,000 * 10^8
