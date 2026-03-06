@@ -5618,6 +5618,30 @@ async function pvaultListProperty() {
   }
 }
 
+
+async function _pvaultExecuteList(provider,net,senderAddr,pending){
+  try{
+    const {getContract,BitcoinAbiTypes,ABIDataTypes}=await _opnetImport();
+    const PVAULT_ABI=[{name:"listProperty",type:BitcoinAbiTypes.Function,payable:false,inputs:[{name:"tokenId",type:ABIDataTypes.UINT256},{name:"maxOpway",type:ABIDataTypes.UINT256}],outputs:[{name:"success",type:ABIDataTypes.BOOL}]}];
+    const pvaultContract=getContract(PROPERTY_VAULT_ADDR,PVAULT_ABI,provider,net,senderAddr);
+    const tokenIdBig=BigInt(pending.tokenId);
+    const maxOpway=BigInt(pending.maxOpway);
+    const listSim=await pvaultContract.listProperty(tokenIdBig,maxOpway);
+    _assertSimOk(listSim,"listProperty");
+    const listReceipt=await listSim.sendTransaction({signer:null,mldsaSigner:null,refundTo:walletState.addr,network:net,maximumAllowedSatToSpend:100_000n});
+    var props=pvaultGetProperties();
+    props.push({tokenId:pending.tokenId,name:pending.name,desc:pending.desc,type:pending.type,btc:pending.btc,maxOpway:Number(maxOpway),owner:pending.owner,listedAt:Date.now()});
+    localStorage.setItem("vaultedProperties",JSON.stringify(props));
+    pvaultRenderListed();
+    vaultLoadVaultedAssets();
+    ["pvault-name","pvault-desc","pvault-btc","pvault-tokenid"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
+    _txCache={};
+    showToast("✅ Property #"+pending.tokenId+" listed! TX: <a href="https://opscan.org/transactions/"+listReceipt.transactionId+"?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">"+listReceipt.transactionId.slice(0,10)+"…↗</a>","success",true);
+  }catch(e){
+    var msg=e&&e.message?e.message:String(e);
+    showToast("List failed: "+msg.slice(0,60),"error");
+  }
+}
 function pvaultGetProperties() {
   try { return JSON.parse(localStorage.getItem('vaultedProperties') || '[]'); } catch(e) { return []; }
 }
