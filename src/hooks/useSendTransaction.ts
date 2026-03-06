@@ -1,10 +1,16 @@
 import { TransactionParameters } from 'opnet';
 import { useOPNETWallet } from './useOPNETWallet';
 
+interface OPNetSimulation {
+  revert?: string;
+  outputs?: unknown[];
+  sendTransaction(params: TransactionParameters): Promise<{ txid?: string } | null>;
+}
+
 export function useSendTransaction() {
   const { provider, network, walletAddress } = useOPNETWallet();
 
-  async function executeTransaction(simulation: any) {
+  async function executeTransaction(simulation: OPNetSimulation) {
     if (!provider || !network || !walletAddress) {
       throw new Error('Wallet not connected');
     }

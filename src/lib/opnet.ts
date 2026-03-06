@@ -5,7 +5,7 @@ import { Address } from '@btc-vision/transaction';
 
 const TESTNET_RPC = (import.meta.env.VITE_OP_NET_TESTNET_RPC as string) ?? 'https://testnet.opnet.org';
 
-export const network = networks.testnet;
+export const network = networks.opnetTestnet;
 
 export const provider = new JSONRpcProvider({
   url: TESTNET_RPC,

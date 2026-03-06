@@ -7,7 +7,7 @@ const OPSCAN = 'https://testnet.opscan.io/tx/';
 const QUICK_AMOUNTS = [1_000, 5_000, 10_000, 50_000, 100_000];
 
 export default function BuyToken() {
-  const { isConnected, walletAddress } = useOPNETWallet();
+  const { isConnected, walletAddress, hashedMLDSAKey } = useOPNETWallet();
   const {
     tokenInfo,
     walletBalance,
@@ -43,11 +43,11 @@ export default function BuyToken() {
       : '--';
 
   const handleBuy = async () => {
-    if (!isConnected || !walletAddress) return;
+    if (!isConnected || !walletAddress || !hashedMLDSAKey) return;
     const dest = useOwnWallet ? walletAddress : recipientInput.trim();
     if (!dest) return;
     try {
-      const addr = Address.fromString(dest, dest);
+      const addr = Address.fromString(hashedMLDSAKey, dest);
       await buy(addr);
     } catch {
       /* address parse error handled by hook */

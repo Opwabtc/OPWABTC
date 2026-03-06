@@ -133,4 +133,6 @@ export class PropertyVault extends OP_NET {
         return result;
     }
 
+    public onUpdate(_calldata: Calldata): void {}
+
 }
