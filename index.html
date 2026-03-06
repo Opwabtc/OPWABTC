@@ -5017,7 +5017,8 @@ async function _pollMempoolBlock(approvalBlock) {
   try {
     var rb = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({jsonrpc:'2.0',id:1,method:'btc_blockNumber',params:[]})
+      body: JSON.stringify({jsonrpc:'2.0',id:1,method:'btc_blockNumber',params:[]}),
+      signal: AbortSignal.timeout(6000)
     });
     var jb = await rb.json();
     opBlock = parseInt(jb.result, 16) || 0;
@@ -5349,10 +5350,11 @@ async function vaultDepositOPWAY() {
         var cReset = _fresh();
         var resetSim = await cReset.opway.decreaseAllowance(vaultAddrObj, curAllow);
         if (resetSim.revert) throw new Error('Allowance reset failed: ' + resetSim.revert);
-        await resetSim.sendTransaction({
+        const resetRx = await resetSim.sendTransaction({
           signer: null, mldsaSigner: null, refundTo: walletState.addr,
           network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
         });
+        if (!resetRx) throw new Error('Allowance reset TX not broadcast — please try again.');
         // Must wait for block confirmation before increaseAllowance — same rule as approve → stake.
         // Return here; on the next Deposit click curAllow will be 0 and we proceed normally.
         showToast('✅ Allowance reset TX submitted. Please click Deposit again after ~1 block (~10 min) for confirmation.', 'info', true);
