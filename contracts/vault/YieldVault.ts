@@ -38,6 +38,9 @@ const ConfigEvent   = new NetEvent('Config',   ['address', 'address']);
 
 @final
 export class YieldVault extends ReentrancyGuard {
+    // FIRST field — must stay first so all subsequent nextPointer values are stable
+    private _configured: StoredBoolean = new StoredBoolean(Blockchain.nextPointer);
+
     private _opway: StoredAddress  = new StoredAddress(Blockchain.nextPointer);
     private _usdop: StoredAddress  = new StoredAddress(Blockchain.nextPointer);
 
