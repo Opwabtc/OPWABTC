@@ -38,6 +38,8 @@ export class PropertyVault extends OP_NET {
     private _maxOpways:  StoredMapU256 = new StoredMapU256(Blockchain.nextPointer);
     // tokenId → block when listed
     private _listBlocks: StoredMapU256 = new StoredMapU256(Blockchain.nextPointer);
+    // address → active listing count (FIX 5.87: max 50 simultaneous listings)
+    private _listCounts: StoredMapU256 = new StoredMapU256(Blockchain.nextPointer);
 
     public constructor() {
         super();
@@ -92,16 +94,22 @@ export class PropertyVault extends OP_NET {
 
         const sender = Blockchain.tx.sender;
 
+        // FIX 5.87: cap simultaneous listings per address
+        const senderKey = u256.fromUint8ArrayBE(sender);
+        const listCount = this._listCounts.get(senderKey);
+        if (u256.gte(listCount, u256.fromU64(50))) throw new Revert('PropertyVault: max 50 active listings');
+
         const existingOwner = this._owners.get(tokenId);
         if (!existingOwner.isZero()) throw new Revert('PropertyVault: token already listed');
 
         // Transfer NFT custody to vault (requires prior approve)
         TransferHelper.transferFrom(nft, sender, this.address, tokenId);
 
-        // Record listing
-        this._owners.set(tokenId, u256.fromUint8ArrayBE(sender));
+        // Record listing + increment owner counter (FIX 5.87)
+        this._owners.set(tokenId, senderKey);
         this._maxOpways.set(tokenId, maxOpway);
         this._listBlocks.set(tokenId, u256.fromU64(Blockchain.block.number));
+        this._listCounts.set(senderKey, SafeMath.add(listCount, u256.One));
 
         // FIX CF-12
         Blockchain.emit(ListEvent, [tokenId, sender, maxOpway]);
@@ -128,10 +136,12 @@ export class PropertyVault extends OP_NET {
         const senderU256 = u256.fromUint8ArrayBE(sender);
         if (ownerU256 != senderU256) throw new Revert('PropertyVault: not the original owner');
 
-        // FIX CF-08 (HIGH CEI): clear state BEFORE external call
+        // FIX CF-08 (HIGH CEI): clear state BEFORE external call (FIX 5.87: decrement counter)
         this._owners.set(tokenId, u256.Zero);
         this._maxOpways.set(tokenId, u256.Zero);
         this._listBlocks.set(tokenId, u256.Zero);
+        const prevCount = this._listCounts.get(senderU256);
+        if (!prevCount.isZero()) this._listCounts.set(senderU256, SafeMath.sub(prevCount, u256.One));
 
         // External call AFTER state cleared
         TransferHelper.transfer(nft, sender, tokenId);
@@ -172,10 +182,12 @@ export class PropertyVault extends OP_NET {
         const sellerBytes = ownerU256.toUint8Array(true); // big-endian
         const seller      = Address.fromUint8Array(sellerBytes);
 
-        // CEI: clear listing BEFORE external calls
+        // CEI: clear listing BEFORE external calls (FIX 5.87: decrement seller counter)
         this._owners.set(tokenId, u256.Zero);
         this._maxOpways.set(tokenId, u256.Zero);
         this._listBlocks.set(tokenId, u256.Zero);
+        const sellerCount = this._listCounts.get(ownerU256);
+        if (!sellerCount.isZero()) this._listCounts.set(ownerU256, SafeMath.sub(sellerCount, u256.One));
 
         // Transfer OPWAY from buyer to seller
         TransferHelper.transferFrom(opway, buyer, seller, listPrice);

@@ -33,6 +33,8 @@ class MintEvent extends NetEvent {
 @final
 export class PropertyNFT extends OP721 {
 
+  // _nextTokenId is NOT declared here — it is managed internally by the OP721 base class.
+  // Do NOT add a _nextTokenId field; OP721 handles token ID auto-increment via its own storage.
   private readonly POINTER_MINT_PRICE: u16  = Blockchain.nextPointer;
   private readonly POINTER_MINTING_OPEN: u16 = Blockchain.nextPointer;
   private readonly POINTER_OWNER: u16        = Blockchain.nextPointer;

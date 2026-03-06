@@ -26,8 +26,8 @@ const TIMELOCK_BLOCKS: u32 = 420;
 // Reward: staked * blocksElapsed / 100
 const REWARD_DIVISOR: u256 = u256.fromU64(100); // FIX 5.100: divisor=100 means 1% reward per block-period — high inflation, monitor in production
 
-// FIX CF-05: max USDOP mintable per claim = 10,000 USDOP (8 decimals)
-const MAX_REWARD_PER_CLAIM: u256 = u256.fromString('1000000000000'); // 10,000 * 10^8
+// FIX 5.52: max USDOP mintable per claim = 100,000 USDOP (8 decimals)
+const MAX_CLAIM: u256 = u256.fromU64(10_000_000_000_000); // 100k × 10^8
 
 // ── NetEvents ─────────────────────────────────────────────────────────────────
 // FIX CF-12: emit events for all state changes
@@ -141,10 +141,8 @@ export class YieldVault extends ReentrancyGuard {
         const blocksElapsed = SafeMath.sub(currentBlock, lastClaim);
         let rewards         = SafeMath.div(SafeMath.mul(staked, blocksElapsed), REWARD_DIVISOR);
 
-        // FIX CF-05: cap reward per claim to prevent uncapped minting
-        if (rewards > MAX_REWARD_PER_CLAIM) {
-            rewards = MAX_REWARD_PER_CLAIM;
-        }
+        // FIX 5.52: cap reward per claim — prevent uncapped minting
+        rewards = SafeMath.min(rewards, MAX_CLAIM);
 
         // FIX CF-04 (CEI): update state BEFORE external call
         this._lastClaims.set(key, currentBlock);
@@ -188,10 +186,8 @@ export class YieldVault extends ReentrancyGuard {
             const lastClaim     = this._lastClaims.get(key);
             const blocksElapsed = SafeMath.sub(currentBlock, lastClaim);
             rewards             = SafeMath.div(SafeMath.mul(staked, blocksElapsed), REWARD_DIVISOR);
-            // FIX CF-05: cap rewards
-            if (rewards > MAX_REWARD_PER_CLAIM) {
-                rewards = MAX_REWARD_PER_CLAIM;
-            }
+            // FIX 5.52: cap rewards
+            rewards = SafeMath.min(rewards, MAX_CLAIM);
         }
 
         // FIX CF-04 (CRITICAL CEI): clear state BEFORE any external calls
@@ -251,7 +247,7 @@ export class YieldVault extends ReentrancyGuard {
         if (!staked.isZero() && u256.gt(currentBlock, lastClaim)) {
             const blocksElapsed = SafeMath.sub(currentBlock, lastClaim);
             rewards = SafeMath.div(SafeMath.mul(staked, blocksElapsed), REWARD_DIVISOR);
-            if (rewards > MAX_REWARD_PER_CLAIM) rewards = MAX_REWARD_PER_CLAIM;
+            rewards = SafeMath.min(rewards, MAX_CLAIM);
         }
 
         const result = new BytesWriter(32);
