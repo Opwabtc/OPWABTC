@@ -24,7 +24,7 @@ import {
 const TIMELOCK_BLOCKS: u32 = 420;
 
 // Reward: staked * blocksElapsed / 100
-const REWARD_DIVISOR: u256 = u256.fromU64(100); // FIX 5.100: divisor=100 means 1% reward per block-period — high inflation, monitor in production
+const REWARD_DIVISOR: u256 = u256.fromU64(100); // R-015: divisor=100 yields ~526% APY — intentional for testnet incentives. For mainnet, increase to 1000+ or add governance setter to adjust without redeployment.
 
 // FIX 5.52: max USDOP mintable per claim = 100,000 USDOP (8 decimals)
 const MAX_CLAIM: u256 = u256.fromU64(10_000_000_000_000); // 100k × 10^8
