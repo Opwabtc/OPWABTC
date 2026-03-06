@@ -16,6 +16,9 @@
    ===================================================================== */
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text}
+::selection{background:transparent}
 
 /* ── TOKENS DARK (default) ── */
 :root{
@@ -1242,7 +1245,7 @@ footer{
 .pending-block-stake-btn:disabled{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--text-3);cursor:not-allowed}
 .pending-block-stake-btn.ready{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.4);cursor:pointer}
 .pending-block-stake-btn.ready:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(59,130,246,.5)}
-@media(max-width:900px){#pending-block-wrap{right:8px;width:160px}}
+@media(max-width:900px){#pending-block-wrap{left:8px;width:160px}}
 /* Position active card */
 .vault-position{background:linear-gradient(135deg,rgba(249,115,22,.07),rgba(251,191,36,.03));border:1px solid rgba(249,115,22,.18);border-radius:12px;padding:16px;margin-bottom:16px}
 .vault-position-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
@@ -2619,7 +2622,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
       </div>
       <p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>
       <div class="ft-social">
-        <a href="https://x.com/" class="soc-btn" title="X / Twitter">
+        <a href="https://x.com/opwabtc/" class="soc-btn" title="X / Twitter">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
         <a href="https://github.com/Opwabtc/OPWABTC" class="soc-btn soc-btn-github" target="_blank" title="GitHub">
@@ -2638,9 +2641,17 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
         Simulator
       </a>
+      <a href="#partners" class="ft-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Partners
+      </a>
       <a href="#how-it-works" class="ft-link">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         How It Works
+      </a>
+      <a href="/vault" onclick="navigate('/vault');return false;" class="ft-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Vault
       </a>
       <a href="/dashboard" onclick="navigate('/dashboard');return false;" class="ft-link">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -2722,7 +2733,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
   <div class="vault-wrap">
 
     <!-- ── FLOATING PENDING BLOCK WIDGET (lateral direita) ── -->
-    <div id="pending-block-wrap" style="display:none;position:fixed;right:24px;bottom:80px;z-index:900;width:190px">
+    <div id="pending-block-wrap" style="display:none;position:fixed;left:24px;bottom:80px;z-index:900;width:190px">
       <div class="pending-block-box state-pending" id="pending-block-box">
         <div class="pending-block-header">
           <span class="pending-block-label">⛏ Next Block</span>
@@ -3073,7 +3084,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <div class="legal-sec"><h2>9. Disclaimers &amp; Limitation of Liability</h2><p>THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. OPWA PROTOCOL AND ITS CONTRIBUTORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF FUNDS, DATA, PROFITS, OR GOODWILL ARISING FROM USE OF OR INABILITY TO USE THE PLATFORM, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p></div>
     <div class="legal-sec"><h2>10. Modifications</h2><p>OPWA Protocol reserves the right to update these Terms at any time. Continued use of the platform after changes constitutes acceptance. We will indicate the last updated date at the top of this document.</p></div>
     <div class="legal-sec"><h2>11. Governing Law</h2><p>These Terms shall be governed by the laws of the applicable jurisdiction of the OPWA Protocol contributors. Any disputes shall be resolved through good-faith negotiation before formal proceedings. Given the decentralized nature of the protocol, on-chain logic supersedes any off-chain dispute resolution in matters of fund custody and contract execution.</p></div>
-    <div class="legal-sec"><h2>12. Contact</h2><p>For inquiries, reach us via <a href="https://github.com/Opwabtc/OPWABTC" target="_blank" style="color:var(--accent)">GitHub</a>, official OPWA community channels, or X (<a href="https://x.com/" target="_blank" style="color:var(--accent)">@OPWA Protocol</a>). For security vulnerabilities, use responsible disclosure through our GitHub repository.</p></div>
+    <div class="legal-sec"><h2>12. Contact</h2><p>For inquiries, reach us via <a href="https://github.com/Opwabtc/OPWABTC" target="_blank" style="color:var(--accent)">GitHub</a>, official OPWA community channels, or X (<a href="https://x.com/opwabtc/" target="_blank" style="color:var(--accent)">@OPWA Protocol</a>). For security vulnerabilities, use responsible disclosure through our GitHub repository.</p></div>
     <div style="margin-top:60px;margin-bottom:40px;padding:28px 32px;border-radius:14px;background:var(--bg-card);border:1px solid var(--border);font-size:14px;color:var(--text-2);line-height:1.7">By using OPWA Protocol, you acknowledge that you have read, understood, and agree to these Terms of Service in their entirety.<div style="margin-top:12px"><a href="/" onclick="navigate('/');return false;" style="color:var(--accent);margin-right:16px;font-weight:600;text-decoration:none">&#x2190; Back to Home</a><a href="/privacy" onclick="navigate('/privacy');return false;" style="color:var(--text-3);text-decoration:none">Privacy Policy &#x2192;</a></div></div>
   </div>
   </div>
@@ -3321,7 +3332,7 @@ function toggleTheme() {
       +'<div class="ft-logo-row"><div class="logo-mark">OP</div><div><div class="logo-text">OPWA</div><div class="logo-sub">Protocol</div></div></div>'
       +'<p class="ft-brand-desc">OPWA is a fractionalized real estate investment platform built natively on Bitcoin, powered by the OP_NET smart contract protocol. Borderless, trustless, and transparent.</p>'
       +'<div class="ft-social">'
-        +'<a href="https://x.com/" class="soc-btn" title="X / Twitter"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>'
+        +'<a href="https://x.com/opwabtc/" class="soc-btn" title="X / Twitter"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>'
         +'<a href="https://github.com/Opwabtc/OPWABTC" class="soc-btn soc-btn-github" target="_blank" title="GitHub"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></a>'
       +'</div>'
     +'</div>'
@@ -5012,10 +5023,13 @@ function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
     if (badgeEl)  { badgeEl.className = 'pending-block-badge confirmed'; badgeEl.textContent = 'CONFIRMED'; }
     if (barEl)    { barEl.style.width = '100%'; barEl.classList.add('done'); }
     if (etaEl)    etaEl.textContent = 'Block confirmed ✓';
-    if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.className = 'pending-block-stake-btn'; stakeBtn.textContent = '🔍 Verifying allowance on-chain…'; }
     clearInterval(_mempoolInterval);
     _mempoolInterval = null;
-    _startAllowancePoll();
+    // Only start allowance poll once — guard against repeated calls after reload
+    if (!_allowancePollInterval) {
+      if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.className = 'pending-block-stake-btn'; stakeBtn.textContent = '🔍 Verifying allowance on-chain…'; }
+      _startAllowancePoll();
+    }
   } else {
     if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.className = 'pending-block-stake-btn'; stakeBtn.textContent = '🔒 Waiting for block confirmation… (' + pct + '%)'; }
   }
@@ -5071,7 +5085,8 @@ async function _startAllowancePoll() {
 
   _checkAllow();
   _allowancePollInterval = setInterval(_checkAllow, 5000);
-  // Safety timeout: after 90s enable the button anyway so the user isn't stuck
+  // Safety timeout: after 20s enable the button anyway so the user isn't stuck
+  // (covers page reload after block confirmed — allowance already on-chain)
   setTimeout(function() {
     if (_allowancePollInterval) {
       clearInterval(_allowancePollInterval);
@@ -5079,7 +5094,7 @@ async function _startAllowancePoll() {
       var btn = document.getElementById('pending-stake-btn');
       if (btn && btn.disabled) { btn.disabled = false; btn.className = 'pending-block-stake-btn ready'; btn.textContent = '⚡ Stake OPWAY — Ready!'; }
     }
-  }, 90000);
+  }, 20000);
 }
 
 async function vaultExecuteStake() {
