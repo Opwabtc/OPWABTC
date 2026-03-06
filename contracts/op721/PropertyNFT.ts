@@ -35,6 +35,7 @@ export class PropertyNFT extends OP721 {
 
   private readonly POINTER_MINT_PRICE: u16  = Blockchain.nextPointer;
   private readonly POINTER_MINTING_OPEN: u16 = Blockchain.nextPointer;
+  private readonly POINTER_OWNER: u16        = Blockchain.nextPointer;
 
   // Mint price in satoshis (set at deploy time or via setMintPrice)
   private readonly DEFAULT_MINT_PRICE_SATS: u64 = 10_000; // 10,000 sats default
@@ -101,8 +102,8 @@ export class PropertyNFT extends OP721 {
   }
 
   private onlyOwner(): void {
-    // Simplistic ownership: deployer is owner (extend with proper ownership module as needed)
-    if (Blockchain.tx.sender !== Blockchain.getStorageString(Blockchain.nextPointer)) {
+    // FIX: use fixed POINTER_OWNER constant — Blockchain.nextPointer advances on every call
+    if (Blockchain.tx.sender !== Blockchain.getStorageString(this.POINTER_OWNER)) {
       throw new Error('Only owner');
     }
   }
