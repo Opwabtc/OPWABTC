@@ -20,8 +20,8 @@ export interface OPNetTransactionReceipt {
 
 // FIX HIGH #44: typed fee rate result
 // interface FeeRateResult {
-  result: number;
-}
+//   result: number;
+// }
 
 export function useSendTransaction() {
   const { provider, network, walletAddress } = useOPNETWallet();
@@ -39,6 +39,7 @@ export function useSendTransaction() {
       const gasParams = await (provider as any).gasParameters?.();
       feeRate = gasParams?.bitcoin?.recommended?.medium ?? undefined;
     } catch(_) { feeRate = undefined; }
+    void feeRate; // consumed below if provider supports it
 
     // 2. Build transaction parameters.
     // FRONTEND RULE: signer=null and mldsaSigner=null — wallet extension handles signing.

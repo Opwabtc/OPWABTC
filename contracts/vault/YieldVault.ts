@@ -1,7 +1,7 @@
-import { StoredBoolean,
- u256 } from '@btc-vision/as-bignum/assembly';
+import { u256 } from '@btc-vision/as-bignum/assembly';
 import {
     ReentrancyGuard,
+    StoredBoolean,
     Blockchain,
     Address,
     Calldata,
