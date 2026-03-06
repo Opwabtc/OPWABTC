@@ -108,13 +108,12 @@ export class YieldVault extends ReentrancyGuard {
             this._depositBlocks.set(key, currentBlock);
         }
 
-        // Pull OPWAY from user
-        TransferHelper.transferFrom(opway, sender, this.address, amount);
-
-        // Accumulate stake; update reward checkpoint
+        // FIX 5.33: CEI — update state BEFORE external call
         const newStake = SafeMath.add(existing, amount);
         this._stakes.set(key, newStake);
         this._lastClaims.set(key, currentBlock);
+        // Pull OPWAY from user
+        TransferHelper.transferFrom(opway, sender, this.address, amount);
 
         // FIX CF-12: emit stake event
         Blockchain.emit(StakeEvent, [sender, amount]);
