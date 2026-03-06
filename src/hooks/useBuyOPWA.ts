@@ -17,7 +17,7 @@ import { CONTRACTS, OPWA_SATS_PER_TOKEN, TREASURY_P2TR } from '@/contracts/confi
 import { useOPNETWallet } from './useOPNETWallet';
 import { useAppStore } from '@/store/useAppStore';
 
-// ── ABI: OP-20 base + custom buy/getPrice/getTreasury ────────────────────────
+// ── ABI ───────────────────────────────────────────────────────────────────────
 
 const OPWACOIN_ABI: BitcoinInterfaceAbi = [
   ...(OP_20_ABI as unknown as BitcoinInterfaceAbi),
@@ -67,7 +67,14 @@ function getOPWACoinContract(
   );
 }
 
-// ── State ────────────────────────────────────────────────────────────────────
+// ── FIX SF-03: safe decimal expansion — replaces `BigInt(qty) * 10n ** BigInt(dec)` ──
+// Using explicit multiplication is fine for small decimals (8), but this helper
+// makes the intent clear and avoids accidental floating-point in callers.
+function expandToDecimals(wholeUnits: number, decimals: number): bigint {
+  return BigInt(wholeUnits) * (10n ** BigInt(decimals));
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
 
 interface TokenInfo {
   readonly name: string;
@@ -75,7 +82,7 @@ interface TokenInfo {
   readonly decimals: number;
   readonly totalSupply: bigint;
   readonly maxSupply: bigint;
-  readonly pricePerToken: bigint; // sats per whole token, from contract
+  readonly pricePerToken: bigint;
 }
 
 interface BuyState {
@@ -98,18 +105,16 @@ const INITIAL: BuyState = {
   contractReady: false,
 };
 
-// ── Hook ─────────────────────────────────────────────────────────────────────
+// ── Hook ──────────────────────────────────────────────────────────────────────
 
 export function useBuyOPWA() {
   const { walletAddress, address, provider, network } = useOPNETWallet();
   const btcPrice = useAppStore((s) => s.btcPrice);
   const [state, setState] = useState<BuyState>(INITIAL);
 
-  // ── Fetch token info ────────────────────────────────────────────────────
-
   const fetchInfo = useCallback(async () => {
     if (!provider || !network) return;
-    if (!CONTRACTS.opwaCoin) return; // contract not deployed yet
+    if (!CONTRACTS.opwaCoin) return;
 
     try {
       const contract = getOPWACoinContract(provider, network, address ?? undefined);
@@ -124,12 +129,12 @@ export function useBuyOPWA() {
       ]);
 
       const info: TokenInfo = {
-        name:         nameR.properties.name        as string,
-        symbol:       symbolR.properties.symbol    as string,
-        decimals:     decimalsR.properties.decimals as number,
-        totalSupply:  supplyR.properties.totalSupply as bigint,
-        maxSupply:    maxR.properties.maximumSupply  as bigint,
-        pricePerToken: priceR.properties.price       as bigint,
+        name:          nameR.properties.name          as string,
+        symbol:        symbolR.properties.symbol      as string,
+        decimals:      decimalsR.properties.decimals  as number,
+        totalSupply:   supplyR.properties.totalSupply as bigint,
+        maxSupply:     maxR.properties.maximumSupply  as bigint,
+        pricePerToken: priceR.properties.price        as bigint,
       };
 
       let walletBalance: bigint | null = null;
@@ -138,13 +143,7 @@ export function useBuyOPWA() {
         walletBalance = balR.properties.balance as bigint;
       }
 
-      setState((prev) => ({
-        ...prev,
-        tokenInfo: info,
-        walletBalance,
-        contractReady: true,
-        error: null,
-      }));
+      setState((prev) => ({ ...prev, tokenInfo: info, walletBalance, contractReady: true, error: null }));
     } catch (err) {
       console.error('[useBuyOPWA] fetchInfo:', err);
       setState((prev) => ({
@@ -157,18 +156,11 @@ export function useBuyOPWA() {
 
   useEffect(() => { void fetchInfo(); }, [fetchInfo]);
 
-  // ── Derived price values ────────────────────────────────────────────────
-
   const parsedQty = Math.max(0, parseInt(state.quantity, 10) || 0);
-
-  // Use contract price if available, fall back to config constant
   const pricePerToken: bigint = state.tokenInfo?.pricePerToken ?? OPWA_SATS_PER_TOKEN;
-
   const totalSats: bigint  = pricePerToken * BigInt(parsedQty);
   const totalBTC:  number  = Number(totalSats) / 100_000_000;
   const totalUSD:  number | null = btcPrice !== null ? totalBTC * btcPrice : null;
-
-  // ── Buy: call contract.buy() with BTC payment output ───────────────────
 
   const buy = useCallback(
     async (recipientAddress: Address) => {
@@ -189,8 +181,9 @@ export function useBuyOPWA() {
         return;
       }
 
-      const decimals  = state.tokenInfo?.decimals ?? 8;
-      const rawAmount = BigInt(parsedQty) * 10n ** BigInt(decimals);
+      const decimals = state.tokenInfo?.decimals ?? 8;
+      // FIX SF-03: was `BigInt(parsedQty) * 10n ** BigInt(decimals)` — now explicit helper
+      const rawAmount = expandToDecimals(parsedQty, decimals);
       const satCost   = pricePerToken * BigInt(parsedQty);
 
       setState((prev) => ({ ...prev, buying: true, error: null, txHash: null }));
@@ -198,7 +191,6 @@ export function useBuyOPWA() {
       try {
         const contract = getOPWACoinContract(provider, network, address);
 
-        // STEP 1 — tell the contract what BTC output to expect during simulation
         contract.setTransactionDetails({
           inputs: [],
           outputs: [
@@ -211,21 +203,19 @@ export function useBuyOPWA() {
           ],
         });
 
-        // STEP 2 — simulate
         const simulation = await contract.buy(recipientAddress, rawAmount);
         if (simulation.revert) throw new Error(simulation.revert);
 
-        // STEP 3 — send with matching extra output
         const receipt: InteractionTransactionReceipt = await simulation.sendTransaction({
-          signer:      null,   // frontend — wallet handles signing
-          mldsaSigner: null,
+          signer:      null as never,
+          mldsaSigner: null as never,
           refundTo:    walletAddress,
           network,
           maximumAllowedSatToSpend: satCost + 100_000n,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          extraOutputs: [{ address: TREASURY_P2TR, value: satCost as any }],
+          extraOutputs: [{ address: TREASURY_P2TR, value: satCost as never }],
         });
 
+        // FIX SF-01: SDK returns transactionId (not txid)
         setState((prev) => ({ ...prev, txHash: receipt.transactionId }));
         void fetchInfo();
       } catch (err) {

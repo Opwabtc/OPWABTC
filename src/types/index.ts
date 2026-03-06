@@ -5,14 +5,11 @@ export interface Property {
   address: string;
   city: string;
   country: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
+  coordinates?: { lat: number; lng: number };
   totalSupply: number;
   availableTokens: number;
-  pricePerToken: number; // in BTC satoshis
-  totalValue: number; // in BTC satoshis
+  pricePerToken: number;
+  totalValue: number;
   images: string[];
   documents: string[];
   propertyType: 'residential' | 'commercial' | 'mixed';
@@ -21,8 +18,8 @@ export interface Property {
   bathrooms?: number;
   yearBuilt?: number;
   status: 'active' | 'pending' | 'sold_out';
-  apy?: number; // Annual percentage yield from rent
-  monthlyRent?: number; // in BTC satoshis
+  apy?: number;
+  monthlyRent?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -41,7 +38,7 @@ export interface PropertyToken {
 export interface WalletState {
   isConnected: boolean;
   address?: string;
-  balance: number; // in satoshis
+  balance: number;
   network: 'mainnet' | 'testnet';
 }
 
@@ -51,16 +48,12 @@ export interface Portfolio {
   properties: PropertyToken[];
   monthlyIncome: number;
   totalIncome: number;
-  performance: {
-    daily: number;
-    weekly: number;
-    monthly: number;
-  };
+  performance: { daily: number; weekly: number; monthly: number };
 }
 
 export interface Transaction {
   id: string;
-  type: 'buy' | 'sell' | 'rent_claim' | 'token_transfer';
+  type: 'buy' | 'sell' | 'rent_claim' | 'token_transfer' | 'stake' | 'unstake' | 'claim';
   propertyId: string;
   propertyName: string;
   amount: number;

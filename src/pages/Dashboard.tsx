@@ -1,10 +1,21 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { Link } from 'react-router-dom'
+import { getContract, JSONRpcProvider, OP_20_ABI } from 'opnet'
+import { networks } from '@btc-vision/bitcoin'
+import { Address } from '@btc-vision/transaction'
+import { CONTRACTS } from '../contracts/config'
+import { useOPNETWallet } from '../hooks/useOPNETWallet'
 
-const OPWAP_ADDRESS = import.meta.env.VITE_OPWAP_TOKEN_ADDRESS || 'opt1sqq047upsqxssrcn7qfeprv84dhv6aszfmu7g6xnp'
-const OPNET_RPC     = 'https://testnet.opnet.org'
-const OPSCAN_BASE   = 'https://opscan.org'
+// FIX SF-05: use SDK getContract() instead of raw eth_call with EVM selectors
+// FIX SF-05: SUPPLY_MAX 18B → 1B (OPWA max supply)
+// FIX: hashedMLDSAKey comes from useOPNETWallet, not useAppStore
+
+const NETWORK     = networks.opnetTestnet
+const TESTNET_RPC = 'https://testnet.opnet.org'
+const OPSCAN_BASE = 'https://opscan.org'
+
+const _provider = new JSONRpcProvider({ url: TESTNET_RPC, network: NETWORK })
 
 function formatAmt(raw: string, dec: number): string {
   if (!raw || raw === '0') return '0'
@@ -18,41 +29,63 @@ function formatAmt(raw: string, dec: number): string {
   } catch { return '0' }
 }
 
-async function rpcCall(tokenAddr: string, data: string): Promise<string | null> {
-  try {
-    const res = await fetch(OPNET_RPC, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to: tokenAddr, data }, 'latest'] }),
-      signal: AbortSignal.timeout(8000),
-    })
-    if (!res.ok) return null
-    const j = await res.json()
-    return j.result ?? null
-  } catch { return null }
+function _hexToBytes(hex: string): Uint8Array {
+  const clean = (hex || '').replace(/^0x/, '')
+  const out = new Uint8Array(clean.length / 2)
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16)
+  return out
 }
 
 export default function Dashboard() {
   const { connected, walletAddr, walletSats, btcPrice } = useAppStore()
+  // FIX: hashedMLDSAKey and publicKey come from useOPNETWallet, not useAppStore
+  const { hashedMLDSAKey, publicKey, address: sdkAddress } = useOPNETWallet()
+
   const [opwapBal, setOpwapBal] = useState('0')
   const [supply,   setSupply]   = useState('0')
   const [loading,  setLoading]  = useState(false)
   const [updated,  setUpdated]  = useState<Date | null>(null)
 
   const fetchData = useCallback(async () => {
-    if (!walletAddr) return
+    if (!walletAddr || !CONTRACTS.opwaCoin) return
     setLoading(true)
     try {
-      const addr64 = walletAddr.replace('0x', '').padStart(64, '0')
-      const [balHex, supHex] = await Promise.all([
-        rpcCall(OPWAP_ADDRESS, '0x70a08231' + addr64),
-        rpcCall(OPWAP_ADDRESS, '0x18160ddd'),
+      // Build Address from hashedMLDSAKey + publicKey if available, else use SDK address
+      let callerAddr: Address | undefined = sdkAddress ?? undefined
+
+      if (!callerAddr && hashedMLDSAKey && publicKey) {
+        try {
+          callerAddr = new Address(_hexToBytes(hashedMLDSAKey), _hexToBytes(publicKey))
+        } catch (_) {}
+      }
+
+      const contract = getContract(
+        CONTRACTS.opwaCoin,
+        OP_20_ABI,
+        _provider,
+        NETWORK,
+        callerAddr,
+      ) as unknown as {
+        balanceOf(addr: Address): Promise<{ properties: { balance: bigint }; revert?: string }>
+        totalSupply(): Promise<{ properties: { totalSupply: bigint }; revert?: string }>
+      }
+
+      const userAddr = callerAddr ?? new Address(new Uint8Array(32), new Uint8Array(33))
+
+      const [balRes, supRes] = await Promise.all([
+        contract.balanceOf(userAddr).catch(() => null),
+        contract.totalSupply().catch(() => null),
       ])
-      if (balHex) setOpwapBal(BigInt(balHex).toString())
-      if (supHex) setSupply(BigInt(supHex).toString())
+
+      if (balRes && !balRes.revert) setOpwapBal(String(balRes.properties.balance ?? 0n))
+      if (supRes && !supRes.revert) setSupply(String(supRes.properties.totalSupply ?? 0n))
       setUpdated(new Date())
-    } finally { setLoading(false) }
-  }, [walletAddr])
+    } catch (e) {
+      console.error('[Dashboard] fetchData error:', e)
+    } finally {
+      setLoading(false)
+    }
+  }, [walletAddr, publicKey, hashedMLDSAKey, sdkAddress])
 
   useEffect(() => {
     fetchData()
@@ -63,10 +96,10 @@ export default function Dashboard() {
   if (!connected) return (
     <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
       <div style={{textAlign:'center',maxWidth:380,padding:'52px 36px',background:'rgba(255,255,255,.04)',border:'1px solid rgba(255,255,255,.09)',borderRadius:20}}>
-        <div style={{fontSize:48,marginBottom:16}}>&#x1F512;</div>
+        <div style={{fontSize:48,marginBottom:16}}>🔒</div>
         <div style={{fontFamily:'Syne,sans-serif',fontSize:22,fontWeight:800,marginBottom:12,color:'var(--text-1)'}}>Connect Your Wallet</div>
         <div style={{fontSize:14,color:'var(--text-2)',marginBottom:28,lineHeight:1.6}}>Connect your Bitcoin wallet to view your portfolio and token balances on OP_NET.</div>
-        <Link to="/" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'12px 24px',background:'linear-gradient(135deg,#f97316,#ea580c)',borderRadius:10,color:'#fff',fontWeight:600,fontSize:14,textDecoration:'none'}}>&#x2192; Go Home to Connect</Link>
+        <Link to="/" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'12px 24px',background:'linear-gradient(135deg,#f97316,#ea580c)',borderRadius:10,color:'#fff',fontWeight:600,fontSize:14,textDecoration:'none'}}>→ Go Home to Connect</Link>
       </div>
     </div>
   )
@@ -78,26 +111,26 @@ export default function Dashboard() {
   const opwapUsd = opwapBtc * (btcPrice || 0)
   const totalUsd = btcUsd + opwapUsd
 
-  const SUPPLY_MAX = 18_000_000_000
+  // FIX SF-05: was 18_000_000_000 — OPWA max supply is 1B
+  const SUPPLY_MAX = 1_000_000_000
   const supplyNum  = Number(BigInt(supply || '0')) / 1e8
   const supplyPct  = Math.min(100, (supplyNum / SUPPLY_MAX) * 100)
   const supplyFmt  = formatAmt(supply, 8)
   const short      = walletAddr ? walletAddr.slice(0,10) + '...' + walletAddr.slice(-4) : ''
   const opscanUrl  = `${OPSCAN_BASE}/accounts/${walletAddr}?network=op_testnet`
+  const tokenAddr  = CONTRACTS.opwaCoin || ''
 
   return (
     <div style={{minHeight:'100vh',padding:'104px 0 64px'}}>
       <div style={{maxWidth:960,margin:'0 auto',padding:'0 24px'}}>
-
-        {/* Header */}
         <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:36,gap:16,flexWrap:'wrap'}}>
           <div>
             <h1 style={{fontSize:'2rem',fontWeight:800,fontFamily:'Syne,sans-serif',color:'var(--text-1)',margin:'0 0 6px'}}>My Portfolio</h1>
             <div style={{fontSize:13,color:'var(--text-3)',fontFamily:'DM Mono,monospace',display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
               <span>{short}</span>
-              <span style={{color:'rgba(255,255,255,.15)'}}>&#xB7;</span>
+              <span style={{color:'rgba(255,255,255,.15)'}}>·</span>
               <span style={{color:'#f97316'}}>OP_NET Testnet</span>
-              {updated && <><span style={{color:'rgba(255,255,255,.15)'}}>&#xB7;</span><span style={{color:'var(--text-3)',fontSize:11}}>Updated {updated.toLocaleTimeString()}</span></>}
+              {updated && <><span style={{color:'rgba(255,255,255,.15)'}}>·</span><span style={{color:'var(--text-3)',fontSize:11}}>Updated {updated.toLocaleTimeString()}</span></>}
             </div>
           </div>
           <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
@@ -105,26 +138,24 @@ export default function Dashboard() {
             <div style={{padding:'6px 14px',borderRadius:20,background:'rgba(16,185,129,.12)',border:'1px solid rgba(16,185,129,.25)',fontSize:12,fontWeight:600,color:'#10b981',display:'flex',alignItems:'center',gap:6}}>
               <span style={{width:6,height:6,borderRadius:'50%',background:'#10b981',display:'inline-block'}}/>CONNECTED
             </div>
-            <button onClick={fetchData} style={{padding:'6px 12px',borderRadius:8,background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.1)',color:'var(--text-2)',fontSize:12,cursor:'pointer'}}>&#x21BB; Refresh</button>
+            <button onClick={fetchData} style={{padding:'6px 12px',borderRadius:8,background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.1)',color:'var(--text-2)',fontSize:12,cursor:'pointer'}}>↻ Refresh</button>
           </div>
         </div>
 
-        {/* Stat Cards */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16,marginBottom:24}}>
           {[
-            { label:'BTC BALANCE',   value:'&#x20BF; ' + btcBtc.toFixed(5),  sub:'&#x2248; $' + btcUsd.toFixed(2) + ' USD', color:'var(--text-1)' },
-            { label:'OPWAP TOKENS',  value:opwapN,                            sub:'&#x25B2; +12.4% this month',               color:'#f97316' },
-            { label:'PORTFOLIO USD', value:'$' + totalUsd.toFixed(0),         sub:'Live price',                               color:'#fbbf24' },
+            {label:'BTC BALANCE',   value:'₿ ' + btcBtc.toFixed(5),  sub:'≈ $' + btcUsd.toFixed(2) + ' USD',  color:'var(--text-1)'},
+            {label:'OPWAP TOKENS',  value:opwapN,                      sub:'Staking active',                    color:'#f97316'},
+            {label:'PORTFOLIO USD', value:'$' + totalUsd.toFixed(0),   sub:'Live price',                        color:'#fbbf24'},
           ].map(c => (
             <div key={c.label} style={{background:'linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.018))',border:'1px solid rgba(255,255,255,.09)',borderRadius:14,padding:'22px 20px'}}>
               <div style={{fontSize:11,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase' as const,color:'var(--text-3)',marginBottom:10}}>{c.label}</div>
-              <div style={{fontSize:26,fontWeight:800,fontFamily:'Syne,sans-serif',color:c.color,marginBottom:4}} dangerouslySetInnerHTML={{__html:c.value}}/>
-              <div style={{fontSize:13,color:'var(--text-2)'}} dangerouslySetInnerHTML={{__html:c.sub}}/>
+              <div style={{fontSize:26,fontWeight:800,fontFamily:'Syne,sans-serif',color:c.color,marginBottom:4}}>{c.value}</div>
+              <div style={{fontSize:13,color:'var(--text-2)'}}>{c.sub}</div>
             </div>
           ))}
         </div>
 
-        {/* Supply Progress */}
         <div style={{background:'rgba(255,255,255,.038)',border:'1px solid rgba(255,255,255,.08)',borderRadius:14,padding:'20px 22px',marginBottom:24}}>
           <div style={{display:'flex',justifyContent:'space-between',marginBottom:12}}>
             <span style={{fontSize:11,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase' as const,color:'var(--text-2)'}}>OPWAP SUPPLY PROGRESS</span>
@@ -134,11 +165,10 @@ export default function Dashboard() {
             <div style={{height:'100%',width:`${supplyPct}%`,background:'linear-gradient(90deg,#f97316,#fbbf24)',borderRadius:4,transition:'width .6s ease'}}/>
           </div>
           <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'var(--text-3)'}}>
-            <span>{supplyFmt} minted</span><span>18B max</span>
+            <span>{supplyFmt} minted</span><span>1B max</span>
           </div>
         </div>
 
-        {/* Holdings */}
         <div style={{marginBottom:28}}>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase' as const,color:'var(--text-3)',marginBottom:14,paddingBottom:8,borderBottom:'1px solid rgba(255,255,255,.06)'}}>TOKEN HOLDINGS</div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(210px,1fr))',gap:16}}>
@@ -148,16 +178,17 @@ export default function Dashboard() {
                 <span style={{fontSize:11,background:'rgba(34,197,94,.18)',color:'#4ade80',borderRadius:20,padding:'3px 9px',fontWeight:700}}>OP_20</span>
               </div>
               <div style={{fontSize:26,fontWeight:900,color:'#fff',marginBottom:4}}>{loading && opwapBal === '0' ? '...' : opwapN}</div>
-              <div style={{fontSize:12,color:'var(--text-2)',marginBottom:10}}>&#x2248; {opwapBtc.toFixed(6)} BTC</div>
-              <div style={{fontSize:12,color:'#4ade80',fontWeight:700,marginBottom:10}}>&#x25B2; 15% APY</div>
-              <a href={`${OPSCAN_BASE}/token/${OPWAP_ADDRESS}?network=op_testnet`} target="_blank" rel="noopener noreferrer" style={{color:'#f97316',textDecoration:'none',fontSize:11,fontWeight:600}}>View on OPScan &#x2197;</a>
+              <div style={{fontSize:12,color:'var(--text-2)',marginBottom:10}}>≈ {opwapBtc.toFixed(6)} BTC</div>
+              <div style={{fontSize:12,color:'#4ade80',fontWeight:700,marginBottom:10}}>▲ 15% APY</div>
+              {tokenAddr && (
+                <a href={`${OPSCAN_BASE}/token/${tokenAddr}?network=op_testnet`} target="_blank" rel="noopener noreferrer" style={{color:'#f97316',textDecoration:'none',fontSize:11,fontWeight:600}}>View on OPScan ↗</a>
+              )}
             </div>
           </div>
         </div>
 
-        {/* OPScan Link */}
         <a href={opscanUrl} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:8,color:'#f97316',fontSize:14,fontWeight:600,textDecoration:'none',border:'1px solid rgba(249,115,22,.28)',borderRadius:9,padding:'11px 18px',background:'rgba(249,115,22,.07)'}}>
-          &#x2197; View all transactions on OPScan
+          ↗ View all transactions on OPScan
         </a>
       </div>
     </div>

@@ -1,87 +1,64 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
+// FIX MEDI #65: refactoring — fetch logic was duplicated between useEffect and refetch().
+// Now a single fetchGasPrice function is used by both.
+
+const GAS_API = 'https://mempool.opnet.org/api/v1/fees/recommended';
+const DEFAULT_FEE = 10; // sat/vbyte fallback
+
+interface GasFees {
+  fastestFee?: number;
+  halfHourFee?: number;
+  hourFee?: number;
+  economyFee?: number;
+}
+
+async function _fetchFeeRate(): Promise<number> {
+  const response = await fetch(GAS_API, { signal: AbortSignal.timeout(6000) });
+  if (!response.ok) throw new Error('Failed to fetch gas price');
+  const data: GasFees = await response.json();
+  return data.halfHourFee ?? data.hourFee ?? data.economyFee ?? DEFAULT_FEE;
+}
 
 export const useGasPrice = () => {
   const [gasPrice, setGasPrice] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchGasPrice = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Fetch real-time gas data from OP_NET mempool
-        const response = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch gas price');
-        }
-        
-        const data = await response.json();
-        
-        // Use the half hour fee rate (standard priority)
-        const standardFee = data?.halfHourFee || data?.hourFee || data?.economyFee || 10;
-        
-        setGasPrice(standardFee);
-      } catch (err) {
-        console.error('Error fetching gas price:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch gas price');
-        // Fallback to default value
-        setGasPrice(10);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Initial fetch
-    fetchGasPrice();
-
-    // Update every 30 seconds
-    const interval = setInterval(fetchGasPrice, 30000);
-
-    return () => clearInterval(interval);
+  // FIX MEDI #65: single fetch function used by both initial load and refetch
+  const fetchGasPrice = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const fee = await _fetchFeeRate();
+      setGasPrice(fee);
+    } catch (err) {
+      console.error('Error fetching gas price:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch gas price');
+      setGasPrice(DEFAULT_FEE);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const getTxUsd = () => {
+  useEffect(() => {
+    void fetchGasPrice();
+    const interval = setInterval(fetchGasPrice, 30_000);
+    return () => clearInterval(interval);
+  }, [fetchGasPrice]);
+
+  const getTxUsd = (): string | null => {
     if (!gasPrice) return null;
-    
     const txBytes = 250;
     const txBtc = (gasPrice * txBytes) / 1e8;
     return (txBtc * 1).toFixed(4);
   };
 
-  return { 
-    gasPrice, 
-    loading, 
+  return {
+    gasPrice,
+    loading,
     error,
     txUsd: getTxUsd(),
-    refetch: () => {
-      const fetchGasPrice = async () => {
-        try {
-          setLoading(true);
-          setError(null);
-          
-          const response = await fetch('https://mempool.opnet.org/api/v1/fees/recommended');
-          
-          if (!response.ok) {
-            throw new Error('Failed to fetch gas price');
-          }
-          
-          const data = await response.json();
-          const standardFee = data?.halfHourFee || data?.hourFee || data?.economyFee || 10;
-          
-          setGasPrice(standardFee);
-        } catch (err) {
-          console.error('Error fetching gas price:', err);
-          setError(err instanceof Error ? err.message : 'Failed to fetch gas price');
-          setGasPrice(10);
-        } finally {
-          setLoading(false);
-        }
-      };
-      
-      fetchGasPrice();
-    }
+    refetch: fetchGasPrice,
   };
 };

@@ -27,19 +27,31 @@ function _hexToBytes(hex: string): Uint8Array {
   return out;
 }
 
+// FIX: crypto.subtle.digest requires ArrayBuffer, not Uint8Array<ArrayBufferLike>
+// Copy into a plain ArrayBuffer first to satisfy the strict type check.
+async function sha256(data: Uint8Array): Promise<Uint8Array> {
+  const buf: ArrayBuffer = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer;
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return new Uint8Array(hash);
+}
+
 async function buildSenderAddress(publicKey: string): Promise<Address> {
   const pubkeyBytes = _hexToBytes(publicKey);
-  const opnet = window.opnet as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  const opnet = window.opnet as { getMLDSAPublicKey?: () => Promise<string> } | undefined;
   if (opnet && typeof opnet.getMLDSAPublicKey === 'function') {
     try {
-      const raw: string = await opnet.getMLDSAPublicKey();
-      return new Address(_hexToBytes(raw), pubkeyBytes);
+      const rawKey = _hexToBytes(await opnet.getMLDSAPublicKey());
+      const mldsaHash = await sha256(rawKey);
+      return new Address(mldsaHash, pubkeyBytes);
     } catch (_) {}
   }
   return new Address(new Uint8Array(32), pubkeyBytes);
 }
 
-// ABI: buy(address, uint256) → bool
+function expandToDecimals(wholeTokens: number, decimals: number): bigint {
+  return BigInt(wholeTokens) * (10n ** BigInt(decimals));
+}
+
 const OPWAP_ABI: BitcoinInterfaceAbi = [
   {
     name: 'buy',
@@ -87,7 +99,7 @@ export function useInvestment() {
     let effectivePublicKey = publicKey;
     if (!effectivePublicKey && window.opnet) {
       try {
-        effectivePublicKey = await (window.opnet as any).getPublicKey(); // eslint-disable-line @typescript-eslint/no-explicit-any
+        effectivePublicKey = await (window.opnet as { getPublicKey: () => Promise<string> }).getPublicKey();
       } catch (_) {}
     }
     if (!effectivePublicKey) { setError('Could not retrieve public key. Reconnect and try again.'); return; }
@@ -95,73 +107,42 @@ export function useInvestment() {
     if (!TREASURY_P2TR)       { setError('Treasury address not configured.'); return; }
     if (tokenCount <= 0 || !Number.isInteger(tokenCount)) { setError('Enter a valid number of tokens.'); return; }
 
-    // exact sats from token count — no floating point
     const satsAmount  = BigInt(tokenCount) * BigInt(SATS_PER_TOKEN);
-    // raw token amount with 8 decimals (contract stores with 8 decimal places)
-    const tokenAmount = BigInt(tokenCount) * 10n ** 8n;
+    const tokenAmount = expandToDecimals(tokenCount, 8);
 
     setLoading(true);
-
     try {
-      console.log('[OPWA] 1. building sender address...');
       const senderAddress = await buildSenderAddress(effectivePublicKey);
-      console.log('[OPWA] 2. senderAddress:', senderAddress);
 
-      const provider = new JSONRpcProvider({
-        url: 'https://testnet.opnet.org',
-        network: NETWORK,
-      });
+      const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: NETWORK });
 
       const contract = getContract<IBuyableToken>(
-        CONTRACTS.opwaCoin,
-        OPWAP_ABI,
-        provider,
-        NETWORK,
-        senderAddress,
+        CONTRACTS.opwaCoin, OPWAP_ABI, provider, NETWORK, senderAddress,
       );
 
-      // STEP 1 — register the BTC output to treasury so simulation can verify it
       contract.setTransactionDetails({
         inputs: [],
-        outputs: [
-          {
-            to:    TREASURY_P2TR,
-            value: satsAmount,
-            index: 1,
-            flags: TransactionOutputFlags.hasTo,
-          },
-        ],
+        outputs: [{ to: TREASURY_P2TR, value: satsAmount, index: 1, flags: TransactionOutputFlags.hasTo }],
       });
 
-      console.log('[OPWA] 3. simulating buy...', { satsAmount: satsAmount.toString(), tokenAmount: tokenAmount.toString() });
       const sim = await contract.buy(senderAddress, tokenAmount);
-      console.log('[OPWA] 4. sim result:', sim);
-
       if (sim.revert) throw new Error('Simulation reverted: ' + sim.revert);
 
-      // STEP 2 — send with matching extra output to treasury
-      console.log('[OPWA] 5. sending transaction...');
       const receipt = await sim.sendTransaction({
-        signer:      null,   // frontend — wallet handles signing
-        mldsaSigner: null,
+        signer:      null as never,
+        mldsaSigner: null as never,
         refundTo:    walletAddr,
         maximumAllowedSatToSpend: satsAmount + 50_000n,
         network: NETWORK,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        extraOutputs: [{ address: TREASURY_P2TR, value: satsAmount as any }],
+        extraOutputs: [{ address: TREASURY_P2TR, value: satsAmount as never }],
       });
-      console.log('[OPWA] 6. receipt:', receipt);
 
       if (!receipt) throw new Error('Transaction rejected or timed out.');
-
       const txHash: string = receipt.transactionId ?? '';
-      const opscanUrl = 'https://testnet.opscan.io/transactions/' + txHash;
-      setResult({ txHash, opscanUrl });
+      setResult({ txHash, opscanUrl: 'https://testnet.opscan.io/transactions/' + txHash });
 
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Transaction failed.';
-      console.error('OPWA BUY ERROR:', err);
-      setError(msg);
+      setError(err instanceof Error ? err.message : 'Transaction failed.');
     } finally {
       setLoading(false);
     }
