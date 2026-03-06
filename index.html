@@ -3722,6 +3722,8 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:'', hash
     if (!saved) return;
     var s = JSON.parse(saved);
     if (!s || !s.addr || !s.type) return;
+    // FIX 5.71: expire wallet session after 24h
+    if (s.savedAt && Date.now() - s.savedAt > 86_400_000) { localStorage.removeItem('opwa_wallet'); return; }
     var sats = 0, publicKey = s.publicKey || '';
     if (s.type === 'OP_Wallet' && window.opnet) {
       try { var accounts = await window.opnet.requestAccounts(); if (!accounts || !accounts.includes(s.addr)) { localStorage.removeItem('opwa_wallet'); return; } } catch(_) { return; }
