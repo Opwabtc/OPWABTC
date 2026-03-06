@@ -82,14 +82,14 @@ const YIELD_VAULT_ABI: BitcoinInterfaceAbi = [
     outputs: [{ name: 'success', type: ABIDataTypes.BOOL }] },
 ];
 const PROPERTY_VAULT_ABI: BitcoinInterfaceAbi = [
-  { name: 'setPropertyNft', type: BitcoinAbiTypes.Function, payable: false,
-    inputs: [{ name: 'addr', type: ABIDataTypes.ADDRESS }],
+  { name: 'configure', type: BitcoinAbiTypes.Function, payable: false,
+    inputs: [{ name: 'nft', type: ABIDataTypes.ADDRESS }, { name: 'opway', type: ABIDataTypes.ADDRESS }],
     outputs: [{ name: 'success', type: ABIDataTypes.BOOL }] },
 ];
 
 interface IUSDOP          { setMinter(minter: Address): Promise<import('opnet').CallResult<{ success: boolean }>> }
 interface IYieldVault     { setAddresses(opway: Address, usdop: Address): Promise<import('opnet').CallResult<{ success: boolean }>> }
-interface IPropertyVault  { setPropertyNft(addr: Address): Promise<import('opnet').CallResult<{ success: boolean }>> }
+interface IPropertyVault  { configure(nft: Address, opway: Address): Promise<import('opnet').CallResult<{ success: boolean }>> }
 
 async function run(): Promise<void> {
   const providerCast = provider as unknown as JSONRpcProvider;
@@ -117,9 +117,9 @@ async function run(): Promise<void> {
   const receipt2 = await sim2.sendTransaction(TX_OPTS);
   console.log('✓ TX:', receipt2.transactionId);
 
-  console.log('\n[3/3] PropertyVault.setPropertyNft(PropertyNFT)…');
+  console.log('\n[3/3] PropertyVault.configure(PropertyNFT, OPWAY)…');
   const propertyVaultContract = getContract<IPropertyVault>(propertyVaultAddr!, PROPERTY_VAULT_ABI, providerCast, NETWORK, senderAddr);
-  const sim3 = await propertyVaultContract.setPropertyNft(nftAddress);
+  const sim3 = await propertyVaultContract.configure(nftAddress, opwayAddress);
   if (sim3.revert) throw new Error(sim3.revert);
   const receipt3 = await sim3.sendTransaction(TX_OPTS);
   console.log('✓ TX:', receipt3.transactionId);
