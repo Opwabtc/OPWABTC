@@ -20,7 +20,7 @@ import {
     U256_BYTE_LENGTH,
 } from '@btc-vision/btc-runtime/runtime';
 
-// 420 block timelock before unstake is allowed
+// 420 block timelock (~3 days at 10min/block) before unstake is allowed — FIX 5.86
 const TIMELOCK_BLOCKS: u32 = 420;
 
 // Reward: staked * blocksElapsed / 100

@@ -86,6 +86,9 @@ export class PropertyVault extends OP_NET {
         const tokenId  = calldata.readU256();
         const maxOpway = calldata.readU256();
         if (maxOpway.isZero()) throw new Revert('PropertyVault: price must be > 0');
+        // FIX 5.84: upper bound guard — prevent absurd listing prices
+        const MAX_OPWAY = u256.fromU64(1_000_000_000_000_000); // 10M OPWAY (8 decimals)
+        if (u256.gt(maxOpway, MAX_OPWAY)) throw new Revert('PropertyVault: price exceeds maximum');
 
         const sender = Blockchain.tx.sender;
 
