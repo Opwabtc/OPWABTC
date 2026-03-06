@@ -48,6 +48,7 @@ const POINTER_USER_PAID:  u16 = 201;  // hash(user, property) → userYieldPerTo
 const POINTER_TOTAL_DEP:  u16 = 202;  // propertyContract → totalYieldDeposited
 const POINTER_MANAGERS:   u16 = 203;  // hash(manager, property) → 1 if authorized
 const POINTER_VAULT:      u16 = 204;  // vault address allowed to call depositYield
+const POINTER_YIELD_TOKEN: u16 = 205; // yield token address for transfers
 
 // NetEvents — FIX CF-12
 const YieldDepositedEvent = new NetEvent('YieldDeposited', ['address', 'uint256', 'uint256']);
@@ -66,7 +67,8 @@ export class YieldDistributor extends ReentrancyGuard {
     // Maps: hash(manager, property) → 1 if authorized
     private _managers:         StoredMapU256 = new StoredMapU256(POINTER_MANAGERS);
     // Vault address: only this address may call depositYield
-    private _vault: StoredAddress = new StoredAddress(POINTER_VAULT);
+    private _vault:      StoredAddress = new StoredAddress(POINTER_VAULT);
+    private _yieldToken: StoredAddress = new StoredAddress(POINTER_YIELD_TOKEN);
 
     public constructor() {
         super();
@@ -75,6 +77,15 @@ export class YieldDistributor extends ReentrancyGuard {
     public onDeployment(_calldata: Calldata): void {}
 
     public onUpdate(_calldata: Calldata): void {}
+    @method({ name: "token", type: ABIDataTypes.ADDRESS })
+    @returns({ name: "success", type: ABIDataTypes.BOOL })
+    public setYieldToken(calldata: Calldata): BytesWriter {
+        this.onlyDeployer(Blockchain.tx.sender);
+        this._yieldToken.value = calldata.readAddress();
+        const result = new BytesWriter(1);
+        result.writeBoolean(true);
+        return result;
+    }
 
     // ── Config ────────────────────────────────────────────────────────────────
 
@@ -184,8 +195,9 @@ export class YieldDistributor extends ReentrancyGuard {
             // Transfer BTC to caller via Blockchain.transfer
             // In OP_NET, yield is distributed as OPWAY/USDOP — transfer via token call
             // For now: emit event and record — actual transfer depends on yield token config
-            // TODO: replace with TransferHelper.transfer(yieldToken, caller, claimable)
-            //       once yieldToken address is configured in storage
+            const yieldTok = this._yieldToken.value;
+            if (yieldTok.equals(Address.zero())) throw new Revert("YieldDistributor: yield token not configured");
+            TransferHelper.transfer(yieldTok, caller, claimable);
             Blockchain.emit(YieldClaimedEvent, [caller, propertyContract, claimable]);
         }
 
