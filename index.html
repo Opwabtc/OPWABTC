@@ -4871,7 +4871,7 @@ async function vaultUpdateAccrued() {
   // Fallback: local estimate (accurate only if claimRewards never called since stake)
   if (vaultCurrentBlock) {
     var blocks = Math.max(0, vaultCurrentBlock - dep.depositBlock);
-    el.textContent = _fmt(blocks * (dep.amount / 100));
+    el.textContent = _fmt(blocks * (dep.amount / 464602));
   }
 }
 
@@ -5187,6 +5187,12 @@ async function _startAllowancePoll() {
         _stopBlockWidget();
         return;
       }
+      // Session guard: same check as the poll's onChainAllow branch — never arm stake
+      // in a restored session without a confirmed deposit in the current browser session.
+      if (!_sessionDepositInitiated) {
+        _stopBlockWidget();
+        return;
+      }
       var btn = document.getElementById('vault-deposit-btn');
       if (btn && btn.disabled) { btn.disabled = false; btn.style.opacity = ''; btn.textContent = '⚡ Stake OPWAY — Ready!'; btn.onclick = vaultExecuteStake; }
     }
@@ -5336,7 +5342,10 @@ async function vaultDepositOPWAY() {
           signer: null, mldsaSigner: null, refundTo: walletState.addr,
           network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
         });
-        showToast('Allowance reset. Now approving full amount… (sign in wallet)', 'info');
+        // Must wait for block confirmation before increaseAllowance — same rule as approve → stake.
+        // Return here; on the next Deposit click curAllow will be 0 and we proceed normally.
+        showToast('✅ Allowance reset TX submitted. Please click Deposit again after ~1 block (~10 min) for confirmation.', 'info', true);
+        return;
       } else {
         showToast('Approving OPWAY spend… (sign in wallet)', 'info');
       }
