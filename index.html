@@ -4995,7 +4995,7 @@ const _OPNET_NET = {
 var _opnetModuleCache = null;
 var _provider = null; // FIX 5.23/5.24: singleton provider — not recreated per function
 function _getProvider() {
-  if (!_provider) _provider = _getProvider();
+  if (!_provider) _provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
   return _provider;
 }
 async function _opnetImport() {
