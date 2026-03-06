@@ -3586,7 +3586,8 @@ async function confirmInvest(asset) {
     });
     if (!receipt) throw new Error('Transaction not broadcast — please try again.');
     const txid = receipt.transactionId;
-    showToast('✅ ' + tokenCount + ' OPWAY minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:#f97316;font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>', 'success', true);
+    const safeTxid = sanitizeText(txid);
+    showToast('✅ ' + tokenCount + ' OPWAY minted! TX: <a href="https://opscan.org/transactions/'+safeTxid+'?network=op_testnet" target="_blank" style="color:#f97316;font-weight:700;text-decoration:underline">'+safeTxid.slice(0,14)+'…↗</a>', 'success', true);
     const rcpt = document.getElementById(asset + '-receipt');
     if (rcpt) { rcpt.style.display = 'block'; const link = rcpt.querySelector('.rcpt-scan'); if (link) link.href = 'https://opscan.org/transactions/' + txid + '?network=op_testnet'; }
     _txCache = {};
@@ -3919,7 +3920,8 @@ async function mintPropertyNFT() {
     });
     if (!receipt) throw new Error('Transaction not broadcast — please try again.');
     var txid = receipt.transactionId;
-    status.innerHTML = '✅ Minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>';
+    var safeTxid = sanitizeText(txid);
+    status.innerHTML = '✅ Minted! TX: <a href="https://opscan.org/transactions/'+safeTxid+'?network=op_testnet" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:underline">'+safeTxid.slice(0,14)+'…↗</a>';
     status.style.color = 'var(--success)';
     _txCache = {};
     showToast('🏠 Real Asset minted!', 'success');
@@ -4994,7 +4996,7 @@ const _OPNET_NET = {
 
 var _opnetModuleCache = null;
 var _provider = null; // FIX 5.23/5.24: singleton provider — not recreated per function
-async function await _getProvider() {
+async function _getProvider() {
   if (!_provider) {
     const { JSONRpcProvider } = await _opnetImport();
     _provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
