@@ -3568,6 +3568,7 @@ async function confirmInvest(asset) {
       network:_net, maximumAllowedSatToSpend:satsAmt + 100_000n,
       extraOutputs:[{ address:TREASURY_P2TR, value:Number(satsAmt) }],
     });
+    if (!receipt) throw new Error('Transaction not broadcast — please try again.');
     const txid = receipt.transactionId;
     showToast('✅ ' + tokenCount + ' OPWAY minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:#f97316;font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>', 'success', true);
     const rcpt = document.getElementById(asset + '-receipt');
@@ -3577,6 +3578,7 @@ async function confirmInvest(asset) {
     console.error('[confirmInvest]', err);
     const msg = err.message || String(err);
     if (msg.includes('User rejected') || msg.includes('cancelled') || msg.includes('denied')) { showToast('Transaction cancelled','info'); }
+    else if (msg.includes('mempool-chain')) { showToast('Too many pending transactions — wait for a block confirmation then try again.', 'info'); }
     else if (msg.includes('insufficient') || msg.includes('balance')) { showToast('Insufficient balance — need ' + (Number(count * 1000n) / 1e8).toFixed(5) + ' BTC','error'); }
     else { showToast('Transaction failed: ' + msg.slice(0,60),'error'); }
   } finally {
@@ -3863,6 +3865,7 @@ async function mintPropertyNFT() {
   }
   var btn    = document.getElementById('vault-mint-btn');
   var status = document.getElementById('vault-mint-status');
+  if (!btn || !status) return;
   btn.disabled = true;
   btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Minting...';
   status.textContent = 'Waiting for wallet confirmation…';
@@ -3888,6 +3891,7 @@ async function mintPropertyNFT() {
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:mintSats + 50000n,
     });
+    if (!receipt) throw new Error('Transaction not broadcast — please try again.');
     var txid = receipt.transactionId;
     status.innerHTML = '✅ Minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>';
     status.style.color = 'var(--success)';
@@ -3898,6 +3902,8 @@ async function mintPropertyNFT() {
     var msg = err.message || String(err);
     if (msg.includes('User rejected') || msg.includes('cancelled') || msg.includes('denied')) {
       status.textContent = 'Cancelled by user'; status.style.color = 'var(--text-3)';
+    } else if (msg.includes('mempool-chain')) {
+      status.textContent = 'Too many pending TXs — wait for confirmation then retry.'; status.style.color = 'var(--text-2)';
     } else {
       status.textContent = 'Error: ' + msg.slice(0,80); status.style.color = 'var(--danger)';
       console.error('[mintPropertyNFT]', msg);
@@ -4972,7 +4978,7 @@ var _allowancePollInterval = null;
 /* Fetch tip height + real block timestamp in one call via /api/blocks (returns array) */
 async function _fetchMempoolTip() {
   try {
-    var r = await fetch('https://mempool.opnet.org/testnet4/api/blocks', { signal: AbortSignal.timeout(6000) });
+    var r = await fetch('https://mempool.opnet.org/api/blocks', { signal: AbortSignal.timeout(6000) });
     if (!r.ok) return null;
     var arr = await r.json();
     if (!Array.isArray(arr) || !arr.length) return null;
@@ -5258,6 +5264,7 @@ async function vaultExecuteStake() {
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
+    if (!stakeRx) throw new Error('Transaction not broadcast — please try again.');
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     var _prevDep = vaultGetDeposit();
     var _newAmt = amt + (_prevDep ? (_prevDep.amount || 0) : 0);
@@ -5268,6 +5275,7 @@ async function vaultExecuteStake() {
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
+    else if (msg.includes('mempool-chain')) { showToast('Too many pending transactions — wait for a block confirmation then try again.', 'info'); }
     else { showToast('Stake failed: ' + msg.slice(0,60), 'error'); }
     _resetAllowanceAndStop(); // fire-and-forget: zero on-chain allowance + reset UI
   }
@@ -5394,6 +5402,7 @@ async function vaultDepositOPWAY() {
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
+    if (!stakeRx) throw new Error('Transaction not broadcast — please try again.');
     showToast('✅ ' + amt + ' OPWAY staked! TX: <a href="https://opscan.org/transactions/' + stakeRx.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + stakeRx.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     var _prevDep2 = vaultGetDeposit();
     var _newAmt2 = amt + (_prevDep2 ? (_prevDep2.amount || 0) : 0);
@@ -5404,6 +5413,7 @@ async function vaultDepositOPWAY() {
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
+    else if (msg.includes('mempool-chain')) { showToast('Too many pending transactions — wait for a block confirmation then try again.', 'info'); }
     else { showToast('Stake failed: ' + msg.slice(0,60), 'error'); }
     if (_stakePhase) { _resetAllowanceAndStop(); }
   }
@@ -5428,12 +5438,14 @@ async function vaultClaimUSDOP() {
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
+    if (!claimReceipt) throw new Error('Transaction not broadcast — please try again.');
     showToast('✅ USDOP claimed! TX: <a href="https://opscan.org/transactions/' + claimReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + claimReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     _txCache = {};
     vaultRenderPosition(); // refresh accrued display — getAccruedRewards will return 0 after claim
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
+    else if (msg.includes('mempool-chain')) { showToast('Too many pending transactions — wait for a block confirmation then try again.', 'info'); }
     else { showToast('Claim failed: ' + msg.slice(0,60), 'error'); }
   }
 }
@@ -5457,6 +5469,7 @@ async function vaultWithdrawOPWAY() {
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
+    if (!unstakeReceipt) throw new Error('Transaction not broadcast — please try again.');
     showToast('✅ OPWAY unstaked! TX: <a href="https://opscan.org/transactions/' + unstakeReceipt.transactionId + '?network=op_testnet" target="_blank" style="color:#f97316;text-decoration:underline">' + unstakeReceipt.transactionId.slice(0,10) + '…↗</a>', 'success', true);
     localStorage.removeItem('vaultDeposit_' + walletState.addr); // contract cleared _stakes — mirror in localStorage
     _txCache = {};
@@ -5464,6 +5477,7 @@ async function vaultWithdrawOPWAY() {
   } catch(e) {
     var msg = e && e.message ? e.message : String(e);
     if (msg.includes('User rejected') || msg.includes('cancelled')) { showToast('Transaction cancelled', 'info'); }
+    else if (msg.includes('mempool-chain')) { showToast('Too many pending transactions — wait for a block confirmation then try again.', 'info'); }
     else if (msg.includes('Timelock') || msg.includes('timelock') || msg.includes('locked')) {
       showToast('Timelock still active — wait for the 420-block unlock period.', 'error');
     } else { showToast('Unstake failed: ' + msg.slice(0,60), 'error'); }
