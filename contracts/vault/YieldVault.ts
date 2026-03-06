@@ -258,7 +258,7 @@ export class YieldVault extends ReentrancyGuard {
     // ── Internal helpers ──────────────────────────────────────────────────────
 
     private _mintUSDOP(usdop: Address, to: Address, amount: u256): void {
-        const selector = encodeSelector('mint(address,uint256)');
+        const selector = encodeSelector('mintUSDOP(address,uint256)');
         const cd = new BytesWriter(SELECTOR_BYTE_LENGTH + ADDRESS_BYTE_LENGTH + U256_BYTE_LENGTH);
         cd.writeSelector(selector);
         cd.writeAddress(to);
