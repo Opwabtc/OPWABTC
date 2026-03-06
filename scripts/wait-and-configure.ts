@@ -23,9 +23,12 @@ const mnemonicObj = new Mnemonic(mnemonic!, '', NETWORK, MLDSASecurityLevel.LEVE
 const wallet      = mnemonicObj.deriveOPWallet(AddressTypes.P2TR, 0);
 const provider    = new JSONRpcProvider({ url: TESTNET_RPC, network: NETWORK });
 const providerCast = provider as unknown as import('opnet').JSONRpcProvider;
+function bytesToHex(bytes) {
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 const senderAddr  = Address.fromString(
     wallet.address.toString(),
-    Buffer.from(wallet.keypair.publicKey).toString('hex'),
+    bytesToHex(wallet.keypair.publicKey),
 );
 const TX_OPTS = {
     signer: wallet.keypair, mldsaSigner: wallet.mldsaKeypair,
@@ -69,21 +72,21 @@ async function run() {
     }];
 
     console.log('\n[1/3] USDOP.setMinter(newYieldVault)...');
-    const usdop = getContract<any>(USDOP_ADDR, USDOP_ABI, providerCast, NETWORK, senderAddr);
+    const usdop = getContract<{setMinter(m: Address): Promise<{revert?: string; sendTransaction(o: object): Promise<{transactionId: string}>}>}>(USDOP_ADDR, USDOP_ABI, providerCast, NETWORK, senderAddr);
     const s1 = await usdop.setMinter(vaultAddr);
     if (s1.revert) throw new Error(s1.revert);
     const r1 = await s1.sendTransaction(TX_OPTS);
     console.log('✓ setMinter TX:', r1.transactionId);
 
     console.log('\n[2/3] YieldVault.setAddresses(OPWAY, USDOP)...');
-    const vault = getContract<any>(NEW_YIELD_VAULT, YIELD_ABI, providerCast, NETWORK, senderAddr);
+    const vault = getContract<{setAddresses(a: Address, b: Address): Promise<{revert?: string; sendTransaction(o: object): Promise<{transactionId: string}>}>}>(NEW_YIELD_VAULT, YIELD_ABI, providerCast, NETWORK, senderAddr);
     const s2 = await vault.setAddresses(opwayAddr!, usdopAddr!);
     if (s2.revert) throw new Error(s2.revert);
     const r2 = await s2.sendTransaction(TX_OPTS);
     console.log('✓ setAddresses TX:', r2.transactionId);
 
     console.log('\n[3/3] PropertyVault.setPropertyNft(PropertyNFT)...');
-    const pvault = getContract<any>(PROPERTY_VAULT, PVAULT_ABI, providerCast, NETWORK, senderAddr);
+    const pvault = getContract<{setPropertyNft(a: Address): Promise<{revert?: string; sendTransaction(o: object): Promise<{transactionId: string}>}>}>(PROPERTY_VAULT, PVAULT_ABI, providerCast, NETWORK, senderAddr);
     const s3 = await pvault.setPropertyNft(nftAddr!);
     if (s3.revert) throw new Error(s3.revert);
     const r3 = await s3.sendTransaction(TX_OPTS);
