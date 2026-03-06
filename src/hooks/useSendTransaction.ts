@@ -19,7 +19,7 @@ export interface OPNetTransactionReceipt {
 }
 
 // FIX HIGH #44: typed fee rate result
-interface FeeRateResult {
+// interface FeeRateResult {
   result: number;
 }
 
@@ -33,13 +33,12 @@ export function useSendTransaction() {
       throw new Error('Wallet not connected');
     }
 
-    // 1. Get current fee rate from provider
-    // FIX HIGH #44: typed cast instead of (provider as any)
-    const providerWithFee = provider as typeof provider & {
-      getFeeRate?: () => Promise<FeeRateResult>;
-    };
-    const feeRateResult = await providerWithFee.getFeeRate?.() ?? { result: 10 };
-    const feeRate = feeRateResult?.result ?? 10; // fallback 10 sat/vB
+    // 1. Get current fee rate from provider via gasParameters() (FIX 5.56/5.68)
+    let feeRate: number | undefined;
+    try {
+      const gasParams = await (provider as any).gasParameters?.();
+      feeRate = gasParams?.bitcoin?.recommended?.medium ?? undefined;
+    } catch(_) { feeRate = undefined; }
 
     // 2. Build transaction parameters.
     // FRONTEND RULE: signer=null and mldsaSigner=null — wallet extension handles signing.
@@ -48,7 +47,6 @@ export function useSendTransaction() {
       mldsaSigner:              null as never,
       refundTo:                 walletAddress,
       maximumAllowedSatToSpend: 100_000n,
-      feeRate,
       network,
     };
 

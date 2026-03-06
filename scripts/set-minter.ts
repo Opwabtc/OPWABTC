@@ -2,7 +2,7 @@
  * set-minter.ts — Call USDOP.setMinter(YieldVault)
  *
  * Usage:
- *   OPNET_MNEMONIC="REDACTED_MNEMONIC"
+ *   OPNET_MNEMONIC="word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12"
  *   npx tsx scripts/set-minter.ts
  */
 import { networks } from '@btc-vision/bitcoin';

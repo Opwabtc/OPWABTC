@@ -20,7 +20,7 @@ import {
 } from '@btc-vision/btc-runtime/runtime';
 
 // 420 block timelock before unstake is allowed
-const TIMELOCK_BLOCKS: u64 = 420;
+const TIMELOCK_BLOCKS: u32 = 420;
 
 // Reward: staked * blocksElapsed / 100
 const REWARD_DIVISOR: u256 = u256.fromU64(100);
@@ -177,7 +177,7 @@ export class YieldVault extends ReentrancyGuard {
         const unlockBlock  = SafeMath.add(depositBlock, u256.fromU64(TIMELOCK_BLOCKS));
         const currentBlock = u256.fromU64(Blockchain.block.number);
 
-        if (currentBlock < unlockBlock) {
+        if (u256.lt(currentBlock, unlockBlock)) {
             throw new Revert('YieldVault: timelock active');
         }
 
@@ -247,7 +247,7 @@ export class YieldVault extends ReentrancyGuard {
         const currentBlock = u256.fromU64(Blockchain.block.number);
 
         let rewards = u256.Zero;
-        if (!staked.isZero() && currentBlock > lastClaim) {
+        if (!staked.isZero() && u256.gt(currentBlock, lastClaim)) {
             const blocksElapsed = SafeMath.sub(currentBlock, lastClaim);
             rewards = SafeMath.div(SafeMath.mul(staked, blocksElapsed), REWARD_DIVISOR);
             if (rewards > MAX_REWARD_PER_CLAIM) rewards = MAX_REWARD_PER_CLAIM;
