@@ -3418,7 +3418,7 @@ document.addEventListener('click', function(e) {
     document.getElementById('gas-trigger-btn').classList.remove('open');
   }
 });
-let btcPrice = 0;
+let btcPrice = null;
 function calcGas(val) {
   if (!btcPrice || !val) return;
   const usd = parseFloat(val) * btcPrice;
@@ -3432,6 +3432,10 @@ function showToast(msg, type, isHtml) {
   if (isHtml) el.innerHTML = msg; else el.textContent = msg;
   document.getElementById('toasts').appendChild(el);
   setTimeout(() => el.remove(), isHtml ? 6000 : 3500);
+}
+function _assertSimOk(sim,label){
+  if(sim&&sim.error)throw new Error((label||"Sim")+" error: "+sim.error);
+  if(sim&&sim.revert)throw new Error((label||"Sim")+" reverted: "+sim.revert);
 }
 
 /* ── INVEST PANELS ── */
@@ -3566,7 +3570,7 @@ async function confirmInvest(asset) {
     // Contract compares out.to == _treasuryTo (stored bech32) — no Uint8Array involved.
     contract.setTransactionDetails({ inputs:[], outputs:[{ to:TREASURY_P2TR, value:satsAmt, index:1, flags:TransactionOutputFlags.hasTo }] });
     const simulation = await contract.mint(senderAddr, tokenAmt);
-    if (simulation.revert) throw new Error(simulation.revert);
+    _assertSimOk(simulation, 'confirmInvest');
     const receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:satsAmt + 100_000n,
@@ -3898,7 +3902,7 @@ async function mintPropertyNFT() {
     var priceRes = await contract.mintPrice();
     var mintSats = priceRes && priceRes.properties ? BigInt(priceRes.properties.price) : 10000n;
     var simulation = await contract.mint();
-    if (simulation.revert) throw new Error(simulation.revert);
+    _assertSimOk(simulation,"mintPropertyNFT");
     var receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:mintSats + 50000n,
@@ -5461,7 +5465,7 @@ async function vaultClaimUSDOP() {
     ];
     const vaultContract = getContract(YIELD_VAULT_ADDR, CLAIM_ABI, provider, _OPNET_NET, senderAddr);
     const claimSim = await vaultContract.claimRewards();
-    if (claimSim.revert) throw new Error(claimSim.revert);
+    _assertSimOk(claimSim, 'claimRewards');
     const claimReceipt = await claimSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
@@ -5492,7 +5496,7 @@ async function vaultWithdrawOPWAY() {
     ];
     const vaultContract = getContract(YIELD_VAULT_ADDR, UNSTAKE_ABI, provider, _OPNET_NET, senderAddr);
     const unstakeSim = await vaultContract.unstake();
-    if (unstakeSim.revert) throw new Error(unstakeSim.revert);
+    _assertSimOk(unstakeSim, 'unstake');
     const unstakeReceipt = await unstakeSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
@@ -5579,7 +5583,7 @@ async function pvaultListProperty() {
     ];
     const nftContract = getContract(CONTRACTS.propertyNft, NFT_ABI, provider, _OPNET_NET, senderAddr);
     const approveSim = await nftContract.approve(pvaultAddrObj, tokenIdBig);
-    if (approveSim.revert) throw new Error(approveSim.revert);
+    _assertSimOk(approveSim, 'approve');
     const approveReceipt = await approveSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
@@ -5594,7 +5598,7 @@ async function pvaultListProperty() {
     ];
     const pvaultContract = getContract(PROPERTY_VAULT_ADDR, PVAULT_ABI, provider, _OPNET_NET, senderAddr);
     const listSim = await pvaultContract.listProperty(tokenIdBig, maxOpway);
-    if (listSim.revert) throw new Error(listSim.revert);
+    _assertSimOk(listSim, 'listProperty');
     const listReceipt = await listSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
@@ -5655,7 +5659,7 @@ async function pvaultRemove(tokenId) {
     ];
     const pvaultContract = getContract(PROPERTY_VAULT_ADDR, DELIST_ABI, provider, _OPNET_NET, senderAddr);
     const delistSim = await pvaultContract.delistProperty(BigInt(tokenId));
-    if (delistSim.revert) throw new Error(delistSim.revert);
+    _assertSimOk(delistSim, 'delistProperty');
     const delistReceipt = await delistSim.sendTransaction({
       signer: null, mldsaSigner: null, refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
