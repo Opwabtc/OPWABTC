@@ -4029,7 +4029,7 @@ async function dashFetch() {
     // ── OPWAY balance + PropertyNFT totalSupply via getContract ──
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, OP_721_ABI, Address } = await _opnetImport();
-      const provider = _getProvider();
+      const provider = await _getProvider();
       const senderAddr = await buildSenderAddress(Address);
       const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
       const balSim = await opwayContract.balanceOf(senderAddr);
@@ -4813,6 +4813,7 @@ function vaultInit() {
   vaultRenderPosition();
   vaultSyncChainState(); // async fire-and-forget: syncs localStorage from getStake+getDepositBlock
   pvaultRenderListed();
+  pvaultSyncOnChain(); // FIX 5.53/5.58/5.88: fire-and-forget on-chain validation
   vaultLoadVaultedAssets();
 }
 
@@ -4976,10 +4977,13 @@ const _OPNET_NET = {
   bip32: { public: 70617039, private: 70615956 },
   pubKeyHash: 111, scriptHash: 196, wif: 239
 };
-// FIX 5.23/5.24: provider singleton
+// FIX 5.23/5.24: provider singleton — async to import JSONRpcProvider from esm.sh once
 var _providerInstance = null;
-function _getProvider() {
-  if (!_providerInstance) _providerInstance = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+async function _getProvider() {
+  if (!_providerInstance) {
+    var _m = await import('https://esm.sh/opnet?bundle');
+    _providerInstance = new _m.JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+  }
   return _providerInstance;
 }
 
@@ -5160,7 +5164,7 @@ async function _startAllowancePoll() {
     var { amountBig } = _pendingApproval;
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-      const provider = _getProvider();
+      const provider = await _getProvider();
       const senderAddr = await buildSenderAddress(Address);
       const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
       if (!vaultAddrObj) return;
@@ -5249,7 +5253,7 @@ async function vaultExecuteStake() {
   if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.textContent = 'Verifying allowance on-chain…'; }
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = _getProvider();
+    const provider = await _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
     if (!vaultAddrObj) throw new Error('Could not resolve vault address — please retry');
@@ -5316,7 +5320,7 @@ async function vaultDepositOPWAY() {
   var _stakePhase = false;
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = _getProvider();
+    const provider = await _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
@@ -5453,7 +5457,7 @@ async function vaultClaimUSDOP() {
   showToast('Claiming USDOP rewards…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = _getProvider();
+    const provider = await _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const CLAIM_ABI = [
       { name:'claimRewards', type:BitcoinAbiTypes.Function, payable:false,
@@ -5484,7 +5488,7 @@ async function vaultWithdrawOPWAY() {
   showToast('Requesting unstake…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = _getProvider();
+    const provider = await _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const UNSTAKE_ABI = [
       { name:'unstake', type:BitcoinAbiTypes.Function, payable:false,
@@ -5566,7 +5570,7 @@ async function pvaultListProperty() {
   showToast('Preparing NFT approval…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = _getProvider();
+    const provider = await _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const tokenIdBig = BigInt(tid);
 
@@ -5618,6 +5622,58 @@ function pvaultGetProperties() {
   try { return JSON.parse(localStorage.getItem('vaultedProperties') || '[]'); } catch(e) { return []; }
 }
 
+
+// FIX 5.53/5.58/5.88: validate localStorage cache against on-chain isListed/getMaxOpway
+async function pvaultSyncOnChain() {
+  if (!walletState.connected || !PROPERTY_VAULT_ADDR) return;
+  try {
+    var stored = [];
+    try { stored = JSON.parse(localStorage.getItem('vaultedProperties') || '[]'); } catch(e) { stored = []; }
+    var mine = stored.filter(function(p){ return p.owner === walletState.addr; });
+    if (mine.length === 0) return;
+    var imp = await _opnetImport();
+    var provider = await _getProvider();
+    var senderAddr = await buildSenderAddress(imp.Address);
+    var VIEW_ABI = [
+      { name:'isListed',   type:imp.BitcoinAbiTypes.Function, payable:false,
+        inputs:[{name:'tokenId',type:imp.ABIDataTypes.UINT256}], outputs:[{name:'listed',type:imp.ABIDataTypes.BOOL}] },
+      { name:'getMaxOpway',type:imp.BitcoinAbiTypes.Function, payable:false,
+        inputs:[{name:'tokenId',type:imp.ABIDataTypes.UINT256}], outputs:[{name:'maxOpway',type:imp.ABIDataTypes.UINT256}] }
+    ];
+    var pvault = imp.getContract(PROPERTY_VAULT_ADDR, VIEW_ABI, provider, _OPNET_NET, senderAddr);
+    var changed = false;
+    for (var i = 0; i < mine.length; i++) {
+      var tokenId = mine[i].tokenId;
+      try {
+        var listedRes = await pvault.isListed(BigInt(tokenId));
+        var isListedOnChain = listedRes && listedRes.properties && listedRes.properties.listed;
+        if (!isListedOnChain) {
+          // Remove stale entry from full stored array
+          stored = stored.filter(function(p){ return !(p.tokenId === tokenId && p.owner === walletState.addr); });
+          changed = true;
+        } else {
+          // Update maxOpway from on-chain value
+          try {
+            var maxRes = await pvault.getMaxOpway(BigInt(tokenId));
+            if (maxRes && maxRes.properties && maxRes.properties.maxOpway != null) {
+              var onChainMax = Number(maxRes.properties.maxOpway);
+              var idx2 = stored.findIndex(function(p){ return p.tokenId === tokenId && p.owner === walletState.addr; });
+              if (idx2 >= 0 && stored[idx2].maxOpway !== onChainMax) {
+                stored[idx2].maxOpway = onChainMax;
+                changed = true;
+              }
+            }
+          } catch(_) {}
+        }
+      } catch(_) {}
+    }
+    if (changed) {
+      try { localStorage.setItem('vaultedProperties', JSON.stringify(stored)); } catch(e) {}
+      pvaultRenderListed();
+      vaultLoadVaultedAssets();
+    }
+  } catch(e) { /* silent — don't disrupt UI */ }
+}
 function pvaultRenderListed() {
   var props = pvaultGetProperties().filter(function(p){ return p.owner === walletState.addr; });
   var wrap = document.getElementById('pvault-listed-wrap');
@@ -5646,7 +5702,7 @@ async function pvaultRemove(tokenId) {
   showToast('Delisting property #' + tokenId + '…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = _getProvider();
+    const provider = await _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const DELIST_ABI = [
       { name:'delistProperty', type:BitcoinAbiTypes.Function, payable:false,
