@@ -3884,9 +3884,11 @@ async function mintPropertyNFT() {
   status.style.color = 'var(--text-2)';
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes, TransactionOutputFlags } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
+    // PropertyNFT P2TR — contract pays-to-self check uses this address
+    var NFT_P2TR = 'opt1pc7ym9tjnyz7tppgq8pfq8s0rhhhmw9mj3wxajwgajqmkvw5d0f3qglgdyx';
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
       { name:'mintNFT', type:BitcoinAbiTypes.Function, payable:false,
@@ -3896,16 +3898,19 @@ async function mintPropertyNFT() {
     var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _net });
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, _net, senderAddr);
-    var mintSats = 10000n; // DEFAULT_MINT_PRICE_SATS — no on-chain getter
+    var mintSats = 10000n; // DEFAULT_MINT_PRICE_SATS (10,000 sats = 0.0001 BTC)
     // Derive next tokenId from current totalSupply
     var supRes = await contract.totalSupply().catch(function(){ return null; });
     var nextTokenId = (supRes && supRes.properties && supRes.properties.totalSupply != null)
       ? BigInt(supRes.properties.totalSupply) + 1n : 1n;
+    // Include BTC payment to contract P2TR — verified via Blockchain.tx.outputs in mintNFT()
+    contract.setTransactionDetails({ inputs:[], outputs:[{ to:NFT_P2TR, value:mintSats, index:1, flags:TransactionOutputFlags.hasTo }] });
     var simulation = await contract.mintNFT(senderAddr, nextTokenId);
     if (simulation.revert) throw new Error(simulation.revert);
     var receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:mintSats + 50000n,
+      extraOutputs:[{ address:NFT_P2TR, value:Number(mintSats) }],
     });
     if (!receipt) throw new Error('Transaction not broadcast — please try again.');
     var txid = receipt.transactionId;
