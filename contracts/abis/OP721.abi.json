@@ -140,44 +140,6 @@
             ]
         },
         {
-            "name": "transfer",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [
-                {
-                    "name": "to",
-                    "type": "ADDRESS"
-                },
-                {
-                    "name": "tokenId",
-                    "type": "UINT256"
-                }
-            ],
-            "outputs": []
-        },
-        {
-            "name": "transferFrom",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [
-                {
-                    "name": "from",
-                    "type": "ADDRESS"
-                },
-                {
-                    "name": "to",
-                    "type": "ADDRESS"
-                },
-                {
-                    "name": "tokenId",
-                    "type": "UINT256"
-                }
-            ],
-            "outputs": []
-        },
-        {
             "name": "safeTransfer",
             "type": "Function",
             "payable": false,
@@ -300,11 +262,7 @@
             "inputs": [
                 {
                     "name": "owner",
-                    "type": "BYTES32"
-                },
-                {
-                    "name": "ownerTweakedPublicKey",
-                    "type": "BYTES32"
+                    "type": "ADDRESS"
                 },
                 {
                     "name": "operator",
@@ -333,11 +291,7 @@
             "inputs": [
                 {
                     "name": "owner",
-                    "type": "BYTES32"
-                },
-                {
-                    "name": "ownerTweakedPublicKey",
-                    "type": "BYTES32"
+                    "type": "ADDRESS"
                 },
                 {
                     "name": "operator",

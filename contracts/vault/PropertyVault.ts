@@ -24,9 +24,39 @@ import {
 
 // ── NetEvents ─────────────────────────────────────────────────────────────────
 // FIX CF-12: emit events
-const ListEvent     = new NetEvent('PropertyListed',    ['uint256', 'address', 'uint256']);
-const DelistEvent   = new NetEvent('PropertyDelisted',  ['uint256', 'address']);
-const PurchaseEvent = new NetEvent('PropertyPurchased', ['uint256', 'address', 'address', 'uint256']);
+
+@final
+class ListEvent extends NetEvent {
+    constructor(tokenId: u256, owner: Address, price: u256) {
+        const data = new BytesWriter(96); // 32 + 32 + 32
+        data.writeU256(tokenId);
+        data.writeAddress(owner);
+        data.writeU256(price);
+        super('PropertyListed', data);
+    }
+}
+
+@final
+class DelistEvent extends NetEvent {
+    constructor(tokenId: u256, owner: Address) {
+        const data = new BytesWriter(64); // 32 + 32
+        data.writeU256(tokenId);
+        data.writeAddress(owner);
+        super('PropertyDelisted', data);
+    }
+}
+
+@final
+class PurchaseEvent extends NetEvent {
+    constructor(tokenId: u256, seller: Address, buyer: Address, price: u256) {
+        const data = new BytesWriter(128); // 32 + 32 + 32 + 32
+        data.writeU256(tokenId);
+        data.writeAddress(seller);
+        data.writeAddress(buyer);
+        data.writeU256(price);
+        super('PropertyPurchased', data);
+    }
+}
 
 @final
 export class PropertyVault extends OP_NET {
@@ -100,7 +130,7 @@ export class PropertyVault extends OP_NET {
         // FIX 5.87: cap simultaneous listings per address
         const senderKey = u256.fromUint8ArrayBE(sender);
         const listCount = this._listCounts.get(senderKey);
-        if (u256.gte(listCount, u256.fromU64(50))) throw new Revert('PropertyVault: max 50 active listings');
+        if (u256.ge(listCount, u256.fromU64(50))) throw new Revert('PropertyVault: max 50 active listings');
 
         const existingOwner = this._owners.get(tokenId);
         if (!existingOwner.isZero()) throw new Revert('PropertyVault: token already listed');
@@ -115,7 +145,7 @@ export class PropertyVault extends OP_NET {
         this._listCounts.set(senderKey, SafeMath.add(listCount, u256.One));
 
         // FIX CF-12
-        Blockchain.emit(ListEvent, [tokenId, sender, maxOpway]);
+        Blockchain.emit(new ListEvent(tokenId, sender, maxOpway));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
@@ -150,7 +180,7 @@ export class PropertyVault extends OP_NET {
         TransferHelper.transfer(nft, sender, tokenId);
 
         // FIX CF-12
-        Blockchain.emit(DelistEvent, [tokenId, sender]);
+        Blockchain.emit(new DelistEvent(tokenId, sender));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
@@ -199,7 +229,7 @@ export class PropertyVault extends OP_NET {
         TransferHelper.transfer(nft, buyer, tokenId);
 
         // FIX CF-12
-        Blockchain.emit(PurchaseEvent, [tokenId, seller, buyer, listPrice]);
+        Blockchain.emit(new PurchaseEvent(tokenId, seller, buyer, listPrice));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);

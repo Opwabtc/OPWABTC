@@ -275,11 +275,7 @@
             "inputs": [
                 {
                     "name": "owner",
-                    "type": "BYTES32"
-                },
-                {
-                    "name": "ownerTweakedPublicKey",
-                    "type": "BYTES32"
+                    "type": "ADDRESS"
                 },
                 {
                     "name": "spender",
@@ -308,11 +304,7 @@
             "inputs": [
                 {
                     "name": "owner",
-                    "type": "BYTES32"
-                },
-                {
-                    "name": "ownerTweakedPublicKey",
-                    "type": "BYTES32"
+                    "type": "ADDRESS"
                 },
                 {
                     "name": "spender",

@@ -13,10 +13,7 @@
  */
 // FIX CF-14: was 'as-bignum/assembly'
 import { u256 } from '@btc-vision/as-bignum/assembly';
-import {
-    OP20,
-    OP20InitParameters,
-} from '@btc-vision/btc-runtime/runtime/contracts/OP20';
+import { OP20 } from '@btc-vision/btc-runtime/runtime/contracts/OP20';
 import {
     Blockchain,
     Address,
@@ -27,6 +24,8 @@ import {
     StoredAddress,
     StoredU256,
     NetEvent,
+    OP20InitParameters,
+    EMPTY_POINTER,
 } from '@btc-vision/btc-runtime/runtime';
 
 // Fixed storage pointers (NOT Blockchain.nextPointer — must be deterministic across upgrades)
@@ -44,17 +43,33 @@ const MAX_EPOCH_MINT: u256 = u256.fromString('1000000000000000'); // 10M × 10^8
 // Max supply: 100B USDOP (8 decimals)
 const MAX_SUPPLY: u256 = u256.fromString('10000000000000000000'); // 100B × 10^8
 
-// FIX CF-12: NetEvents
-const MinterChangedEvent = new NetEvent('MinterChanged', ['address']);
-const MintEvent       = new NetEvent('MintUSDOP',  ['address', 'uint256']);
+// ── NetEvent concrete subclasses ──────────────────────────────────────────────
+@final
+class MinterChangedEvent extends NetEvent {
+    constructor(minter: Address) {
+        const data = new BytesWriter(32);
+        data.writeAddress(minter);
+        super('MinterChanged', data);
+    }
+}
+
+@final
+class MintUSDOPEvent extends NetEvent {
+    constructor(to: Address, amount: u256) {
+        const data = new BytesWriter(64);
+        data.writeAddress(to);
+        data.writeU256(amount);
+        super('MintUSDOP', data);
+    }
+}
 
 @final
 export class USDOP extends OP20 {
     // FIX HIGH #41: use StoredAddress/StoredU256 — not raw Blockchain.getStorage*
     private _minter:       StoredAddress = new StoredAddress(POINTER_MINTER);
-    private _minterLocked: StoredU256    = new StoredU256(POINTER_MINTER_LOCKED, u256.Zero);
-    private _epochMint:    StoredU256    = new StoredU256(POINTER_EPOCH_MINT,    u256.Zero);
-    private _epochBlock:   StoredU256    = new StoredU256(POINTER_EPOCH_BLOCK,   u256.Zero);
+    private _minterLocked: StoredU256    = new StoredU256(POINTER_MINTER_LOCKED, EMPTY_POINTER);
+    private _epochMint:    StoredU256    = new StoredU256(POINTER_EPOCH_MINT,    EMPTY_POINTER);
+    private _epochBlock:   StoredU256    = new StoredU256(POINTER_EPOCH_BLOCK,   EMPTY_POINTER);
 
     public constructor() {
         super();
@@ -95,7 +110,7 @@ export class USDOP extends OP20 {
         this._minter.value       = minter;
         this._minterLocked.value = u256.One; // lock forever
 
-        Blockchain.emit(MinterChangedEvent, [minter]);
+        Blockchain.emit(new MinterChangedEvent(minter));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
@@ -139,7 +154,7 @@ export class USDOP extends OP20 {
 
         // Check if we're in a new epoch (currentBlock - epochStart >= EPOCH_BLOCKS)
         const blocksSinceEpoch = SafeMath.sub(currentBlock, epochStart);
-        if (u256.gte(blocksSinceEpoch, u256.fromU64(EPOCH_BLOCKS))) {
+        if (u256.ge(blocksSinceEpoch, u256.fromU64(EPOCH_BLOCKS))) {
             // New epoch — reset counter
             this._epochBlock.value = currentBlock;
             epochMinted = u256.Zero;
@@ -156,7 +171,7 @@ export class USDOP extends OP20 {
         // Mint via parent OP20
         this._mint(to, amount);
 
-        Blockchain.emit(MintEvent, [to, amount]);
+        Blockchain.emit(new MintUSDOPEvent(to, amount));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);

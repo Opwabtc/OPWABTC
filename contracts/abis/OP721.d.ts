@@ -118,16 +118,6 @@ export type OwnerOf = CallResult<
 >;
 
 /**
- * @description Represents the result of the transfer function call.
- */
-export type Transfer = CallResult<{}, OPNetEvent<TransferredEvent>[]>;
-
-/**
- * @description Represents the result of the transferFrom function call.
- */
-export type TransferFrom = CallResult<{}, OPNetEvent<TransferredEvent>[]>;
-
-/**
  * @description Represents the result of the safeTransfer function call.
  */
 export type SafeTransfer = CallResult<{}, OPNetEvent<TransferredEvent>[]>;
@@ -242,8 +232,6 @@ export interface IOP721 extends IOP_NETContract {
     totalSupply(): Promise<TotalSupply>;
     balanceOf(owner: Address): Promise<BalanceOf>;
     ownerOf(tokenId: bigint): Promise<OwnerOf>;
-    transfer(to: Address, tokenId: bigint): Promise<Transfer>;
-    transferFrom(from: Address, to: Address, tokenId: bigint): Promise<TransferFrom>;
     safeTransfer(to: Address, tokenId: bigint, data: Uint8Array): Promise<SafeTransfer>;
     safeTransferFrom(from: Address, to: Address, tokenId: bigint, data: Uint8Array): Promise<SafeTransferFrom>;
     approve(operator: Address, tokenId: bigint): Promise<Approve>;
@@ -251,16 +239,14 @@ export interface IOP721 extends IOP_NETContract {
     setApprovalForAll(operator: Address, approved: boolean): Promise<SetApprovalForAll>;
     isApprovedForAll(owner: Address, operator: Address): Promise<IsApprovedForAll>;
     approveBySignature(
-        owner: Uint8Array,
-        ownerTweakedPublicKey: Uint8Array,
+        owner: Address,
         operator: Address,
         tokenId: bigint,
         deadline: bigint,
         signature: Uint8Array,
     ): Promise<ApproveBySignature>;
     setApprovalForAllBySignature(
-        owner: Uint8Array,
-        ownerTweakedPublicKey: Uint8Array,
+        owner: Address,
         operator: Address,
         approved: boolean,
         deadline: bigint,

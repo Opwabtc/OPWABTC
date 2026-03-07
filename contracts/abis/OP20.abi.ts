@@ -155,8 +155,7 @@ export const OP20Abi = [
     {
         name: 'increaseAllowanceBySignature',
         inputs: [
-            { name: 'owner', type: ABIDataTypes.BYTES32 },
-            { name: 'ownerTweakedPublicKey', type: ABIDataTypes.BYTES32 },
+            { name: 'owner', type: ABIDataTypes.ADDRESS },
             { name: 'spender', type: ABIDataTypes.ADDRESS },
             { name: 'amount', type: ABIDataTypes.UINT256 },
             { name: 'deadline', type: ABIDataTypes.UINT64 },
@@ -168,8 +167,7 @@ export const OP20Abi = [
     {
         name: 'decreaseAllowanceBySignature',
         inputs: [
-            { name: 'owner', type: ABIDataTypes.BYTES32 },
-            { name: 'ownerTweakedPublicKey', type: ABIDataTypes.BYTES32 },
+            { name: 'owner', type: ABIDataTypes.ADDRESS },
             { name: 'spender', type: ABIDataTypes.ADDRESS },
             { name: 'amount', type: ABIDataTypes.UINT256 },
             { name: 'deadline', type: ABIDataTypes.UINT64 },

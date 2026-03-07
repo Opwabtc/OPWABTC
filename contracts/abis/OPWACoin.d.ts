@@ -10,11 +10,31 @@ import { CallResult, OPNetEvent, IOP_NETContract } from 'opnet';
 // ------------------------------------------------------------------
 
 /**
+ * @description Represents the result of the buy function call.
+ */
+export type Buy = CallResult<
+    {
+        success: boolean;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
  * @description Represents the result of the setTreasury function call.
  */
 export type SetTreasury = CallResult<
     {
         success: boolean;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the getTreasury function call.
+ */
+export type GetTreasury = CallResult<
+    {
+        treasury: Address;
     },
     OPNetEvent<never>[]
 >;
@@ -40,19 +60,9 @@ export type GetPrice = CallResult<
 >;
 
 /**
- * @description Represents the result of the getTreasury function call.
+ * @description Represents the result of the setMinter function call.
  */
-export type GetTreasury = CallResult<
-    {
-        treasury: Address;
-    },
-    OPNetEvent<never>[]
->;
-
-/**
- * @description Represents the result of the buy function call.
- */
-export type Buy = CallResult<
+export type SetMinter = CallResult<
     {
         success: boolean;
     },
@@ -63,9 +73,10 @@ export type Buy = CallResult<
 // IOPWACoin
 // ------------------------------------------------------------------
 export interface IOPWACoin extends IOP_NETContract {
-    setTreasury(pubkey: Address): Promise<SetTreasury>;
-    setPrice(newPrice: bigint): Promise<SetPrice>;
-    getPrice(): Promise<GetPrice>;
-    getTreasury(): Promise<GetTreasury>;
     buy(to: Address, amount: bigint): Promise<Buy>;
+    setTreasury(pubkey: Address): Promise<SetTreasury>;
+    getTreasury(): Promise<GetTreasury>;
+    setPrice(price: bigint): Promise<SetPrice>;
+    getPrice(): Promise<GetPrice>;
+    setMinter(minter: Address): Promise<SetMinter>;
 }

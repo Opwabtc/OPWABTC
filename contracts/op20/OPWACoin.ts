@@ -8,10 +8,7 @@
  * FIX CF-11: onUpdate() lifecycle hook added
  * FIX CF-12: NetEvents for buy, config, price
  */
-import {
-  OP20,
-  OP20InitParameters,
-} from '@btc-vision/btc-runtime/runtime/contracts/OP20';
+import { OP20 } from '@btc-vision/btc-runtime/runtime/contracts/OP20';
 import { u256 } from '@btc-vision/as-bignum/assembly';
 import {
   Blockchain,
@@ -24,6 +21,8 @@ import {
   SafeMath,
   TransferHelper,
   NetEvent,
+  OP20InitParameters,
+  EMPTY_POINTER,
 } from '@btc-vision/btc-runtime/runtime';
 
 // Storage pointers for new fields
@@ -32,10 +31,45 @@ const POINTER_PRICE:    u16 = 201;
 const POINTER_MINTER:   u16 = 202;
 const POINTER_MINTER_LOCKED: u16 = 203;
 
-// FIX CF-12
-const BuyEvent      = new NetEvent('Buy',      ['address', 'uint256', 'uint256']);
-const ConfigEvent   = new NetEvent('Config',   ['string',  'address']);
-const PriceEvent    = new NetEvent('PriceSet', ['uint256']);
+// ── NetEvent concrete subclasses (FIX CF-12) ─────────────────────────────────
+
+@final
+class BuyEvent extends NetEvent {
+    constructor(to: Address, amount: u256, price: u256) {
+        const data = new BytesWriter(96); // 32 + 32 + 32
+        data.writeAddress(to);
+        data.writeU256(amount);
+        data.writeU256(price);
+        super('Buy', data);
+    }
+}
+
+@final
+class TreasurySetEvent extends NetEvent {
+    constructor(addr: Address) {
+        const data = new BytesWriter(32);
+        data.writeAddress(addr);
+        super('TreasurySet', data);
+    }
+}
+
+@final
+class MinterSetEvent extends NetEvent {
+    constructor(addr: Address) {
+        const data = new BytesWriter(32);
+        data.writeAddress(addr);
+        super('MinterSet', data);
+    }
+}
+
+@final
+class PriceSetEvent extends NetEvent {
+    constructor(price: u256) {
+        const data = new BytesWriter(32);
+        data.writeU256(price);
+        super('PriceSet', data);
+    }
+}
 
 @final
 export class OPWACoin extends OP20 {
@@ -44,9 +78,9 @@ export class OPWACoin extends OP20 {
 
   // New storage fields
   private _treasury:      StoredAddress = new StoredAddress(POINTER_TREASURY);
-  private _price:         StoredU256    = new StoredU256(POINTER_PRICE, u256.Zero);
+  private _price:         StoredU256    = new StoredU256(POINTER_PRICE, EMPTY_POINTER);
   private _minter:        StoredAddress = new StoredAddress(POINTER_MINTER);
-  private _minterLocked:  StoredU256    = new StoredU256(POINTER_MINTER_LOCKED, u256.Zero);
+  private _minterLocked:  StoredU256    = new StoredU256(POINTER_MINTER_LOCKED, EMPTY_POINTER);
 
   constructor() {
     super();
@@ -89,10 +123,12 @@ export class OPWACoin extends OP20 {
 
     if (!treasury.equals(Address.zero()) && !price.isZero()) {
       // Verify BTC payment: sum outputs to treasury address
-      const outputs  = Blockchain.tx.outputs;
+      const outputs       = Blockchain.tx.outputs;
+      const treasuryAddr  = treasury.p2tr(); // bech32 string for comparison with output.to
       let totalPaid  = u256.Zero;
       for (let i = 0; i < outputs.length; i++) {
-        if (outputs[i].to.equals(treasury)) {
+        const outTo = outputs[i].to;
+        if (outTo !== null && outTo == treasuryAddr) {
           totalPaid = SafeMath.add(totalPaid, u256.fromU64(outputs[i].value));
         }
       }
@@ -104,7 +140,7 @@ export class OPWACoin extends OP20 {
     }
 
     this._mintBuy(to, amount);
-    Blockchain.emit(BuyEvent, [to, amount, price]);
+    Blockchain.emit(new BuyEvent(to, amount, price));
 
     const result = new BytesWriter(1);
     result.writeBoolean(true);
@@ -119,7 +155,7 @@ export class OPWACoin extends OP20 {
     this.onlyDeployer(Blockchain.tx.sender);
     const addr = calldata.readAddress();
     this._treasury.value = addr;
-    Blockchain.emit(ConfigEvent, ['treasury', addr]);
+    Blockchain.emit(new TreasurySetEvent(addr));
     const result = new BytesWriter(1);
     result.writeBoolean(true);
     return result;
@@ -129,7 +165,7 @@ export class OPWACoin extends OP20 {
 
   @method()
   @returns({ name: 'treasury', type: ABIDataTypes.ADDRESS })
-  public getTreasury(): BytesWriter {
+  public getTreasury(_calldata: Calldata): BytesWriter {
     const result = new BytesWriter(32);
     result.writeAddress(this._treasury.value);
     return result;
@@ -143,7 +179,7 @@ export class OPWACoin extends OP20 {
     this.onlyDeployer(Blockchain.tx.sender);
     const price = calldata.readU256();
     this._price.value = price;
-    Blockchain.emit(PriceEvent, [price]);
+    Blockchain.emit(new PriceSetEvent(price));
     const result = new BytesWriter(1);
     result.writeBoolean(true);
     return result;
@@ -153,7 +189,7 @@ export class OPWACoin extends OP20 {
 
   @method()
   @returns({ name: 'price', type: ABIDataTypes.UINT256 })
-  public getPrice(): BytesWriter {
+  public getPrice(_calldata: Calldata): BytesWriter {
     const result = new BytesWriter(32);
     result.writeU256(this._price.value);
     return result;
@@ -172,7 +208,7 @@ export class OPWACoin extends OP20 {
     const minter = calldata.readAddress();
     this._minter.value       = minter;
     this._minterLocked.value = u256.One;
-    Blockchain.emit(ConfigEvent, ['minter', minter]);
+    Blockchain.emit(new MinterSetEvent(minter));
     const result = new BytesWriter(1);
     result.writeBoolean(true);
     return result;

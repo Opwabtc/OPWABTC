@@ -31,15 +31,51 @@ const MAX_CLAIM: u256 = u256.fromU64(10_000_000_000_000); // 100k × 10^8
 
 // ── NetEvents ─────────────────────────────────────────────────────────────────
 // FIX CF-12: emit events for all state changes
-const StakeEvent    = new NetEvent('Stake',    ['address', 'uint256']);
-const UnstakeEvent  = new NetEvent('Unstake',  ['address', 'uint256']);
-const ClaimEvent    = new NetEvent('Claim',    ['address', 'uint256']);
-const ConfigEvent   = new NetEvent('Config',   ['address', 'address']);
+
+@final
+class StakeEvent extends NetEvent {
+    constructor(user: Address, amount: u256) {
+        const data = new BytesWriter(64);
+        data.writeAddress(user);
+        data.writeU256(amount);
+        super('Stake', data);
+    }
+}
+
+@final
+class UnstakeEvent extends NetEvent {
+    constructor(user: Address, amount: u256) {
+        const data = new BytesWriter(64);
+        data.writeAddress(user);
+        data.writeU256(amount);
+        super('Unstake', data);
+    }
+}
+
+@final
+class ClaimEvent extends NetEvent {
+    constructor(user: Address, rewards: u256) {
+        const data = new BytesWriter(64);
+        data.writeAddress(user);
+        data.writeU256(rewards);
+        super('Claim', data);
+    }
+}
+
+@final
+class ConfigEvent extends NetEvent {
+    constructor(opway: Address, usdop: Address) {
+        const data = new BytesWriter(64);
+        data.writeAddress(opway);
+        data.writeAddress(usdop);
+        super('Config', data);
+    }
+}
 
 @final
 export class YieldVault extends ReentrancyGuard {
     // FIRST field — must stay first so all subsequent nextPointer values are stable
-    private _configured: StoredBoolean = new StoredBoolean(Blockchain.nextPointer);
+    private _configured: StoredBoolean = new StoredBoolean(Blockchain.nextPointer, false);
 
     private _opway: StoredAddress  = new StoredAddress(Blockchain.nextPointer);
     private _usdop: StoredAddress  = new StoredAddress(Blockchain.nextPointer);
@@ -69,7 +105,7 @@ export class YieldVault extends ReentrancyGuard {
         this._opway.value = opway;
         this._usdop.value = usdop;
         // FIX CF-12: emit config event
-        Blockchain.emit(ConfigEvent, [opway, usdop]);
+        Blockchain.emit(new ConfigEvent(opway, usdop));
         const result = new BytesWriter(1);
         result.writeBoolean(true);
         return result;
@@ -119,7 +155,7 @@ export class YieldVault extends ReentrancyGuard {
         TransferHelper.transferFrom(opway, sender, this.address, amount);
 
         // FIX CF-12: emit stake event
-        Blockchain.emit(StakeEvent, [sender, amount]);
+        Blockchain.emit(new StakeEvent(sender, amount));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
@@ -153,7 +189,7 @@ export class YieldVault extends ReentrancyGuard {
         if (!rewards.isZero()) {
             this._mintUSDOP(usdop, sender, rewards);
             // FIX CF-12
-            Blockchain.emit(ClaimEvent, [sender, rewards]);
+            Blockchain.emit(new ClaimEvent(sender, rewards));
         }
 
         const result = new BytesWriter(1);
@@ -202,13 +238,13 @@ export class YieldVault extends ReentrancyGuard {
         // External calls AFTER state is cleared
         if (!usdop.equals(Address.zero()) && !rewards.isZero()) {
             this._mintUSDOP(usdop, sender, rewards);
-            Blockchain.emit(ClaimEvent, [sender, rewards]);
+            Blockchain.emit(new ClaimEvent(sender, rewards));
         }
 
         TransferHelper.transfer(opway, sender, staked);
 
         // FIX CF-12
-        Blockchain.emit(UnstakeEvent, [sender, staked]);
+        Blockchain.emit(new UnstakeEvent(sender, staked));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
@@ -267,8 +303,9 @@ export class YieldVault extends ReentrancyGuard {
         cd.writeAddress(to);
         cd.writeU256(amount);
         // FIX CF-06: check return value of Blockchain.call — revert on failure
-        const callResult = Blockchain.call(usdop, cd);
-        if (!callResult || callResult.revert) {
+        // stopExecutionOnFailure=false so we can check result.success ourselves
+        const callResult = Blockchain.call(usdop, cd, false);
+        if (!callResult.success) {
             throw new Revert('YieldVault: USDOP mint failed');
         }
     }

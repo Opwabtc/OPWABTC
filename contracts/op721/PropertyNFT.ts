@@ -5,11 +5,12 @@
  *  CF-03 / CRIT #5   mint() now verifies BTC payment via Blockchain.tx.outputs
  *  HIGH #6           Add onUpdate() lifecycle hook
  *  HIGH #12          NetEvent emission for Mint
- *  R-007 (sub-1)     POINTER_ constants now fixed u16 values (100/101) — not Blockchain.nextPointer
- *                    in field initializers (non-deterministic, advances on every call)
- *  R-007 (sub-2)     onlyOwner() replaced with this.onlyDeployer() from base class —
- *                    previous impl compared Address !== string (type mismatch, always failed)
+ *  R-007 (sub-1)     POINTER_ constants now fixed u16 values (100/101)
+ *  R-007 (sub-2)     onlyOwner() replaced with this.onlyDeployer() from base class
  *  R-007 (sub-3)     Removed custom POINTER_OWNER — deployer tracked by OP_NET base class
+ *  API-FIX           OP721 constructor now takes 0 args; name/symbol set in onDeployment()
+ *                    StoredBoolean/StoredU64 replace removed Blockchain.getStorage* methods
+ *                    mint() uses @method decorator + Calldata; calls _mint() not super.mint()
  */
 
 import {
@@ -19,13 +20,26 @@ import {
   BytesWriter,
   Revert,
   NetEvent,
-  ABIDataTypes,
+  Address,
+  StoredBoolean,
+  StoredU64,
+  OP721InitParameters,
+  EMPTY_POINTER,
 } from '@btc-vision/btc-runtime/runtime';
 import { u256 } from '@btc-vision/as-bignum/assembly';
 
 // ── NetEvents ──────────────────────────────────────────────────────────────────
 
-const MintEvent = new NetEvent('Mint', ['address', 'uint256', 'uint64']);
+@final
+class MintEvent extends NetEvent {
+    constructor(to: Address, tokenId: u256, paid: u64) {
+        const data = new BytesWriter(72); // 32 + 32 + 8
+        data.writeAddress(to);
+        data.writeU256(tokenId);
+        data.writeU64(paid);
+        super('Mint', data);
+    }
+}
 
 // ── Storage pointer constants (R-007 sub-1) ───────────────────────────────────
 // Fixed values — must NOT use Blockchain.nextPointer in field/class-level initializers.
@@ -38,34 +52,55 @@ const POINTER_MINTING_OPEN: u16 = 101;
 @final
 export class PropertyNFT extends OP721 {
 
-  // _nextTokenId is NOT declared here — it is managed internally by the OP721 base class.
-  // Do NOT add a _nextTokenId field; OP721 handles token ID auto-increment via its own storage.
-
   private readonly DEFAULT_MINT_PRICE_SATS: u64 = 10_000; // 10,000 sats default
 
+  // StoredU64 and StoredBoolean replace Blockchain.getStorage*/setStorage* (removed in btc-runtime)
+  private _mintPrice:   StoredU64     = new StoredU64(POINTER_MINT_PRICE, EMPTY_POINTER);
+  private _mintingOpen: StoredBoolean = new StoredBoolean(POINTER_MINTING_OPEN, false);
+
   constructor() {
-    super('Property NFT', 'PROP');
+    super();
+  }
+
+  public override onDeployment(_calldata: Calldata): void {
+    this.instantiate(
+      new OP721InitParameters(
+        'Property NFT',
+        'PROP',
+        '',                    // baseURI
+        u256.fromU64(10000),   // maxSupply
+      ),
+    );
   }
 
   // FIX HIGH #6 / CF-11
   public onUpdate(_calldata: Calldata): void {}
 
   // ── FIXED mint(): verify payment before minting ──────────────────────────────
-  public mint(to: string, tokenId: u256): boolean {
-    if (!Blockchain.getStorageBool(POINTER_MINTING_OPEN)) {
+  @method(
+    { name: 'to',      type: ABIDataTypes.ADDRESS },
+    { name: 'tokenId', type: ABIDataTypes.UINT256 },
+  )
+  @returns({ name: 'success', type: ABIDataTypes.BOOL })
+  public mintNFT(calldata: Calldata): BytesWriter {
+    if (!this._mintingOpen.value) {
       throw new Revert('PropertyNFT: minting not open');
     }
 
+    const to      = calldata.readAddress();
+    const tokenId = calldata.readU256();
+
     // FIX CF-03 (CRIT #5): verify BTC payment via Blockchain.tx.outputs
-    const mintPriceSats: u64 = Blockchain.getStorageU64(POINTER_MINT_PRICE)
-      || this.DEFAULT_MINT_PRICE_SATS;
+    const storedPrice: u64 = this._mintPrice.get(0);
+    const mintPriceSats: u64 = storedPrice > 0 ? storedPrice : this.DEFAULT_MINT_PRICE_SATS;
 
     let paid: u64 = 0;
-    const outputs = Blockchain.tx.outputs;
-    const contractAddr = Blockchain.contractAddress;
+    const outputs      = Blockchain.tx.outputs;
+    const contractAddr = Blockchain.contractAddress.p2tr(); // bech32 for string comparison
 
     for (let i = 0; i < outputs.length; i++) {
-      if (outputs[i].to.equals(contractAddr)) {
+      const outTo = outputs[i].to;
+      if (outTo !== null && outTo == contractAddr) {
         paid += outputs[i].value;
       }
     }
@@ -74,11 +109,13 @@ export class PropertyNFT extends OP721 {
       throw new Revert('PropertyNFT: insufficient BTC payment');
     }
 
-    const success = super.mint(to, tokenId);
-    if (success) {
-      Blockchain.emit(MintEvent, [to, tokenId, u256.fromU64(paid)]);
-    }
-    return success;
+    // Call protected _mint from OP721 base class
+    super._mint(to, tokenId);
+    Blockchain.emit(new MintEvent(to, tokenId, paid));
+
+    const result = new BytesWriter(1);
+    result.writeBoolean(true);
+    return result;
   }
 
   // ── Admin: set mint price (R-007 sub-2: onlyDeployer from base class) ─────────
@@ -87,7 +124,7 @@ export class PropertyNFT extends OP721 {
   public setMintPrice(calldata: Calldata): BytesWriter {
     this.onlyDeployer(Blockchain.tx.sender);
     const priceSats = calldata.readU64();
-    Blockchain.setStorageU64(POINTER_MINT_PRICE, priceSats);
+    this._mintPrice.set(0, priceSats);
     const result = new BytesWriter(1);
     result.writeBoolean(true);
     return result;
@@ -99,14 +136,9 @@ export class PropertyNFT extends OP721 {
   public setMintingOpen(calldata: Calldata): BytesWriter {
     this.onlyDeployer(Blockchain.tx.sender);
     const open = calldata.readBoolean();
-    Blockchain.setStorageBool(POINTER_MINTING_OPEN, open);
+    this._mintingOpen.value = open;
     const result = new BytesWriter(1);
     result.writeBoolean(true);
     return result;
-  }
-
-  // FIX CF-02e / HIGH #6
-  public override execute(_calldata: Calldata): BytesWriter {
-    return super.execute(_calldata);
   }
 }

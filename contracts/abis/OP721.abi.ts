@@ -100,25 +100,6 @@ export const OP721Abi = [
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'transfer',
-        inputs: [
-            { name: 'to', type: ABIDataTypes.ADDRESS },
-            { name: 'tokenId', type: ABIDataTypes.UINT256 },
-        ],
-        outputs: [],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
-        name: 'transferFrom',
-        inputs: [
-            { name: 'from', type: ABIDataTypes.ADDRESS },
-            { name: 'to', type: ABIDataTypes.ADDRESS },
-            { name: 'tokenId', type: ABIDataTypes.UINT256 },
-        ],
-        outputs: [],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
         name: 'safeTransfer',
         inputs: [
             { name: 'to', type: ABIDataTypes.ADDRESS },
@@ -175,8 +156,7 @@ export const OP721Abi = [
     {
         name: 'approveBySignature',
         inputs: [
-            { name: 'owner', type: ABIDataTypes.BYTES32 },
-            { name: 'ownerTweakedPublicKey', type: ABIDataTypes.BYTES32 },
+            { name: 'owner', type: ABIDataTypes.ADDRESS },
             { name: 'operator', type: ABIDataTypes.ADDRESS },
             { name: 'tokenId', type: ABIDataTypes.UINT256 },
             { name: 'deadline', type: ABIDataTypes.UINT64 },
@@ -188,8 +168,7 @@ export const OP721Abi = [
     {
         name: 'setApprovalForAllBySignature',
         inputs: [
-            { name: 'owner', type: ABIDataTypes.BYTES32 },
-            { name: 'ownerTweakedPublicKey', type: ABIDataTypes.BYTES32 },
+            { name: 'owner', type: ABIDataTypes.ADDRESS },
             { name: 'operator', type: ABIDataTypes.ADDRESS },
             { name: 'approved', type: ABIDataTypes.BOOL },
             { name: 'deadline', type: ABIDataTypes.UINT64 },

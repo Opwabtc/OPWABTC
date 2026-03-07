@@ -52,10 +52,48 @@ const POINTER_VAULT:      u16 = 504;  // vault address allowed to call depositYi
 const POINTER_YIELD_TOKEN: u16 = 505; // yield token address for transfers
 
 // NetEvents — FIX CF-12
-const YieldDepositedEvent = new NetEvent('YieldDeposited', ['address', 'uint256', 'uint256']);
-const YieldClaimedEvent   = new NetEvent('YieldClaimed',   ['address', 'address', 'uint256']);
-const ManagerSetEvent     = new NetEvent('ManagerSet',     ['address', 'address', 'bool']);
-const VaultSetEvent       = new NetEvent('VaultSet',       ['address']);
+
+@final
+class YieldDepositedEvent extends NetEvent {
+    constructor(property: Address, amount: u256, newYPT: u256) {
+        const data = new BytesWriter(96); // 32 + 32 + 32
+        data.writeAddress(property);
+        data.writeU256(amount);
+        data.writeU256(newYPT);
+        super('YieldDeposited', data);
+    }
+}
+
+@final
+class YieldClaimedEvent extends NetEvent {
+    constructor(user: Address, property: Address, amount: u256) {
+        const data = new BytesWriter(96); // 32 + 32 + 32
+        data.writeAddress(user);
+        data.writeAddress(property);
+        data.writeU256(amount);
+        super('YieldClaimed', data);
+    }
+}
+
+@final
+class ManagerSetEvent extends NetEvent {
+    constructor(manager: Address, property: Address, allowed: boolean) {
+        const data = new BytesWriter(65); // 32 + 32 + 1
+        data.writeAddress(manager);
+        data.writeAddress(property);
+        data.writeBoolean(allowed);
+        super('ManagerSet', data);
+    }
+}
+
+@final
+class VaultSetEvent extends NetEvent {
+    constructor(vault: Address) {
+        const data = new BytesWriter(32);
+        data.writeAddress(vault);
+        super('VaultSet', data);
+    }
+}
 
 @final
 export class YieldDistributor extends ReentrancyGuard {
@@ -96,7 +134,7 @@ export class YieldDistributor extends ReentrancyGuard {
         this.onlyDeployer(Blockchain.tx.sender);
         const vault = calldata.readAddress();
         this._vault.value = vault;
-        Blockchain.emit(VaultSetEvent, [vault]);
+        Blockchain.emit(new VaultSetEvent(vault));
         const result = new BytesWriter(1);
         result.writeBoolean(true);
         return result;
@@ -116,7 +154,7 @@ export class YieldDistributor extends ReentrancyGuard {
 
         const key = this._managerKey(manager, property);
         this._managers.set(key, allowed ? u256.One : u256.Zero);
-        Blockchain.emit(ManagerSetEvent, [manager, property, allowed]);
+        Blockchain.emit(new ManagerSetEvent(manager, property, allowed));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
@@ -164,7 +202,7 @@ export class YieldDistributor extends ReentrancyGuard {
         const totalDep = this._totalDeposited.get(propKey);
         this._totalDeposited.set(propKey, SafeMath.add(totalDep, amount));
 
-        Blockchain.emit(YieldDepositedEvent, [propertyContract, amount, newYPT]);
+        Blockchain.emit(new YieldDepositedEvent(propertyContract, amount, newYPT));
 
         const result = new BytesWriter(1);
         result.writeBoolean(true);
@@ -199,7 +237,7 @@ export class YieldDistributor extends ReentrancyGuard {
             const yieldTok = this._yieldToken.value;
             if (yieldTok.equals(Address.zero())) throw new Revert("YieldDistributor: yield token not configured");
             TransferHelper.transfer(yieldTok, caller, claimable);
-            Blockchain.emit(YieldClaimedEvent, [caller, propertyContract, claimable]);
+            Blockchain.emit(new YieldClaimedEvent(caller, propertyContract, claimable));
         }
 
         const result = new BytesWriter(32);
@@ -268,10 +306,9 @@ export class YieldDistributor extends ReentrancyGuard {
         const selector = encodeSelector('totalSupply()');
         const cd       = new BytesWriter(SELECTOR_BYTE_LENGTH);
         cd.writeSelector(selector);
-        const callResult = Blockchain.call(tokenContract, cd);
-        if (!callResult || callResult.revert) return u256.Zero;
-        // Read first 32 bytes as u256
-        return u256.fromUint8ArrayBE(callResult.response.slice(0, 32));
+        const callResult = Blockchain.call(tokenContract, cd, false);
+        if (!callResult.success) return u256.Zero;
+        return callResult.data.readU256();
     }
 
     // Cross-contract call: FractionalToken.balanceOf(user)
@@ -280,9 +317,9 @@ export class YieldDistributor extends ReentrancyGuard {
         const cd       = new BytesWriter(SELECTOR_BYTE_LENGTH + ADDRESS_BYTE_LENGTH);
         cd.writeSelector(selector);
         cd.writeAddress(user);
-        const callResult = Blockchain.call(tokenContract, cd);
-        if (!callResult || callResult.revert) return u256.Zero;
-        return u256.fromUint8ArrayBE(callResult.response.slice(0, 32));
+        const callResult = Blockchain.call(tokenContract, cd, false);
+        if (!callResult.success) return u256.Zero;
+        return callResult.data.readU256();
     }
 
     // Composite key: sha256(user ++ propertyContract)

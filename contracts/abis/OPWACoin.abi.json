@@ -1,6 +1,28 @@
 {
     "functions": [
         {
+            "name": "buy",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [
+                {
+                    "name": "to",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "amount",
+                    "type": "UINT256"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "BOOL"
+                }
+            ]
+        },
+        {
             "name": "setTreasury",
             "type": "Function",
             "payable": false,
@@ -19,13 +41,26 @@
             ]
         },
         {
+            "name": "getTreasury",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "treasury",
+                    "type": "ADDRESS"
+                }
+            ]
+        },
+        {
             "name": "setPrice",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
             "inputs": [
                 {
-                    "name": "newPrice",
+                    "name": "price",
                     "type": "UINT256"
                 }
             ],
@@ -50,31 +85,14 @@
             ]
         },
         {
-            "name": "getTreasury",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [],
-            "outputs": [
-                {
-                    "name": "treasury",
-                    "type": "ADDRESS"
-                }
-            ]
-        },
-        {
-            "name": "buy",
+            "name": "setMinter",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
             "inputs": [
                 {
-                    "name": "to",
+                    "name": "minter",
                     "type": "ADDRESS"
-                },
-                {
-                    "name": "amount",
-                    "type": "UINT256"
                 }
             ],
             "outputs": [

@@ -1,7 +1,38 @@
 {
     "functions": [
         {
-            "name": "mintNFT",
+            "name": "setMinter",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [
+                {
+                    "name": "minter",
+                    "type": "ADDRESS"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "BOOL"
+                }
+            ]
+        },
+        {
+            "name": "getMinter",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "minter",
+                    "type": "ADDRESS"
+                }
+            ]
+        },
+        {
+            "name": "mintUSDOP",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
@@ -11,44 +42,8 @@
                     "type": "ADDRESS"
                 },
                 {
-                    "name": "tokenId",
+                    "name": "amount",
                     "type": "UINT256"
-                }
-            ],
-            "outputs": [
-                {
-                    "name": "success",
-                    "type": "BOOL"
-                }
-            ]
-        },
-        {
-            "name": "setMintPrice",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [
-                {
-                    "name": "priceSats",
-                    "type": "UINT64"
-                }
-            ],
-            "outputs": [
-                {
-                    "name": "success",
-                    "type": "BOOL"
-                }
-            ]
-        },
-        {
-            "name": "setMintingOpen",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [
-                {
-                    "name": "open",
-                    "type": "BOOL"
                 }
             ],
             "outputs": [

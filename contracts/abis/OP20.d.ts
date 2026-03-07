@@ -205,16 +205,14 @@ export interface IOP20 extends IOP_NETContract {
     increaseAllowance(spender: Address, amount: bigint): Promise<IncreaseAllowance>;
     decreaseAllowance(spender: Address, amount: bigint): Promise<DecreaseAllowance>;
     increaseAllowanceBySignature(
-        owner: Uint8Array,
-        ownerTweakedPublicKey: Uint8Array,
+        owner: Address,
         spender: Address,
         amount: bigint,
         deadline: bigint,
         signature: Uint8Array,
     ): Promise<IncreaseAllowanceBySignature>;
     decreaseAllowanceBySignature(
-        owner: Uint8Array,
-        ownerTweakedPublicKey: Uint8Array,
+        owner: Address,
         spender: Address,
         amount: bigint,
         deadline: bigint,
