@@ -14,7 +14,7 @@
 export const CONTRACTS = {
   /** OPWACoin OP-20 — has built-in buy() function (redeployed 2026-03-07) */
   opwaCoin:    'opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2' as string,
-  propertyNft: 'opt1sqzg3xs364026l3pz6kqllar4l7q73jr5cy0hqkwc' as string,  // redeployed 2026-03-07
+  propertyNft: 'opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7' as string,  // redeployed 2026-03-07 (hrp=opt fix)
 } as const;
 
 /**

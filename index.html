@@ -2559,7 +2559,7 @@ sendTransaction({ extraOutputs })
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">PropertyNFT OP-721</span>
-            <a href="https://opscan.org/tokens/0xc789b2ae5320bcb08500385203c1e3bdefb717728b8dd9391d9037663a8d7a62?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqzg…y0hqkwc ↗</a>
+            <a href="https://opscan.org/tokens/0xb5ab49e8d2ca1bd915ef562e0c3bf9c62493ac7fe514716e25046e1ec65e24af?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr0…tpe5y7 ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">Treasury P2TR</span>
@@ -3140,7 +3140,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/0xb93b82f0b53f13667680765e1d836f84b6c7cd201356d1b639578e4727c9af68?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…axq8t2 ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0xc789b2ae5320bcb08500385203c1e3bdefb717728b8dd9391d9037663a8d7a62?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqzg…y0hqkwc ↗</a></span>
+    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0xb5ab49e8d2ca1bd915ef562e0c3bf9c62493ac7fe514716e25046e1ec65e24af?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…tpe5y7 ↗</a></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
@@ -3162,7 +3162,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/0xb93b82f0b53f13667680765e1d836f84b6c7cd201356d1b639578e4727c9af68?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…axq8t2 ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0xc789b2ae5320bcb08500385203c1e3bdefb717728b8dd9391d9037663a8d7a62?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqzg…y0hqkwc ↗</a></span>
+    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0xb5ab49e8d2ca1bd915ef562e0c3bf9c62493ac7fe514716e25046e1ec65e24af?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…tpe5y7 ↗</a></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
@@ -3853,7 +3853,7 @@ var dashOpwapBal = '0', dashSupply = '0';
    ────────────────────────────────────────── */
 var CONTRACTS = {
   opwaCoin:    'opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2',  // redeployed 2026-03-07 (patched)
-  propertyNft: 'opt1sqzg3xs364026l3pz6kqllar4l7q73jr5cy0hqkwc',  // redeployed 2026-03-07 (patched)
+  propertyNft: 'opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7',  // redeployed 2026-03-07 (patched)
   opwayYield:  'opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv'
 };
 /* ── Vault contract addresses — fill after deploy ── */
@@ -3888,7 +3888,7 @@ async function mintPropertyNFT() {
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
     // PropertyNFT P2TR — contract pays-to-self check uses this address
-    var NFT_P2TR = 'opt1pc7ym9tjnyz7tppgq8pfq8s0rhhhmw9mj3wxajwgajqmkvw5d0f3qglgdyx';
+    var NFT_P2TR = 'opt1pkk45n6xjegdaj9002chqcwleccjf8trlu528zm39q3hpa3j7yjhsppftyv';
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
       { name:'mintNFT', type:BitcoinAbiTypes.Function, payable:false,
@@ -5475,11 +5475,22 @@ async function vaultDepositOPWAY() {
 async function vaultClaimUSDOP() {
   if (!walletState.connected) { openWalletModal(); return; }
   if (!YIELD_VAULT_ADDR) { showToast('Vault contracts deploying soon — stay tuned!', 'info'); return; }
-  showToast('Claiming USDOP rewards…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
     const provider = await _getProvider();
     const senderAddr = await buildSenderAddress(Address);
+    // Pre-check: bail early if nothing to claim
+    const ACC_ABI = [{ name:'getAccruedRewards', type:BitcoinAbiTypes.Function, payable:false,
+      inputs:[{name:'user',type:ABIDataTypes.ADDRESS}], outputs:[{name:'rewards',type:ABIDataTypes.UINT256}] }];
+    const accruedRes = await getContract(YIELD_VAULT_ADDR, ACC_ABI, provider, _OPNET_NET, senderAddr)
+      .getAccruedRewards(senderAddr).catch(function(){ return null; });
+    const accrued = (accruedRes && !accruedRes.revert && accruedRes.properties && accruedRes.properties.rewards != null)
+      ? BigInt(String(accruedRes.properties.rewards)) : 0n;
+    if (accrued === 0n) {
+      showToast('No rewards to claim yet — rewards accrue block by block. Try again after a few blocks.', 'info');
+      return;
+    }
+    showToast('Claiming USDOP rewards…', 'info');
     const CLAIM_ABI = [
       { name:'claimRewards', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[], outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
