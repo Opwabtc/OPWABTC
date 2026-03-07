@@ -3828,7 +3828,7 @@ var CONTRACTS = {
 /* ── Vault contract addresses — fill after deploy ── */
 var USDOP_ADDR          = 'opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu';
 var YIELD_VAULT_ADDR    = 'opt1sqqna5kthnryd4e44q0urp4veg6y6xp5k65jgj9mv';
-var PROPERTY_VAULT_ADDR = 'opt1sqpqkdmpr6z84l4lw8nhxuj66q02t5ay2vqu4zc6z';
+var PROPERTY_VAULT_ADDR = 'opt1sqz5styqz7lcq92028p6pyjwlpnvzmjpmnufny8rs';
 var TREASURY_P2TR    = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
 var OPWA_SATS_PER_TOKEN = 1000n;
 var PROPERTY_MINT_SATS  = 10000n;  // maximumAllowedSatToSpend: 50_000n no hook
@@ -4025,7 +4025,7 @@ async function dashFetch() {
         dashSupply = supSim.properties.totalSupply.toString();
       }
     } catch(balErr) {
-      // silent — deixa dashOpwapBal/dashSupply com valor anterior
+      console.error('[dashFetch] balance/supply error:', balErr);
     }
 
     dashRenderData();
@@ -4042,7 +4042,7 @@ function dashRenderData() {
   var ob = Number(BigInt(dashOpwapBal || '0') / 100000n) / 1e3 * 0.00001;
   var ou = ob * bp;
   var sn = Number(BigInt(dashSupply || '0'));
-  var pct = Math.min(100, (sn / 100) * 100);
+  var pct = Math.min(100, (sn / 10000) * 100);
   function s(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
   s('dash-btc-val', '\u20BF ' + bb.toFixed(5));
   s('dash-btc-usd', bp ? '\u2248 $' + bu.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' USD' : '\u2248 $ \u2014');
@@ -4369,8 +4369,12 @@ async function loadTxHistory() {
               var tx = block.transactions[j];
               if (tx.OPNetType !== 'Interaction' && tx.OPNetType !== 'Deployment') continue;
               var outputs = tx.outputs || [];
+              var inputs  = tx.inputs  || [];
               var _tb1Addr = _opt1ToTb1p(addr);
-              var isUser = outputs.some(function(o){var a=o.scriptPubKey&&o.scriptPubKey.address;return a===addr||a===_tb1Addr;});
+              // Match sender (from field or inputs) OR receiver (outputs)
+              var isUser = (tx.from && (tx.from===addr||tx.from===_tb1Addr))
+                || outputs.some(function(o){var a=o.scriptPubKey&&o.scriptPubKey.address;return a===addr||a===_tb1Addr;})
+                || inputs.some(function(i){var a=i.scriptPubKey&&i.scriptPubKey.address||i.address;return a===addr||a===_tb1Addr;});
               if (!isUser) continue;
               var cAddr = (tx.contractAddress||'').toLowerCase();
               var label = tx.OPNetType==='Deployment' ? 'Deploy' : 'Contract Call';
