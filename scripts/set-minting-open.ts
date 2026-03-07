@@ -15,7 +15,7 @@ import { BitcoinAbiTypes, BitcoinInterfaceAbi, getContract, JSONRpcProvider } fr
 
 const TESTNET_RPC       = 'https://testnet.opnet.org';
 const NETWORK           = networks.opnetTestnet;
-const PROPERTY_NFT_ADDR = 'opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7';
+const PROPERTY_NFT_ADDR = 'opt1sqpvldyanfs6edn5vxxd8ven58tp8qcrxdyzd2pvl';
 
 const mnemonic = process.env.OPNET_MNEMONIC;
 if (!mnemonic) { console.error('ERROR: set OPNET_MNEMONIC'); process.exit(1); }
