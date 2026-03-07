@@ -78,12 +78,12 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-selec
 
 /* ── TOKENS LIGHT — 70% branco · 20% roxo · 10% laranja ── */
 [data-theme="light"]{
-  /* 70% — base off-white com profundidade */
-  --bg-base:#f7f6f4;
-  --bg-surface:#f2f0ee;
-  --bg-card:#eceae7;
-  --bg-elevated:#e4e1dd;
-  --bg-elevated2:#dbd8d3;
+  /* 70% — base branca limpa */
+  --bg-base:#ffffff;
+  --bg-surface:#fafafa;
+  --bg-card:#f6f5f3;
+  --bg-elevated:#eeecea;
+  --bg-elevated2:#e6e3df;
 
   /* 20% — roxo como cor principal de UI, links, pills, destaques */
   --accent:#7c3aed;
@@ -134,7 +134,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-selec
 }
 
 /* ── BASE ── */
-html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px;font-stretch:normal;-webkit-text-size-adjust:100%}
+html{font-family:'DM Sans',sans-serif;scroll-behavior:smooth;font-size:16px}
 *{cursor:none!important}
 body{background:var(--bg-base);color:var(--text-1);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s;overflow-x:hidden;display:flex;flex-direction:column}
 a{text-decoration:none;color:inherit}
@@ -148,9 +148,8 @@ input,select,textarea{font-family:inherit}
   position:fixed;pointer-events:none;z-index:99999;
   width:20px;height:10px;border-radius:999px;overflow:hidden;
   transform:translate(-50%,-50%) rotate(45deg);
-  transform-origin:center center;
   box-shadow:0 2px 14px rgba(249,115,22,.55);
-  will-change:transform,left,top;
+  will-change:left,top;
   left:-200px;top:-200px;
 }
 #cur::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 50%,#f97316 50%)}
@@ -374,7 +373,12 @@ button:focus-visible,a:focus-visible{
     linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
   background-size:58px 58px;
 }
-[data-theme="light"] .hero{background:linear-gradient(160deg,#f0edf8 0%,#f7f6f4 60%,#faf6f0 100%);border-bottom:1px solid rgba(124,58,237,.12)}
+[data-theme="light"] .hero{
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);
+  background-size:58px 58px;
+}
 .hero::after{
   content:'';position:absolute;bottom:0;left:0;right:0;height:240px;
   background:linear-gradient(to top,var(--bg-base),transparent);
@@ -1619,7 +1623,7 @@ footer{
 .pcard-track-wrap::before,.pcard-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
 .pcard-track-wrap::before{left:0;background:linear-gradient(to right,var(--bg-base),transparent)}
 .pcard-track-wrap::after{right:0;background:linear-gradient(to left,var(--bg-base),transparent)}
-.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 35s linear infinite;will-change:transform;padding:8px 0;width:max-content}
+.pcard-track{display:flex;gap:16px;white-space:nowrap;animation:pcardScroll 40s linear infinite;will-change:transform;padding:8px 0}
 .pcard-track:hover{animation-play-state:paused}
 @keyframes pcardScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;min-width:130px;width:130px;padding:18px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;color:inherit}
@@ -1675,18 +1679,6 @@ body{overflow-x:hidden}
 [data-theme="light"] #page-dashboard footer{
   border-top-color:rgba(124,58,237,.13)!important;
   background:rgba(196,181,253,.45)!important;
-}
-/* V2-M-01: WalletConnect modal — ensure correct stacking and centering */
-.wallet-connect-modal,
-[class*='walletconnect'] [class*='modal'],
-wcm-modal, w3m-modal {
-  position:fixed!important;
-  top:0!important; left:0!important; right:0!important; bottom:0!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  z-index:99999!important;
-  background:rgba(0,0,0,.7)!important;
 }
 </style>
 </head>
@@ -1855,9 +1847,9 @@ wcm-modal, w3m-modal {
       <div class="hs-sub">Early access</div>
     </div>
     <div class="hero-stat">
-      <div class="hs-label">Market Opportunity</div>
-      <div class="hs-value sm" title="$326T+ global real estate — less than 1% tokenized">$326T+</div>
-      <div class="hs-sub">Global RE Market</div>
+      <div class="hs-label">Real Estate Market</div>
+      <div class="hs-value sm" title="$326T+ in global real estate assets — all tokenizable on OPWA">$326T+</div>
+      <div class="hs-sub">Total</div>
     </div>
   </div>
 </section>
@@ -2468,7 +2460,7 @@ wcm-modal, w3m-modal {
       </div>
       <div class="step-tag">Invest</div>
       <h3 class="step-title">Send BTC</h3>
-      <p class="step-text">0.00001 BTC per token. Pay directly from your wallet — no bridges, no wrapping, settles on Bitcoin.</p>
+      <p class="step-text">1000 sats per token. Transaction is simulated then signed and sent to the OP_NET L1 contract.</p>
       <a href="https://dev.opnet.org/" target="_blank" class="step-link">
         Build on OP_NET
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -2482,7 +2474,7 @@ wcm-modal, w3m-modal {
       </div>
       <div class="step-tag">Earn</div>
       <h3 class="step-title">Receive Yield</h3>
-      <p class="step-text">Hold OPWAY tokens and earn USDOP stablecoin yield from real estate rental income, distributed automatically on-chain.</p>
+      <p class="step-text">Hold OPWAY tokens and receive stablecoin yield distributed directly on-chain.</p>
       <a href="https://faucet.opnet.org/" target="_blank" class="step-link">
         Testnet Faucet
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -2523,7 +2515,7 @@ wcm-modal, w3m-modal {
         </div>
         <div class="tech-card-tag">Smart Contracts · OP-20</div>
         <div class="tech-card-title">OPWACoin Token</div>
-        <div class="tech-card-desc">OPWAY is the protocol token on Bitcoin L1. Buy tokens by sending BTC directly — the contract mints and delivers OPWAY to your wallet atomically, in the same transaction. No wrapping, no bridges.</div>
+        <div class="tech-card-desc">The OPWAY token is an OP-20 standard contract on Bitcoin L1 via OP_NET. Buy tokens by sending BTC directly to the treasury — the contract mints OPWAY tokens atomically in the same transaction.</div>
         <div class="tech-code-block">
 <span class="tech-code-comment">// buy() flow — atomic on Bitcoin</span>
 setTransactionDetails(treasury, sats)
@@ -2547,7 +2539,7 @@ sendTransaction({ extraOutputs })
         <div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">OPWACoin OP-20</span>
-            <a href="https://opscan.org/tokens/0xb93b82f0b53f13667680765e1d836f84b6c7cd201356d1b639578e4727c9af68?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqpz…axq8t2 ↗</a>
+            <a href="https://opscan.org/tokens/opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqpz…vsgaxq8t2 ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">OPWAYield v3</span>
@@ -2559,7 +2551,7 @@ sendTransaction({ extraOutputs })
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">PropertyNFT OP-721</span>
-            <a href="https://opscan.org/tokens/0xb5ab49e8d2ca1bd915ef562e0c3bf9c62493ac7fe514716e25046e1ec65e24af?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr0…tpe5y7 ↗</a>
+            <a href="https://opscan.org/tokens/opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr0…pe5y7 ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">Treasury P2TR</span>
@@ -2598,7 +2590,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         </div>
         <div class="tech-card-tag" style="color:#22c55e">Yield · Stablecoin</div>
         <div class="tech-card-title">Earn in Stablecoin, On-Chain</div>
-        <div class="tech-card-desc">Rental income from tokenized properties is distributed to OPWAY stakers as USDOP stablecoin — no volatility, no middlemen. Every payment is recorded permanently on Bitcoin and verifiable by anyone.</div>
+        <div class="tech-card-desc">Real estate yields distributed in stablecoin with no volatility and no middlemen. Every payment is recorded permanently on Bitcoin and verifiable by anyone.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
           <div style="padding:10px 12px;border-radius:9px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18)">
             <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#22c55e;margin-bottom:3px">Immutable</div>
@@ -2743,25 +2735,6 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
 <div id="page-vault" class="vault-page">
   <div style="flex:1 0 auto;padding-bottom:60px">
   <div class="vault-wrap">
-
-    <!-- ── FLOATING PENDING BLOCK WIDGET (lateral direita) ── -->
-    <div id="pending-block-wrap" style="display:none;position:fixed;left:24px;bottom:80px;z-index:900;width:190px">
-      <div class="pending-block-box state-pending" id="pending-block-box">
-        <div class="pending-block-header">
-          <span class="pending-block-label">⛏ Next Block</span>
-          <span class="pending-block-badge pending" id="pending-block-badge">PENDING</span>
-        </div>
-        <div class="pending-block-num" id="pending-block-num">—</div>
-        <div class="pending-block-meta">
-          <span id="pending-block-txs">— txs</span>
-          <span id="pending-block-eta">~10 min</span>
-          <span id="pending-block-fee">— sat/vB</span>
-        </div>
-        <div class="pending-block-bar-wrap">
-          <div class="pending-block-bar-fill" id="pending-block-bar" style="width:0%"></div>
-        </div>
-      </div>
-    </div>
 
     <!-- Wallet not connected — lock screen -->
     <div id="vault-lock-screen" style="display:none;align-items:center;justify-content:center;min-height:60vh">
@@ -2962,7 +2935,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
         <div class="dash-stat">
           <div style="font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">OPWAY Tokens</div>
           <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--accent);margin-bottom:4px" id="dash-opwap-val">0</div>
-          <div style="font-size:12px;color:var(--text-2)">&#x25B2; +12.4% this month</div>
+          <div style="font-size:12px;color:var(--text-2)" id="dash-opwap-change">Live price</div>
         </div>
         <div class="dash-stat">
           <div style="font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Portfolio USD</div>
@@ -3138,9 +3111,9 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">BTC&nbsp;</span><span class="lb-acc" id="lb-btc">$&#x2014;</span></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/0xb93b82f0b53f13667680765e1d836f84b6c7cd201356d1b639578e4727c9af68?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…axq8t2 ↗</a></span>
+    <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…vsgaxq8t2 ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0xb5ab49e8d2ca1bd915ef562e0c3bf9c62493ac7fe514716e25046e1ec65e24af?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…tpe5y7 ↗</a></span>
+    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…pe5y7 ↗</a></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
@@ -3160,9 +3133,9 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">BTC&nbsp;</span><span class="lb-acc" id="lb-btc2">$&#x2014;</span></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/0xb93b82f0b53f13667680765e1d836f84b6c7cd201356d1b639578e4727c9af68?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…axq8t2 ↗</a></span>
+    <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…vsgaxq8t2 ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/0xb5ab49e8d2ca1bd915ef562e0c3bf9c62493ac7fe514716e25046e1ec65e24af?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…tpe5y7 ↗</a></span>
+    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…pe5y7 ↗</a></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqry…6cdtv ↗</a></span>
     <span class="lb-sep">&bull;</span>
@@ -3563,7 +3536,7 @@ async function confirmInvest(asset) {
         inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'amount',type:ABIDataTypes.UINT256}],
         outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
-    const provider    = new JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _net });
+    const provider    = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
     const senderAddr  = await buildSenderAddress(Address);
     const contract    = getContract(CONTRACTS.opwayYield, OPWAY_ABI, provider, _net, senderAddr);
     // hasTo: server passes to string as-is to contract's out.to
@@ -3714,8 +3687,6 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
     if (!saved) return;
     var s = JSON.parse(saved);
     if (!s || !s.addr || !s.type) return;
-    // FIX 5.71: expire wallet session after 24h
-    if (s.ts && (Date.now() - s.ts) > 86400000) { localStorage.removeItem('opwa_wallet'); return; }
     var sats = 0, publicKey = s.publicKey || '';
     if (s.type === 'OP_Wallet' && window.opnet) {
       try { var accounts = await window.opnet.requestAccounts(); if (!accounts || !accounts.includes(s.addr)) { localStorage.removeItem('opwa_wallet'); return; } } catch(_) { return; }
@@ -3770,7 +3741,7 @@ function handleConnectClick() {
 function walletConnected(addr, sats, type, publicKey) {
   if (!addr || !addr.startsWith('opt1p')) { showToast('Wrong network — switch to OPNet Testnet', 'error'); return; }
   walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || ''};
-  try { localStorage.setItem('opwa_wallet', JSON.stringify({addr:addr, type:type, publicKey: publicKey || '', ts: Date.now()})); } catch(_) {} // FIX 5.71: store timestamp for 24h TTL
+  try { localStorage.setItem('opwa_wallet', JSON.stringify({addr:addr, type:type, publicKey: publicKey || ''})); } catch(_) {}
   const short = addr.slice(0, 8) + '...' + addr.slice(-6);
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = short; btn.classList.add('connected'); }
@@ -3821,8 +3792,6 @@ window.connectWallet = async function(type) {
       try { publicKey = await window.opnet.getPublicKey(); } catch(_) {}
     } else if (type === 'Unisat') {
       if (!window.unisat) { showToast('Unisat not found.', 'error'); return; }
-      // FIX 5.80: warn that UniSat lacks native OP_NET support
-      showToast('⚠️ UniSat não suporta OP_NET nativamente — recomendamos OP_Wallet para melhor experiência.', 'info');
       accounts = await window.unisat.requestAccounts();
       try { var b2 = await window.unisat.getBalance(); sats = b2.total || 0; } catch(_) {}
       try { publicKey = await window.unisat.getPublicKey(); } catch(_) {}
@@ -3852,14 +3821,14 @@ var dashOpwapBal = '0', dashSupply = '0';
    CONTRACTS (mirrors src/contracts/config.ts)
    ────────────────────────────────────────── */
 var CONTRACTS = {
-  opwaCoin:    'opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2',  // redeployed 2026-03-07 (patched)
-  propertyNft: 'opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7',  // redeployed 2026-03-07 (patched)
+  opwaCoin:    'opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2',
+  propertyNft: 'opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7',
   opwayYield:  'opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv'
 };
 /* ── Vault contract addresses — fill after deploy ── */
 var USDOP_ADDR          = 'opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu';
-var YIELD_VAULT_ADDR    = 'opt1sqqna5kthnryd4e44q0urp4veg6y6xp5k65jgj9mv';  // YieldVaultV3 (unchanged)
-var PROPERTY_VAULT_ADDR = 'opt1sqz5styqz7lcq92028p6pyjwlpnvzmjpmnufny8rs';  // redeployed 2026-03-07 (patched)
+var YIELD_VAULT_ADDR    = 'opt1sqqna5kthnryd4e44q0urp4veg6y6xp5k65jgj9mv';
+var PROPERTY_VAULT_ADDR = 'opt1sqpqkdmpr6z84l4lw8nhxuj66q02t5ay2vqu4zc6z';
 var TREASURY_P2TR    = 'opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t';
 var OPWA_SATS_PER_TOKEN = 1000n;
 var PROPERTY_MINT_SATS  = 10000n;  // maximumAllowedSatToSpend: 50_000n no hook
@@ -3884,37 +3853,29 @@ async function mintPropertyNFT() {
   status.style.color = 'var(--text-2)';
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes, TransactionOutputFlags } = mod;
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
-    // PropertyNFT P2TR — contract pays-to-self check uses this address
-    var NFT_P2TR = 'opt1pkk45n6xjegdaj9002chqcwleccjf8trlu528zm39q3hpa3j7yjhsppftyv';
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
-      { name:'mintNFT', type:BitcoinAbiTypes.Function, payable:false,
-        inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'tokenId',type:ABIDataTypes.UINT256}],
-        outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
+      { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
+      { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
     ];
-    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _net });
+    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, _net, senderAddr);
-    var mintSats = 10000n; // DEFAULT_MINT_PRICE_SATS (10,000 sats = 0.0001 BTC)
-    // Derive next tokenId from current totalSupply
-    var supRes = await contract.totalSupply().catch(function(){ return null; });
-    var nextTokenId = (supRes && supRes.properties && supRes.properties.totalSupply != null)
-      ? BigInt(supRes.properties.totalSupply) + 1n : 1n;
-    // Include BTC payment to contract P2TR — verified via Blockchain.tx.outputs in mintNFT()
-    contract.setTransactionDetails({ inputs:[], outputs:[{ to:NFT_P2TR, value:mintSats, index:1, flags:TransactionOutputFlags.hasTo }] });
-    var simulation = await contract.mintNFT(senderAddr, nextTokenId);
+    var priceRes = await contract.mintPrice();
+    var mintSats = priceRes && priceRes.properties ? BigInt(priceRes.properties.price) : 10000n;
+    var simulation = await contract.mint();
     if (simulation.revert) throw new Error(simulation.revert);
     var receipt = await simulation.sendTransaction({
       signer:null, mldsaSigner:null, refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:mintSats + 50000n,
-      extraOutputs:[{ address:NFT_P2TR, value:Number(mintSats) }],
     });
     if (!receipt) throw new Error('Transaction not broadcast — please try again.');
     var txid = receipt.transactionId;
-    status.innerHTML = '✅ Minted! TX: <a href="https://opscan.org/transactions/'+txid+'?network=op_testnet" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:underline">'+txid.slice(0,14)+'…↗</a>';
+    var _safeTxid = sanitizeText ? sanitizeText(txid) : txid.replace(/[<>"'&]/g,'');
+    status.innerHTML = '✅ Minted! TX: <a href="https://opscan.org/transactions/'+_safeTxid+'?network=op_testnet" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:underline">'+_safeTxid.slice(0,14)+'…↗</a>';
     status.style.color = 'var(--success)';
     _txCache = {};
     showToast('🏠 Real Asset minted!', 'success');
@@ -3952,8 +3913,8 @@ async function loadVault() {
     var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
-    var VAULT_ABI = [...OP_721_ABI];
-    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _net });
+    var VAULT_ABI = [...OP_721_ABI, {name:'mint',type:BitcoinAbiTypes.Function,payable:false,inputs:[],outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}]}];
+    var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, VAULT_ABI, provider, _net, senderAddr);
 
@@ -4050,7 +4011,7 @@ async function dashFetch() {
     // ── OPWAY balance + PropertyNFT totalSupply via getContract ──
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, OP_721_ABI, Address } = await _opnetImport();
-      const provider = await _getProvider();
+      const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
       const senderAddr = await buildSenderAddress(Address);
       const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
       const balSim = await opwayContract.balanceOf(senderAddr);
@@ -4078,7 +4039,7 @@ function dashRenderData() {
   var bb = walletState.sats / 1e8;
   var bu = bb * bp;
   var on = fmtAmt(dashOpwapBal, 8);
-  var ob = Number(BigInt(dashOpwapBal || '0')) / 1e8 * 0.00001;
+  var ob = Number(BigInt(dashOpwapBal || '0') / 100000n) / 1e3 * 0.00001;
   var ou = ob * bp;
   var sn = Number(BigInt(dashSupply || '0'));
   var pct = Math.min(100, (sn / 100) * 100);
@@ -4119,13 +4080,11 @@ function navScrollTo(id) {
     var el = document.getElementById(id);
     if (el) el.scrollIntoView({behavior:'smooth'});
   } else {
-    window._pendingScrollId = id;
     navigate('/');
     setTimeout(function() {
-      var el = document.getElementById(window._pendingScrollId || id);
-      if (el) { el.scrollIntoView({behavior:'smooth'}); }
-      window._pendingScrollId = null;
-    }, 320);
+      var el = document.getElementById(id);
+      if (el) el.scrollIntoView({behavior:'smooth'});
+    }, 120);
   }
 }
 
@@ -4170,7 +4129,7 @@ function renderRoute() {
     if (main) main.style.display = 'block';
     setNavActive('nav-home');
   }
-  if (!window._pendingScrollId) window.scrollTo(0, 0);
+  window.scrollTo(0, 0);
 }
 
 window.addEventListener('popstate', renderRoute);
@@ -4209,7 +4168,8 @@ async function loadChartData() {
     var btcBal = walletState.sats / 1e8;
     // OPWAY raw token count. Each token = 0.00001 BTC = 1,000 sats
     // dashOpwapBal is raw with 8 decimals — divide by 1e8 to get human token count
-    var opwapTokens = Number(BigInt(dashOpwapBal||'0')) / 1e8;
+    var opwapBig = BigInt(dashOpwapBal||'0');
+    var opwapTokens = Number(opwapBig / 100000000n) + Number(opwapBig % 100000000n) / 1e8;
 
     for (var i = days-1; i >= 0; i--) {
       var pd = new Date(); pd.setDate(pd.getDate()-i);
@@ -4439,10 +4399,6 @@ async function loadTxHistory() {
     renderTxList(userTxs);
   }
 }
-function sanitizeText(s) {
-  if (typeof s !== 'string') return String(s);
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
 function renderTxList(txs){
   _txAllData = txs;
   var listEl=document.getElementById('tx-list'), countEl=document.getElementById('tx-count-label');
@@ -4494,11 +4450,11 @@ function renderTxList(txs){
       +'<div style="margin-right:10px"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25)"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>'
       // Hash + method
       +'<div style="min-width:0">'
-        +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11.5px;color:#f97316;text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">'+sanitizeText(sh)+'</a>'
-        +'<span style="display:inline-block;margin-top:3px;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:'+mBg+';color:'+mColor+'">'+sanitizeText(tx.action)+'</span>'
+        +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11.5px;color:#f97316;text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">'+sh+'</a>'
+        +'<span style="display:inline-block;margin-top:3px;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:'+mBg+';color:'+mColor+'">'+tx.action+'</span>'
       +'</div>'
       // Value
-      +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.5)">'+sanitizeText(tx.value)+'</span></div>'
+      +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.5)">'+tx.value+'</span></div>'
       // Block
       +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.45)">#'+blockDec+'</span></div>'
       // Time
@@ -4662,11 +4618,8 @@ function updateAllAssetPrices() {
   });
 }
 
-/* ── FIX 5.73: API throttle — prevent rapid repeated calls (min 10s between manual triggers) ── */
-var _lastFetchPrices = 0, _lastFetchBlock = 0, _lastFetchGas = 0;
 /* ── FETCH BTC PRICE (CoinGecko → CoinPaprika fallback) ── */
 async function fetchPrices() {
-  var now = Date.now(); if (now - _lastFetchPrices < 10000) return; _lastFetchPrices = now;
   try {
     let price = 0;
     const priceSrcs = [
@@ -4694,7 +4647,6 @@ async function fetchPrices() {
 }
 
 async function fetchOpNetBlock() {
-  var now = Date.now(); if (now - _lastFetchBlock < 10000) return; _lastFetchBlock = now;
   try {
     var h = 0;
     // 1. mempool.opnet.org (OP_NET own mempool)
@@ -4725,7 +4677,6 @@ async function fetchOpNetBlock() {
 
 /* ── FETCH GAS (mempool.opnet.org) ── */
 async function fetchGas() {
-  var now = Date.now(); if (now - _lastFetchGas < 10000) return; _lastFetchGas = now;
   try {
     var fee = 0;
     for (var _gs of ['https://mempool.opnet.org/api/v1/fees/recommended','https://mempool.space/api/v1/fees/recommended']) {
@@ -4761,23 +4712,18 @@ setInterval(fetchGas,   30000);
 (function() {
   var track = document.querySelector('.pcard-track');
   if (!track) return;
-  // Pegar todos os cards únicos (primeiro conjunto)
-  var allCards = Array.from(track.querySelectorAll('.pcard'));
-  // Determinar se já estão duplicados — usar apenas metade como fonte
-  var half = Math.floor(allCards.length / 2);
-  var originals = (allCards.length >= 2 && half > 0) ? allCards.slice(0, half) : allCards;
-  if (originals.length === 0) return;
-  // Rebuild: 2 cópias idênticas para loop seamless
+  // Remove duplicate set if already present, rebuild clean
+  var cards = Array.from(track.querySelectorAll('.pcard'));
+  var half = Math.floor(cards.length / 2);
+  // If already duplicated (even count), use only first half as source
+  var originals = cards.length > 0 ? cards.slice(0, half || cards.length) : cards;
+  // Clear and rebuild with exactly 2 copies for seamless loop
   track.innerHTML = '';
   originals.forEach(function(c) { track.appendChild(c.cloneNode(true)); });
   originals.forEach(function(c) { track.appendChild(c.cloneNode(true)); });
-  // Duração proporcional ao número de cards
-  var dur = Math.max(25, originals.length * 4.5);
-  track.style.animationDuration = dur + 's';
-  // Forçar reflow para reiniciar animação
-  track.style.animation = 'none';
-  track.offsetHeight;
-  track.style.animation = '';
+  // Adjust animation duration based on card count
+  var duration = Math.max(20, originals.length * 5);
+  track.style.animationDuration = duration + 's';
 })();
 vaultLoadVaultedAssets();
 
@@ -4834,7 +4780,6 @@ function vaultInit() {
   vaultRenderPosition();
   vaultSyncChainState(); // async fire-and-forget: syncs localStorage from getStake+getDepositBlock
   pvaultRenderListed();
-  pvaultSyncOnChain(); // FIX 5.53/5.58/5.88: fire-and-forget on-chain validation
   vaultLoadVaultedAssets();
 }
 
@@ -4896,7 +4841,7 @@ async function vaultUpdateAccrued() {
   if (walletState.connected && YIELD_VAULT_ADDR) {
     try {
       var imp = await _opnetImport();
-      var provider   = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _OPNET_NET });
+      var provider   = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
       var senderAddr = await buildSenderAddress(imp.Address);
       var ACC_ABI = [{
         name: 'getAccruedRewards',
@@ -4934,7 +4879,7 @@ async function vaultSyncChainState() {
   if (!walletState.connected || !YIELD_VAULT_ADDR) return;
   try {
     var imp = await _opnetImport();
-    var provider = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _OPNET_NET });
+    var provider = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     var senderAddr = await buildSenderAddress(imp.Address);
     var SYNC_ABI = [
       { name:'getStake',        type:imp.BitcoinAbiTypes.Function, payable:false,
@@ -4998,15 +4943,6 @@ const _OPNET_NET = {
   bip32: { public: 70617039, private: 70615956 },
   pubKeyHash: 111, scriptHash: 196, wif: 239
 };
-// FIX 5.23/5.24: provider singleton — async to import JSONRpcProvider from esm.sh once
-var _providerInstance = null;
-async function _getProvider() {
-  if (!_providerInstance) {
-    var _m = await import('https://esm.sh/opnet?bundle');
-    _providerInstance = new _m.JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _OPNET_NET });
-  }
-  return _providerInstance;
-}
 
 async function _opnetImport() {
   const mod = await import('https://esm.sh/opnet?bundle');
@@ -5044,22 +4980,12 @@ function _startBlockWidget(approvalBlock) {
   if (depositBtn) { depositBtn.disabled = true; depositBtn.style.opacity = '0.45'; }
   _pollMempoolBlock(approvalBlock);
   if (_mempoolInterval) clearInterval(_mempoolInterval);
-  _mempoolInterval = setInterval(function() { _pollMempoolBlock(approvalBlock); }, 15000);
+  // OP_NET blocks ~30s — poll a cada 8s para resposta rápida
+  _mempoolInterval = setInterval(function() { _pollMempoolBlock(approvalBlock); }, 8000);
 }
 
 async function _pollMempoolBlock(approvalBlock) {
-  var tip = await _fetchMempoolTip();
-  if (!tip) return;
-
-  var height = tip.height;
-
-  // Update real block timestamp when a new block arrives
-  if (_mempoolLastBlock === null || height > _mempoolLastBlock) {
-    _mempoolLastBlock = height;
-    _mempoolLastBlockTimestamp = tip.timestamp; // real unix seconds from network
-  }
-
-  // Also check OP_NET block to see if approval confirmed
+  // Widget sincronizado com OP_NET — não depende de mempool BTC
   var opBlock = 0;
   try {
     var rb = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
@@ -5069,59 +4995,55 @@ async function _pollMempoolBlock(approvalBlock) {
     });
     var jb = await rb.json();
     opBlock = parseInt(jb.result, 16) || 0;
+    // Atualiza também o display do bloco no vault/hero se visível
+    if (opBlock > 0) {
+      var vb = document.getElementById('vault-current-block');
+      if (vb) vb.textContent = opBlock.toLocaleString();
+    }
   } catch(_) {}
 
-  _updateBlockWidget(height, opBlock, approvalBlock);
+  _updateBlockWidget(0, opBlock, approvalBlock);
 }
 
 function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
-  var numEl    = document.getElementById('pending-block-num');
-  var txsEl    = document.getElementById('pending-block-txs');
-  var etaEl    = document.getElementById('pending-block-eta');
-  var feeEl    = document.getElementById('pending-block-fee');
-  var barEl    = document.getElementById('pending-block-bar');
-  var boxEl    = document.getElementById('pending-block-box');
-  var badgeEl  = document.getElementById('pending-block-badge');
+  var numEl      = document.getElementById('pending-block-num');
+  var etaEl      = document.getElementById('pending-block-eta');
+  var approvalEl = document.getElementById('pending-block-approval');
+  var barEl      = document.getElementById('pending-block-bar');
+  var boxEl      = document.getElementById('pending-block-box');
+  var badgeEl    = document.getElementById('pending-block-badge');
   var depositBtn = document.getElementById('vault-deposit-btn');
 
-  var nextBlock = mempoolHeight + 1;
-  if (numEl) numEl.textContent = nextBlock.toLocaleString('en').replace(',','.');
+  // Mostrar bloco OPNet atual (não BTC)
+  if (numEl) numEl.textContent = opBlock > 0 ? '#' + opBlock.toLocaleString() : '…';
+  if (approvalEl) approvalEl.textContent = 'approval: #' + approvalBlock;
 
-  // ── CORRECT TIMER LOGIC ──
-  // elapsed = now - real timestamp of last confirmed block (in seconds)
-  // remaining = max(0, 600 - elapsed)  →  "last block was X min ago, so next in 10-X min"
-  var nowSec = Math.floor(Date.now() / 1000);
-  var elapsed = _mempoolLastBlockTimestamp ? Math.max(0, nowSec - _mempoolLastBlockTimestamp) : 0;
-  var remainingSec = Math.max(0, 600 - elapsed);
-  var remainingMin = Math.ceil(remainingSec / 60);
-  var progress = Math.min(elapsed / 600, 1);
-  var pct = Math.round(progress * 100);
+  // Progresso: quantos blocos OPNet passaram desde o approval
+  // OPNet confirma em 1 bloco após o approval — se opBlock > approvalBlock, confirmado
+  var confirmed = opBlock > 0 && opBlock > approvalBlock;
+  var blocksGone = opBlock > 0 ? Math.max(0, opBlock - approvalBlock) : 0;
+  // Barra de progresso: 0% ao enviar, 100% ao confirmar (máximo em 2 blocos de margem)
+  var pct = Math.min(100, Math.round(blocksGone * 50));
 
   if (barEl) barEl.style.width = pct + '%';
 
-  if (remainingSec === 0) {
-    if (etaEl) etaEl.textContent = 'Please wait a moment…';
-  } else {
-    if (etaEl) etaEl.textContent = '~' + remainingMin + ' min remaining';
+  if (!confirmed) {
+    if (etaEl) etaEl.textContent = opBlock > 0 ? 'aguardando próximo bloco…' : 'conectando…';
+    if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔒 Aguardando bloco OP_NET… (' + pct + '%)'; }
   }
-
-  // Confirmed if OP_NET moved at least 1 block past approval
-  var confirmed = opBlock > approvalBlock;
 
   if (confirmed) {
     if (boxEl)    { boxEl.classList.remove('state-pending'); boxEl.classList.add('state-confirmed'); }
     if (badgeEl)  { badgeEl.className = 'pending-block-badge confirmed'; badgeEl.textContent = 'CONFIRMED'; }
     if (barEl)    { barEl.style.width = '100%'; barEl.classList.add('done'); }
-    if (etaEl)    etaEl.textContent = 'Block confirmed ✓';
+    if (etaEl)    etaEl.textContent = 'Bloco confirmado ✓';
     clearInterval(_mempoolInterval);
     _mempoolInterval = null;
     // Only start allowance poll once — guard against repeated calls after reload
     if (!_allowancePollInterval) {
-      if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔍 Verifying allowance on-chain…'; }
+      if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔍 Verificando allowance on-chain…'; }
       _startAllowancePoll();
     }
-  } else {
-    if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔒 Waiting for block… (' + pct + '%)'; }
   }
 }
 
@@ -5132,7 +5054,7 @@ async function _resetAllowanceAndStop() {
   try {
     showToast('Resetting allowance on-chain… (sign in wallet)', 'info');
     var imp = await _opnetImport();
-    var provider = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org/api/v1/json-rpc', network: _OPNET_NET });
+    var provider = new imp.JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     var senderAddr = await buildSenderAddress(imp.Address);
     var vaultAddrObj = await _contractAddr(imp.Address, YIELD_VAULT_ADDR);
     if (!vaultAddrObj) return;
@@ -5185,7 +5107,7 @@ async function _startAllowancePoll() {
     var { amountBig } = _pendingApproval;
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-      const provider = await _getProvider();
+      const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
       const senderAddr = await buildSenderAddress(Address);
       const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
       if (!vaultAddrObj) return;
@@ -5196,7 +5118,30 @@ async function _startAllowancePoll() {
         if (onChainAllow >= amountBig) {
           clearInterval(_allowancePollInterval);
           _allowancePollInterval = null;
-          // Allowance confirmed on-chain — arm Stake button regardless of session
+          // Cross-session restore guard: if deposit was NOT initiated this session,
+          // verify user has no active stake before arming the button.
+          if (!_sessionDepositInitiated) {
+            try {
+              var GSTK_ABI = [{ name: 'getStake', type: BitcoinAbiTypes.Function, constant: true, payable: false,
+                inputs: [{ name: 'user', type: ABIDataTypes.ADDRESS }],
+                outputs: [{ name: 'amount', type: ABIDataTypes.UINT256 }] }];
+              var stakeVerifyC = getContract(YIELD_VAULT_ADDR, GSTK_ABI, provider, _OPNET_NET, senderAddr);
+              var stakeVRes = await stakeVerifyC.getStake(senderAddr);
+              if (!stakeVRes.revert && stakeVRes.properties && stakeVRes.properties.amount != null) {
+                if (BigInt(String(stakeVRes.properties.amount)) > 0n) {
+                  // Active stake exists — just refresh position display, no button
+                  _stopBlockWidget();
+                  vaultRenderPosition();
+                  return;
+                }
+              }
+            } catch (_sv) {
+              // Cannot verify — safer to reset than to arm stake button blindly
+              _stopBlockWidget();
+              showToast('Could not verify on-chain stake state — please redeposit to continue.', 'info');
+              return;
+            }
+          }
           var btn = document.getElementById('vault-deposit-btn');
           if (btn) { btn.disabled = false; btn.style.opacity = ''; btn.textContent = '⚡ Stake OPWAY — Ready!'; btn.onclick = vaultExecuteStake; }
         }
@@ -5218,6 +5163,12 @@ async function _startAllowancePoll() {
       }
       var inputAmt = parseFloat((document.getElementById('vault-deposit-amount') || {}).value) || 0;
       if (Math.abs(inputAmt - _pendingApproval.amt) > 0.5) {
+        _stopBlockWidget();
+        return;
+      }
+      // Session guard: same check as the poll's onChainAllow branch — never arm stake
+      // in a restored session without a confirmed deposit in the current browser session.
+      if (!_sessionDepositInitiated) {
         _stopBlockWidget();
         return;
       }
@@ -5245,7 +5196,7 @@ async function vaultExecuteStake() {
   if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.textContent = 'Verifying allowance on-chain…'; }
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = await _getProvider();
+    const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     const senderAddr = await buildSenderAddress(Address);
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
     if (!vaultAddrObj) throw new Error('Could not resolve vault address — please retry');
@@ -5312,7 +5263,7 @@ async function vaultDepositOPWAY() {
   var _stakePhase = false;
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = await _getProvider();
+    const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
@@ -5375,7 +5326,7 @@ async function vaultDepositOPWAY() {
         if (!resetRx) throw new Error('Allowance reset TX not broadcast — please try again.');
         // Must wait for block confirmation before increaseAllowance — same rule as approve → stake.
         // Return here; on the next Deposit click curAllow will be 0 and we proceed normally.
-        showToast('✅ Allowance reset TX submitted. Please click Deposit again after ~1 block (~5 min on OPNet) for confirmation.', 'info', true);
+        showToast('✅ Allowance reset TX submitted. Please click Deposit again after ~1 block (~10 min) for confirmation.', 'info', true);
         return;
       } else {
         showToast('Approving OPWAY spend… (sign in wallet)', 'info');
@@ -5403,6 +5354,12 @@ async function vaultDepositOPWAY() {
       return;
     }
 
+    if (!_sessionDepositInitiated) {
+      showToast('Found allowance from a previous session — resetting for security. Please deposit again.', 'info');
+      await _resetAllowanceAndStop();
+      return;
+    }
+
     /* ── Step 3: Stake (allowance already enough) ── */
     _stakePhase = true;
     showToast('Staking OPWAY… (sign in wallet)', 'info');
@@ -5410,7 +5367,7 @@ async function vaultDepositOPWAY() {
     var stakeSim = await cS.vault.stake(amountBig);
     if (stakeSim.revert) {
       if (stakeSim.revert.toLowerCase().includes('allowance')) {
-        showToast('Allowance not confirmed yet — wait for the next block (~5 min on OPNet) then click Stake again.', 'info');
+        showToast('Allowance not confirmed yet — wait for the next block (~10 min) then click Stake again.', 'info');
       } else {
         throw new Error(stakeSim.revert);
       }
@@ -5440,22 +5397,11 @@ async function vaultDepositOPWAY() {
 async function vaultClaimUSDOP() {
   if (!walletState.connected) { openWalletModal(); return; }
   if (!YIELD_VAULT_ADDR) { showToast('Vault contracts deploying soon — stay tuned!', 'info'); return; }
+  showToast('Claiming USDOP rewards…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = await _getProvider();
+    const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     const senderAddr = await buildSenderAddress(Address);
-    // Pre-check: bail early if nothing to claim
-    const ACC_ABI = [{ name:'getAccruedRewards', type:BitcoinAbiTypes.Function, payable:false,
-      inputs:[{name:'user',type:ABIDataTypes.ADDRESS}], outputs:[{name:'rewards',type:ABIDataTypes.UINT256}] }];
-    const accruedRes = await getContract(YIELD_VAULT_ADDR, ACC_ABI, provider, _OPNET_NET, senderAddr)
-      .getAccruedRewards(senderAddr).catch(function(){ return null; });
-    const accrued = (accruedRes && !accruedRes.revert && accruedRes.properties && accruedRes.properties.rewards != null)
-      ? BigInt(String(accruedRes.properties.rewards)) : 0n;
-    if (accrued === 0n) {
-      showToast('No rewards to claim yet — rewards accrue block by block. Try again after a few blocks.', 'info');
-      return;
-    }
-    showToast('Claiming USDOP rewards…', 'info');
     const CLAIM_ABI = [
       { name:'claimRewards', type:BitcoinAbiTypes.Function, payable:false,
         inputs:[], outputs:[{name:'success',type:ABIDataTypes.BOOL}] }
@@ -5485,7 +5431,7 @@ async function vaultWithdrawOPWAY() {
   showToast('Requesting unstake…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = await _getProvider();
+    const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     const senderAddr = await buildSenderAddress(Address);
     const UNSTAKE_ABI = [
       { name:'unstake', type:BitcoinAbiTypes.Function, payable:false,
@@ -5567,7 +5513,7 @@ async function pvaultListProperty() {
   showToast('Preparing NFT approval…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = await _getProvider();
+    const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     const senderAddr = await buildSenderAddress(Address);
     const tokenIdBig = BigInt(tid);
 
@@ -5619,58 +5565,6 @@ function pvaultGetProperties() {
   try { return JSON.parse(localStorage.getItem('vaultedProperties') || '[]'); } catch(e) { return []; }
 }
 
-
-// FIX 5.53/5.58/5.88: validate localStorage cache against on-chain isListed/getMaxOpway
-async function pvaultSyncOnChain() {
-  if (!walletState.connected || !PROPERTY_VAULT_ADDR) return;
-  try {
-    var stored = [];
-    try { stored = JSON.parse(localStorage.getItem('vaultedProperties') || '[]'); } catch(e) { stored = []; }
-    var mine = stored.filter(function(p){ return p.owner === walletState.addr; });
-    if (mine.length === 0) return;
-    var imp = await _opnetImport();
-    var provider = await _getProvider();
-    var senderAddr = await buildSenderAddress(imp.Address);
-    var VIEW_ABI = [
-      { name:'isListed',   type:imp.BitcoinAbiTypes.Function, payable:false,
-        inputs:[{name:'tokenId',type:imp.ABIDataTypes.UINT256}], outputs:[{name:'listed',type:imp.ABIDataTypes.BOOL}] },
-      { name:'getMaxOpway',type:imp.BitcoinAbiTypes.Function, payable:false,
-        inputs:[{name:'tokenId',type:imp.ABIDataTypes.UINT256}], outputs:[{name:'maxOpway',type:imp.ABIDataTypes.UINT256}] }
-    ];
-    var pvault = imp.getContract(PROPERTY_VAULT_ADDR, VIEW_ABI, provider, _OPNET_NET, senderAddr);
-    var changed = false;
-    for (var i = 0; i < mine.length; i++) {
-      var tokenId = mine[i].tokenId;
-      try {
-        var listedRes = await pvault.isListed(BigInt(tokenId));
-        var isListedOnChain = listedRes && listedRes.properties && listedRes.properties.listed;
-        if (!isListedOnChain) {
-          // Remove stale entry from full stored array
-          stored = stored.filter(function(p){ return !(p.tokenId === tokenId && p.owner === walletState.addr); });
-          changed = true;
-        } else {
-          // Update maxOpway from on-chain value
-          try {
-            var maxRes = await pvault.getMaxOpway(BigInt(tokenId));
-            if (maxRes && maxRes.properties && maxRes.properties.maxOpway != null) {
-              var onChainMax = Number(maxRes.properties.maxOpway);
-              var idx2 = stored.findIndex(function(p){ return p.tokenId === tokenId && p.owner === walletState.addr; });
-              if (idx2 >= 0 && stored[idx2].maxOpway !== onChainMax) {
-                stored[idx2].maxOpway = onChainMax;
-                changed = true;
-              }
-            }
-          } catch(_) {}
-        }
-      } catch(_) {}
-    }
-    if (changed) {
-      try { localStorage.setItem('vaultedProperties', JSON.stringify(stored)); } catch(e) {}
-      pvaultRenderListed();
-      vaultLoadVaultedAssets();
-    }
-  } catch(e) { /* silent — don't disrupt UI */ }
-}
 function pvaultRenderListed() {
   var props = pvaultGetProperties().filter(function(p){ return p.owner === walletState.addr; });
   var wrap = document.getElementById('pvault-listed-wrap');
@@ -5699,7 +5593,7 @@ async function pvaultRemove(tokenId) {
   showToast('Delisting property #' + tokenId + '…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = await _getProvider();
+    const provider = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _OPNET_NET });
     const senderAddr = await buildSenderAddress(Address);
     const DELIST_ABI = [
       { name:'delistProperty', type:BitcoinAbiTypes.Function, payable:false,
@@ -5881,5 +5775,23 @@ function vaultMarkDashboardAssets() {
 })();
 
 </script>
+<!-- ── FLOATING PENDING BLOCK WIDGET — fora de qualquer page, sempre visível quando display:block ── -->
+<div id="pending-block-wrap" style="display:none;position:fixed;left:24px;bottom:80px;z-index:9900;width:210px">
+  <div class="pending-block-box state-pending" id="pending-block-box">
+    <div class="pending-block-header">
+      <span class="pending-block-label">⛏ OP_NET Block</span>
+      <span class="pending-block-badge pending" id="pending-block-badge">PENDING</span>
+    </div>
+    <div class="pending-block-num" id="pending-block-num">—</div>
+    <div class="pending-block-meta">
+      <span id="pending-block-approval">approval: #—</span>
+      <span id="pending-block-eta">waiting…</span>
+    </div>
+    <div class="pending-block-bar-wrap">
+      <div class="pending-block-bar-fill" id="pending-block-bar" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
