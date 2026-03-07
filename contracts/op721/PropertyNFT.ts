@@ -96,7 +96,7 @@ export class PropertyNFT extends OP721 {
 
     let paid: u64 = 0;
     const outputs      = Blockchain.tx.outputs;
-    const contractAddr = Blockchain.contractAddress.p2tr(); // bech32 for string comparison
+    const contractAddr = this.address.p2tr(); // bech32 for string comparison
 
     for (let i = 0; i < outputs.length; i++) {
       const outTo = outputs[i].to;
