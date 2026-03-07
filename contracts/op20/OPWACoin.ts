@@ -18,7 +18,6 @@ import {
   Address,
   Calldata,
   BytesWriter,
-  Selector,
   Revert,
   StoredAddress,
   StoredU256,
@@ -68,24 +67,8 @@ export class OPWACoin extends OP20 {
     );
   }
 
-  public override execute(method: Selector, calldata: Calldata): BytesWriter {
-    switch (method) {
-      case Selector.for('buy(address,uint256)'):
-        return this.buy(calldata);
-      case Selector.for('setTreasury(address)'):
-        return this.setTreasury(calldata);
-      case Selector.for('setPrice(uint256)'):
-        return this.setPrice(calldata);
-      case Selector.for('getPrice()'):
-        return this.getPrice();
-      case Selector.for('getTreasury()'):
-        return this.getTreasury();
-      case Selector.for('setMinter(address)'):
-        return this.setMinter(calldata);
-      default:
-        return super.execute(method, calldata);
-    }
-  }
+  // V2-M-05: removed manual execute() override — @method decorators handle routing automatically.
+  // Having both caused duplicate routing conflict.
 
   // ── buy(to, amount) ───────────────────────────────────────────────────────
   // FIX CF-10: was in ABI but not implemented
@@ -115,7 +98,7 @@ export class OPWACoin extends OP20 {
       }
       // Expected cost = amount * price / 10^8 (token has 8 decimals, price in sats per whole token)
       const expectedSats = SafeMath.div(SafeMath.mul(amount, price), u256.fromString('100000000'));
-      if (totalPaid < expectedSats) {
+      if (u256.lt(totalPaid, expectedSats)) { // V2-C-05: was JS `<` — u256.lt for correct comparison
         throw new Revert('OPWACoin: insufficient BTC payment');
       }
     }

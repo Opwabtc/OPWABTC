@@ -137,7 +137,7 @@ export class PropertyVault extends OP_NET {
         if (ownerU256.isZero()) throw new Revert('PropertyVault: token not listed');
 
         const senderU256 = u256.fromUint8ArrayBE(sender);
-        if (ownerU256 != senderU256) throw new Revert('PropertyVault: not the original owner');
+        if (!u256.eq(ownerU256, senderU256)) throw new Revert('PropertyVault: not the original owner'); // V2-C-04: was JS `!=` — u256.eq for correct comparison
 
         // FIX CF-08 (HIGH CEI): clear state BEFORE external call (FIX 5.87: decrement counter)
         this._owners.set(tokenId, u256.Zero);
@@ -179,7 +179,7 @@ export class PropertyVault extends OP_NET {
         if (ownerU256.isZero()) throw new Revert('PropertyVault: token not listed');
 
         const listPrice = this._maxOpways.get(tokenId);
-        if (offerOpway < listPrice) throw new Revert('PropertyVault: offer below list price');
+        if (u256.lt(offerOpway, listPrice)) throw new Revert('PropertyVault: offer below list price'); // V2-C-04: was JS `<` — u256.lt for correct comparison
 
         // Reconstruct seller address from stored u256 (big-endian 32 bytes)
         const sellerBytes = ownerU256.toUint8Array(true); // big-endian

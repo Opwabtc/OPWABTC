@@ -356,7 +356,7 @@ function LiveTicker() {
     { label: 'Network','val': 'Bitcoin Testnet4' } as unknown as {label:string;val:string},
     { label: 'Wallet', val: 'opt1sqq047…g6xnp' },
     { label: 'Min inv',val: '0.00001 BTC' },
-    { label: 'Supply', val: '18B max' },
+    { label: 'Supply', val: '1B max' }, // V2-H-08: OPWACoin MAX_SUPPLY = 1B tokens
     { label: 'Slippage',val:'0.5%' },
     { label: 'Protocol',val:'OP_NET' },
   ]

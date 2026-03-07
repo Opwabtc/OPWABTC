@@ -1676,6 +1676,18 @@ body{overflow-x:hidden}
   border-top-color:rgba(124,58,237,.13)!important;
   background:rgba(196,181,253,.45)!important;
 }
+/* V2-M-01: WalletConnect modal — ensure correct stacking and centering */
+.wallet-connect-modal,
+[class*='walletconnect'] [class*='modal'],
+wcm-modal, w3m-modal {
+  position:fixed!important;
+  top:0!important; left:0!important; right:0!important; bottom:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  z-index:99999!important;
+  background:rgba(0,0,0,.7)!important;
+}
 </style>
 </head>
 <body data-theme="dark">

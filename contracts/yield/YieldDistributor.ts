@@ -23,6 +23,7 @@ import {
     ReentrancyGuard,
     Blockchain,
     Address,
+    TransferHelper, // V2-C-02: was missing — used in claimYield but not imported
     Calldata,
     BytesWriter,
     Revert,
@@ -42,13 +43,13 @@ import {
 // yieldPerToken is stored scaled by SCALE to preserve precision for small amounts
 const SCALE: u256 = u256.fromString('1000000000000000000');
 
-// Storage pointers
-const POINTER_YIELD_PT:   u16 = 200;  // propertyContract → yieldPerTokenStored (scaled)
-const POINTER_USER_PAID:  u16 = 201;  // hash(user, property) → userYieldPerTokenPaid (scaled)
-const POINTER_TOTAL_DEP:  u16 = 202;  // propertyContract → totalYieldDeposited
-const POINTER_MANAGERS:   u16 = 203;  // hash(manager, property) → 1 if authorized
-const POINTER_VAULT:      u16 = 204;  // vault address allowed to call depositYield
-const POINTER_YIELD_TOKEN: u16 = 205; // yield token address for transfers
+// Storage pointers — R-005: start at 500+ to avoid collision with OP_NET/OP20 base class slots (0-199)
+const POINTER_YIELD_PT:   u16 = 500;  // propertyContract → yieldPerTokenStored (scaled)
+const POINTER_USER_PAID:  u16 = 501;  // hash(user, property) → userYieldPerTokenPaid (scaled)
+const POINTER_TOTAL_DEP:  u16 = 502;  // propertyContract → totalYieldDeposited
+const POINTER_MANAGERS:   u16 = 503;  // hash(manager, property) → 1 if authorized
+const POINTER_VAULT:      u16 = 504;  // vault address allowed to call depositYield
+const POINTER_YIELD_TOKEN: u16 = 505; // yield token address for transfers
 
 // NetEvents — FIX CF-12
 const YieldDepositedEvent = new NetEvent('YieldDeposited', ['address', 'uint256', 'uint256']);
@@ -284,14 +285,17 @@ export class YieldDistributor extends ReentrancyGuard {
         return u256.fromUint8ArrayBE(callResult.response.slice(0, 32));
     }
 
-    // Composite key: hash(user ++ propertyContract)
+    // Composite key: sha256(user ++ propertyContract)
+    // R-006: was u256.fromUint8ArrayBE(combined) — 64-byte input truncated to first 32, causing key collisions.
+    // Fix: hash with Blockchain.sha256 first, then convert the 32-byte digest.
     private _userKey(user: Address, propertyContract: Address): u256 {
         const userBytes = user as Uint8Array;
         const propBytes = propertyContract as Uint8Array;
         const combined  = new Uint8Array(userBytes.length + propBytes.length);
         combined.set(userBytes, 0);
         combined.set(propBytes, userBytes.length);
-        return u256.fromUint8ArrayBE(combined);
+        const hash = Blockchain.sha256(combined);
+        return u256.fromUint8ArrayBE(hash);
     }
 
     // Composite key: hash(manager ++ propertyContract)

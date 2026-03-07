@@ -5,6 +5,11 @@
  *  CF-03 / CRIT #5   mint() now verifies BTC payment via Blockchain.tx.outputs
  *  HIGH #6           Add onUpdate() lifecycle hook
  *  HIGH #12          NetEvent emission for Mint
+ *  R-007 (sub-1)     POINTER_ constants now fixed u16 values (100/101) — not Blockchain.nextPointer
+ *                    in field initializers (non-deterministic, advances on every call)
+ *  R-007 (sub-2)     onlyOwner() replaced with this.onlyDeployer() from base class —
+ *                    previous impl compared Address !== string (type mismatch, always failed)
+ *  R-007 (sub-3)     Removed custom POINTER_OWNER — deployer tracked by OP_NET base class
  */
 
 import {
@@ -12,14 +17,21 @@ import {
   Blockchain,
   Calldata,
   BytesWriter,
+  Revert,
   NetEvent,
+  ABIDataTypes,
 } from '@btc-vision/btc-runtime/runtime';
 import { u256 } from '@btc-vision/as-bignum/assembly';
 
 // ── NetEvents ──────────────────────────────────────────────────────────────────
 
-// R-014: use standard NetEvent pattern instead of @event class
 const MintEvent = new NetEvent('Mint', ['address', 'uint256', 'uint64']);
+
+// ── Storage pointer constants (R-007 sub-1) ───────────────────────────────────
+// Fixed values — must NOT use Blockchain.nextPointer in field/class-level initializers.
+// Values 100/101: safe offset above OP721 base class slots (assumed 0–99).
+const POINTER_MINT_PRICE:   u16 = 100;
+const POINTER_MINTING_OPEN: u16 = 101;
 
 // ── Contract ───────────────────────────────────────────────────────────────────
 
@@ -28,28 +40,24 @@ export class PropertyNFT extends OP721 {
 
   // _nextTokenId is NOT declared here — it is managed internally by the OP721 base class.
   // Do NOT add a _nextTokenId field; OP721 handles token ID auto-increment via its own storage.
-  private readonly POINTER_MINT_PRICE: u16  = Blockchain.nextPointer;
-  private readonly POINTER_MINTING_OPEN: u16 = Blockchain.nextPointer;
-  private readonly POINTER_OWNER: u16        = Blockchain.nextPointer;
 
-  // Mint price in satoshis (set at deploy time or via setMintPrice)
   private readonly DEFAULT_MINT_PRICE_SATS: u64 = 10_000; // 10,000 sats default
 
   constructor() {
     super('Property NFT', 'PROP');
   }
 
+  // FIX HIGH #6 / CF-11
+  public onUpdate(_calldata: Calldata): void {}
+
   // ── FIXED mint(): verify payment before minting ──────────────────────────────
   public mint(to: string, tokenId: u256): boolean {
-    // Gate: minting must be open
-    if (!Blockchain.getStorageBool(this.POINTER_MINTING_OPEN)) {
-      throw new Error('Minting not open');
+    if (!Blockchain.getStorageBool(POINTER_MINTING_OPEN)) {
+      throw new Revert('PropertyNFT: minting not open');
     }
 
     // FIX CF-03 (CRIT #5): verify BTC payment via Blockchain.tx.outputs
-    // The caller must have included a UTXO output to this contract address
-    // equal to or exceeding the mint price.
-    const mintPriceSats: u64 = Blockchain.getStorageU64(this.POINTER_MINT_PRICE)
+    const mintPriceSats: u64 = Blockchain.getStorageU64(POINTER_MINT_PRICE)
       || this.DEFAULT_MINT_PRICE_SATS;
 
     let paid: u64 = 0;
@@ -57,56 +65,48 @@ export class PropertyNFT extends OP721 {
     const contractAddr = Blockchain.contractAddress;
 
     for (let i = 0; i < outputs.length; i++) {
-      const out = outputs[i];
-      // Sum all outputs to the contract address
-      if (out.to === contractAddr) {
-        paid += out.value; // value is in satoshis
+      if (outputs[i].to.equals(contractAddr)) {
+        paid += outputs[i].value;
       }
     }
 
     if (paid < mintPriceSats) {
-      throw new Error(
-        'Insufficient BTC payment: required ' + mintPriceSats.toString() +
-        ' sats, got ' + paid.toString() + ' sats'
-      );
+      throw new Revert('PropertyNFT: insufficient BTC payment');
     }
 
-    // Payment verified — proceed with mint
     const success = super.mint(to, tokenId);
-
-    // FIX HIGH #12: emit event
     if (success) {
       Blockchain.emit(MintEvent, [to, tokenId, u256.fromU64(paid)]);
     }
-
     return success;
   }
 
-  // ── Admin: set mint price ────────────────────────────────────────────────────
-  public setMintPrice(priceSats: u64): void {
-    this.onlyOwner();
-    Blockchain.setStorageU64(this.POINTER_MINT_PRICE, priceSats);
+  // ── Admin: set mint price (R-007 sub-2: onlyDeployer from base class) ─────────
+  @method({ name: 'priceSats', type: ABIDataTypes.UINT64 })
+  @returns({ name: 'success', type: ABIDataTypes.BOOL })
+  public setMintPrice(calldata: Calldata): BytesWriter {
+    this.onlyDeployer(Blockchain.tx.sender);
+    const priceSats = calldata.readU64();
+    Blockchain.setStorageU64(POINTER_MINT_PRICE, priceSats);
+    const result = new BytesWriter(1);
+    result.writeBoolean(true);
+    return result;
   }
 
   // ── Admin: open/close minting ────────────────────────────────────────────────
-  // FIX HIGH #43: was setMintingOpen() always setting true — now properly stores the param
-  public setMintingOpen(open: bool): void {
-    this.onlyOwner();
-    Blockchain.setStorageBool(this.POINTER_MINTING_OPEN, open);
-  }
-
-  private onlyOwner(): void {
-    // FIX: use fixed POINTER_OWNER constant — Blockchain.nextPointer advances on every call
-    if (Blockchain.tx.sender !== Blockchain.getStorageString(this.POINTER_OWNER)) {
-      throw new Error('Only owner');
-    }
+  @method({ name: 'open', type: ABIDataTypes.BOOL })
+  @returns({ name: 'success', type: ABIDataTypes.BOOL })
+  public setMintingOpen(calldata: Calldata): BytesWriter {
+    this.onlyDeployer(Blockchain.tx.sender);
+    const open = calldata.readBoolean();
+    Blockchain.setStorageBool(POINTER_MINTING_OPEN, open);
+    const result = new BytesWriter(1);
+    result.writeBoolean(true);
+    return result;
   }
 
   // FIX CF-02e / HIGH #6
   public override execute(_calldata: Calldata): BytesWriter {
     return super.execute(_calldata);
   }
-
-  // FIX HIGH #6: required for upgrade mechanism
-  public onUpdate(_calldata: Calldata): void {}
 }
