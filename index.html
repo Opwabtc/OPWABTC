@@ -1178,6 +1178,13 @@ footer{
 .wallet-install a{color:var(--accent);text-decoration:none}
 .wallet-install a:hover{text-decoration:underline}
 
+/* ── M-01: WalletConnect modal centering fix ── */
+.wallet-connect-modal,[class*='walletconnect'],[class*='w3m-'],[class*='wcm-']{
+  position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  z-index:99999!important;background:rgba(0,0,0,.7)!important;
+}
+
 .net-row{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)}
 .net-btn{flex:1;padding:10px;border-radius:9px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:4px;align-items:center;transition:all .15s}
 .net-btn.active{border-color:rgba(249,115,22,.32);background:rgba(249,115,22,.08)}
@@ -2551,7 +2558,7 @@ sendTransaction({ extraOutputs })
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">PropertyNFT OP-721</span>
-            <a href="https://opscan.org/tokens/opt1sqrtuzn5snnqxxjyr6ajqp38gqwdccme3vcwvu3lz?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqrt…wu3lz ↗</a>
+            <a href="https://opscan.org/tokens/opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7?network=op_testnet" target="_blank" class="tech-contract-addr" title="View on OPScan">opt1sqr0…pe5y7 ↗</a>
           </div>
           <div class="tech-contract-row">
             <span class="tech-contract-label">Treasury P2TR</span>
@@ -3113,7 +3120,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…vsgaxq8t2 ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/opt1sqrtuzn5snnqxxjyr6ajqp38gqwdccme3vcwvu3lz?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqrt…wu3lz ↗</a></span>
+    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…pe5y7 ↗</a></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/opt1sqpp23havwmyn6fykg2x8pr4vkqzw848suq828lwz?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpp…828lwz ↗</a></span>
     <span class="lb-sep">&bull;</span>
@@ -3135,7 +3142,7 @@ networks.testnet       <span class="tech-code-comment">// ✗ Testnet4 only</spa
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAY Coin&nbsp;</span><a href="https://opscan.org/tokens/opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpz…vsgaxq8t2 ↗</a></span>
     <span class="lb-sep">&bull;</span>
-    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/opt1sqrtuzn5snnqxxjyr6ajqp38gqwdccme3vcwvu3lz?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqrt…wu3lz ↗</a></span>
+    <span class="lb-item"><span class="lb-label">PropertyNFT&nbsp;</span><a href="https://opscan.org/tokens/opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqr0…pe5y7 ↗</a></span>
     <span class="lb-sep">&bull;</span>
     <span class="lb-item"><span class="lb-label">OPWAYield&nbsp;</span><a href="https://opscan.org/tokens/opt1sqpp23havwmyn6fykg2x8pr4vkqzw848suq828lwz?network=op_testnet" target="_blank" class="lb-addr" style="color:var(--accent);text-decoration:none">opt1sqpp…828lwz ↗</a></span>
     <span class="lb-sep">&bull;</span>
@@ -3545,7 +3552,7 @@ async function confirmInvest(asset) {
     const simulation = await contract.mint(senderAddr, tokenAmt);
     if (simulation.revert) throw new Error(simulation.revert);
     const receipt = await simulation.sendTransaction({
-      signer:null, mldsaSigner:null, refundTo:walletState.addr,
+      refundTo:walletState.addr,
       network:_net, maximumAllowedSatToSpend:satsAmt + 100_000n,
       extraOutputs:[{ address:TREASURY_P2TR, value:Number(satsAmt) }],
     });
@@ -3822,7 +3829,7 @@ var dashOpwapBal = '0', dashSupply = '0';
    ────────────────────────────────────────── */
 var CONTRACTS = {
   opwaCoin:    'opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2',
-  propertyNft: 'opt1sqrtuzn5snnqxxjyr6ajqp38gqwdccme3vcwvu3lz',
+  propertyNft: 'opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7',
   opwayYield:  'opt1sqpp23havwmyn6fykg2x8pr4vkqzw848suq828lwz'
 };
 /* ── Vault contract addresses — fill after deploy ── */
@@ -3853,24 +3860,40 @@ async function mintPropertyNFT() {
   status.style.color = 'var(--text-2)';
   try {
     var mod = await import('https://esm.sh/opnet?bundle');
-    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes } = mod;
+    var { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_721_ABI, ABIDataTypes, TransactionOutputFlags } = mod;
     var { Address } = await import('https://esm.sh/@btc-vision/transaction?bundle');
     var _net = { messagePrefix: '\x18Bitcoin Signed Message:\n', bech32: 'opt', bech32Opnet: 'opt', bip32: { public: 70617039, private: 70615956 }, pubKeyHash: 111, scriptHash: 196, wif: 239 };
+    // NFT contract P2TR — payment destination verified in contract via Blockchain.tx.outputs
+    var NFT_P2TR  = 'opt1pkk45n6xjegdaj9002chqcwleccjf8trlu528zm39q3hpa3j7yjhsppftyv';
+    var MINT_SATS = 10000n;
     var PROPERTY_NFT_ABI = [
       ...OP_721_ABI,
-      { name:'mint', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'tokenId',type:ABIDataTypes.UINT256}] },
-      { name:'mintPrice', type:BitcoinAbiTypes.Function, payable:false, inputs:[], outputs:[{name:'price',type:ABIDataTypes.UINT256}] },
+      { name:'mintNFT', type:BitcoinAbiTypes.Function, payable:true,
+        inputs:[{name:'to',type:ABIDataTypes.ADDRESS},{name:'tokenId',type:ABIDataTypes.UINT256}],
+        outputs:[{name:'success',type:ABIDataTypes.BOOL}] },
     ];
     var provider   = new JSONRpcProvider({ url: 'https://testnet.opnet.org', network: _net });
     var senderAddr = await buildSenderAddress(Address);
     var contract   = getContract(CONTRACTS.propertyNft, PROPERTY_NFT_ABI, provider, _net, senderAddr);
-    var priceRes = await contract.mintPrice();
-    var mintSats = priceRes && priceRes.properties ? BigInt(priceRes.properties.price) : 10000n;
-    var simulation = await contract.mint();
+    // Determine next tokenId from totalSupply
+    var nextId = 1n;
+    try {
+      var supRes = await contract.totalSupply();
+      if (supRes && supRes.properties && supRes.properties.totalSupply != null) {
+        nextId = BigInt(supRes.properties.totalSupply) + 1n;
+      }
+    } catch(_) {}
+    // Set payment output so contract can verify BTC payment via Blockchain.tx.outputs
+    contract.setTransactionDetails({
+      inputs: [],
+      outputs: [{ to: NFT_P2TR, value: MINT_SATS, index: 1, flags: TransactionOutputFlags.hasTo }]
+    });
+    var simulation = await contract.mintNFT(senderAddr, nextId);
     if (simulation.revert) throw new Error(simulation.revert);
     var receipt = await simulation.sendTransaction({
-      signer:null, mldsaSigner:null, refundTo:walletState.addr,
-      network:_net, maximumAllowedSatToSpend:mintSats + 50000n,
+      refundTo: walletState.addr,
+      network: _net, maximumAllowedSatToSpend: MINT_SATS + 50000n,
+      extraOutputs: [{ address: NFT_P2TR, value: Number(MINT_SATS) }],
     });
     if (!receipt) throw new Error('Transaction not broadcast — please try again.');
     var txid = receipt.transactionId;
@@ -5070,7 +5093,7 @@ async function _resetAllowanceAndStop() {
         var decSim = await opway.decreaseAllowance(vaultAddrObj, curAllow);
         if (!decSim.revert) {
           await decSim.sendTransaction({
-            signer: null, mldsaSigner: null, refundTo: walletState.addr,
+            refundTo: walletState.addr,
             network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
           });
           showToast('Allowance reset. Deposit OPWAY again to retry.', 'success');
@@ -5238,7 +5261,7 @@ async function vaultExecuteStake() {
       return;
     }
     var stakeRx = await stakeSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     if (!stakeRx) throw new Error('Transaction not broadcast — please try again.');
@@ -5414,7 +5437,7 @@ async function vaultClaimUSDOP() {
     const claimSim = await vaultContract.claimRewards();
     if (claimSim.revert) throw new Error(claimSim.revert);
     const claimReceipt = await claimSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     if (!claimReceipt) throw new Error('Transaction not broadcast — please try again.');
@@ -5445,7 +5468,7 @@ async function vaultWithdrawOPWAY() {
     const unstakeSim = await vaultContract.unstake();
     if (unstakeSim.revert) throw new Error(unstakeSim.revert);
     const unstakeReceipt = await unstakeSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     if (!unstakeReceipt) throw new Error('Transaction not broadcast — please try again.');
@@ -5532,7 +5555,7 @@ async function pvaultListProperty() {
     const approveSim = await nftContract.approve(pvaultAddrObj, tokenIdBig);
     if (approveSim.revert) throw new Error(approveSim.revert);
     const approveReceipt = await approveSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     showToast('NFT approved. Listing property…', 'info');
@@ -5547,7 +5570,7 @@ async function pvaultListProperty() {
     const listSim = await pvaultContract.listProperty(tokenIdBig, maxOpway);
     if (listSim.revert) throw new Error(listSim.revert);
     const listReceipt = await listSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     /* reset form */
