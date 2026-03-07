@@ -20,8 +20,8 @@ import { BitcoinAbiTypes, BitcoinInterfaceAbi, getContract, JSONRpcProvider } fr
 const TESTNET_RPC        = 'https://testnet.opnet.org';
 const NETWORK            = networks.opnetTestnet;
 const PROPERTY_VAULT_ADDR = 'opt1sqz5styqz7lcq92028p6pyjwlpnvzmjpmnufny8rs';
-const PROPERTY_NFT_ADDR  = 'opt1sqr0n9qf4nv8y5huvpmpfwcfqg3dt5geqwutpe5y7'; // v4 (hrp=opt)
-const OPWAY_YIELD_ADDR   = 'opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv';  // OPWAYield v3
+const PROPERTY_NFT_ADDR  = 'opt1sqrtuzn5snnqxxjyr6ajqp38gqwdccme3vcwvu3lz'; // v4 (hrp=opt)
+const OPWAY_YIELD_ADDR   = 'opt1sqpp23havwmyn6fykg2x8pr4vkqzw848suq828lwz';  // OPWAYield v3
 
 const mnemonic = process.env.OPNET_MNEMONIC;
 if (!mnemonic) { console.error('ERROR: set OPNET_MNEMONIC'); process.exit(1); }
