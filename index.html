@@ -5013,22 +5013,34 @@ function _startBlockWidget(approvalBlock) {
 }
 
 async function _pollMempoolBlock(approvalBlock) {
-  // Widget sincronizado com OP_NET — não depende de mempool BTC
   var opBlock = 0;
+  // Primary: OPNet JSON-RPC btc_blockNumber
   try {
     var rb = await fetch('https://testnet.opnet.org/api/v1/json-rpc', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({jsonrpc:'2.0',id:1,method:'btc_blockNumber',params:[]}),
-      signal: AbortSignal.timeout(6000)
+      signal: AbortSignal.timeout(8000)
     });
     var jb = await rb.json();
-    opBlock = parseInt(jb.result, 16) || 0;
-    // Atualiza também o display do bloco no vault/hero se visível
-    if (opBlock > 0) {
-      var vb = document.getElementById('vault-current-block');
-      if (vb) vb.textContent = opBlock.toLocaleString();
-    }
+    var parsed = jb.result ? parseInt(jb.result, 16) : 0;
+    if (parsed > 0) opBlock = parsed;
   } catch(_) {}
+
+  // Fallback: mempool.opnet.org block height (same Signet chain, same block index)
+  if (opBlock === 0) {
+    try {
+      var mf = await fetch('https://mempool.opnet.org/api/blocks', { signal: AbortSignal.timeout(6000) });
+      if (mf.ok) {
+        var arr = await mf.json();
+        if (Array.isArray(arr) && arr.length && arr[0].height > 0) opBlock = arr[0].height;
+      }
+    } catch(_) {}
+  }
+
+  if (opBlock > 0) {
+    var vb = document.getElementById('vault-current-block');
+    if (vb) vb.textContent = opBlock.toLocaleString();
+  }
 
   _updateBlockWidget(0, opBlock, approvalBlock);
 }
@@ -5056,20 +5068,20 @@ function _updateBlockWidget(mempoolHeight, opBlock, approvalBlock) {
   if (barEl) barEl.style.width = pct + '%';
 
   if (!confirmed) {
-    if (etaEl) etaEl.textContent = opBlock > 0 ? 'aguardando próximo bloco…' : 'conectando…';
-    if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔒 Aguardando bloco OP_NET… (' + pct + '%)'; }
+    if (etaEl) etaEl.textContent = opBlock > 0 ? 'waiting for next block…' : 'connecting…';
+    if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔒 Awaiting OP_NET block… (' + pct + '%)'; }
   }
 
   if (confirmed) {
     if (boxEl)    { boxEl.classList.remove('state-pending'); boxEl.classList.add('state-confirmed'); }
     if (badgeEl)  { badgeEl.className = 'pending-block-badge confirmed'; badgeEl.textContent = 'CONFIRMED'; }
     if (barEl)    { barEl.style.width = '100%'; barEl.classList.add('done'); }
-    if (etaEl)    etaEl.textContent = 'Bloco confirmado ✓';
+    if (etaEl)    etaEl.textContent = 'Block confirmed ✓';
     clearInterval(_mempoolInterval);
     _mempoolInterval = null;
     // Only start allowance poll once — guard against repeated calls after reload
     if (!_allowancePollInterval) {
-      if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔍 Verificando allowance on-chain…'; }
+      if (depositBtn) { depositBtn.disabled = true; depositBtn.textContent = '🔍 Verifying allowance on-chain…'; }
       _startAllowancePoll();
     }
   }
