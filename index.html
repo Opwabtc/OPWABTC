@@ -4038,6 +4038,7 @@ async function dashFetch() {
       const senderAddr = await buildSenderAddress(Address);
       const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
       const balSim = await opwayContract.balanceOf(senderAddr);
+      console.log('[dashFetch] balSim raw:', JSON.stringify(balSim && balSim.properties));
       var rawBal = balSim && balSim.properties && balSim.properties.balance != null
         ? balSim.properties.balance.toString()
         : '0';
@@ -4343,7 +4344,7 @@ async function loadTxHistory() {
 
   try {
     // Strategy 1: OPScan REST API (most reliable — same data as the OPScan UI)
-    var opscanUrl = 'https://opscan.org/api/v1/address/' + addr + '/transactions?network=op_testnet&limit=50';
+    var opscanUrl = 'https://api.opscan.org/v1/address/' + addr + '/transactions?network=op_testnet&limit=50';
     try {
       var osR = await fetch(opscanUrl, {signal: AbortSignal.timeout(8000)});
       if (osR.ok) {
@@ -4380,7 +4381,7 @@ async function loadTxHistory() {
           ? parseInt(bnRaw, 16) : parseInt(String(bnRaw));
       }
       if (blockNum) {
-        var SCAN_BLOCKS = 30;
+        var SCAN_BLOCKS = 150; // ~75 min of OPNet blocks at ~30s each
         for (var i = 0; i < SCAN_BLOCKS && userTxs.length < 50; i++) {
           var bn = blockNum - i;
           if (bn < 1) break;
@@ -5347,7 +5348,7 @@ async function vaultDepositOPWAY() {
         var resetSim = await cReset.opway.decreaseAllowance(vaultAddrObj, curAllow);
         if (resetSim.revert) throw new Error('Allowance reset failed: ' + resetSim.revert);
         const resetRx = await resetSim.sendTransaction({
-          signer: null, mldsaSigner: null, refundTo: walletState.addr,
+          refundTo: walletState.addr,
           network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
         });
         if (!resetRx) throw new Error('Allowance reset TX not broadcast — please try again.');
@@ -5362,7 +5363,7 @@ async function vaultDepositOPWAY() {
       var appSim = await cApp.opway.increaseAllowance(vaultAddrObj, amountBig);
       if (appSim.revert) throw new Error('Approval simulation failed: ' + appSim.revert);
       const appRx = await appSim.sendTransaction({
-        signer: null, mldsaSigner: null, refundTo: walletState.addr,
+        refundTo: walletState.addr,
         network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
       });
       if (!appRx) throw new Error('Approval TX not broadcast — please try again.');
@@ -5401,7 +5402,7 @@ async function vaultDepositOPWAY() {
       return;
     }
     var stakeRx = await stakeSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     if (!stakeRx) throw new Error('Transaction not broadcast — please try again.');
@@ -5631,7 +5632,7 @@ async function pvaultRemove(tokenId) {
     const delistSim = await pvaultContract.delistProperty(BigInt(tokenId));
     if (delistSim.revert) throw new Error(delistSim.revert);
     const delistReceipt = await delistSim.sendTransaction({
-      signer: null, mldsaSigner: null, refundTo: walletState.addr,
+      refundTo: walletState.addr,
       network: _OPNET_NET, maximumAllowedSatToSpend: 100_000n
     });
     var props = pvaultGetProperties().filter(function(p){ return p.tokenId !== tokenId; });
