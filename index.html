@@ -5196,30 +5196,7 @@ async function _startAllowancePoll() {
         if (onChainAllow >= amountBig) {
           clearInterval(_allowancePollInterval);
           _allowancePollInterval = null;
-          // Cross-session restore guard: if deposit was NOT initiated this session,
-          // verify user has no active stake before arming the button.
-          if (!_sessionDepositInitiated) {
-            try {
-              var GSTK_ABI = [{ name: 'getStake', type: BitcoinAbiTypes.Function, constant: true, payable: false,
-                inputs: [{ name: 'user', type: ABIDataTypes.ADDRESS }],
-                outputs: [{ name: 'amount', type: ABIDataTypes.UINT256 }] }];
-              var stakeVerifyC = getContract(YIELD_VAULT_ADDR, GSTK_ABI, provider, _OPNET_NET, senderAddr);
-              var stakeVRes = await stakeVerifyC.getStake(senderAddr);
-              if (!stakeVRes.revert && stakeVRes.properties && stakeVRes.properties.amount != null) {
-                if (BigInt(String(stakeVRes.properties.amount)) > 0n) {
-                  // Active stake exists — just refresh position display, no button
-                  _stopBlockWidget();
-                  vaultRenderPosition();
-                  return;
-                }
-              }
-            } catch (_sv) {
-              // Cannot verify — safer to reset than to arm stake button blindly
-              _stopBlockWidget();
-              showToast('Could not verify on-chain stake state — please redeposit to continue.', 'info');
-              return;
-            }
-          }
+          // Allowance confirmed on-chain — arm Stake button regardless of session
           var btn = document.getElementById('vault-deposit-btn');
           if (btn) { btn.disabled = false; btn.style.opacity = ''; btn.textContent = '⚡ Stake OPWAY — Ready!'; btn.onclick = vaultExecuteStake; }
         }
@@ -5241,12 +5218,6 @@ async function _startAllowancePoll() {
       }
       var inputAmt = parseFloat((document.getElementById('vault-deposit-amount') || {}).value) || 0;
       if (Math.abs(inputAmt - _pendingApproval.amt) > 0.5) {
-        _stopBlockWidget();
-        return;
-      }
-      // Session guard: same check as the poll's onChainAllow branch — never arm stake
-      // in a restored session without a confirmed deposit in the current browser session.
-      if (!_sessionDepositInitiated) {
         _stopBlockWidget();
         return;
       }
@@ -5404,7 +5375,7 @@ async function vaultDepositOPWAY() {
         if (!resetRx) throw new Error('Allowance reset TX not broadcast — please try again.');
         // Must wait for block confirmation before increaseAllowance — same rule as approve → stake.
         // Return here; on the next Deposit click curAllow will be 0 and we proceed normally.
-        showToast('✅ Allowance reset TX submitted. Please click Deposit again after ~1 block (~10 min) for confirmation.', 'info', true);
+        showToast('✅ Allowance reset TX submitted. Please click Deposit again after ~1 block (~5 min on OPNet) for confirmation.', 'info', true);
         return;
       } else {
         showToast('Approving OPWAY spend… (sign in wallet)', 'info');
@@ -5432,12 +5403,6 @@ async function vaultDepositOPWAY() {
       return;
     }
 
-    if (!_sessionDepositInitiated) {
-      showToast('Found allowance from a previous session — resetting for security. Please deposit again.', 'info');
-      await _resetAllowanceAndStop();
-      return;
-    }
-
     /* ── Step 3: Stake (allowance already enough) ── */
     _stakePhase = true;
     showToast('Staking OPWAY… (sign in wallet)', 'info');
@@ -5445,7 +5410,7 @@ async function vaultDepositOPWAY() {
     var stakeSim = await cS.vault.stake(amountBig);
     if (stakeSim.revert) {
       if (stakeSim.revert.toLowerCase().includes('allowance')) {
-        showToast('Allowance not confirmed yet — wait for the next block (~10 min) then click Stake again.', 'info');
+        showToast('Allowance not confirmed yet — wait for the next block (~5 min on OPNet) then click Stake again.', 'info');
       } else {
         throw new Error(stakeSim.revert);
       }
