@@ -1,3 +1,6 @@
+// FIX 5.101: Hashing in this contract (StoredMapU256 composite keys) uses the
+// AssemblyScript native SHA256 provided by the @btc-vision/btc-runtime runtime.
+// No external WASM SHA256 module is required or loaded.
 import { u256 } from '@btc-vision/as-bignum/assembly';
 import {
     OP_NET,

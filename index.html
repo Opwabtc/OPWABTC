@@ -3702,6 +3702,8 @@ var walletState = {connected:false, addr:'', sats:0, type:'', publicKey:''};
     if (!saved) return;
     var s = JSON.parse(saved);
     if (!s || !s.addr || !s.type) return;
+    // FIX 5.71: expire wallet session after 24h
+    if (s.ts && (Date.now() - s.ts) > 86400000) { localStorage.removeItem('opwa_wallet'); return; }
     var sats = 0, publicKey = s.publicKey || '';
     if (s.type === 'OP_Wallet' && window.opnet) {
       try { var accounts = await window.opnet.requestAccounts(); if (!accounts || !accounts.includes(s.addr)) { localStorage.removeItem('opwa_wallet'); return; } } catch(_) { return; }
@@ -3756,7 +3758,7 @@ function handleConnectClick() {
 function walletConnected(addr, sats, type, publicKey) {
   if (!addr || !addr.startsWith('opt1p')) { showToast('Wrong network — switch to OPNet Testnet', 'error'); return; }
   walletState = {connected:true, addr:addr, sats:sats, type:type, publicKey: publicKey || ''};
-  try { localStorage.setItem('opwa_wallet', JSON.stringify({addr:addr, type:type, publicKey: publicKey || ''})); } catch(_) {}
+  try { localStorage.setItem('opwa_wallet', JSON.stringify({addr:addr, type:type, publicKey: publicKey || '', ts: Date.now()})); } catch(_) {} // FIX 5.71: store timestamp for 24h TTL
   const short = addr.slice(0, 8) + '...' + addr.slice(-6);
   const btn = document.getElementById('connect-btn');
   if (btn) { btn.textContent = short; btn.classList.add('connected'); }
@@ -3807,6 +3809,8 @@ window.connectWallet = async function(type) {
       try { publicKey = await window.opnet.getPublicKey(); } catch(_) {}
     } else if (type === 'Unisat') {
       if (!window.unisat) { showToast('Unisat not found.', 'error'); return; }
+      // FIX 5.80: warn that UniSat lacks native OP_NET support
+      showToast('⚠️ UniSat não suporta OP_NET nativamente — recomendamos OP_Wallet para melhor experiência.', 'info');
       accounts = await window.unisat.requestAccounts();
       try { var b2 = await window.unisat.getBalance(); sats = b2.total || 0; } catch(_) {}
       try { publicKey = await window.unisat.getPublicKey(); } catch(_) {}
@@ -4025,7 +4029,7 @@ async function dashFetch() {
     // ── OPWAY balance + PropertyNFT totalSupply via getContract ──
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, OP_721_ABI, Address } = await _opnetImport();
-      const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+      const provider = _getProvider();
       const senderAddr = await buildSenderAddress(Address);
       const opwayContract = getContract(CONTRACTS.opwayYield, OP_20_ABI, provider, _OPNET_NET, senderAddr);
       const balSim = await opwayContract.balanceOf(senderAddr);
@@ -4414,6 +4418,10 @@ async function loadTxHistory() {
     renderTxList(userTxs);
   }
 }
+function sanitizeText(s) {
+  if (typeof s !== 'string') return String(s);
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 function renderTxList(txs){
   _txAllData = txs;
   var listEl=document.getElementById('tx-list'), countEl=document.getElementById('tx-count-label');
@@ -4465,11 +4473,11 @@ function renderTxList(txs){
       +'<div style="margin-right:10px"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25)"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>'
       // Hash + method
       +'<div style="min-width:0">'
-        +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11.5px;color:#f97316;text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">'+sh+'</a>'
-        +'<span style="display:inline-block;margin-top:3px;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:'+mBg+';color:'+mColor+'">'+tx.action+'</span>'
+        +'<a href="'+href+'" target="_blank" style="font-family:monospace;font-size:11.5px;color:#f97316;text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">'+sanitizeText(sh)+'</a>'
+        +'<span style="display:inline-block;margin-top:3px;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:'+mBg+';color:'+mColor+'">'+sanitizeText(tx.action)+'</span>'
       +'</div>'
       // Value
-      +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.5)">'+tx.value+'</span></div>'
+      +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.5)">'+sanitizeText(tx.value)+'</span></div>'
       // Block
       +'<div style="padding:0 18px;text-align:right"><span style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.45)">#'+blockDec+'</span></div>'
       // Time
@@ -4633,8 +4641,11 @@ function updateAllAssetPrices() {
   });
 }
 
+/* ── FIX 5.73: API throttle — prevent rapid repeated calls (min 10s between manual triggers) ── */
+var _lastFetchPrices = 0, _lastFetchBlock = 0, _lastFetchGas = 0;
 /* ── FETCH BTC PRICE (CoinGecko → CoinPaprika fallback) ── */
 async function fetchPrices() {
+  var now = Date.now(); if (now - _lastFetchPrices < 10000) return; _lastFetchPrices = now;
   try {
     let price = 0;
     const priceSrcs = [
@@ -4662,6 +4673,7 @@ async function fetchPrices() {
 }
 
 async function fetchOpNetBlock() {
+  var now = Date.now(); if (now - _lastFetchBlock < 10000) return; _lastFetchBlock = now;
   try {
     var h = 0;
     // 1. mempool.opnet.org (OP_NET own mempool)
@@ -4692,6 +4704,7 @@ async function fetchOpNetBlock() {
 
 /* ── FETCH GAS (mempool.opnet.org) ── */
 async function fetchGas() {
+  var now = Date.now(); if (now - _lastFetchGas < 10000) return; _lastFetchGas = now;
   try {
     var fee = 0;
     for (var _gs of ['https://mempool.opnet.org/api/v1/fees/recommended','https://mempool.space/api/v1/fees/recommended']) {
@@ -4963,6 +4976,12 @@ const _OPNET_NET = {
   bip32: { public: 70617039, private: 70615956 },
   pubKeyHash: 111, scriptHash: 196, wif: 239
 };
+// FIX 5.23/5.24: provider singleton
+var _providerInstance = null;
+function _getProvider() {
+  if (!_providerInstance) _providerInstance = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+  return _providerInstance;
+}
 
 async function _opnetImport() {
   const mod = await import('https://esm.sh/opnet?bundle');
@@ -5141,7 +5160,7 @@ async function _startAllowancePoll() {
     var { amountBig } = _pendingApproval;
     try {
       const { getContract, JSONRpcProvider, OP_20_ABI, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-      const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+      const provider = _getProvider();
       const senderAddr = await buildSenderAddress(Address);
       const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
       if (!vaultAddrObj) return;
@@ -5230,7 +5249,7 @@ async function vaultExecuteStake() {
   if (stakeBtn) { stakeBtn.disabled = true; stakeBtn.textContent = 'Verifying allowance on-chain…'; }
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
     if (!vaultAddrObj) throw new Error('Could not resolve vault address — please retry');
@@ -5297,7 +5316,7 @@ async function vaultDepositOPWAY() {
   var _stakePhase = false;
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, OP_20_ABI, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const amountBig = BigInt(Math.floor(amt)) * 100_000_000n;
     const vaultAddrObj = await _contractAddr(Address, YIELD_VAULT_ADDR);
@@ -5434,7 +5453,7 @@ async function vaultClaimUSDOP() {
   showToast('Claiming USDOP rewards…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const CLAIM_ABI = [
       { name:'claimRewards', type:BitcoinAbiTypes.Function, payable:false,
@@ -5465,7 +5484,7 @@ async function vaultWithdrawOPWAY() {
   showToast('Requesting unstake…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const UNSTAKE_ABI = [
       { name:'unstake', type:BitcoinAbiTypes.Function, payable:false,
@@ -5547,7 +5566,7 @@ async function pvaultListProperty() {
   showToast('Preparing NFT approval…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const tokenIdBig = BigInt(tid);
 
@@ -5627,7 +5646,7 @@ async function pvaultRemove(tokenId) {
   showToast('Delisting property #' + tokenId + '…', 'info');
   try {
     const { getContract, JSONRpcProvider, BitcoinAbiTypes, ABIDataTypes, Address } = await _opnetImport();
-    const provider = new JSONRpcProvider('https://testnet.opnet.org/api/v1/json-rpc', _OPNET_NET);
+    const provider = _getProvider();
     const senderAddr = await buildSenderAddress(Address);
     const DELIST_ABI = [
       { name:'delistProperty', type:BitcoinAbiTypes.Function, payable:false,

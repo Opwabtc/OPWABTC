@@ -4,6 +4,7 @@ import {
   AbstractRpcProvider,
   BitcoinAbiTypes,
   BitcoinInterfaceAbi,
+  BitcoinUtils,
   CallResult,
   getContract,
   IOP20Contract,
@@ -67,12 +68,7 @@ function getOPWACoinContract(
   );
 }
 
-// ── FIX SF-03: safe decimal expansion — replaces `BigInt(qty) * 10n ** BigInt(dec)` ──
-// Using explicit multiplication is fine for small decimals (8), but this helper
-// makes the intent clear and avoids accidental floating-point in callers.
-function expandToDecimals(wholeUnits: number, decimals: number): bigint {
-  return BigInt(wholeUnits) * (10n ** BigInt(decimals));
-}
+// FIX 5.59: use BitcoinUtils.expandToDecimals from opnet SDK instead of raw BigInt multiplication
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
@@ -182,8 +178,8 @@ export function useBuyOPWA() {
       }
 
       const decimals = state.tokenInfo?.decimals ?? 8;
-      // FIX SF-03: was `BigInt(parsedQty) * 10n ** BigInt(decimals)` — now explicit helper
-      const rawAmount = expandToDecimals(parsedQty, decimals);
+      // FIX 5.59: use BitcoinUtils.expandToDecimals from opnet SDK
+      const rawAmount = BitcoinUtils.expandToDecimals(parsedQty, decimals);
       const satCost   = pricePerToken * BigInt(parsedQty);
 
       setState((prev) => ({ ...prev, buying: true, error: null, txHash: null }));

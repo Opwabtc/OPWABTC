@@ -24,7 +24,7 @@ const GAS_SAT_FEE = 15_000n;
 const mnemonic = process.env.OPNET_MNEMONIC;
 if (!mnemonic) { console.error('ERROR: set OPNET_MNEMONIC'); process.exit(1); }
 
-const mnemonicObj = new Mnemonic(mnemonic, '', NETWORK, MLDSASecurityLevel.LEVEL1);
+const mnemonicObj = new Mnemonic(mnemonic, '', NETWORK, MLDSASecurityLevel.LEVEL1 /* FIX 5.106: LEVEL1 (ML-DSA-44) provides 128-bit quantum security — sufficient for testnet; upgrade to LEVEL3/LEVEL5 for mainnet production */);
 const wallet      = mnemonicObj.deriveOPWallet(AddressTypes.P2TR, 0);
 console.log('Deployer:', wallet.p2tr);
 
