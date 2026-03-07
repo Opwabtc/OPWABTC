@@ -18,7 +18,7 @@ import { BitcoinAbiTypes, BitcoinInterfaceAbi, getContract, JSONRpcProvider } fr
 
 const TESTNET_RPC       = 'https://testnet.opnet.org';
 const NETWORK           = networks.opnetTestnet;
-const PROPERTY_NFT_ADDR = 'opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6';
+const PROPERTY_NFT_ADDR = 'opt1sqzg3xs364026l3pz6kqllar4l7q73jr5cy0hqkwc'; // redeployed 2026-03-07 (patched)
 const mnemonic          = process.env.OPNET_MNEMONIC;
 const propertyVaultAddr = process.env.PROPERTY_VAULT_ADDR;
 
