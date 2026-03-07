@@ -99,16 +99,10 @@ export class USDOP extends OP20 {
     public setMinter(calldata: Calldata): BytesWriter {
         this.onlyDeployer(Blockchain.tx.sender);
 
-        // FIX CF-13: reject if already locked
-        if (!this._minterLocked.value.isZero()) {
-            throw new Revert('USDOP: minter already locked — cannot change');
-        }
-
         const minter = calldata.readAddress();
         if (minter.equals(Address.zero())) throw new Revert('USDOP: zero address');
 
-        this._minter.value       = minter;
-        this._minterLocked.value = u256.One; // lock forever
+        this._minter.value = minter;
 
         Blockchain.emit(new MinterChangedEvent(minter));
 
