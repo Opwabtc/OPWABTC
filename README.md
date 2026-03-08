@@ -100,12 +100,12 @@ Contracts are compiled to WASM (AssemblyScript → OP-VM) and deployed on Bitcoi
 
 | Contract | Standard | Address | Explorer |
 |---|---|---|---|
-| OPWACoin (OPWAY) | OP-20 | `opt1sqzr3qjugf334hrjaque5gt5r09fsvm80lqylyrcp` | [OPScan ↗](https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet) |
-| PropertyNFT | OP-721 | `opt1sqr92tw6fg5d39llk80uddvktzgwa0g39hc0uyqa6` | [OPScan ↗](https://opscan.org/tokens/0x5be08132f3efd4d59a4adb27a8f53c1dc8e788db79e5aa086017f82359dfecfc?network=op_testnet) |
+| OPWACoin (OPWAY) | OP-20 | `opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2` | [OPScan ↗](https://opscan.org/tokens/0xa4c529ac2a92cc21cb34bf6f17835cf466dc7345a61af0df82eee54d56dbd7b9?network=op_testnet) |
+| PropertyNFT | OP-721 | `opt1sqpvldyanfs6edn5vxxd8ven58tp8qcrxdyzd2pvl` | [OPScan ↗](https://opscan.org/tokens/0x5be08132f3efd4d59a4adb27a8f53c1dc8e788db79e5aa086017f82359dfecfc?network=op_testnet) |
 | YieldVault v3 | Custom | `opt1sqqna5kthnryd4e44q0urp4veg6y6xp5k65jgj9mv` | [OPScan ↗](https://opscan.org/accounts/opt1sqqna5kthnryd4e44q0urp4veg6y6xp5k65jgj9mv?network=op_testnet) |
 | USDOP | OP-20 | `opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu` | [OPScan ↗](https://opscan.org/accounts/opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu?network=op_testnet) |
-| OPWAYield v3 | Custom | `opt1sqryxvl6fypj72l77ncfave5cfpvxs5c2d596cdtv` | [OPScan ↗](https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet) |
-| PropertyVault | Custom | `opt1sqpqkdmpr6z84l4lw8nhxuj66q02t5ay2vqu4zc6z` | [OPScan ↗](https://opscan.org/accounts/opt1sqpqkdmpr6z84l4lw8nhxuj66q02t5ay2vqu4zc6z?network=op_testnet) |
+| OPWAYield v3 | Custom | `opt1sqpp23havwmyn6fykg2x8pr4vkqzw848suq828lwz` | [OPScan ↗](https://opscan.org/tokens/0x50569f8a290f5f5eaa50321f3113d989cd6ea52384d25b49fe977ac2f266bbc8?network=op_testnet) |
+| PropertyVault | Custom | `opt1sqz5styqz7lcq92028p6pyjwlpnvzmjpmnufny8rs` | [OPScan ↗](https://opscan.org/accounts/opt1sqpqkdmpr6z84l4lw8nhxuj66q02t5ay2vqu4zc6z?network=op_testnet) |
 
 > ⚠️ Do not change contract addresses. See [docs/testnet-deployments.md](docs/testnet-deployments.md) for full deployment records.
 
