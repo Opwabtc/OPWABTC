@@ -127,7 +127,7 @@ npx asc op20/OPWACoin.ts --outFile build/OPWACoin.wasm --optimize
 
 # Deploy
 cd ~/OPWABTC
-OPNET_MNEMONIC='canvas fix manual tiger...' npx tsx scripts/deploy-token.ts
+OPNET_MNEMONIC='$OPNET_MNEMONIC' npx tsx scripts/deploy-token.ts
 
 # Configurar
 OPNET_MNEMONIC='...' npx tsx scripts/set-treasury.ts
@@ -143,7 +143,7 @@ git push
 
 ## Mnemonic de Deploy
 
-`REDACTED_MNEMONIC`
+`[REDACTED — use .env local]`
 
 ---
 
