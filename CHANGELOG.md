@@ -7,6 +7,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ---
 
 ## [Unreleased]
+## [1.0.0-rc1] — 2026-03-07 · Sessions 34–36
+
+### Fixed
+- `CONTRACTS.propertyNft` — PropertyNFT v5 WASM não estava indexado no OPNet node (`btc_getCode` retornava "Contract bytecode not found"); redeployado como v6 (`opt1sqpvldyanfs6edn5vxxd8ven58tp8qcrxdyzd2pvl`) — resolve "Contract not found" em `loadVault`, `dashFetch` e `mintPropertyNFT`
+- `NFT_P2TR` atualizado para v6: `opt1py4wmts2h49eykwn8903mtwdl7ndcmffnaynx83eep9ahyrdmqc3sfsfkpk`
+- `mintPropertyNFT` — ABI corrigida de `mint()` sem args para `mintNFT(to: Address, tokenId: uint256)` com `setTransactionDetails` + `extraOutputs` para pagamento BTC ao NFT P2TR
+- `signer: null` / `mldsaSigner: null` removidos de todas as chamadas `sendTransaction`
+- TX history Strategy 1: URL corrigida de `opscan.org/api/v1/` para `api.opscan.org/v1/`
+- TX history scan: janela ampliada de 30 para 150 blocos (~75 min de histórico)
+- Block widget: strings PT→EN + fallback mempool.opnet.org para 0% stuck
+- WalletConnect modal CSS M-01: position:fixed + z-index:99999
+
+### Contracts
+- PropertyNFT v6 deployado: `opt1sqpvldyanfs6edn5vxxd8ven58tp8qcrxdyzd2pvl`
+- PropertyVault reconfigurado com NFT v6 + OPWAYield v4 (TX: af3619912d...)
+- scripts/set-minting-open.ts e configure-property-vault-full.ts atualizados para v6
+
 - YieldDistributor — rental income distribution to fractional token holders
 - OPWACoin governance activation + airdrop mechanics
 - Motoswap liquidity integration for OPWAY/BTC pair
