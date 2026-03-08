@@ -12,13 +12,13 @@ Deadline: 13 março 2026 (hackathon) / 17 março 2026 (OP_NET mainnet)
 
 ```
 opwaCoin:      opt1sqpz0m0uql87kz425y6h99p2k0lqut59vsgaxq8t2   (v3)
-propertyNft:   opt1sqrtuzn5snnqxxjyr6ajqp38gqwdccme3vcwvu3lz   (v5)
+propertyNft:   opt1sqpvldyanfs6edn5vxxd8ven58tp8qcrxdyzd2pvl   (v6)
 opwayYield:    opt1sqpp23havwmyn6fykg2x8pr4vkqzw848suq828lwz   (v4)
 usdop:         opt1sqpy0t34k0s6fkn76art8uv6rg8uphvna5ydgd4mu   (v1)
 yieldVault:    opt1sqqna5kthnryd4e44q0urp4veg6y6xp5k65jgj9mv   (v3)
 propertyVault: opt1sqz5styqz7lcq92028p6pyjwlpnvzmjpmnufny8rs   (v3)
 treasury:      opt1ptma69xdfhxqvve9zl2pwva288lj8rtm7w3ww5xavf6xfp8uegevqq58h3t
-nftP2tr:       opt1pkk45n6xjegdaj9002chqcwleccjf8trlu528zm39q3hpa3j7yjhsppftyv
+nftP2tr:       opt1py4wmts2h49eykwn8903mtwdl7ndcmffnaynx83eep9ahyrdmqc3sfsfkpk
 ```
 
 ---
